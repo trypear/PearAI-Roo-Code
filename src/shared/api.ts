@@ -14,6 +14,7 @@ export type ApiProvider =
 	| "deepseek"
 	| "vscode-lm"
 	| "mistral"
+	| "pearai"
 
 export interface ApiHandlerOptions {
 	apiModelId?: string
@@ -57,6 +58,10 @@ export interface ApiHandlerOptions {
 	deepSeekBaseUrl?: string
 	deepSeekApiKey?: string
 	includeMaxTokens?: boolean
+	pearaiApiKey?: string
+	pearaiBaseUrl?: string
+	pearaiModelId?: string
+	pearaiModelInfo?: ModelInfo
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {

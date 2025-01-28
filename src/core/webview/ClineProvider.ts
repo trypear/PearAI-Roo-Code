@@ -63,6 +63,7 @@ type SecretKey =
 	| "openAiNativeApiKey"
 	| "deepSeekApiKey"
 	| "mistralApiKey"
+	| "pearaiApiKey"
 type GlobalStateKey =
 	| "apiProvider"
 	| "apiModelId"
@@ -97,6 +98,10 @@ type GlobalStateKey =
 	| "openRouterModelId"
 	| "openRouterModelInfo"
 	| "openRouterBaseUrl"
+	| "pearaiModelId"
+	| "pearaiModelInfo"
+	| "pearaiBaseUrl"
+	| "pearaiApiKey"
 	| "openRouterUseMiddleOutTransform"
 	| "allowedCommands"
 	| "soundEnabled"
@@ -1363,6 +1368,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			openRouterUseMiddleOutTransform,
 			vsCodeLmModelSelector,
 			mistralApiKey,
+			pearaiApiKey,
+			pearaiBaseUrl,
+			pearaiModelId,
+			pearaiModelInfo,
 		} = apiConfiguration
 		await this.updateGlobalState("apiProvider", apiProvider)
 		await this.updateGlobalState("apiModelId", apiModelId)
@@ -1401,6 +1410,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		await this.updateGlobalState("openRouterUseMiddleOutTransform", openRouterUseMiddleOutTransform)
 		await this.updateGlobalState("vsCodeLmModelSelector", vsCodeLmModelSelector)
 		await this.storeSecret("mistralApiKey", mistralApiKey)
+		await this.updateGlobalState("pearaiModelId", pearaiModelId)
+		await this.updateGlobalState("pearaiModelInfo", pearaiModelInfo)
+		await this.storeSecret("pearaiApiKey", pearaiApiKey)
+		await this.updateGlobalState("pearaiBaseUrl", pearaiBaseUrl)
 		if (this.cline) {
 			this.cline.api = buildApiHandler(apiConfiguration)
 		}
@@ -2019,6 +2032,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			openAiNativeApiKey,
 			deepSeekApiKey,
 			mistralApiKey,
+			pearaiApiKey,
+			pearaiBaseUrl,
+			pearaiModelId,
+			pearaiModelInfo,
 			azureApiVersion,
 			openAiStreamingEnabled,
 			openRouterModelId,
@@ -2089,6 +2106,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.getSecret("openAiNativeApiKey") as Promise<string | undefined>,
 			this.getSecret("deepSeekApiKey") as Promise<string | undefined>,
 			this.getSecret("mistralApiKey") as Promise<string | undefined>,
+			this.getSecret("pearaiApiKey") as Promise<string | undefined>,
+			this.getGlobalState("pearaiBaseUrl") as Promise<string | undefined>,
+			this.getGlobalState("pearaiModelId") as Promise<string | undefined>,
+			this.getGlobalState("pearaiModelInfo") as Promise<ModelInfo | undefined>,
 			this.getGlobalState("azureApiVersion") as Promise<string | undefined>,
 			this.getGlobalState("openAiStreamingEnabled") as Promise<boolean | undefined>,
 			this.getGlobalState("openRouterModelId") as Promise<string | undefined>,
@@ -2176,6 +2197,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				openAiNativeApiKey,
 				deepSeekApiKey,
 				mistralApiKey,
+				pearaiApiKey,
+				pearaiBaseUrl,
+				pearaiModelId,
+				pearaiModelInfo,
 				azureApiVersion,
 				openAiStreamingEnabled,
 				openRouterModelId,
