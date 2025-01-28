@@ -1596,7 +1596,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		// Update mode's default config
 		const { mode } = await this.getState()
 		if (mode) {
-			const currentApiConfigName = await this.getGlobalState("currentApiConfigName")
+			const currentApiConfigName = (await this.getGlobalState("currentApiConfigName")) ?? "default"
 			const listApiConfig = await this.configManager.listConfig()
 			const config = listApiConfig?.find((c) => c.name === currentApiConfigName)
 			if (config?.id) {
