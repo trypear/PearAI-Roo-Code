@@ -16,7 +16,7 @@ import { getTheme } from "../../integrations/theme/getTheme"
 import { getDiffStrategy } from "../diff/DiffStrategy"
 import WorkspaceTracker from "../../integrations/workspace/WorkspaceTracker"
 import { McpHub } from "../../services/mcp/McpHub"
-import { ApiConfiguration, ApiProvider, ModelInfo } from "../../shared/api"
+import { ApiConfiguration, ApiProvider, ModelInfo, PEARAI_URL } from "../../shared/api"
 import { findLast } from "../../shared/array"
 import { ApiConfigMeta, ExtensionMessage } from "../../shared/ExtensionMessage"
 import { HistoryItem } from "../../shared/HistoryItem"
@@ -39,6 +39,9 @@ import { CustomSupportPrompts, supportPrompt } from "../../shared/support-prompt
 
 import { ACTION_NAMES } from "../CodeActionProvider"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
+
+// Todo: Remove
+const PEARAI_TOKEN = "temp"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -132,6 +135,9 @@ type GlobalStateKey =
 	| "requestyModelInfo"
 	| "unboundModelInfo"
 	| "modelTemperature"
+	| "customModes"
+	| "pearai-token"
+	| "pearai-refresh" // Array of custom modes
 
 export const GlobalFileNames = {
 	apiConversationHistory: "api_conversation_history.json",
@@ -1692,10 +1698,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		await this.updateGlobalState("requestyModelId", requestyModelId)
 		await this.updateGlobalState("requestyModelInfo", requestyModelInfo)
 		await this.updateGlobalState("modelTemperature", modelTemperature)
+		await this.updateGlobalState("pearai-token", PEARAI_TOKEN)
+		await this.updateGlobalState("pearaiBaseUrl", PEARAI_URL)
 		await this.updateGlobalState("pearaiModelId", pearaiModelId)
 		await this.updateGlobalState("pearaiModelInfo", pearaiModelInfo)
-		await this.storeSecret("pearaiApiKey", pearaiApiKey)
-		await this.updateGlobalState("pearaiBaseUrl", pearaiBaseUrl)
 		if (this.cline) {
 			this.cline.api = buildApiHandler(apiConfiguration)
 		}
@@ -2527,6 +2533,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			deepSeekApiKey,
 			mistralApiKey,
 			pearaiApiKey,
+			pearaiRefreshKey,
 			pearaiBaseUrl,
 			pearaiModelId,
 			pearaiModelInfo,
@@ -2610,7 +2617,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.getSecret("openAiNativeApiKey") as Promise<string | undefined>,
 			this.getSecret("deepSeekApiKey") as Promise<string | undefined>,
 			this.getSecret("mistralApiKey") as Promise<string | undefined>,
-			this.getSecret("pearaiApiKey") as Promise<string | undefined>,
+			this.getGlobalState("pearai-token") as Promise<string | undefined>,
+			this.getGlobalState("pearai-refresh") as Promise<string | undefined>,
 			this.getGlobalState("pearaiBaseUrl") as Promise<string | undefined>,
 			this.getGlobalState("pearaiModelId") as Promise<string | undefined>,
 			this.getGlobalState("pearaiModelInfo") as Promise<ModelInfo | undefined>,
