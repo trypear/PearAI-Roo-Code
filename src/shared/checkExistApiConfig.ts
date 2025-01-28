@@ -4,6 +4,7 @@ export function checkExistKey(config: ApiConfiguration | undefined) {
 	return config
 		? [
 				config.apiKey,
+				config.pearaiApiKey,
 				config.glamaApiKey,
 				config.openRouterApiKey,
 				config.awsRegion,
