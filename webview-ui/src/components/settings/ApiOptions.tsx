@@ -32,6 +32,7 @@ import {
 	openRouterDefaultModelInfo,
 	vertexDefaultModelId,
 	vertexModels,
+	PEARAI_URL,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 import { useExtensionState } from "../../context/ExtensionStateContext"
@@ -44,8 +45,6 @@ import OpenRouterModelPicker, {
 } from "./OpenRouterModelPicker"
 import OpenAiModelPicker from "./OpenAiModelPicker"
 import GlamaModelPicker from "./GlamaModelPicker"
-
-const PEARAI_DEFAULT_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
 
 interface ApiOptionsProps {
 	apiErrorMessage?: string
@@ -60,7 +59,6 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
 	const [openRouterBaseUrlSelected, setOpenRouterBaseUrlSelected] = useState(!!apiConfiguration?.openRouterBaseUrl)
-	const [pearaiBaseUrlSelected, setPearaiBaseUrlSelected] = useState(!!apiConfiguration?.pearaiBaseUrl)
 	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
 	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(() => {
@@ -171,34 +169,12 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						placeholder="Enter API Key...">
 						<span style={{ fontWeight: 500 }}>PearAI API Key</span>
 					</VSCodeTextField>
-					<VSCodeTextField
-						value={apiConfiguration?.pearaiBaseUrl || PEARAI_DEFAULT_URL}
-						style={{ width: "100%" }}
-						type="url"
-						onInput={handleInputChange("pearaiBaseUrl")}
-						placeholder={PEARAI_DEFAULT_URL}>
-						<span style={{ fontWeight: 500 }}>Base URL</span>
-					</VSCodeTextField>
-					{apiConfiguration?.pearaiBaseUrl && apiConfiguration.pearaiBaseUrl !== PEARAI_DEFAULT_URL && (
-						<VSCodeButton
-							onClick={() => {
-								handleInputChange("pearaiBaseUrl")({
-									target: {
-										value: PEARAI_DEFAULT_URL,
-									},
-								})
-							}}>
-							Reset to default URL
-						</VSCodeButton>
-					)}
 					<p
 						style={{
 							fontSize: "12px",
 							marginTop: "5px",
 							color: "var(--vscode-descriptionForeground)",
-						}}>
-						This key is stored locally and only used to make API requests from this extension.
-					</p>
+						}}></p>
 				</div>
 			)}
 
@@ -1607,7 +1583,7 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 		case "pearai":
 			return {
 				selectedProvider: provider,
-				selectedModelId: apiConfiguration?.pearaiModelId || "",
+				selectedModelId: apiConfiguration?.pearaiModelId || "pearai_model",
 				selectedModelInfo: apiConfiguration?.pearaiModelInfo || openAiModelInfoSaneDefaults,
 			}
 		default:
