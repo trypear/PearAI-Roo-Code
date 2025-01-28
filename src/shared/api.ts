@@ -16,6 +16,7 @@ export type ApiProvider =
 	| "mistral"
 	| "unbound"
 	| "requesty"
+	| "pearai"
 
 export interface ApiHandlerOptions {
 	apiModelId?: string
@@ -66,6 +67,10 @@ export interface ApiHandlerOptions {
 	requestyModelId?: string
 	requestyModelInfo?: ModelInfo
 	modelTemperature?: number
+	pearaiApiKey?: string
+	pearaiBaseUrl?: string
+	pearaiModelId?: string
+	pearaiModelInfo?: ModelInfo
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {

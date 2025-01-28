@@ -1,7 +1,7 @@
-import { memo, useCallback, useEffect, useMemo, useState } from "react"
+import { Fragment, memo, useCallback, useEffect, useMemo, useState } from "react"
 import { useEvent, useInterval } from "react-use"
 import { Checkbox, Dropdown, Pane, type DropdownOption } from "vscrui"
-import { VSCodeLink, VSCodeRadio, VSCodeRadioGroup, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import { VSCodeLink, VSCodeRadio, VSCodeRadioGroup, VSCodeTextField, VSCodeButton } from "@vscode/webview-ui-toolkit/react"
 import { TemperatureControl } from "./TemperatureControl"
 import * as vscodemodels from "vscode"
 
@@ -45,6 +45,8 @@ import { ModelInfoView } from "./ModelInfoView"
 import { DROPDOWN_Z_INDEX } from "./styles"
 import { RequestyModelPicker } from "./RequestyModelPicker"
 
+const PEARAI_DEFAULT_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+
 interface ApiOptionsProps {
 	apiErrorMessage?: string
 	modelIdErrorMessage?: string
@@ -59,6 +61,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage, fromWelcomeView }: A
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
 	const [openRouterBaseUrlSelected, setOpenRouterBaseUrlSelected] = useState(!!apiConfiguration?.openRouterBaseUrl)
+	const [pearaiBaseUrlSelected, setPearaiBaseUrlSelected] = useState(!!apiConfiguration?.pearaiBaseUrl)
 	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 
 	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(() => {
@@ -153,6 +156,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage, fromWelcomeView }: A
 					}}
 					style={{ minWidth: 130, position: "relative", zIndex: DROPDOWN_Z_INDEX + 1 }}
 					options={[
+						{ value: "pearai", label: "PearAI" },
 						{ value: "openrouter", label: "OpenRouter" },
 						{ value: "anthropic", label: "Anthropic" },
 						{ value: "gemini", label: "Google Gemini" },
@@ -171,6 +175,47 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage, fromWelcomeView }: A
 					]}
 				/>
 			</div>
+
+			{selectedProvider === "pearai" && (
+				<div>
+					<VSCodeTextField
+						value={apiConfiguration?.pearaiApiKey || ""}
+						style={{ width: "100%" }}
+						type="password"
+						onInput={handleInputChange("pearaiApiKey")}
+						placeholder="Enter API Key...">
+						<span style={{ fontWeight: 500 }}>PearAI API Key</span>
+					</VSCodeTextField>
+					<VSCodeTextField
+						value={apiConfiguration?.pearaiBaseUrl || PEARAI_DEFAULT_URL}
+						style={{ width: "100%" }}
+						type="url"
+						onInput={handleInputChange("pearaiBaseUrl")}
+						placeholder={PEARAI_DEFAULT_URL}>
+						<span style={{ fontWeight: 500 }}>Base URL</span>
+					</VSCodeTextField>
+					{apiConfiguration?.pearaiBaseUrl && apiConfiguration.pearaiBaseUrl !== PEARAI_DEFAULT_URL && (
+						<VSCodeButton
+							onClick={() => {
+								handleInputChange("pearaiBaseUrl")({
+									target: {
+										value: PEARAI_DEFAULT_URL,
+									},
+								})
+							}}>
+							Reset to default URL
+						</VSCodeButton>
+					)}
+					<p
+						style={{
+							fontSize: "12px",
+							marginTop: "5px",
+							color: "var(--vscode-descriptionForeground)",
+						}}>
+						This key is stored locally and only used to make API requests from this extension.
+					</p>
+				</div>
+			)}
 
 			{selectedProvider === "anthropic" && (
 				<div>
@@ -1374,7 +1419,8 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage, fromWelcomeView }: A
 				selectedProvider !== "openai" &&
 				selectedProvider !== "ollama" &&
 				selectedProvider !== "lmstudio" &&
-				selectedProvider !== "unbound" && (
+				selectedProvider !== "unbound" &&
+				selectedProvider !== "pearai" && (
 					<>
 						<div className="dropdown-container">
 							<label htmlFor="model-id">
@@ -1519,6 +1565,12 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 				selectedProvider: provider,
 				selectedModelId: apiConfiguration?.requestyModelId || requestyDefaultModelId,
 				selectedModelInfo: apiConfiguration?.requestyModelInfo || requestyDefaultModelInfo,
+			}
+		case "pearai":
+			return {
+				selectedProvider: provider,
+				selectedModelId: apiConfiguration?.pearaiModelId || "",
+				selectedModelInfo: apiConfiguration?.pearaiModelInfo || openAiModelInfoSaneDefaults,
 			}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
