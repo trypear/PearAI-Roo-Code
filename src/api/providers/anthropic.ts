@@ -83,7 +83,10 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 							case "claude-3-opus-20240229":
 							case "claude-3-haiku-20240307":
 								return {
-									headers: { "anthropic-beta": "prompt-caching-2024-07-31" },
+									headers: {
+										"anthropic-beta": "prompt-caching-2024-07-31",
+										"authorization": `Bearer ${this.options.apiKey}`,
+									},
 								}
 							default:
 								return undefined
