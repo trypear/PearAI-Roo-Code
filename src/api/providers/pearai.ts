@@ -9,10 +9,8 @@ export class PearAiHandler extends AnthropicHandler {
 		}
 		super({
 			...options,
-			// Map PearAI specific options to OpenAI options for compatibility
-			openAiApiKey: options.pearaiApiKey,
-			openAiBaseUrl: PEARAI_URL,
-			openAiStreamingEnabled: true,
+			apiKey: options.pearaiApiKey,
+			anthropicBaseUrl: PEARAI_URL,
 		})
 	}
 }
