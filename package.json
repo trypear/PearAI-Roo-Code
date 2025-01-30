@@ -49,7 +49,7 @@
 	"main": "./dist/extension.js",
 	"contributes": {
 		"viewsContainers": {
-			"activitybar": [
+			"auxiliarybar": [
 				{
 					"id": "roo-cline-ActivityBar",
 					"title": "Roo Code",
