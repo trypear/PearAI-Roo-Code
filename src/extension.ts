@@ -71,7 +71,7 @@ export function activate(context: vscode.ExtensionContext) {
 	)
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand("pearai-roo-cline.pearAILogout", async () => {
+		vscode.commands.registerCommand("pearai-roo-cline.pearaiLogout", async () => {
 			console.dir("Logged out of PearAI:")
 			context.secrets.delete("pearai-token")
 			context.secrets.delete("pearai-refresh")
