@@ -33,6 +33,7 @@
 	},
 	"scripts": {
 		"start": "react-app-rewired start",
+		"start:custom": "node scripts/start-custom.js",
 		"build": "node ./scripts/build-react-no-split.js",
 		"test": "react-app-rewired test --watchAll=false",
 		"eject": "react-scripts eject",

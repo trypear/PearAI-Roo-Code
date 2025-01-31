@@ -1,5 +1,9 @@
-export const getLogoPath = (assetName: string) => {
-	return `${window.vscMediaUrl}/icons/${assetName}`
+// export const getLogoPath = (assetName: string) => {
+// 	return `${window.vscMediaUrl}/icons/${assetName}`
+// }
+
+const getLogoPath = (assetName: string) => {
+	return `/icons/${assetName}`
 }
 
 const InventoryPreview = () => {
@@ -74,7 +78,7 @@ const InventoryPreview = () => {
 					{/* <div className="ml-1">
             <ShortcutButton keys={["⌘", "E"]} label={"Inventory"} labelInside={true} />
           </div> */}
-					<div>{window.vscMediaUrl}</div>
+					{/* <div>{window.vscMediaUrl}</div> */}
 				</div>
 			</div>
 		</div>
