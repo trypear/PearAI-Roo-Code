@@ -54,7 +54,8 @@ export interface ExtensionMessage {
 		| "historyButtonClicked"
 		| "promptsButtonClicked"
 		| "didBecomeVisible"
-	invoke?: "sendMessage" | "primaryButtonClick" | "secondaryButtonClick" | "setChatBoxMessage"
+		| "updatePearAIAuth"
+	invoke?: "sendMessage" | "primaryButtonClick" | "secondaryButtonClick"
 	state?: ExtensionState
 	images?: string[]
 	ollamaModels?: string[]

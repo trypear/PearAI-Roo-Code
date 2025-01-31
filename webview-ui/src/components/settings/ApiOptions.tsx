@@ -176,20 +176,35 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage, fromWelcomeView }: A
 
 			{selectedProvider === "pearai" && (
 				<div>
-					<VSCodeTextField
-						value={apiConfiguration?.pearaiApiKey || ""}
-						style={{ width: "100%" }}
-						type="password"
-						onInput={handleInputChange("pearaiApiKey")}
-						placeholder="Enter API Key...">
-						<span style={{ fontWeight: 500 }}>PearAI API Key</span>
-					</VSCodeTextField>
-					<p
-						style={{
-							fontSize: "12px",
-							marginTop: "5px",
-							color: "var(--vscode-descriptionForeground)",
-						}}></p>
+					{!apiConfiguration?.pearaiApiKey ? (
+						<>
+							<VSCodeButton
+								onClick={() => {
+									vscode.postMessage({
+										type: "openPearAiAuth",
+									})
+								}}>
+								Login to PearAI
+							</VSCodeButton>
+							<p
+								style={{
+									fontSize: "12px",
+									marginTop: "5px",
+									color: "var(--vscode-descriptionForeground)",
+								}}>
+								Connect your PearAI account to use servers.
+							</p>
+						</>
+					) : (
+						<p
+							style={{
+								fontSize: "12px",
+								marginTop: "5px",
+								color: "var(--vscode-descriptionForeground)",
+							}}>
+							User already logged in to PearAI. Click 'Done' to proceed!
+						</p>
+					)}
 				</div>
 			)}
 

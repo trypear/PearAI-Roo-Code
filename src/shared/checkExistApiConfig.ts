@@ -4,7 +4,6 @@ export function checkExistKey(config: ApiConfiguration | undefined) {
 	return config
 		? [
 				config.apiKey,
-				config.pearaiApiKey,
 				config.glamaApiKey,
 				config.openRouterApiKey,
 				config.awsRegion,
@@ -19,6 +18,7 @@ export function checkExistKey(config: ApiConfiguration | undefined) {
 				config.vsCodeLmModelSelector,
 				config.requestyApiKey,
 				config.unboundApiKey,
+				config.pearaiBaseUrl,
 			].some((key) => key !== undefined)
 		: false
 }

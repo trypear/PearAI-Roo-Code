@@ -40,9 +40,6 @@ import { CustomSupportPrompts, supportPrompt } from "../../shared/support-prompt
 import { ACTION_NAMES } from "../CodeActionProvider"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 
-// Todo: Remove
-const PEARAI_TOKEN = "temp"
-
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
 
@@ -64,6 +61,8 @@ type SecretKey =
 	| "unboundApiKey"
 	| "requestyApiKey"
 	| "pearaiApiKey"
+	| "pearai-token"
+	| "pearai-refresh" // Array of custom modes
 type GlobalStateKey =
 	| "apiProvider"
 	| "apiModelId"
@@ -136,8 +135,6 @@ type GlobalStateKey =
 	| "unboundModelInfo"
 	| "modelTemperature"
 	| "customModes"
-	| "pearai-token"
-	| "pearai-refresh" // Array of custom modes
 
 export const GlobalFileNames = {
 	apiConversationHistory: "api_conversation_history.json",
@@ -1503,6 +1500,19 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 							await this.updateGlobalState("mode", defaultModeSlug)
 							await this.postStateToWebview()
 						}
+						break
+					case "openPearAiAuth":
+						const extensionUrl = `${vscode.env.uriScheme}://pearai.pearai/auth`
+						const callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(extensionUrl))
+
+						await vscode.env.openExternal(
+							await vscode.env.asExternalUri(
+								vscode.Uri.parse(
+									`https://trypear.ai/signin?callback=${callbackUri.toString()}`, // Change to localhost if running locally
+								),
+							),
+						)
+						break
 				}
 			},
 			null,
@@ -2617,8 +2627,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.getSecret("openAiNativeApiKey") as Promise<string | undefined>,
 			this.getSecret("deepSeekApiKey") as Promise<string | undefined>,
 			this.getSecret("mistralApiKey") as Promise<string | undefined>,
-			this.getGlobalState("pearai-token") as Promise<string | undefined>,
-			this.getGlobalState("pearai-refresh") as Promise<string | undefined>,
+			this.getSecret("pearai-token") as Promise<string | undefined>,
+			this.getSecret("pearai-refresh") as Promise<string | undefined>,
 			this.getGlobalState("pearaiBaseUrl") as Promise<string | undefined>,
 			this.getGlobalState("pearaiModelId") as Promise<string | undefined>,
 			this.getGlobalState("pearaiModelInfo") as Promise<ModelInfo | undefined>,

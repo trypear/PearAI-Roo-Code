@@ -61,6 +61,91 @@ export function activate(context: vscode.ExtensionContext) {
 	 *
 	 * https://code.visualstudio.com/api/extension-guides/virtual-documents
 	 */
+	context.subscriptions.push(
+		vscode.commands.registerCommand("pearai-roo-cline.pearaiLogin", async (data) => {
+			console.dir("Logged in to PearAI:")
+			console.dir(data)
+			context.secrets.store("pearai-token", data.accessToken)
+			context.secrets.store("pearai-refresh", data.refreshToken)
+		}),
+	)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("pearai-roo-cline.pearAILogout", async () => {
+			console.dir("Logged out of PearAI:")
+			context.secrets.delete("pearai-token")
+			context.secrets.delete("pearai-refresh")
+		}),
+	)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("roo-cline.mcpButtonClicked", () => {
+			sidebarProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
+		}),
+	)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("roo-cline.promptsButtonClicked", () => {
+			sidebarProvider.postMessageToWebview({ type: "action", action: "promptsButtonClicked" })
+		}),
+	)
+
+	const openClineInNewTab = async () => {
+		outputChannel.appendLine("Opening Roo Code in new tab")
+		// (this example uses webviewProvider activation event which is necessary to deserialize cached webview, but since we use retainContextWhenHidden, we don't need to use that event)
+		// https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
+		const tabProvider = new ClineProvider(context, outputChannel)
+		//const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined
+		const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
+
+		// Check if there are any visible text editors, otherwise open a new group to the right
+		const hasVisibleEditors = vscode.window.visibleTextEditors.length > 0
+		if (!hasVisibleEditors) {
+			await vscode.commands.executeCommand("workbench.action.newGroupRight")
+		}
+		const targetCol = hasVisibleEditors ? Math.max(lastCol + 1, 1) : vscode.ViewColumn.Two
+
+		const panel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Roo Code", targetCol, {
+			enableScripts: true,
+			retainContextWhenHidden: true,
+			localResourceRoots: [context.extensionUri],
+		})
+		// TODO: use better svg icon with light and dark variants (see https://stackoverflow.com/questions/58365687/vscode-extension-iconpath)
+
+		panel.iconPath = {
+			light: vscode.Uri.joinPath(context.extensionUri, "assets", "icons", "rocket.png"),
+			dark: vscode.Uri.joinPath(context.extensionUri, "assets", "icons", "rocket.png"),
+		}
+		tabProvider.resolveWebviewView(panel)
+
+		// Lock the editor group so clicking on files doesn't open them over the panel
+		await delay(100)
+		await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
+	}
+
+	context.subscriptions.push(vscode.commands.registerCommand("roo-cline.popoutButtonClicked", openClineInNewTab))
+	context.subscriptions.push(vscode.commands.registerCommand("roo-cline.openInNewTab", openClineInNewTab))
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("roo-cline.settingsButtonClicked", () => {
+			//vscode.window.showInformationMessage(message)
+			sidebarProvider.postMessageToWebview({ type: "action", action: "settingsButtonClicked" })
+		}),
+	)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("roo-cline.historyButtonClicked", () => {
+			sidebarProvider.postMessageToWebview({ type: "action", action: "historyButtonClicked" })
+		}),
+	)
+
+	/*
+	We use the text document content provider API to show the left side for diff view by creating a virtual document for the original content. This makes it readonly so users know to edit the right side if they want to keep their changes.
+
+	- This API allows you to create readonly documents in VSCode from arbitrary sources, and works by claiming an uri-scheme for which your provider then returns text contents. The scheme must be provided when registering a provider and cannot change afterwards.
+	- Note how the provider doesn't create uris for virtual documents - its role is to provide contents given such an uri. In return, content providers are wired into the open document logic so that providers are always considered.
+	https://code.visualstudio.com/api/extension-guides/virtual-documents
+	*/
 	const diffContentProvider = new (class implements vscode.TextDocumentContentProvider {
 		provideTextDocumentContent(uri: vscode.Uri): string {
 			return Buffer.from(uri.query, "base64").toString("utf-8")
