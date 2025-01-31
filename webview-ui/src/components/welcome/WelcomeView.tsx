@@ -1,41 +1,29 @@
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
-import { useEffect, useState } from "react"
-import { useExtensionState } from "../../context/ExtensionStateContext"
-import { validateApiConfiguration } from "../../utils/validate"
 import { vscode } from "../../utils/vscode"
-import ApiOptions from "../settings/ApiOptions"
+import { PEARAI_URL } from "../../../../src/shared/api"
 
 const WelcomeView = () => {
-	const { apiConfiguration } = useExtensionState()
-
-	const [apiErrorMessage, setApiErrorMessage] = useState<string | undefined>(undefined)
-
-	const disableLetsGoButton = apiErrorMessage != null
-
 	const handleSubmit = () => {
-		vscode.postMessage({ type: "apiConfiguration", apiConfiguration })
+		vscode.postMessage({
+			type: "apiConfiguration",
+			apiConfiguration: {
+				apiProvider: "pearai",
+				pearaiBaseUrl: `${PEARAI_URL}/integrations/cline`,
+			},
+		})
 	}
-
-	useEffect(() => {
-		setApiErrorMessage(validateApiConfiguration(apiConfiguration))
-	}, [apiConfiguration])
 
 	return (
 		<div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, padding: "0 20px" }}>
-			<h2>Hi, I'm Roo!</h2>
+			<h2>Welcome to PearAI Coding Agent (Powered by Roo Code / Cline)!</h2>
 			<p>
-				I can do all kinds of tasks thanks to the latest breakthroughs in agentic coding capabilities and access
-				to tools that let me create & edit files, explore complex projects, use the browser, and execute
-				terminal commands (with your permission, of course). I can even use MCP to create new tools and extend
-				my own capabilities.
+				Ask me to create a new feature, fix a bug, anything else. I can create & edit files, explore complex
+				projects, use the browser, and execute terminal commands!
 			</p>
 
-			<b>To get started, this extension needs an API provider.</b>
-
 			<div style={{ marginTop: "10px" }}>
-				<ApiOptions />
-				<VSCodeButton onClick={handleSubmit} disabled={disableLetsGoButton} style={{ marginTop: "3px" }}>
-					Let's go!
+				<VSCodeButton onClick={handleSubmit} style={{ marginTop: "3px" }}>
+					Next
 				</VSCodeButton>
 			</div>
 		</div>

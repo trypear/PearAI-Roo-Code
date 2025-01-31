@@ -16,6 +16,7 @@ export function checkExistKey(config: ApiConfiguration | undefined) {
 				config.deepSeekApiKey,
 				config.mistralApiKey,
 				config.vsCodeLmModelSelector,
+				config.pearaiBaseUrl,
 			].some((key) => key !== undefined)
 		: false
 }

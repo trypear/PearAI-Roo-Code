@@ -82,6 +82,7 @@ export interface WebviewMessage {
 		| "deleteCustomMode"
 		| "setopenAiCustomModelInfo"
 		| "openCustomModesSettings"
+		| "openPearAiAuth"
 	text?: string
 	disabled?: boolean
 	askResponse?: ClineAskResponse

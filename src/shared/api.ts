@@ -14,6 +14,7 @@ export type ApiProvider =
 	| "deepseek"
 	| "vscode-lm"
 	| "mistral"
+	| "pearai"
 	| "unbound"
 
 export interface ApiHandlerOptions {
@@ -58,6 +59,10 @@ export interface ApiHandlerOptions {
 	deepSeekBaseUrl?: string
 	deepSeekApiKey?: string
 	includeMaxTokens?: boolean
+	pearaiApiKey?: string
+	pearaiBaseUrl?: string
+	pearaiModelId?: string
+	pearaiModelInfo?: ModelInfo
 	unboundApiKey?: string
 	unboundModelId?: string
 }
@@ -615,3 +620,9 @@ export const unboundModels = {
 	"deepseek/deepseek-reasoner": deepSeekModels["deepseek-reasoner"],
 	"mistral/codestral-latest": mistralModels["codestral-latest"],
 } as const satisfies Record<string, ModelInfo>
+
+// CHANGE AS NEEDED FOR TESTING
+// PROD:
+// export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+// DEV:
+export const PEARAI_URL = "http://localhost:8000/integrations/cline"

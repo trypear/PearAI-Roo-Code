@@ -54,6 +54,24 @@ export function activate(context: vscode.ExtensionContext) {
 	)
 
 	context.subscriptions.push(
+		vscode.commands.registerCommand("pearai-roo-cline.pearaiLogin", async (data) => {
+			console.dir("Logged in to PearAI:")
+			console.dir(data)
+			context.secrets.store("pearai-token", data.accessToken)
+			context.secrets.store("pearai-refresh", data.refreshToken)
+			vscode.commands.executeCommand("roo-cline.plusButtonClicked")
+		}),
+	)
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("pearai-roo-cline.pearaiLogout", async () => {
+			console.dir("Logged out of PearAI:")
+			context.secrets.delete("pearai-token")
+			context.secrets.delete("pearai-refresh")
+		}),
+	)
+
+	context.subscriptions.push(
 		vscode.commands.registerCommand("roo-cline.mcpButtonClicked", () => {
 			sidebarProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
 		}),
