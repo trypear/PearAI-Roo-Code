@@ -4,6 +4,7 @@
 process.env.WDS_SOCKET_HOST = "localhost"
 process.env.WDS_SOCKET_PORT = "3000"
 process.env.HOST = "localhost"
+process.env.BROWSER = "none" // Disable localhost url opening in browser
 
 const rewire = require("rewire")
 const defaults = rewire("react-scripts/scripts/start.js")
