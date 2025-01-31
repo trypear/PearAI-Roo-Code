@@ -67,6 +67,7 @@ export function activate(context: vscode.ExtensionContext) {
 			console.dir(data)
 			context.secrets.store("pearai-token", data.accessToken)
 			context.secrets.store("pearai-refresh", data.refreshToken)
+			vscode.commands.executeCommand("roo-cline.plusButtonClicked")
 		}),
 	)
 
