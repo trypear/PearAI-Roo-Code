@@ -1,0 +1,15 @@
+in tasks.json, the labels on the tasks are just for human readability.
+labels dont uniquely identify the npm type tasks.
+
+for npm type tasks, if you have two tasks with different labels but same script, 
+the one defined last will be registered as the task or override the previous one.
+
+A simple workaround is to duplicate the script in package.json with a different name but the same command and use that. 
+This allows you to have multiple tasks referencing different script names that execute the same command.
+
+another workaround is add 
+"path": "."
+'.', or './.' or '././.' etc.
+to the task definition. though this might stop working in the future if vscode changes how it handles tasks.
+reference: https://github.com/microsoft/vscode/issues/93001
+

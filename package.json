@@ -49,7 +49,7 @@
 	"main": "./dist/extension.js",
 	"contributes": {
 		"viewsContainers": {
-			"activitybar": [
+			"auxiliarybar": [
 				{
 					"id": "roo-cline-ActivityBar",
 					"title": "Roo Code",
@@ -228,6 +228,7 @@
 		"watch": "npm-run-all -p watch:*",
 		"watch:esbuild": "node esbuild.js --watch",
 		"watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+		"watch-webview": "cd webview-ui && npm run dev",
 		"watch-tests": "tsc -p . -w --outDir out"
 	},
 	"devDependencies": {
