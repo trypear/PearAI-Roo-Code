@@ -7,9 +7,7 @@
 			"label": "compile",
 			"type": "npm",
 			"script": "compile",
-			"dependsOn": [
-				"npm: build:webview"
-			],
+			"dependsOn": ["npm: build:webview"],
 			"group": {
 				"kind": "build",
 				"isDefault": true
@@ -18,21 +16,14 @@
 				"reveal": "silent",
 				"panel": "shared"
 			},
-			"problemMatcher": [
-				"$tsc",
-				"$eslint-stylish"
-			]
+			"problemMatcher": ["$tsc", "$eslint-stylish"]
 		},
 		{
 			"label": "dev",
 			"type": "npm",
 			"path": ".",
 			"script": "compile",
-			"dependsOn": [
-				"npm: watch:tsc",
-				"npm: watch:esbuild",
-				"npm: watch-webview"
-			],
+			"dependsOn": ["npm: watch:tsc", "npm: watch:esbuild", "npm: watch-webview"],
 			"group": {
 				"kind": "build",
 				"isDefault": false
@@ -41,19 +32,11 @@
 				"reveal": "silent",
 				"panel": "shared"
 			},
-			"problemMatcher": [
-				"$tsc",
-				"$eslint-stylish"
-			]
+			"problemMatcher": ["$tsc", "$eslint-stylish"]
 		},
 		{
 			"label": "watch",
-			"dependsOn": [
-				"npm: build:webview",
-				"npm: watch:tsc",
-				"npm: watch:esbuild",
-				"npm: watch-webview"
-			],
+			"dependsOn": ["npm: build:webview", "npm: watch:tsc", "npm: watch:esbuild", "npm: watch-webview"],
 			"presentation": {
 				"reveal": "never"
 			},
@@ -103,10 +86,7 @@
 			"script": "watch-webview",
 			"problemMatcher": {
 				"owner": "custom",
-				"fileLocation": [
-					"relative",
-					"${workspaceFolder}"
-				],
+				"fileLocation": ["relative", "${workspaceFolder}"],
 				"pattern": [
 					{
 						"regexp": "^(.*):\\s*(\\d+):(\\d+)\\s*-\\s*(error|warning)\\s*(.*)$",
@@ -143,10 +123,7 @@
 		},
 		{
 			"label": "tasks: watch-tests",
-			"dependsOn": [
-				"npm: watch",
-				"npm: watch-tests"
-			],
+			"dependsOn": ["npm: watch", "npm: watch-tests"],
 			"problemMatcher": []
 		}
 	]
