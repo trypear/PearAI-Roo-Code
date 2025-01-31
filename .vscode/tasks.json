@@ -19,8 +19,24 @@
 			"problemMatcher": ["$tsc", "$eslint-stylish"]
 		},
 		{
+			"label": "dev",
+			"type": "npm",
+			"path": ".",
+			"script": "compile",
+			"dependsOn": ["npm: watch:tsc", "npm: watch:esbuild", "npm: watch-webview"],
+			"group": {
+				"kind": "build",
+				"isDefault": false
+			},
+			"presentation": {
+				"reveal": "silent",
+				"panel": "shared"
+			},
+			"problemMatcher": ["$tsc", "$eslint-stylish"]
+		},
+		{
 			"label": "watch",
-			"dependsOn": ["npm: build:webview", "npm: watch:tsc", "npm: watch:esbuild"],
+			"dependsOn": ["npm: build:webview", "npm: watch:tsc", "npm: watch:esbuild", "npm: watch-webview"],
 			"presentation": {
 				"reveal": "never"
 			},
@@ -60,6 +76,35 @@
 			"problemMatcher": "$tsc-watch",
 			"isBackground": true,
 			"label": "npm: watch:tsc",
+			"presentation": {
+				"group": "watch",
+				"reveal": "never"
+			}
+		},
+		{
+			"type": "npm",
+			"script": "watch-webview",
+			"problemMatcher": {
+				"owner": "custom",
+				"fileLocation": ["relative", "${workspaceFolder}"],
+				"pattern": [
+					{
+						"regexp": "^(.*):\\s*(\\d+):(\\d+)\\s*-\\s*(error|warning)\\s*(.*)$",
+						"file": 1,
+						"line": 2,
+						"column": 3,
+						"severity": 4,
+						"message": 5
+					}
+				],
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "watch-webview",
+					"endsPattern": "Compiled successfully"
+				}
+			},
+			"isBackground": true,
+			"label": "npm: watch-webview",
 			"presentation": {
 				"group": "watch",
 				"reveal": "never"

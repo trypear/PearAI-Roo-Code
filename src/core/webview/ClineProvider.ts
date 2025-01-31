@@ -265,6 +265,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		webviewView.webview.options = {
 			// Allow scripts in the webview
 			enableScripts: true,
+			enableCommandUris: true,
 			localResourceRoots: [this.context.extensionUri],
 		}
 		webviewView.webview.html = this.getHtmlContent(webviewView.webview)
@@ -405,17 +406,31 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	private getHtmlContent(webview: vscode.Webview): string {
 		// Get the local path to main script run in the webview,
 		// then convert it to a uri we can use in the webview.
+		let scriptUri: string
+		let stylesUri: string
+		const inDevelopmentMode = this.context.extensionMode === vscode.ExtensionMode.Development
 
-		// The CSS file from the React build output
-		const stylesUri = getUri(webview, this.context.extensionUri, [
-			"webview-ui",
-			"build",
-			"static",
-			"css",
-			"main.css",
-		])
-		// The JS file from the React build output
-		const scriptUri = getUri(webview, this.context.extensionUri, ["webview-ui", "build", "static", "js", "main.js"])
+		if (inDevelopmentMode) {
+			scriptUri = "http://localhost:3000/static/js/bundle.js"
+			stylesUri = "http://localhost:3000/static/css/main.css"
+		} else {
+			// The CSS file from the React build output
+			stylesUri = getUri(webview, this.context.extensionUri, [
+				"webview-ui",
+				"build",
+				"static",
+				"css",
+				"main.css",
+			]).toString()
+			// The JS file from the React build output
+			scriptUri = getUri(webview, this.context.extensionUri, [
+				"webview-ui",
+				"build",
+				"static",
+				"js",
+				"main.js",
+			]).toString()
+		}
 
 		// The codicon font from the React build output
 		// https://github.com/microsoft/vscode-extension-samples/blob/main/webview-codicons-sample/src/extension.ts
@@ -450,7 +465,20 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		*/
 		const nonce = getNonce()
 
-		// Tip: Install the es6-string-html VS Code extension to enable code highlighting below
+		// Update the CSP to allow localhost in development mode
+		const csp = inDevelopmentMode
+			? `default-src 'none';
+		   font-src ${webview.cspSource};
+		   style-src ${webview.cspSource} 'unsafe-inline' http://localhost:3000;
+		   img-src ${webview.cspSource} data:;
+		   script-src 'unsafe-eval' 'unsafe-inline' http://localhost:3000;
+		   connect-src http://localhost:3000 ws://localhost:3000 ws://localhost:3000/ws ws://0.0.0.0:3000 ws://0.0.0.0:3000/ws http://0.0.0.0:3000`
+			: `default-src 'none';
+		   font-src ${webview.cspSource};
+		   style-src ${webview.cspSource} 'unsafe-inline';
+		   img-src ${webview.cspSource} data:;
+		   script-src 'nonce-${nonce}'`
+
 		return /*html*/ `
         <!DOCTYPE html>
         <html lang="en">
@@ -458,7 +486,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}';">
+            <meta http-equiv="Content-Security-Policy" content="${csp}">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			<link href="${codiconsUri}" rel="stylesheet" />
             <title>Roo Code</title>
@@ -466,7 +494,11 @@ export class ClineProvider implements vscode.WebviewViewProvider {
           <body>
             <noscript>You need to enable JavaScript to run this app.</noscript>
             <div id="root"></div>
-            <script nonce="${nonce}" src="${scriptUri}"></script>
+            ${
+				inDevelopmentMode
+					? `<script src="${scriptUri}"></script>`
+					: `<script nonce="${nonce}" src="${scriptUri}"></script>`
+			}
           </body>
         </html>
       `
