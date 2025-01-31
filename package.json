@@ -226,9 +226,9 @@
 		"vscode:prepublish": "npm run package",
 		"vsix": "mkdir -p bin && npx vsce package --out bin",
 		"watch": "npm-run-all -p watch:*",
-		"watch:webview": "cd webview-ui && npm run dev",
 		"watch:esbuild": "node esbuild.js --watch",
 		"watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+		"watch-webview": "cd webview-ui && npm run dev",
 		"watch-tests": "tsc -p . -w --outDir out"
 	},
 	"devDependencies": {
