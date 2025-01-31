@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+// These environment variables must be set on top of the file
+process.env.WDS_SOCKET_HOST = "localhost"
+process.env.WDS_SOCKET_PORT = "3000"
+process.env.HOST = "localhost"
+
 const rewire = require("rewire")
 const defaults = rewire("react-scripts/scripts/start.js")
 const configFactory = defaults.__get__("configFactory")
@@ -8,7 +13,6 @@ const configFactory = defaults.__get__("configFactory")
 defaults.__set__("configFactory", (webpackEnv) => {
 	const config = configFactory(webpackEnv)
 
-	// Add the same modifications as in build-react-no-split.js
 	const ModuleScopePlugin = require("react-dev-utils/ModuleScopePlugin")
 	const path = require("path")
 	const fs = require("fs")
@@ -43,6 +47,36 @@ defaults.__set__("configFactory", (webpackEnv) => {
 			rule.include = [rule.include, sharedDir].filter(Boolean)
 		}
 	})
+
+	// Modify webpack dev server settings
+	if (config.devServer) {
+		config.devServer = {
+			...config.devServer,
+			host: "localhost",
+			port: 3000,
+			hot: true,
+			headers: {
+				"Access-Control-Allow-Origin": "*",
+			},
+			allowedHosts: "all",
+			client: {
+				webSocketURL: {
+					hostname: "localhost",
+					pathname: "/ws",
+					port: 3000,
+					protocol: "ws",
+				},
+			},
+		}
+	}
+
+	// Force websocket client settings
+	if (config.output) {
+		config.output = {
+			...config.output,
+			publicPath: "http://localhost:3000/",
+		}
+	}
 
 	return config
 })

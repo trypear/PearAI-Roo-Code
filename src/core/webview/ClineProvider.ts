@@ -467,17 +467,17 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 
 		// Update the CSP to allow localhost in development mode
 		const csp = inDevelopmentMode
-			? `default-src 'none'; 
-			   font-src ${webview.cspSource}; 
-			   style-src ${webview.cspSource} 'unsafe-inline' http://localhost:3000; 
-			   img-src ${webview.cspSource} data:; 
-			   script-src 'unsafe-eval' 'unsafe-inline' http://localhost:3000;
-			   connect-src http://localhost:3000 ws://localhost:3000`
-			: `default-src 'none'; 
-			   font-src ${webview.cspSource}; 
-			   style-src ${webview.cspSource} 'unsafe-inline'; 
-			   img-src ${webview.cspSource} data:; 
-			   script-src 'nonce-${nonce}'`
+			? `default-src 'none';
+		   font-src ${webview.cspSource};
+		   style-src ${webview.cspSource} 'unsafe-inline' http://localhost:3000;
+		   img-src ${webview.cspSource} data:;
+		   script-src 'unsafe-eval' 'unsafe-inline' http://localhost:3000;
+		   connect-src http://localhost:3000 ws://localhost:3000 ws://localhost:3000/ws ws://0.0.0.0:3000 ws://0.0.0.0:3000/ws http://0.0.0.0:3000`
+			: `default-src 'none';
+		   font-src ${webview.cspSource};
+		   style-src ${webview.cspSource} 'unsafe-inline';
+		   img-src ${webview.cspSource} data:;
+		   script-src 'nonce-${nonce}'`
 
 		return /*html*/ `
         <!DOCTYPE html>
