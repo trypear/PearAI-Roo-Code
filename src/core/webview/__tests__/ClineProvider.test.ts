@@ -108,6 +108,11 @@ jest.mock("vscode", () => ({
 		uriScheme: "vscode",
 		language: "en",
 	},
+	ExtensionMode: {
+		Production: 1,
+		Development: 2,
+		Test: 3,
+	},
 }))
 
 // Mock sound utility
@@ -319,6 +324,7 @@ describe("ClineProvider", () => {
 			fuzzyMatchThreshold: 1.0,
 			mcpEnabled: true,
 			requestDelaySeconds: 5,
+			rateLimitSeconds: 0,
 			mode: defaultModeSlug,
 			customModes: [],
 			experiments: experimentDefault,

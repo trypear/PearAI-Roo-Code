@@ -32,6 +32,8 @@ import {
 	openRouterDefaultModelInfo,
 	vertexDefaultModelId,
 	vertexModels,
+	unboundDefaultModelId,
+	unboundModels,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 import { useExtensionState } from "../../context/ExtensionStateContext"
@@ -154,6 +156,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						{ value: "mistral", label: "Mistral" },
 						{ value: "lmstudio", label: "LM Studio" },
 						{ value: "ollama", label: "Ollama" },
+						{ value: "unbound", label: "Unbound" },
 					]}
 				/>
 			</div>
@@ -601,7 +604,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 			)}
 
 			{selectedProvider === "openai" && (
-				<div>
+				<div style={{ display: "flex", flexDirection: "column", rowGap: "5px" }}>
 					<VSCodeTextField
 						value={apiConfiguration?.openAiBaseUrl || ""}
 						style={{ width: "100%" }}
@@ -1324,6 +1327,35 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				</div>
 			)}
 
+			{selectedProvider === "unbound" && (
+				<div>
+					<VSCodeTextField
+						value={apiConfiguration?.unboundApiKey || ""}
+						style={{ width: "100%" }}
+						type="password"
+						onChange={handleInputChange("unboundApiKey")}
+						placeholder="Enter API Key...">
+						<span style={{ fontWeight: 500 }}>Unbound API Key</span>
+					</VSCodeTextField>
+					{!apiConfiguration?.unboundApiKey && (
+						<VSCodeButtonLink
+							href="https://gateway.getunbound.ai"
+							style={{ margin: "5px 0 0 0" }}
+							appearance="secondary">
+							Get Unbound API Key
+						</VSCodeButtonLink>
+					)}
+					<p
+						style={{
+							fontSize: "12px",
+							marginTop: 3,
+							color: "var(--vscode-descriptionForeground)",
+						}}>
+						This key is stored locally and only used to make API requests from this extension.
+					</p>
+				</div>
+			)}
+
 			{apiErrorMessage && (
 				<p
 					style={{
@@ -1357,6 +1389,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							{selectedProvider === "openai-native" && createDropdown(openAiNativeModels)}
 							{selectedProvider === "deepseek" && createDropdown(deepSeekModels)}
 							{selectedProvider === "mistral" && createDropdown(mistralModels)}
+							{selectedProvider === "unbound" && createDropdown(unboundModels)}
 						</div>
 
 						<ModelInfoView
@@ -1600,6 +1633,8 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 				selectedModelId: apiConfiguration?.pearaiModelId || "pearai_model",
 				selectedModelInfo: apiConfiguration?.pearaiModelInfo || openAiModelInfoSaneDefaults,
 			}
+		case "unbound":
+			return getProviderData(unboundModels, unboundDefaultModelId)
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
 	}

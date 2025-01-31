@@ -3,7 +3,7 @@
 	"displayName": "PearAI Roo Code / Cline",
 	"description": "PearAI's integration of Roo Code / Cline, a coding agent.",
 	"publisher": "PearAI",
-	"version": "3.3.4",
+	"version": "3.3.6",
 	"icon": "assets/icons/rocket.png",
 	"galleryBanner": {
 		"color": "#617A91",
@@ -40,7 +40,9 @@
 		"chatgpt",
 		"sonnet",
 		"ai",
-		"llama"
+		"llama",
+		"roo code",
+		"roocode"
 	],
 	"activationEvents": [
 		"onLanguage",
@@ -116,6 +118,11 @@
 				"command": "roo-cline.improveCode",
 				"title": "Roo Code: Improve Code",
 				"category": "Roo Code"
+			},
+			{
+				"command": "roo-cline.addToContext",
+				"title": "Roo Code: Add To Context",
+				"category": "Roo Code"
 			}
 		],
 		"menus": {
@@ -134,6 +141,11 @@
 					"command": "roo-cline.improveCode",
 					"when": "editorHasSelection",
 					"group": "Roo Code@3"
+				},
+				{
+					"command": "roo-cline.addToContext",
+					"when": "editorHasSelection",
+					"group": "Roo Code@4"
 				}
 			],
 			"view/title": [
@@ -215,7 +227,7 @@
 		"lint": "eslint src --ext ts && npm run lint --prefix webview-ui",
 		"package": "npm run build:webview && npm run check-types && npm run lint && node esbuild.js --production",
 		"pretest": "npm run compile-tests && npm run compile && npm run lint",
-		"start:webview": "cd webview-ui && npm run start",
+		"dev": "cd webview-ui && npm run dev",
 		"test": "jest && npm run test:webview",
 		"test:webview": "cd webview-ui && npm run test",
 		"test:extension": "vscode-test",

@@ -50,8 +50,7 @@ export interface ExtensionMessage {
 		| "historyButtonClicked"
 		| "promptsButtonClicked"
 		| "didBecomeVisible"
-		| "updatePearAIAuth"
-	invoke?: "sendMessage" | "primaryButtonClick" | "secondaryButtonClick"
+	invoke?: "sendMessage" | "primaryButtonClick" | "secondaryButtonClick" | "setChatBoxMessage"
 	state?: ExtensionState
 	images?: string[]
 	ollamaModels?: string[]
@@ -95,6 +94,7 @@ export interface ExtensionState {
 	alwaysApproveResubmit?: boolean
 	alwaysAllowModeSwitch?: boolean
 	requestDelaySeconds: number
+	rateLimitSeconds: number // Minimum time between successive requests (0 = disabled)
 	uriScheme?: string
 	allowedCommands?: string[]
 	soundEnabled?: boolean
@@ -160,6 +160,8 @@ export type ClineSay =
 	| "command"
 	| "mcp_server_request_started"
 	| "mcp_server_response"
+	| "new_task_started"
+	| "new_task"
 
 export interface ClineSayTool {
 	tool:
@@ -172,6 +174,7 @@ export interface ClineSayTool {
 		| "listCodeDefinitionNames"
 		| "searchFiles"
 		| "switchMode"
+		| "newTask"
 	path?: string
 	diff?: string
 	content?: string

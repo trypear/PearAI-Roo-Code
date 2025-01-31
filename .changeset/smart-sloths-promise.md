@@ -2,4 +2,4 @@
 "roo-cline": patch
 ---
 
-v3.3.5
+v3.3.7

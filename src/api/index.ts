@@ -15,6 +15,7 @@ import { MistralHandler } from "./providers/mistral"
 import { VsCodeLmHandler } from "./providers/vscode-lm"
 import { ApiStream } from "./transform/stream"
 import { PearAiHandler } from "./providers/pearai"
+import { UnboundHandler } from "./providers/unbound"
 
 export interface SingleCompletionHandler {
 	completePrompt(prompt: string): Promise<string>
@@ -56,6 +57,8 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
 			return new MistralHandler(options)
 		case "pearai":
 			return new PearAiHandler(options)
+		case "unbound":
+			return new UnboundHandler(options)
 		default:
 			return new AnthropicHandler(options)
 	}
