@@ -411,8 +411,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		const inDevelopmentMode = this.context.extensionMode === vscode.ExtensionMode.Development
 
 		if (inDevelopmentMode) {
-			scriptUri = "http://localhost:3000/static/js/bundle.js" // Update this path
-			stylesUri = "http://localhost:3000/static/css/main.css" // Update this path
+			scriptUri = "http://localhost:3000/static/js/bundle.js"
+			stylesUri = "http://localhost:3000/static/css/main.css"
 		} else {
 			// The CSS file from the React build output
 			stylesUri = getUri(webview, this.context.extensionUri, [
