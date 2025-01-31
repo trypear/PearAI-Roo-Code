@@ -1,8 +1,8 @@
 {
-	"name": "roo-cline",
-	"displayName": "Roo Code (prev. Roo Cline)",
-	"description": "A VS Code plugin that enhances coding with AI-powered automation, multi-model support, and experimental features.",
-	"publisher": "RooVeterinaryInc",
+	"name": "pearai-roo-cline",
+	"displayName": "PearAI Roo Code / Cline",
+	"description": "PearAI's integration of Roo Code / Cline, a coding agent.",
+	"publisher": "PearAI",
 	"version": "3.3.4",
 	"icon": "assets/icons/rocket.png",
 	"galleryBanner": {
@@ -13,7 +13,7 @@
 		"vscode": "^1.84.0"
 	},
 	"author": {
-		"name": "Roo Vet"
+		"name": "PearAI"
 	},
 	"repository": {
 		"type": "git",
