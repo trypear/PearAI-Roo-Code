@@ -30,3 +30,5 @@ docs/_site/
 logs
 .aider*
 .env
+# aider
+.aider*
