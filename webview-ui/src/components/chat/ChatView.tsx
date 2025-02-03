@@ -970,6 +970,27 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				flexDirection: "column",
 				overflow: "hidden",
 			}}>
+			{messages.length === 0 && (
+				<ChatTextArea
+					ref={textAreaRef}
+					inputValue={inputValue}
+					setInputValue={setInputValue}
+					textAreaDisabled={textAreaDisabled}
+					placeholderText={placeholderText}
+					selectedImages={selectedImages}
+					setSelectedImages={setSelectedImages}
+					onSend={() => handleSendMessage(inputValue, selectedImages)}
+					onSelectImages={selectImages}
+					shouldDisableImages={shouldDisableImages}
+					onHeightChange={() => {
+						if (isAtBottom) {
+							scrollToBottomAuto()
+						}
+					}}
+					mode={mode}
+					setMode={setMode}
+				/>
+			)}
 			{task ? (
 				<TaskHeader
 					task={task}
@@ -993,13 +1014,13 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						paddingBottom: "10px",
 					}}>
 					{showAnnouncement && <Announcement version={version} hideAnnouncement={hideAnnouncement} />}
-					<div style={{ padding: "0 20px", flexShrink: 0 }}>
+					{/* <div style={{ padding: "0 20px", flexShrink: 0 }}>
 						<h2>PearAI Coding Agent (Powered by Roo Code / Cline)</h2>
 						<p>
 							Ask me to create a new feature, fix a bug, anything else. I can create & edit files, explore
 							complex projects, use the browser, and execute terminal commands!
 						</p>
-					</div>
+					</div> */}
 					{taskHistory.length > 0 && <HistoryPreview showHistoryView={showHistoryView} />}
 				</div>
 			)}
@@ -1113,25 +1134,27 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					)}
 				</>
 			)}
-			<ChatTextArea
-				ref={textAreaRef}
-				inputValue={inputValue}
-				setInputValue={setInputValue}
-				textAreaDisabled={textAreaDisabled}
-				placeholderText={placeholderText}
-				selectedImages={selectedImages}
-				setSelectedImages={setSelectedImages}
-				onSend={() => handleSendMessage(inputValue, selectedImages)}
-				onSelectImages={selectImages}
-				shouldDisableImages={shouldDisableImages}
-				onHeightChange={() => {
-					if (isAtBottom) {
-						scrollToBottomAuto()
-					}
-				}}
-				mode={mode}
-				setMode={setMode}
-			/>
+			{messages.length > 0 && (
+				<ChatTextArea
+					ref={textAreaRef}
+					inputValue={inputValue}
+					setInputValue={setInputValue}
+					textAreaDisabled={textAreaDisabled}
+					placeholderText={placeholderText}
+					selectedImages={selectedImages}
+					setSelectedImages={setSelectedImages}
+					onSend={() => handleSendMessage(inputValue, selectedImages)}
+					onSelectImages={selectImages}
+					shouldDisableImages={shouldDisableImages}
+					onHeightChange={() => {
+						if (isAtBottom) {
+							scrollToBottomAuto()
+						}
+					}}
+					mode={mode}
+					setMode={setMode}
+				/>
+			)}
 		</div>
 	)
 }

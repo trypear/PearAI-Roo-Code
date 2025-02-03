@@ -3,6 +3,8 @@ import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
 import { memo } from "react"
 import { formatLargeNumber } from "../../utils/format"
+import { vscEditorBackground } from "../ui"
+import { CounterClockwiseClockIcon } from "@radix-ui/react-icons"
 
 type HistoryPreviewProps = {
 	showHistoryView: () => void
@@ -30,20 +32,23 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 	}
 
 	return (
-		<div style={{ flexShrink: 0 }}>
+		<div style={{ flexShrink: 0, paddingLeft: "40px", paddingRight: "40px" }}>
 			<style>
 				{`
 					.history-preview-item {
-						background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 65%, transparent);
-						border-radius: 4px;
+
+
+						background-color: ${vscEditorBackground};
+						border-radius: 12px;
 						position: relative;
 						overflow: hidden;
 						opacity: 0.8;
 						cursor: pointer;
 						margin-bottom: 12px;
+
 					}
 					.history-preview-item:hover {
-						background-color: color-mix(in srgb, var(--vscode-toolbar-hoverBackground) 100%, transparent);
+						background-color: color-mix(in srgb, var(--vscode-editor-background) 100%, transparent);
 						opacity: 1;
 						pointer-events: auto;
 					}
@@ -57,9 +62,8 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 					display: "flex",
 					alignItems: "center",
 				}}>
-				<span
-					className="codicon codicon-comment-discussion"
-					style={{ marginRight: "4px", transform: "scale(0.9)" }}></span>
+				<CounterClockwiseClockIcon
+					style={{ marginRight: "4px", transform: "scale(0.9)" }}></CounterClockwiseClockIcon>
 				<span
 					style={{
 						fontWeight: 500,
@@ -136,6 +140,8 @@ const HistoryPreview = ({ showHistoryView }: HistoryPreviewProps) => {
 						onClick={() => showHistoryView()}
 						style={{
 							opacity: 0.9,
+							borderRadius: "8px",
+							padding: "8px",
 						}}>
 						<div
 							style={{

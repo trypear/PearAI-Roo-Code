@@ -16,6 +16,97 @@ import { vscode } from "../../utils/vscode"
 import { WebviewMessage } from "../../../../src/shared/WebviewMessage"
 import { Mode, getAllModes } from "../../../../src/shared/modes"
 import { CaretIcon } from "../common/CaretIcon"
+import { Button } from "../ui/button-pear-scn"
+import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/16/solid"
+import { getFontSize, lightGray, vscEditorBackground, vscFocusBorder, vscInputBackground } from "../ui"
+import styled from "styled-components"
+import { Listbox } from "@headlessui/react"
+import { ImageIcon } from "@radix-ui/react-icons"
+
+const StyledListboxButton = styled(Listbox.Button)`
+	border: solid 1px ${lightGray}30;
+	background-color: ${vscEditorBackground};
+	border-radius: 4px;
+	padding: 4px 8px;
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	user-select: none;
+	cursor: pointer;
+	font-size: ${getFontSize() - 3}px;
+	color: ${lightGray};
+	&:focus {
+		outline: none;
+	}
+`
+
+const StyledListboxOptions = styled(Listbox.Options)<{ newSession: boolean }>`
+	position: absolute;
+	bottom: 100%;
+	left: 0;
+	margin-bottom: 4px;
+	list-style: none;
+	padding: 6px;
+	white-space: nowrap;
+	cursor: default;
+	z-index: 50;
+	border: 1px solid ${lightGray}30;
+	border-radius: 10px;
+	background-color: ${vscEditorBackground};
+	max-height: 300px;
+	min-width: 100px;
+	overflow-y: auto;
+	font-size: ${getFontSize() - 2}px;
+	user-select: none;
+	outline: none;
+
+	&::-webkit-scrollbar {
+		display: none;
+	}
+
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+
+	& > * {
+		margin: 4px 0;
+	}
+`
+
+interface ListboxOptionProps {
+	isCurrentModel?: boolean
+}
+
+const StyledListboxOption = styled(Listbox.Option)<ListboxOptionProps>`
+	cursor: pointer;
+	border-radius: 6px;
+	padding: 5px 4px;
+
+	&:hover {
+		background: ${(props) => (props.isCurrentModel ? `${lightGray}66` : `${lightGray}33`)};
+	}
+
+	background: ${(props) => (props.isCurrentModel ? `${lightGray}66` : "transparent")};
+`
+
+const StyledTrashIcon = styled(TrashIcon)`
+	cursor: pointer;
+	flex-shrink: 0;
+	margin-left: 8px;
+	&:hover {
+		color: red;
+	}
+`
+
+const Divider = styled.div`
+	height: 2px;
+	background-color: ${lightGray}35;
+	margin: 0px 4px;
+`
+
+const ListboxWrapper = styled.div`
+	position: relative;
+	display: inline-block;
+`
 
 interface ChatTextAreaProps {
 	inputValue: string
@@ -498,35 +589,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			[updateCursorPosition],
 		)
 
-		const selectStyle = {
-			fontSize: "11px",
-			cursor: textAreaDisabled ? "not-allowed" : "pointer",
-			backgroundColor: "transparent",
-			border: "none",
-			color: "var(--vscode-foreground)",
-			opacity: textAreaDisabled ? 0.5 : 0.8,
-			outline: "none",
-			paddingLeft: "20px",
-			paddingRight: "6px",
-			WebkitAppearance: "none" as const,
-			MozAppearance: "none" as const,
-			appearance: "none" as const,
-		}
-
-		const optionStyle = {
-			backgroundColor: "var(--vscode-dropdown-background)",
-			color: "var(--vscode-dropdown-foreground)",
-		}
-
-		const caretContainerStyle = {
-			position: "absolute" as const,
-			left: 6,
-			top: "50%",
-			transform: "translateY(-45%)",
-			pointerEvents: "none" as const,
-			opacity: textAreaDisabled ? 0.5 : 0.8,
-		}
-
 		return (
 			<div
 				className="chat-text-area"
@@ -536,13 +598,13 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					display: "flex",
 					flexDirection: "column",
 					gap: "8px",
-					backgroundColor: "var(--vscode-input-background)",
+					backgroundColor: vscEditorBackground,
 					margin: "10px 15px",
 					padding: "8px",
 					outline: "none",
 					border: "1px solid",
-					borderColor: isFocused ? "var(--vscode-focusBorder)" : "transparent",
-					borderRadius: "2px",
+					borderColor: "transparent",
+					borderRadius: "12px",
 				}}
 				onDrop={async (e) => {
 					e.preventDefault()
@@ -668,7 +730,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							onHeightChange?.(height)
 						}}
 						placeholder={placeholderText}
-						minRows={3}
+						minRows={2}
 						maxRows={15}
 						autoFocus={true}
 						style={{
@@ -686,6 +748,8 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							overflowY: "auto",
 							border: "none",
 							padding: "2px",
+							paddingTop: "8px",
+							paddingBottom: "8px",
 							paddingRight: "8px",
 							marginBottom: thumbnailsHeight > 0 ? `${thumbnailsHeight + 16}px` : 0,
 							cursor: textAreaDisabled ? "not-allowed" : undefined,
@@ -724,13 +788,12 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						style={{
 							display: "flex",
 							alignItems: "center",
+							gap: "8px",
 						}}>
-						<div style={{ position: "relative", display: "inline-block" }}>
-							<select
+						<ListboxWrapper>
+							<Listbox
 								value={mode}
-								disabled={textAreaDisabled}
-								onChange={(e) => {
-									const value = e.target.value
+								onChange={(value) => {
 									if (value === "prompts-action") {
 										window.postMessage({ type: "action", action: "promptsButtonClicked" })
 										return
@@ -741,47 +804,29 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 										text: value,
 									})
 								}}
-								style={{
-									...selectStyle,
-									minWidth: "70px",
-									flex: "0 0 auto",
-								}}>
-								{getAllModes(customModes).map((mode) => (
-									<option key={mode.slug} value={mode.slug} style={{ ...optionStyle }}>
-										{mode.name}
-									</option>
-								))}
-								<option
-									disabled
-									style={{
-										borderTop: "1px solid var(--vscode-dropdown-border)",
-										...optionStyle,
-									}}>
-									────
-								</option>
-								<option value="prompts-action" style={{ ...optionStyle }}>
-									Edit...
-								</option>
-							</select>
-							<div style={caretContainerStyle}>
-								<CaretIcon />
-							</div>
-						</div>
+								disabled={textAreaDisabled}>
+								<StyledListboxButton>
+									{getAllModes(customModes).find((m) => m.slug === mode)?.name}
+									<CaretIcon />
+								</StyledListboxButton>
+								<StyledListboxOptions newSession={false}>
+									{getAllModes(customModes).map((mode) => (
+										<StyledListboxOption key={mode.slug} value={mode.slug} isCurrentModel={false}>
+											{mode.name}
+										</StyledListboxOption>
+									))}
+									<Divider />
+									<StyledListboxOption value="prompts-action" isCurrentModel={false}>
+										Edit...
+									</StyledListboxOption>
+								</StyledListboxOptions>
+							</Listbox>
+						</ListboxWrapper>
 
-						<div
-							style={{
-								position: "relative",
-								display: "inline-block",
-								flex: "1 1 auto",
-								minWidth: 0,
-								maxWidth: "150px",
-								overflow: "hidden",
-							}}>
-							<select
+						<ListboxWrapper>
+							<Listbox
 								value={currentApiConfigName || ""}
-								disabled={textAreaDisabled}
-								onChange={(e) => {
-									const value = e.target.value
+								onChange={(value) => {
 									if (value === "settings-action") {
 										window.postMessage({ type: "action", action: "settingsButtonClicked" })
 										return
@@ -791,37 +836,27 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 										text: value,
 									})
 								}}
-								style={{
-									...selectStyle,
-									width: "100%",
-									textOverflow: "ellipsis",
-								}}>
-								{(listApiConfigMeta || []).map((config) => (
-									<option
-										key={config.name}
-										value={config.name}
-										style={{
-											...optionStyle,
-										}}>
-										{config.name}
-									</option>
-								))}
-								<option
-									disabled
-									style={{
-										borderTop: "1px solid var(--vscode-dropdown-border)",
-										...optionStyle,
-									}}>
-									────
-								</option>
-								<option value="settings-action" style={{ ...optionStyle }}>
-									Edit...
-								</option>
-							</select>
-							<div style={caretContainerStyle}>
-								<CaretIcon />
-							</div>
-						</div>
+								disabled={textAreaDisabled}>
+								<StyledListboxButton>
+									{currentApiConfigName}
+									<CaretIcon />
+								</StyledListboxButton>
+								<StyledListboxOptions newSession={false}>
+									{(listApiConfigMeta || []).map((config) => (
+										<StyledListboxOption
+											key={config.name}
+											value={config.name}
+											isCurrentModel={config.name === currentApiConfigName}>
+											{config.name}
+										</StyledListboxOption>
+									))}
+									<Divider />
+									<StyledListboxOption value="settings-action" isCurrentModel={false}>
+										Edit...
+									</StyledListboxOption>
+								</StyledListboxOptions>
+							</Listbox>
+						</ListboxWrapper>
 					</div>
 
 					<div
@@ -854,18 +889,17 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								/>
 							)}
 						</div>
-						<span
-							className={`input-icon-button ${
-								shouldDisableImages ? "disabled" : ""
-							} codicon codicon-device-camera`}
+						<ImageIcon
+							className={`${shouldDisableImages ? "disabled" : ""} `}
 							onClick={() => !shouldDisableImages && onSelectImages()}
-							style={{ fontSize: 16.5 }}
 						/>
-						<span
-							className={`input-icon-button ${textAreaDisabled ? "disabled" : ""} codicon codicon-send`}
-							onClick={() => !textAreaDisabled && onSend()}
-							style={{ fontSize: 15 }}
-						/>
+						<Button
+							className="gap-1 h-6 bg-[#AFF349] text-[#005A4E] text-xs px-2"
+							disabled={textAreaDisabled}
+							onClick={() => !textAreaDisabled && onSend()}>
+							<ArrowTurnDownLeftIcon width="12px" height="12px" />
+							Send
+						</Button>
 					</div>
 				</div>
 			</div>
