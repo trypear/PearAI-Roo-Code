@@ -29,8 +29,10 @@ import {
 	vscFocusBorder,
 	vscInputBackground,
 } from "../ui"
-import { ServerIcon } from "@heroicons/react/24/outline"
+import { PencilIcon, PencilSquareIcon, ServerIcon } from "@heroicons/react/24/outline"
 import { vsCodeBadge } from "@vscode/webview-ui-toolkit"
+import { ViewfinderCircleIcon } from "@heroicons/react/24/outline"
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons"
 
 interface ChatRowProps {
 	message: ClineMessage
@@ -167,10 +169,17 @@ export const ChatRowContent = ({
 				]
 			case "completion_result":
 				return [
-					<span
-						className="codicon codicon-check"
-						style={{ color: successColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: successColor, fontWeight: "bold" }}>Task Completed</span>,
+					// <span
+					// 	className="codicon codicon-check"
+					// 	style={{ color: successColor, marginBottom: "-1.5px" }}
+					// >
+					// </span>,
+					<div
+						className="flex items-center gap-2 p-2 rounded-lg"
+						style={{ background: "linear-gradient(to bottom, #E64C9E66, #E64C9E1A)" }}>
+						<PencilIcon className="w-4 h-4" />
+						<span className="font-bold uppercase">Task Completed</span>
+					</div>,
 				]
 			case "api_req_retry_delayed":
 				return []
@@ -272,9 +281,26 @@ export const ChatRowContent = ({
 			case "appliedDiff":
 				return (
 					<>
-						<div style={headerStyle}>
-							{toolIcon(tool.tool === "appliedDiff" ? "diff" : "edit")}
-							<span style={{ fontWeight: "bold" }}>Roo wants to edit this file:</span>
+						<div
+							style={{ backgroundColor: vscEditorBackground }}
+							className="flex items-center gap-2 p-2 rounded-lg mb-2">
+							<PencilIcon className="w-5 h-5" />
+							<div className="flex flex-col">
+								<span className="font-bold uppercase">Roo wants to edit</span>
+								<span
+									style={{
+										color: "var(--vscode-descriptionForeground)",
+										whiteSpace: "nowrap",
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										direction: "rtl",
+										textAlign: "left",
+										fontWeight: "bold",
+										letterSpacing: "0.03em",
+									}}>
+									{removeLeadingNonAlphanumeric(tool.path ?? "") + "\u200E"}
+								</span>
+							</div>
 						</div>
 						<CodeAccordian
 							isLoading={message.partial}
@@ -304,12 +330,6 @@ export const ChatRowContent = ({
 			case "readFile":
 				return (
 					<>
-						<div style={headerStyle}>
-							{toolIcon("file-code")}
-							<span style={{ fontWeight: "bold" }}>
-								{message.type === "ask" ? "Roo wants to read this file:" : "Roo read this file:"}
-							</span>
-						</div>
 						{/* <CodeAccordian
 							code={tool.content!}
 							path={tool.path!}
@@ -317,44 +337,58 @@ export const ChatRowContent = ({
 							onToggleExpand={onToggleExpand}
 						/> */}
 						<div
-							style={{
-								borderRadius: 3,
-								backgroundColor: CODE_BLOCK_BG_COLOR,
-								overflow: "hidden",
-								border: "1px solid var(--vscode-editorGroup-border)",
-							}}>
+							style={{ backgroundColor: vscEditorBackground }}
+							className="flex items-center gap-2 p-2 rounded-lg">
+							<ViewfinderCircleIcon className="w-6 h-6" />
 							<div
 								style={{
-									color: "var(--vscode-descriptionForeground)",
-									display: "flex",
-									alignItems: "center",
-									padding: "9px 10px",
-									cursor: "pointer",
-									userSelect: "none",
-									WebkitUserSelect: "none",
-									MozUserSelect: "none",
-									msUserSelect: "none",
-								}}
+									backgroundColor: CODE_BLOCK_BG_COLOR,
+									overflow: "hidden",
+									width: "fit-content",
+								}}>
+								<span style={{ fontWeight: "bold" }} className="uppercase">
+									{message.type === "ask" ? "Roo wants to read this file" : "Roo read this file:"}
+								</span>
+								<div
+									style={{
+										color: "var(--vscode-descriptionForeground)",
+										display: "flex",
+										alignItems: "center",
+										cursor: "pointer",
+										userSelect: "none",
+										WebkitUserSelect: "none",
+										MozUserSelect: "none",
+										msUserSelect: "none",
+									}}
+									onClick={() => {
+										vscode.postMessage({ type: "openFile", text: tool.content })
+									}}>
+									{tool.path?.startsWith(".") && <span>.</span>}
+									<span
+										style={{
+											whiteSpace: "nowrap",
+											overflow: "hidden",
+											textOverflow: "ellipsis",
+											direction: "rtl",
+											textAlign: "left",
+											fontWeight: "bold",
+											letterSpacing: "0.03em",
+										}}>
+										{removeLeadingNonAlphanumeric(tool.path ?? "") + "\u200E"}
+									</span>
+									<div style={{ flexGrow: 1 }}></div>
+									{/* <span
+										className={`codicon codicon-link-external`}
+										>
+										</span> */}
+								</div>
+							</div>
+							<OpenInNewWindowIcon
+								className="w-5 h-5 ml-auto cursor-pointer"
 								onClick={() => {
 									vscode.postMessage({ type: "openFile", text: tool.content })
-								}}>
-								{tool.path?.startsWith(".") && <span>.</span>}
-								<span
-									style={{
-										whiteSpace: "nowrap",
-										overflow: "hidden",
-										textOverflow: "ellipsis",
-										marginRight: "8px",
-										direction: "rtl",
-										textAlign: "left",
-									}}>
-									{removeLeadingNonAlphanumeric(tool.path ?? "") + "\u200E"}
-								</span>
-								<div style={{ flexGrow: 1 }}></div>
-								<span
-									className={`codicon codicon-link-external`}
-									style={{ fontSize: 13.5, margin: "1px 0" }}></span>
-							</div>
+								}}
+							/>
 						</div>
 					</>
 				)
@@ -540,14 +574,14 @@ export const ChatRowContent = ({
 								onClick={onToggleExpand}>
 								{/* <VSCodeBadge style={{ opacity: cost != null && cost > 0 ? 1 : 0 }} className=""> */}
 								<div
-									className="flex items-center gap-2 p-2 rounded-md"
+									className="flex items-center gap-2 p-2 rounded-lg"
 									style={{ backgroundColor: vscBadgeBackground }}>
 									<div className="flex items-center gap-2 flex-grow">
 										{title}${Number(cost || 0)?.toFixed(4)}
 									</div>
+									<span className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}></span>
 								</div>
 								{/* </VSCodeBadge> */}
-								<span className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}></span>
 							</div>
 							{((cost == null && apiRequestFailedMessage) || apiReqStreamingFailedMessage) && (
 								<>
