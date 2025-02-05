@@ -12,6 +12,7 @@ import { BackspaceIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outli
 import { vscBadgeBackground, vscEditorBackground, vscInputBackground } from "../ui"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
+import { Tail } from "../ui/tail"
 
 interface TaskHeaderProps {
 	task: ClineMessage
@@ -357,6 +358,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 						</div>
 					</>
 				)}
+				<Tail />
 			</div>
 			{/* {apiProvider === "" && (
 				<div

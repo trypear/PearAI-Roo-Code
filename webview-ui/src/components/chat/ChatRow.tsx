@@ -238,10 +238,12 @@ export const ChatRowContent = ({
 				]
 			case "followup":
 				return [
-					<span
-						className="codicon codicon-question"
-						style={{ color: normalColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: normalColor, fontWeight: "bold" }}>Roo has a question:</span>,
+					<div className="flex items-center gap-2 p-2">
+						<span
+							className="codicon codicon-question"
+							style={{ color: normalColor, marginBottom: "-1.5px" }}></span>
+						,<span style={{ color: normalColor, fontWeight: "bold" }}>Roo has a question:</span>,
+					</div>,
 				]
 			default:
 				return [null, null]
