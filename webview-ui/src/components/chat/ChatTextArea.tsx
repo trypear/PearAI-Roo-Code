@@ -18,7 +18,21 @@ import { Mode, getAllModes } from "../../../../src/shared/modes"
 import { CaretIcon } from "../common/CaretIcon"
 import { Button } from "../ui/button-pear-scn"
 import { ArrowTurnDownLeftIcon, TrashIcon } from "@heroicons/react/16/solid"
-import { getFontSize, lightGray, vscEditorBackground, vscFocusBorder, vscInputBackground } from "../ui"
+import {
+	getFontSize,
+	lightGray,
+	vscBackground,
+	vscBadgeBackground,
+	vscButtonBackground,
+	vscButtonForeground,
+	vscEditorBackground,
+	vscFocusBorder,
+	vscForeground,
+	vscInputBackground,
+	vscInputBorder,
+	vscInputBorderFocus,
+	vscListActiveBackground,
+} from "../ui"
 import styled from "styled-components"
 import { Listbox } from "@headlessui/react"
 import { ImageIcon } from "@radix-ui/react-icons"
@@ -675,6 +689,51 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 
 				<div
 					style={{
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						marginTop: "auto",
+						paddingTop: "2px",
+					}}>
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							gap: "8px",
+						}}>
+						<Button
+							className={`gap-1 text-xs bg-input text-input-foreground  h-6 px-2 hover:bg-sidebar-background`}
+							variant={"secondary"}
+							disabled={textAreaDisabled}
+							onClick={() => !textAreaDisabled && onSend()}
+							style={{
+								color: vscForeground,
+								backgroundColor: vscInputBackground,
+								border: `1px solid ${vscInputBorder}`,
+							}}>
+							@ Context
+						</Button>
+					</div>
+
+					{/* <div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							gap: "12px",
+						}}>
+
+						<Button
+							className="gap-1 h-6 bg-[#AFF349] text-[#005A4E] text-xs px-2"
+							disabled={textAreaDisabled}
+							onClick={() => !textAreaDisabled && onSend()}>
+							<ArrowTurnDownLeftIcon width="12px" height="12px" />
+							Send
+						</Button>
+					</div> */}
+				</div>
+
+				<div
+					style={{
 						position: "relative",
 						flex: "1 1 auto",
 						display: "flex",
@@ -730,7 +789,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							onHeightChange?.(height)
 						}}
 						placeholder={placeholderText}
-						minRows={2}
+						minRows={0}
 						maxRows={15}
 						autoFocus={true}
 						style={{

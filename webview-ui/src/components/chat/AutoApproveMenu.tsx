@@ -2,6 +2,7 @@ import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react"
 import { useCallback, useState } from "react"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
+import { vsCodeBadge } from "@vscode/webview-ui-toolkit"
 
 interface AutoApproveAction {
 	id: string
@@ -158,9 +159,6 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 			style={{
 				padding: "0 15px",
 				userSelect: "none",
-				borderTop: isExpanded
-					? `0.5px solid color-mix(in srgb, var(--vscode-titleBar-inactiveForeground) 20%, transparent)`
-					: "none",
 				overflowY: "auto",
 				...style,
 			}}>
@@ -169,7 +167,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 					display: "flex",
 					alignItems: "center",
 					gap: "8px",
-					padding: isExpanded ? "8px 0" : "8px 0 0 0",
+					// padding: isExpanded ? "8px 0" : "8px 0 0 0",
 					cursor: "pointer",
 				}}
 				onClick={toggleExpanded}>
