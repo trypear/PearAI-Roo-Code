@@ -16,6 +16,7 @@ import { BackspaceIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outli
 import { vscBadgeBackground, vscEditorBackground, vscInputBackground } from "../ui"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
+import { Tail } from "../ui/tail"
 
 interface TaskHeaderProps {
 	task: ClineMessage
@@ -362,8 +363,37 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 						</div >
 					</>
 				)}
-			</div >
-		</div >
+				<Tail />
+			</div>
+			{/* {apiProvider === "" && (
+				<div
+					style={{
+						backgroundColor: "color-mix(in srgb, var(--vscode-badge-background) 50%, transparent)",
+						color: "var(--vscode-badge-foreground)",
+						borderRadius: "0 0 3px 3px",
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						padding: "4px 12px 6px 12px",
+						fontSize: "0.9em",
+						marginLeft: "10px",
+						marginRight: "10px",
+					}}>
+					<div style={{ fontWeight: "500" }}>Credits Remaining:</div>
+					<div>
+						{formatPrice(Credits || 0)}
+						{(Credits || 0) < 1 && (
+							<>
+								{" "}
+								<VSCodeLink style={{ fontSize: "0.9em" }} href={getAddCreditsUrl(vscodeUriScheme)}>
+									(get more?)
+								</VSCodeLink>
+							</>
+						)}
+					</div>
+				</div>
+			)} */}
+		</div>
 	)
 }
 
