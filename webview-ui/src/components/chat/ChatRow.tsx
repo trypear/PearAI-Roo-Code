@@ -22,6 +22,17 @@ import McpResourceRow from "../mcp/McpResourceRow"
 import McpToolRow from "../mcp/McpToolRow"
 import { highlightMentions } from "./TaskHeader"
 import { CheckpointSaved } from "./checkpoints/CheckpointSaved"
+import {
+	vscBackground,
+	vscBadgeBackground,
+	vscBadgeForeground,
+	vscButtonBackground,
+	vscEditorBackground,
+	vscFocusBorder,
+	vscInputBackground,
+} from "../ui"
+import { ServerIcon } from "@heroicons/react/24/outline"
+import { vsCodeBadge } from "@vscode/webview-ui-toolkit"
 
 interface ChatRowProps {
 	message: ClineMessage
@@ -204,8 +215,14 @@ export const ChatRowContent = ({
 						) : (
 							<span style={{ color: errorColor, fontWeight: "bold" }}>API Streaming Failed</span>
 						)
-					) : cost !== null && cost !== undefined ? (
-						<span style={{ color: normalColor, fontWeight: "bold" }}>API Request</span>
+					) : cost != null && cost !== undefined ? (
+						<span
+							className={`font-bold flex items-center gap-2`}
+							// style={{ color: vscBadgeBackground }}
+						>
+							<ServerIcon className="w-4 h-4" />
+							API REQUEST
+						</span>
 					) : apiRequestFailedMessage ? (
 						<span style={{ color: errorColor, fontWeight: "bold" }}>API Request Failed</span>
 					) : (
@@ -524,14 +541,15 @@ export const ChatRowContent = ({
 									msUserSelect: "none",
 								}}
 								onClick={onToggleExpand}>
-								<div style={{ display: "flex", alignItems: "center", gap: "10px", flexGrow: 1 }}>
-									{icon}
-									{title}
-									<VSCodeBadge
-										style={{ opacity: cost !== null && cost !== undefined && cost > 0 ? 1 : 0 }}>
-										${Number(cost || 0)?.toFixed(4)}
-									</VSCodeBadge>
+								{/* <VSCodeBadge style={{ opacity: cost != null && cost > 0 ? 1 : 0 }} className=""> */}
+								<div
+									className="flex items-center gap-2 p-2 rounded-md"
+									style={{ backgroundColor: vscBadgeBackground }}>
+									<div className="flex items-center gap-2 flex-grow">
+										{title}${Number(cost || 0)?.toFixed(4)}
+									</div>
 								</div>
+								{/* </VSCodeBadge> */}
 								<span className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}></span>
 							</div>
 							{(((cost === null || cost === undefined) && apiRequestFailedMessage) ||

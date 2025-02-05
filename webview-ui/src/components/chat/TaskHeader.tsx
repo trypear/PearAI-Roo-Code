@@ -12,6 +12,10 @@ import { formatLargeNumber } from "../../utils/format"
 import { normalizeApiConfiguration } from "../settings/ApiOptions"
 import { Button } from "../ui"
 import { HistoryItem } from "../../../../src/shared/HistoryItem"
+import { BackspaceIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outline"
+import { vscBadgeBackground, vscEditorBackground, vscInputBackground } from "../ui"
+import { DownloadIcon } from "@radix-ui/react-icons"
+import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
 
 interface TaskHeaderProps {
 	task: ClineMessage
@@ -116,9 +120,9 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 		<div style={{ padding: "10px 13px 10px 13px" }}>
 			<div
 				style={{
-					backgroundColor: "var(--vscode-badge-background)",
+					backgroundColor: vscEditorBackground,
 					color: "var(--vscode-badge-foreground)",
-					borderRadius: "3px",
+					borderRadius: "12px",
 					padding: "9px 10px 9px 14px",
 					display: "flex",
 					flexDirection: "column",
@@ -149,7 +153,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 						<div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
 							<span className={`codicon codicon-chevron-${isTaskExpanded ? "down" : "right"}`}></span>
 						</div>
-						<div
+						{/* <div
 							style={{
 								marginLeft: 6,
 								whiteSpace: "nowrap",
@@ -158,11 +162,13 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 								flexGrow: 1,
 								minWidth: 0, // This allows the div to shrink below its content size
 							}}>
-							<span style={{ fontWeight: "bold" }}>Task{!isTaskExpanded && ":"}</span>
+							<span style={{ fontWeight: "bold" }}>
+								Task
+								{!isTaskExpanded && ":"}</span>
 							{!isTaskExpanded && (
 								<span style={{ marginLeft: 4 }}>{highlightMentions(task.text, false)}</span>
 							)}
-						</div>
+						</div> */}
 					</div>
 					{!isTaskExpanded && isCostAvailable && (
 						<div
@@ -218,25 +224,14 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 										display: "flex",
 										alignItems: "center",
 									}}>
-									<div
+									{/* <div
 										style={{
 											width: 30,
 											height: "1.2em",
 											background:
 												"linear-gradient(to right, transparent, var(--vscode-badge-background))",
 										}}
-									/>
-									<div
-										style={{
-											cursor: "pointer",
-											color: "var(--vscode-textLink-foreground)",
-											paddingRight: 0,
-											paddingLeft: 3,
-											backgroundColor: "var(--vscode-badge-background)",
-										}}
-										onClick={() => setIsTextExpanded(!isTextExpanded)}>
-										See more
-									</div>
+									/> */}
 								</div>
 							)}
 						</div>
@@ -257,70 +252,118 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 						{task.images && task.images.length > 0 && <Thumbnails images={task.images} />}
 
 						<div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-							<div className="flex justify-between items-center h-[20px]">
-								<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
-									<span style={{ fontWeight: "bold" }}>Tokens:</span>
-									<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-										<i
-											className="codicon codicon-arrow-up"
-											style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
-										/>
-										{formatLargeNumber(tokensIn || 0)}
-									</span>
-									<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-										<i
-											className="codicon codicon-arrow-down"
-											style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
-										/>
-										{formatLargeNumber(tokensOut || 0)}
-									</span>
+							<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
+								<span
+									style={{
+										display: "flex",
+										alignItems: "center",
+										gap: "3px",
+										padding: 4,
+										backgroundColor: vscInputBackground,
+										borderRadius: 4,
+										marginLeft: "auto",
+									}}
+									className="text-xs">
+									Context
+									<ChevronDownIcon />
+								</span>
+
+								<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+									{contextTokens ? `${formatLargeNumber(contextTokens)})` : ""}
+								</span>
+							</div>
+							<div
+								style={{
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "space-between",
+									gap: "4px",
+									flexWrap: "wrap",
+								}}>
+								<div
+									style={{
+										display: "flex",
+										justifyContent: "space-between",
+										alignItems: "center",
+										// marginLeft: "auto",
+									}}>
+									<div
+										style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
+										{/* <span style={{ }}>Tokens:</span> */}
+										<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+											<i
+												className="codicon codicon-arrow-up"
+												style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
+											/>
+											{formatLargeNumber(tokensIn || 0)}
+										</span>
+										<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+											<i
+												className="codicon codicon-arrow-down"
+												style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
+											/>
+											{formatLargeNumber(tokensOut || 0)}
+										</span>
+									</div>
 								</div>
-								{!isCostAvailable && <TaskActions item={currentTaskItem} />}
+
+								<div
+									style={{
+										cursor: "pointer",
+										color: "var(--vscode-textLink-foreground)",
+										backgroundColor: vscEditorBackground,
+										stroke: "var(--vscode-editor-foreground)",
+										// marginLeft: "auto",
+									}}
+									onClick={() => setIsTextExpanded(!isTextExpanded)}>
+									<ChevronDownIcon />
+								</div>
+
+								{!isCostAvailable && (
+									<div style={{}}>
+										<ExportButton />
+									</div>
+								)}
 							</div>
 
-							{isTaskExpanded && contextWindow && (
-								<div className={`flex ${windowWidth < 270 ? "flex-col" : "flex-row"} gap-1 h-[20px]`}>
-									<ContextWindowProgress
-										contextWindow={contextWindow}
-										contextTokens={contextTokens || 0}
-									/>
-								</div>
-							)}
-
-							{shouldShowPromptCacheInfo && (cacheReads !== undefined || cacheWrites !== undefined) && (
-								<div className="flex items-center gap-1 flex-wrap h-[20px]">
-									<span style={{ fontWeight: "bold" }}>Cache:</span>
-									<span className="flex items-center gap-1">
-										<i
-											className="codicon codicon-database"
-											style={{ fontSize: "12px", fontWeight: "bold" }}
-										/>
-										+{formatLargeNumber(cacheWrites || 0)}
-									</span>
-									<span className="flex items-center gap-1">
-										<i
-											className="codicon codicon-arrow-right"
-											style={{ fontSize: "12px", fontWeight: "bold" }}
-										/>
-										{formatLargeNumber(cacheReads || 0)}
-									</span>
-								</div>
-							)}
-
-							{isCostAvailable && (
-								<div className="flex justify-between items-center h-[20px]">
-									<div className="flex items-center gap-1">
-										<span className="font-bold">API Cost:</span>
-										<span>${totalCost?.toFixed(4)}</span>
+							{
+								shouldShowPromptCacheInfo && (cacheReads !== undefined || cacheWrites !== undefined) && (
+									<div className="flex items-center gap-1 flex-wrap h-[20px]">
+										<span style={{ fontWeight: "bold" }}>Cache:</span>
+										<span className="flex items-center gap-1">
+											<i
+												className="codicon codicon-database"
+												style={{ fontSize: "12px", fontWeight: "bold" }}
+											/>
+											+{formatLargeNumber(cacheWrites || 0)}
+										</span>
+										<span className="flex items-center gap-1">
+											<i
+												className="codicon codicon-arrow-right"
+												style={{ fontSize: "12px", fontWeight: "bold" }}
+											/>
+											{formatLargeNumber(cacheReads || 0)}
+										</span>
 									</div>
-									<TaskActions item={currentTaskItem} />
-								</div>
-							)}
-						</div>
+								)
+							}
+
+							{
+								isCostAvailable && (
+									<div className="flex justify-between items-center h-[20px]">
+										<div className="flex items-center gap-1">
+											<span className="font-bold">API Cost:</span>
+											<span>${totalCost?.toFixed(4)}</span>
+										</div>
+										<TaskActions item={currentTaskItem} />
+									</div>
+								)
+							}
+						</div >
 					</>
 				)}
-			</div>
-		</div>
+			</div >
+		</div >
 	)
 }
 
@@ -384,6 +427,18 @@ const ContextWindowProgress = ({ contextWindow, contextTokens }: { contextWindow
 			<div>{formatLargeNumber(contextWindow)}</div>
 		</div>
 	</>
+)
+
+const ExportButton = () => (
+	<div
+		onClick={() => vscode.postMessage({ type: "exportCurrentTask" })}
+		style={{
+			// marginBottom: "-2px",
+			// marginRight: "-2.5px",
+			cursor: "pointer",
+		}}>
+		<DownloadIcon style={{ width: "16px", height: "16px" }} />
+	</div>
 )
 
 export default memo(TaskHeader)

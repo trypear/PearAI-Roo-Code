@@ -28,6 +28,9 @@ import TaskHeader from "./TaskHeader"
 import AutoApproveMenu from "./AutoApproveMenu"
 import { AudioType } from "../../../../src/shared/WebviewMessage"
 import { validateCommand } from "../../utils/command-validation"
+import { Button } from "../ui/button-pear-scn"
+import { DownloadIcon } from "@radix-ui/react-icons"
+import { vscBackground, vscBadgeBackground, vscEditorBackground, vscForeground, vscInputBorder } from "../ui"
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -997,6 +1000,22 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					setMode={setMode}
 				/>
 			)}
+			{!task && (
+				<AutoApproveMenu
+					style={{
+						marginLeft: "50px",
+						marginRight: "50px",
+						paddingLeft: "25px",
+						paddingRight: "25px",
+						paddingTop: "10px",
+						paddingBottom: "10px",
+						borderRadius: "12px",
+						flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
+						minHeight: 0,
+						background: vscEditorBackground,
+					}}
+				/>
+			)}
 			{task ? (
 				<TaskHeader
 					task={task}
@@ -1016,7 +1035,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						minHeight: 0,
 						overflowY: "auto",
 						display: "flex",
-						flexDirection: "column",
+						flexDirection: "column-reverse",
 						paddingBottom: "10px",
 					}}>
 					{showAnnouncement && <Announcement version={version} hideAnnouncement={hideAnnouncement} />}
@@ -1046,15 +1065,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			//    This ensures it takes its natural height when there's space
 			//    but becomes scrollable when the viewport is too small
 			*/}
-			{!task && (
-				<AutoApproveMenu
-					style={{
-						marginBottom: -2,
-						flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
-						minHeight: 0,
-					}}
-				/>
-			)}
 
 			{task && (
 				<>
@@ -1085,7 +1095,20 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							initialTopMostItemIndex={groupedMessages.length - 1}
 						/>
 					</div>
-					<AutoApproveMenu />
+					<AutoApproveMenu
+						style={{
+							marginLeft: "50px",
+							marginRight: "50px",
+							paddingLeft: "25px",
+							paddingRight: "25px",
+							paddingTop: "10px",
+							paddingBottom: "10px",
+							borderRadius: "12px",
+							flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
+							minHeight: 0,
+							background: vscEditorBackground,
+						}}
+					/>
 					{showScrollToBottom ? (
 						<div
 							style={{
@@ -1113,28 +1136,30 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 15px 0px 15px`,
 							}}>
 							{primaryButtonText && !isStreaming && (
-								<VSCodeButton
-									appearance="primary"
+								<Button
 									disabled={!enableButtons}
 									style={{
+										backgroundColor: "#AFF349",
 										flex: secondaryButtonText ? 1 : 2,
 										marginRight: secondaryButtonText ? "6px" : "0",
 									}}
 									onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
 									{primaryButtonText}
-								</VSCodeButton>
+								</Button>
 							)}
 							{(secondaryButtonText || isStreaming) && (
-								<VSCodeButton
-									appearance="secondary"
+								<Button
+									variant="secondary"
 									disabled={!enableButtons && !(isStreaming && !didClickCancel)}
 									style={{
+										backgroundColor: vscInputBorder,
+										color: vscForeground,
 										flex: isStreaming ? 2 : 1,
 										marginLeft: isStreaming ? 0 : "6px",
 									}}
 									onClick={(e) => handleSecondaryButtonClick(inputValue, selectedImages)}>
 									{isStreaming ? "Cancel" : secondaryButtonText}
-								</VSCodeButton>
+								</Button>
 							)}
 						</div>
 					)}
