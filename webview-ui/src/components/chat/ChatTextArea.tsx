@@ -991,7 +991,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							onClick={() => !shouldDisableImages && onSelectImages()}
 						/>
 						<Button
-							className="gap-1 h-6 bg-[#AFF349] text-[#005A4E] text-xs px-2"
+							className="gap-1 h-6 bg-[#E64C9E] text-white text-xs px-2"
 							disabled={textAreaDisabled}
 							onClick={() => !textAreaDisabled && onSend()}>
 							<ArrowTurnDownLeftIcon width="12px" height="12px" />

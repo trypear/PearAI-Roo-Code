@@ -30,7 +30,15 @@ import { AudioType } from "../../../../src/shared/WebviewMessage"
 import { validateCommand } from "../../utils/command-validation"
 import { Button } from "../ui/button-pear-scn"
 import { DownloadIcon } from "@radix-ui/react-icons"
-import { vscBackground, vscBadgeBackground, vscEditorBackground, vscForeground, vscInputBorder } from "../ui"
+import {
+	vscBackground,
+	vscBadgeBackground,
+	vscButtonBackground,
+	vscEditorBackground,
+	vscForeground,
+	vscInputBorder,
+	vscSidebarBorder,
+} from "../ui"
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -1139,7 +1147,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								<Button
 									disabled={!enableButtons}
 									style={{
-										backgroundColor: "#AFF349",
+										// backgroundColor: "#E64C9E",
+										backgroundColor: vscButtonBackground,
+										color: vscForeground,
 										flex: secondaryButtonText ? 1 : 2,
 										marginRight: secondaryButtonText ? "6px" : "0",
 									}}
@@ -1152,7 +1162,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 									variant="secondary"
 									disabled={!enableButtons && !(isStreaming && !didClickCancel)}
 									style={{
-										backgroundColor: vscInputBorder,
+										backgroundColor: vscBadgeBackground,
 										color: vscForeground,
 										flex: isStreaming ? 2 : 1,
 										marginLeft: isStreaming ? 0 : "6px",
