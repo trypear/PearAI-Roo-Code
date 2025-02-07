@@ -8,6 +8,7 @@ import {
 	glamaDefaultModelInfo,
 	openRouterDefaultModelId,
 	openRouterDefaultModelInfo,
+	PEARAI_URL,
 } from "../../../src/shared/api"
 import { vscode } from "../utils/vscode"
 import { convertTextMateToHljs } from "../utils/textMateToHljs"
@@ -162,6 +163,15 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					}))
 					const config = newState.apiConfiguration
 					const hasKey = checkExistKey(config)
+					if (!hasKey) {
+						vscode.postMessage({
+							type: "apiConfiguration",
+							apiConfiguration: {
+								apiProvider: "pearai",
+								pearaiBaseUrl: PEARAI_URL,
+							},
+						})
+					}
 					setShowWelcome(!hasKey)
 					setDidHydrateState(true)
 					break
