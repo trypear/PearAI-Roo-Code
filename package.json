@@ -4,7 +4,7 @@
 	"description": "PearAI's integration of Roo Code / Cline, a coding agent.",
 	"publisher": "PearAI",
 	"version": "3.3.6",
-	"icon": "assets/icons/rocket.png",
+	"icon": "assets/icons/pear.png",
 	"galleryBanner": {
 		"color": "#617A91",
 		"theme": "dark"
@@ -55,7 +55,7 @@
 				{
 					"id": "pearai-roo-cline",
 					"title": "PearAI Agent",
-					"icon": "$(rocket)"
+					"icon": "assets/icons/pear.png"
 				}
 			]
 		},
