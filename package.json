@@ -17,9 +17,9 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/RooVetGit/Roo-Code"
+		"url": "https://github.com/trypear/PearAI-Roo-Code"
 	},
-	"homepage": "https://github.com/RooVetGit/Roo-Code",
+	"homepage": "https://github.com/trypear/PearAI-Roo-Code",
 	"categories": [
 		"AI",
 		"Chat",
@@ -51,16 +51,16 @@
 	"main": "./dist/extension.js",
 	"contributes": {
 		"viewsContainers": {
-			"activitybar": [
+			"auxiliarybar": [
 				{
-					"id": "roo-cline-ActivityBar",
-					"title": "Roo Code",
+					"id": "pearai-roo-cline",
+					"title": "PearAI Agent",
 					"icon": "$(rocket)"
 				}
 			]
 		},
 		"views": {
-			"roo-cline-ActivityBar": [
+			"pearai-roo-cline": [
 				{
 					"type": "webview",
 					"id": "roo-cline.SidebarProvider",
