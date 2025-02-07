@@ -4,7 +4,6 @@ import { ExtensionMessage } from "../../src/shared/ExtensionMessage"
 import ChatView from "./components/chat/ChatView"
 import HistoryView from "./components/history/HistoryView"
 import SettingsView from "./components/settings/SettingsView"
-import WelcomeView from "./components/welcome/WelcomeView"
 import { ExtensionStateContextProvider, useExtensionState } from "./context/ExtensionStateContext"
 import { vscode } from "./utils/vscode"
 import McpView from "./components/mcp/McpView"
@@ -73,30 +72,26 @@ const AppContent = () => {
 
 	return (
 		<>
-			{showWelcome ? (
-				<WelcomeView />
-			) : (
-				<>
-					{showSettings && <SettingsView onDone={() => setShowSettings(false)} />}
-					{showHistory && <HistoryView onDone={() => setShowHistory(false)} />}
-					{showMcp && <McpView onDone={() => setShowMcp(false)} />}
-					{showPrompts && <PromptsView onDone={() => setShowPrompts(false)} />}
-					{/* Do not conditionally load ChatView, it's expensive and there's state we don't want to lose (user input, disableInput, askResponse promise, etc.) */}
-					<ChatView
-						showHistoryView={() => {
-							setShowSettings(false)
-							setShowMcp(false)
-							setShowPrompts(false)
-							setShowHistory(true)
-						}}
-						isHidden={showSettings || showHistory || showMcp || showPrompts}
-						showAnnouncement={showAnnouncement}
-						hideAnnouncement={() => {
-							setShowAnnouncement(false)
-						}}
-					/>
-				</>
-			)}
+			<>
+				{showSettings && <SettingsView onDone={() => setShowSettings(false)} />}
+				{showHistory && <HistoryView onDone={() => setShowHistory(false)} />}
+				{showMcp && <McpView onDone={() => setShowMcp(false)} />}
+				{showPrompts && <PromptsView onDone={() => setShowPrompts(false)} />}
+				{/* Do not conditionally load ChatView, it's expensive and there's state we don't want to lose (user input, disableInput, askResponse promise, etc.) */}
+				<ChatView
+					showHistoryView={() => {
+						setShowSettings(false)
+						setShowMcp(false)
+						setShowPrompts(false)
+						setShowHistory(true)
+					}}
+					isHidden={showSettings || showHistory || showMcp || showPrompts}
+					showAnnouncement={false}
+					hideAnnouncement={() => {
+						true
+					}}
+				/>
+			</>
 		</>
 	)
 }
