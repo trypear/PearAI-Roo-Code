@@ -884,7 +884,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	useEvent("wheel", handleWheel, window, { passive: true }) // passive improves scrolling performance
 
 	const placeholderText = useMemo(() => {
-		const baseText = task ? "Ask a follow up." : "Give RooCode a task here."
+		const baseText = task ? "Ask a follow up." : "Give PearAI Agent a task here."
 		const contextText = " Use @ to add context."
 		const imageText = shouldDisableImages ? "" : "\nhold shift to drag in images"
 		const helpText = imageText ? `\n${contextText}${imageText}` : `\n${contextText}`
