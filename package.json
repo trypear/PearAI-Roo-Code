@@ -123,6 +123,11 @@
 				"command": "roo-cline.addToContext",
 				"title": "Roo Code: Add To Context",
 				"category": "Roo Code"
+			},
+			{
+				"command": "roo-cline.focus",
+				"title": "Roo Code: Bring To Focus",
+				"category": "Roo Code"
 			}
 		],
 		"menus": {
