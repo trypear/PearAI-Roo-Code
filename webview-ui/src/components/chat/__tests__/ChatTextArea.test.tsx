@@ -34,6 +34,7 @@ describe("ChatTextArea", () => {
 		onHeightChange: jest.fn(),
 		mode: defaultModeSlug,
 		setMode: jest.fn(),
+		isNewTask: false,
 	}
 
 	beforeEach(() => {
