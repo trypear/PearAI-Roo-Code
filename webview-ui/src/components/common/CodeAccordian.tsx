@@ -41,15 +41,15 @@ const CodeAccordian = ({
 	return (
 		<div
 			style={{
-				borderRadius: 8,
+				borderRadius: 3,
 				backgroundColor: CODE_BLOCK_BG_COLOR,
 				overflow: "hidden", // This ensures the inner scrollable area doesn't overflow the rounded corners
-				// border: "1px solid var(--vscode-editorGroup-border)",
+				border: "1px solid var(--vscode-editorGroup-border)",
 			}}>
 			{(path || isFeedback || isConsoleLogs) && (
 				<div
 					style={{
-						// color: "var(--vscode-descriptionForeground)",
+						color: "var(--vscode-descriptionForeground)",
 						display: "flex",
 						alignItems: "center",
 						padding: "9px 10px",
@@ -89,8 +89,7 @@ const CodeAccordian = ({
 									// trick to get ellipsis at beginning of string
 									direction: "rtl",
 									textAlign: "left",
-								}}
-								className="font-bold">
+								}}>
 								{removeLeadingNonAlphanumeric(path ?? "") + "\u200E"}
 							</span>
 						</>

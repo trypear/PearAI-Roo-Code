@@ -2,7 +2,6 @@ import { VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react"
 import { useCallback, useState } from "react"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
-import { vsCodeBadge } from "@vscode/webview-ui-toolkit"
 
 interface AutoApproveAction {
 	id: string
@@ -42,21 +41,21 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 			id: "readFiles",
 			label: "Read files and directories",
 			shortName: "Read",
-			enabled: alwaysAllowReadOnly ?? true,
+			enabled: alwaysAllowReadOnly ?? false,
 			description: "Allows access to read any file on your computer.",
 		},
 		{
 			id: "editFiles",
 			label: "Edit files",
 			shortName: "Edit",
-			enabled: alwaysAllowWrite ?? true,
+			enabled: alwaysAllowWrite ?? false,
 			description: "Allows modification of any files on your computer.",
 		},
 		{
 			id: "executeCommands",
 			label: "Execute approved commands",
 			shortName: "Commands",
-			enabled: alwaysAllowExecute ?? true,
+			enabled: alwaysAllowExecute ?? false,
 			description:
 				"Allows execution of approved terminal commands. You can configure this in the settings panel.",
 		},
@@ -64,21 +63,21 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 			id: "useBrowser",
 			label: "Use the browser",
 			shortName: "Browser",
-			enabled: alwaysAllowBrowser ?? true,
+			enabled: alwaysAllowBrowser ?? false,
 			description: "Allows ability to launch and interact with any website in a headless browser.",
 		},
 		{
 			id: "useMcp",
 			label: "Use MCP servers",
 			shortName: "MCP",
-			enabled: alwaysAllowMcp ?? true,
+			enabled: alwaysAllowMcp ?? false,
 			description: "Allows use of configured MCP servers which may modify filesystem or interact with APIs.",
 		},
 		{
 			id: "switchModes",
 			label: "Switch modes & create tasks",
 			shortName: "Modes",
-			enabled: alwaysAllowModeSwitch ?? true,
+			enabled: alwaysAllowModeSwitch ?? false,
 			description:
 				"Allows automatic switching between different AI modes and creating new tasks without requiring approval.",
 		},
@@ -86,7 +85,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 			id: "retryRequests",
 			label: "Retry failed requests",
 			shortName: "Retries",
-			enabled: alwaysApproveResubmit ?? true,
+			enabled: alwaysApproveResubmit ?? false,
 			description: "Automatically retry failed API requests when the provider returns an error response.",
 		},
 	]
@@ -157,9 +156,11 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 	return (
 		<div
 			style={{
-				padding: "6px 6px 10px 6px",
-				// paddingBottom: "10px",
+				padding: "0 15px",
 				userSelect: "none",
+				borderTop: isExpanded
+					? `0.5px solid color-mix(in srgb, var(--vscode-titleBar-inactiveForeground) 20%, transparent)`
+					: "none",
 				overflowY: "auto",
 				...style,
 			}}>
@@ -168,7 +169,7 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 					display: "flex",
 					alignItems: "center",
 					gap: "8px",
-					// padding: isExpanded ? "8px 0" : "8px 0 0 0",
+					padding: isExpanded ? "8px 0" : "8px 0 0 0",
 					cursor: "pointer",
 				}}
 				onClick={toggleExpanded}>

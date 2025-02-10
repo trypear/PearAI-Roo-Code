@@ -28,18 +28,6 @@ import TaskHeader from "./TaskHeader"
 import AutoApproveMenu from "./AutoApproveMenu"
 import { AudioType } from "../../../../src/shared/WebviewMessage"
 import { validateCommand } from "../../utils/command-validation"
-import { Button } from "../ui/button-pear-scn"
-import { DownloadIcon } from "@radix-ui/react-icons"
-import {
-	vscBackground,
-	vscBadgeBackground,
-	vscButtonBackground,
-	vscEditorBackground,
-	vscForeground,
-	vscInputBorder,
-	vscSidebarBorder,
-} from "../ui"
-import splashIcon from "../../../../assets/icons/pearai-agent-splash.svg"
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -884,11 +872,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	useEvent("wheel", handleWheel, window, { passive: true }) // passive improves scrolling performance
 
 	const placeholderText = useMemo(() => {
-		const baseText = task ? "Ask a follow up." : "Give RooCode a task here."
-		const contextText = " Use @ to add context."
-		const imageText = shouldDisableImages ? "" : "\nhold shift to drag in images"
-		const helpText = imageText ? `\n${contextText}${imageText}` : `\n${contextText}`
-		return baseText + contextText
+		const baseText = task ? "Type a message..." : "Type your task here..."
+		const contextText = "(@ to add context"
+		const imageText = shouldDisableImages ? "" : ", hold shift to drag in images"
+		const helpText = imageText ? `\n${contextText}${imageText})` : `\n${contextText})`
+		return baseText + helpText
 	}, [task, shouldDisableImages])
 
 	const itemContent = useCallback(
@@ -978,7 +966,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				left: 0,
 				right: 0,
 				bottom: 0,
-				padding: "12px 12px",
 				display: isHidden ? "none" : "flex",
 				flexDirection: "column",
 				overflow: "hidden",
@@ -1002,31 +989,17 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						minHeight: 0,
 						overflowY: "auto",
 						display: "flex",
-						flexDirection: "column-reverse",
+						flexDirection: "column",
 						paddingBottom: "10px",
 					}}>
 					{showAnnouncement && <Announcement version={version} hideAnnouncement={hideAnnouncement} />}
-					{messages.length === 0 && (
-						<>
-							<div className="max-w-2xl mx-auto w-full h-[calc(100vh-270px)] text-center flex flex-col justify-center">
-								<div className="w-full text-center flex flex-col items-center justify-center relative gap-5">
-									<img src={splashIcon} alt="..." />
-									<div className="w-[300px] flex-col justify-start items-start gap-5 inline-flex">
-										<div className="flex flex-col text-left">
-											<div className="text-2xl">PearAI Coding Agent</div>
-											<div className="h-[18px] opacity-50 text-xs leading-[18px]">
-												Powered by Roo Code / Cline
-											</div>
-										</div>
-									</div>
-									<div className="w-[300px] text-left opacity-50 text-xs leading-[18px]">
-										Autonomous coding agent that has access to your development environment (with
-										your permission) for a feedback loop to add features, fix bugs, and more.
-									</div>
-								</div>
-							</div>
-						</>
-					)}
+					<div style={{ padding: "0 20px", flexShrink: 0 }}>
+						<h2>PearAI Coding Agent (Powered by Roo Code / Cline)</h2>
+						<p>
+							Ask me to create a new feature, fix a bug, anything else. I can create & edit files, explore
+							complex projects, use the browser, and execute terminal commands!
+						</p>
+					</div>
 					{taskHistory.length > 0 && <HistoryPreview showHistoryView={showHistoryView} />}
 				</div>
 			)}
@@ -1085,6 +1058,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							initialTopMostItemIndex={groupedMessages.length - 1}
 						/>
 					</div>
+					<AutoApproveMenu />
 					{showScrollToBottom ? (
 						<div
 							style={{
@@ -1112,36 +1086,31 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 15px 0px 15px`,
 							}}>
 							{primaryButtonText && !isStreaming && (
-								<Button
+								<VSCodeButton
+									appearance="primary"
 									disabled={!enableButtons}
 									style={{
-										// backgroundColor: "#E64C9E",
-										backgroundColor: vscButtonBackground,
-										color: "var(--vscode-button-foreground)",
 										flex: secondaryButtonText ? 1 : 2,
 										marginRight: secondaryButtonText ? "6px" : "0",
 									}}
 									onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
 									{primaryButtonText}
-								</Button>
+								</VSCodeButton>
 							)}
 							{(secondaryButtonText || isStreaming) && (
-								<Button
-									// appearance="secondary"
+								<VSCodeButton
+									appearance="secondary"
 									disabled={!enableButtons && !(isStreaming && !didClickCancel)}
 									style={{
-										backgroundColor: "var(--vscode-button-secondaryBackground)",
-										color: "var(--vscode-button-secondaryForeground)",
 										flex: isStreaming ? 2 : 1,
 										marginLeft: isStreaming ? 0 : "6px",
 									}}
 									onClick={(e) => handleSecondaryButtonClick(inputValue, selectedImages)}>
 									{isStreaming ? "Cancel" : secondaryButtonText}
-								</Button>
+								</VSCodeButton>
 							)}
 						</div>
 					)}
-					<AutoApproveMenu />
 				</>
 			)}
 			<ChatTextArea
@@ -1162,7 +1131,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				}}
 				mode={mode}
 				setMode={setMode}
-				isNewTask={taskHistory.length === 0}
 			/>
 		</div>
 	)

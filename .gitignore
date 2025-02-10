@@ -18,6 +18,3 @@ roo-cline-*.vsix
 
 # Docs
 docs/_site/
-
-# aider
-.aider*
