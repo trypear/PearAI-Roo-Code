@@ -54,7 +54,7 @@ describe("ChatTextArea", () => {
 				openedTabs: [],
 			})
 
-			render(<ChatTextArea isNewTask={false} {...defaultProps} textAreaDisabled={true} />)
+			render(<ChatTextArea {...defaultProps} textAreaDisabled={true} />)
 			const enhanceButton = screen.getByRole("button", { name: /enhance prompt/i })
 			expect(enhanceButton).toHaveClass("disabled")
 		})
@@ -73,7 +73,7 @@ describe("ChatTextArea", () => {
 				apiConfiguration,
 			})
 
-			render(<ChatTextArea isNewTask={false} {...defaultProps} inputValue="Test prompt" />)
+			render(<ChatTextArea {...defaultProps} inputValue="Test prompt" />)
 
 			const enhanceButton = screen.getByRole("button", { name: /enhance prompt/i })
 			fireEvent.click(enhanceButton)
@@ -93,7 +93,7 @@ describe("ChatTextArea", () => {
 				},
 			})
 
-			render(<ChatTextArea isNewTask={false} {...defaultProps} inputValue="" />)
+			render(<ChatTextArea {...defaultProps} inputValue="" />)
 
 			const enhanceButton = screen.getByRole("button", { name: /enhance prompt/i })
 			fireEvent.click(enhanceButton)
@@ -110,7 +110,7 @@ describe("ChatTextArea", () => {
 				},
 			})
 
-			render(<ChatTextArea isNewTask={false} {...defaultProps} inputValue="Test prompt" />)
+			render(<ChatTextArea {...defaultProps} inputValue="Test prompt" />)
 
 			const enhanceButton = screen.getByRole("button", { name: /enhance prompt/i })
 			fireEvent.click(enhanceButton)
@@ -122,7 +122,7 @@ describe("ChatTextArea", () => {
 
 	describe("effect dependencies", () => {
 		it("should update when apiConfiguration changes", () => {
-			const { rerender } = render(<ChatTextArea isNewTask={false} {...defaultProps} />)
+			const { rerender } = render(<ChatTextArea {...defaultProps} />)
 
 			// Update apiConfiguration
 			;(useExtensionState as jest.Mock).mockReturnValue({
@@ -134,7 +134,7 @@ describe("ChatTextArea", () => {
 				},
 			})
 
-			rerender(<ChatTextArea isNewTask={false} {...defaultProps} />)
+			rerender(<ChatTextArea {...defaultProps} />)
 
 			// Verify the enhance button appears after apiConfiguration changes
 			expect(screen.getByRole("button", { name: /enhance prompt/i })).toBeInTheDocument()
@@ -145,7 +145,7 @@ describe("ChatTextArea", () => {
 		it("should update input value when receiving enhanced prompt", () => {
 			const setInputValue = jest.fn()
 
-			render(<ChatTextArea isNewTask={false} {...defaultProps} setInputValue={setInputValue} />)
+			render(<ChatTextArea {...defaultProps} setInputValue={setInputValue} />)
 
 			// Simulate receiving enhanced prompt message
 			window.dispatchEvent(
