@@ -884,11 +884,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	useEvent("wheel", handleWheel, window, { passive: true }) // passive improves scrolling performance
 
 	const placeholderText = useMemo(() => {
-		const baseText = task ? "Type a message..." : "Type your task here..."
-		const contextText = "(@ to add context"
-		const imageText = shouldDisableImages ? "" : ", hold shift to drag in images"
-		const helpText = imageText ? `\n${contextText}${imageText})` : `\n${contextText})`
-		return baseText + helpText
+		const baseText = task ? "Ask a follow up." : "Give RooCode a task here."
+		const contextText = " Use @ to add context."
+		const imageText = shouldDisableImages ? "" : "\nhold shift to drag in images"
+		const helpText = imageText ? `\n${contextText}${imageText}` : `\n${contextText}`
+		return baseText + contextText
 	}, [task, shouldDisableImages])
 
 	const itemContent = useCallback(
@@ -978,67 +978,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				left: 0,
 				right: 0,
 				bottom: 0,
+				padding: "12px 12px",
 				display: isHidden ? "none" : "flex",
 				flexDirection: "column",
 				overflow: "hidden",
 			}}>
-			{messages.length === 0 && (
-				<>
-					<div className="max-w-2xl mx-auto w-full h-[calc(100vh-270px)] text-center flex flex-col justify-center">
-						<div className="w-full text-center flex flex-col items-center justify-center relative gap-5">
-							<img src={splashIcon} alt="..." />
-							<div className="w-[300px] flex-col justify-start items-start gap-5 inline-flex">
-								<div className="flex flex-col text-left">
-									<div className="text-2xl">PearAI Agent</div>
-									<div className="h-[18px] opacity-50 text-xs leading-[18px]">
-										Powered by Roo Code / Cline
-									</div>
-								</div>
-							</div>
-							<div className="w-[300px] text-left opacity-50 text-xs leading-[18px]">
-								Autonomous coding agent that has control of your development environment (with your
-								permission) for a feedback loop to add features, fix bugs, and more.
-							</div>
-						</div>
-					</div>
-
-					<ChatTextArea
-						ref={textAreaRef}
-						inputValue={inputValue}
-						setInputValue={setInputValue}
-						textAreaDisabled={textAreaDisabled}
-						placeholderText={placeholderText}
-						selectedImages={selectedImages}
-						setSelectedImages={setSelectedImages}
-						onSend={() => handleSendMessage(inputValue, selectedImages)}
-						onSelectImages={selectImages}
-						shouldDisableImages={shouldDisableImages}
-						onHeightChange={() => {
-							if (isAtBottom) {
-								scrollToBottomAuto()
-							}
-						}}
-						mode={mode}
-						setMode={setMode}
-					/>
-				</>
-			)}
-			{!task && (
-				<AutoApproveMenu
-					style={{
-						marginLeft: "50px",
-						marginRight: "50px",
-						paddingLeft: "25px",
-						paddingRight: "25px",
-						paddingTop: "10px",
-						paddingBottom: "10px",
-						borderRadius: "12px",
-						flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
-						minHeight: 0,
-						background: vscEditorBackground,
-					}}
-				/>
-			)}
 			{task ? (
 				<TaskHeader
 					task={task}
@@ -1062,13 +1006,27 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						paddingBottom: "10px",
 					}}>
 					{showAnnouncement && <Announcement version={version} hideAnnouncement={hideAnnouncement} />}
-					{/* <div style={{ padding: "0 20px", flexShrink: 0 }}>
-						<h2>PearAI Coding Agent (Powered by Roo Code / Cline)</h2>
-						<p>
-							Ask me to create a new feature, fix a bug, anything else. I can create & edit files, explore
-							complex projects, use the browser, and execute terminal commands!
-						</p>
-					</div> */}
+					{messages.length === 0 && (
+						<>
+							<div className="max-w-2xl mx-auto w-full h-[calc(100vh-270px)] text-center flex flex-col justify-center">
+								<div className="w-full text-center flex flex-col items-center justify-center relative gap-5">
+									<img src={splashIcon} alt="..." />
+									<div className="w-[300px] flex-col justify-start items-start gap-5 inline-flex">
+										<div className="flex flex-col text-left">
+											<div className="text-2xl">PearAI Agent</div>
+											<div className="h-[18px] opacity-50 text-xs leading-[18px]">
+												Powered by Roo Code / Cline
+											</div>
+										</div>
+									</div>
+									<div className="w-[300px] text-left opacity-50 text-xs leading-[18px]">
+										Autonomous coding agent that has control of your development environment (with
+										your permission) for a feedback loop to add features, fix bugs, and more.
+									</div>
+								</div>
+							</div>
+						</>
+					)}
 					{taskHistory.length > 0 && <HistoryPreview showHistoryView={showHistoryView} />}
 				</div>
 			)}
@@ -1088,6 +1046,15 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			//    This ensures it takes its natural height when there's space
 			//    but becomes scrollable when the viewport is too small
 			*/}
+			{!task && (
+				<AutoApproveMenu
+					style={{
+						marginBottom: -2,
+						flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
+						minHeight: 0,
+					}}
+				/>
+			)}
 
 			{task && (
 				<>
@@ -1118,20 +1085,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							initialTopMostItemIndex={groupedMessages.length - 1}
 						/>
 					</div>
-					<AutoApproveMenu
-						style={{
-							marginLeft: "50px",
-							marginRight: "50px",
-							paddingLeft: "25px",
-							paddingRight: "25px",
-							paddingTop: "10px",
-							paddingBottom: "10px",
-							borderRadius: "12px",
-							flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
-							minHeight: 0,
-							background: vscEditorBackground,
-						}}
-					/>
 					{showScrollToBottom ? (
 						<div
 							style={{
@@ -1164,7 +1117,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 									style={{
 										// backgroundColor: "#E64C9E",
 										backgroundColor: vscButtonBackground,
-										color: vscForeground,
+										color: "var(--vscode-button-foreground)",
 										flex: secondaryButtonText ? 1 : 2,
 										marginRight: secondaryButtonText ? "6px" : "0",
 									}}
@@ -1174,11 +1127,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							)}
 							{(secondaryButtonText || isStreaming) && (
 								<Button
-									variant="secondary"
+									// appearance="secondary"
 									disabled={!enableButtons && !(isStreaming && !didClickCancel)}
 									style={{
-										backgroundColor: vscBadgeBackground,
-										color: vscForeground,
+										backgroundColor: "var(--vscode-button-secondaryBackground)",
+										color: "var(--vscode-button-secondaryForeground)",
 										flex: isStreaming ? 2 : 1,
 										marginLeft: isStreaming ? 0 : "6px",
 									}}
@@ -1188,29 +1141,29 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							)}
 						</div>
 					)}
+					<AutoApproveMenu />
 				</>
 			)}
-			{messages.length > 0 && (
-				<ChatTextArea
-					ref={textAreaRef}
-					inputValue={inputValue}
-					setInputValue={setInputValue}
-					textAreaDisabled={textAreaDisabled}
-					placeholderText={placeholderText}
-					selectedImages={selectedImages}
-					setSelectedImages={setSelectedImages}
-					onSend={() => handleSendMessage(inputValue, selectedImages)}
-					onSelectImages={selectImages}
-					shouldDisableImages={shouldDisableImages}
-					onHeightChange={() => {
-						if (isAtBottom) {
-							scrollToBottomAuto()
-						}
-					}}
-					mode={mode}
-					setMode={setMode}
-				/>
-			)}
+			<ChatTextArea
+				ref={textAreaRef}
+				inputValue={inputValue}
+				setInputValue={setInputValue}
+				textAreaDisabled={textAreaDisabled}
+				placeholderText={placeholderText}
+				selectedImages={selectedImages}
+				setSelectedImages={setSelectedImages}
+				onSend={() => handleSendMessage(inputValue, selectedImages)}
+				onSelectImages={selectImages}
+				shouldDisableImages={shouldDisableImages}
+				onHeightChange={() => {
+					if (isAtBottom) {
+						scrollToBottomAuto()
+					}
+				}}
+				mode={mode}
+				setMode={setMode}
+				isNewTask={taskHistory.length === 0}
+			/>
 		</div>
 	)
 }

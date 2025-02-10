@@ -157,7 +157,8 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 	return (
 		<div
 			style={{
-				padding: "0 15px",
+				padding: "6px 6px 10px 6px",
+				// paddingBottom: "10px",
 				userSelect: "none",
 				overflowY: "auto",
 				...style,

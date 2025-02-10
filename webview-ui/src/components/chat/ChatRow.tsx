@@ -29,10 +29,11 @@ import {
 	vscFocusBorder,
 	vscInputBackground,
 } from "../ui"
-import { PencilIcon, PencilSquareIcon, ServerIcon } from "@heroicons/react/24/outline"
+import { PencilIcon, PencilSquareIcon, ServerIcon, PlusCircleIcon } from "@heroicons/react/24/outline"
 import { vsCodeBadge } from "@vscode/webview-ui-toolkit"
 import { ViewfinderCircleIcon } from "@heroicons/react/24/outline"
 import { OpenInNewWindowIcon } from "@radix-ui/react-icons"
+import { Tail, Tail2 } from "../ui/tail"
 
 interface ChatRowProps {
 	message: ClineMessage
@@ -289,6 +290,7 @@ export const ChatRowContent = ({
 							<PencilIcon className="w-5 h-5" />
 							<div className="flex flex-col">
 								<span className="font-bold uppercase">Roo wants to edit</span>
+
 								<span
 									style={{
 										color: "var(--vscode-descriptionForeground)",
@@ -316,9 +318,12 @@ export const ChatRowContent = ({
 			case "newFileCreated":
 				return (
 					<>
-						<div style={headerStyle}>
-							{toolIcon("new-file")}
-							<span style={{ fontWeight: "bold" }}>Roo wants to create a new file:</span>
+						<div
+							style={{ ...headerStyle, backgroundColor: vscEditorBackground }}
+							className="flex items-center gap-2 p-2 rounded-lg">
+							{/* {toolIcon("new-file")} */}
+							<PlusCircleIcon className="w-5 h-5" />
+							<span className="font-bold uppercase">Roo wants to create a new file</span>
 						</div>
 						<CodeAccordian
 							isLoading={message.partial}
@@ -575,13 +580,21 @@ export const ChatRowContent = ({
 								}}
 								onClick={onToggleExpand}>
 								{/* <VSCodeBadge style={{ opacity: cost != null && cost > 0 ? 1 : 0 }} className=""> */}
-								<div
-									className="flex items-center gap-2 p-2 rounded-lg"
-									style={{ backgroundColor: vscBadgeBackground }}>
-									<div className="flex items-center gap-2 flex-grow">
-										{title}${Number(cost || 0)?.toFixed(4)}
+								<div className="flex items-center gap-2">
+									<div
+										className="flex items-center gap-2 p-2 rounded-lg"
+										style={{ backgroundColor: "var(--vscode-list-hoverBackground)" }}>
+										<div className="flex items-center gap-2 flex-grow">
+											{title}${Number(cost || 0)?.toFixed(4)}
+										</div>
+										<span
+											className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}></span>
 									</div>
-									<span className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}></span>
+									{isStreaming && (
+										<div className="flex items-center gap-2 w-5 h-5">
+											<VSCodeProgressRing />
+										</div>
+									)}
 								</div>
 								{/* </VSCodeBadge> */}
 							</div>
@@ -663,13 +676,17 @@ export const ChatRowContent = ({
 					return (
 						<div
 							style={{
-								backgroundColor: "var(--vscode-badge-background)",
+								backgroundColor: "var(--vscode-list-hoverBackground)",
 								color: "var(--vscode-badge-foreground)",
-								borderRadius: "3px",
+								borderRadius: "12px",
 								padding: "9px",
 								whiteSpace: "pre-line",
 								wordWrap: "break-word",
+								width: "60%",
+								marginLeft: "auto",
+								position: "relative",
 							}}>
+							<Tail2 />
 							<div
 								style={{
 									display: "flex",
@@ -680,6 +697,7 @@ export const ChatRowContent = ({
 								<span style={{ display: "block", flexGrow: 1, padding: "4px" }}>
 									{highlightMentions(message.text)}
 								</span>
+
 								<VSCodeButton
 									appearance="icon"
 									style={{
