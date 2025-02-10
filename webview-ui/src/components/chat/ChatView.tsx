@@ -1013,14 +1013,14 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 									<img src={splashIcon} alt="..." />
 									<div className="w-[300px] flex-col justify-start items-start gap-5 inline-flex">
 										<div className="flex flex-col text-left">
-											<div className="text-2xl">PearAI Agent</div>
+											<div className="text-2xl">PearAI Coding Agent</div>
 											<div className="h-[18px] opacity-50 text-xs leading-[18px]">
 												Powered by Roo Code / Cline
 											</div>
 										</div>
 									</div>
 									<div className="w-[300px] text-left opacity-50 text-xs leading-[18px]">
-										Autonomous coding agent that has control of your development environment (with
+										Autonomous coding agent that has access to your development environment (with
 										your permission) for a feedback loop to add features, fix bugs, and more.
 									</div>
 								</div>
