@@ -8,6 +8,7 @@ import { ExtensionStateContextProvider, useExtensionState } from "./context/Exte
 import { vscode } from "./utils/vscode"
 import McpView from "./components/mcp/McpView"
 import PromptsView from "./components/prompts/PromptsView"
+import { Inspector } from "react-dev-inspector"
 
 const AppContent = () => {
 	const { didHydrateState, showWelcome, shouldShowAnnouncement } = useExtensionState()
@@ -73,6 +74,7 @@ const AppContent = () => {
 	return (
 		<>
 			<>
+				<Inspector />
 				{showSettings && <SettingsView onDone={() => setShowSettings(false)} />}
 				{showHistory && <HistoryView onDone={() => setShowHistory(false)} />}
 				{showMcp && <McpView onDone={() => setShowMcp(false)} />}

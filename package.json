@@ -378,7 +378,10 @@
 		"prettier": "^3.4.2",
 		"rimraf": "^6.0.1",
 		"ts-jest": "^29.2.5",
-		"typescript": "^5.4.5"
+		"typescript": "^5.4.5",
+		"@react-dev-inspector/middleware": "^2.0.1",
+		"dotenv": "^16.4.7",
+		"react-dev-inspector": "^2.0.1",
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,json,css,md}": [

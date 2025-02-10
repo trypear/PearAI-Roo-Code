@@ -124,12 +124,14 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 					backgroundColor: vscEditorBackground,
 					color: "var(--vscode-badge-foreground)",
 					borderRadius: "12px",
-					padding: "9px 10px 9px 14px",
+					padding: "12px",
 					display: "flex",
 					flexDirection: "column",
 					gap: 6,
 					position: "relative",
 					zIndex: 1,
+					width: "60%",
+					marginLeft: "auto",
 				}}>
 				<div
 					style={{
@@ -151,25 +153,26 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							minWidth: 0, // This allows the div to shrink below its content size
 						}}
 						onClick={() => setIsTaskExpanded(!isTaskExpanded)}>
-						<div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+						{/* <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
 							<span className={`codicon codicon-chevron-${isTaskExpanded ? "down" : "right"}`}></span>
-						</div>
-						{/* <div
+						</div> */}
+						<div
 							style={{
-								marginLeft: 6,
+								// marginLeft: 6,
 								whiteSpace: "nowrap",
 								overflow: "hidden",
 								textOverflow: "ellipsis",
 								flexGrow: 1,
 								minWidth: 0, // This allows the div to shrink below its content size
 							}}>
-							<span style={{ fontWeight: "bold" }}>
-								Task
-								{!isTaskExpanded && ":"}</span>
+							<span style={{ fontWeight: "bold", color: "var(--vscode-descriptionForeground)" }}>
+								TASK
+								{!isTaskExpanded && ":"}
+							</span>
 							{!isTaskExpanded && (
 								<span style={{ marginLeft: 4 }}>{highlightMentions(task.text, false)}</span>
 							)}
-						</div> */}
+						</div>
 					</div>
 					{!isTaskExpanded && isCostAvailable && (
 						<div
@@ -187,9 +190,54 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							${totalCost?.toFixed(4)}
 						</div>
 					)}
-					<VSCodeButton appearance="icon" onClick={onClose} style={{ marginLeft: 6, flexShrink: 0 }}>
+					<div
+						className="flex items-center justify-between gap-2 py-1 px-2 rounded-lg"
+						style={{ backgroundColor: "var(--vscode-list-hoverBackground)" }}>
+						{isCostAvailable && (
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+								}}>
+								<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+									{/* <span style={{ fontWeight: "bold" }}>API Cost:</span> */}
+									<span>${totalCost?.toFixed(4)}</span>
+								</div>
+							</div>
+						)}
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								// marginLeft: "auto",
+							}}>
+							<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
+								{/* <span style={{ }}>Tokens:</span> */}
+								<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+									<i
+										className="codicon codicon-arrow-up"
+										style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
+									/>
+									{formatLargeNumber(tokensIn || 0)}
+								</span>
+								<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+									<i
+										className="codicon codicon-arrow-down"
+										style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
+									/>
+									{formatLargeNumber(tokensOut || 0)}
+								</span>
+							</div>
+						</div>
+					</div>
+					<div className="ml-2">
+						<ExportButton />
+					</div>
+					{/* <VSCodeButton appearance="icon" onClick={onClose} style={{ marginLeft: 6, flexShrink: 0 }}>
 						<span className="codicon codicon-close"></span>
-					</VSCodeButton>
+					</VSCodeButton> */}
 				</div>
 				{isTaskExpanded && (
 					<>
@@ -254,7 +302,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 
 						<div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
 							<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
-								<span
+								{/* <span
 									style={{
 										display: "flex",
 										alignItems: "center",
@@ -267,11 +315,11 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 									className="text-xs">
 									Context
 									<ChevronDownIcon />
-								</span>
+								</span> */}
 
-								<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-									{contextTokens ? `${formatLargeNumber(contextTokens)})` : ""}
-								</span>
+								{/* <span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+									{contextTokens ? `${formatLargeNumber(contextTokens)} (${contextPercentage}%)` : ""}
+								</span> */}
 							</div>
 							<div
 								style={{
@@ -283,38 +331,11 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 								}}>
 								<div
 									style={{
-										display: "flex",
-										justifyContent: "space-between",
-										alignItems: "center",
-										// marginLeft: "auto",
-									}}>
-									<div
-										style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
-										{/* <span style={{ }}>Tokens:</span> */}
-										<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-											<i
-												className="codicon codicon-arrow-up"
-												style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
-											/>
-											{formatLargeNumber(tokensIn || 0)}
-										</span>
-										<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-											<i
-												className="codicon codicon-arrow-down"
-												style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
-											/>
-											{formatLargeNumber(tokensOut || 0)}
-										</span>
-									</div>
-								</div>
-
-								<div
-									style={{
 										cursor: "pointer",
 										color: "var(--vscode-textLink-foreground)",
 										backgroundColor: vscEditorBackground,
 										stroke: "var(--vscode-editor-foreground)",
-										// marginLeft: "auto",
+										marginLeft: "auto",
 									}}
 									onClick={() => setIsTextExpanded(!isTextExpanded)}>
 									<ChevronDownIcon />
@@ -463,8 +484,8 @@ const ExportButton = () => (
 	<div
 		onClick={() => vscode.postMessage({ type: "exportCurrentTask" })}
 		style={{
-			// marginBottom: "-2px",
-			// marginRight: "-2.5px",
+			marginBottom: "-5px",
+			marginRight: "-2.5px",
 			cursor: "pointer",
 		}}>
 		<DownloadIcon style={{ width: "16px", height: "16px" }} />
