@@ -153,6 +153,11 @@
 				"command": "roo-cline.terminalExplainCommandInCurrentTask",
 				"title": "Roo Code: Explain This Command (Current Task)",
 				"category": "Terminal"
+			},
+			{
+				"command": "roo-cline.focus",
+				"title": "Roo Code: Bring To Focus",
+				"category": "Roo Code"
 			}
 		],
 		"menus": {

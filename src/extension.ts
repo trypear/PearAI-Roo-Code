@@ -169,6 +169,12 @@ export function activate(context: vscode.ExtensionContext) {
 	registerCodeActions(context)
 	registerTerminalActions(context)
 
+	context.subscriptions.push(
+		vscode.commands.registerCommand("roo-cline.focus", async (...args: any[]) => {
+			await vscode.commands.executeCommand("roo-cline.SidebarProvider.focus")
+		}),
+	)
+
 	return createClineAPI(outputChannel, sidebarProvider)
 }
 
