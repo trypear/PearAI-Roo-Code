@@ -748,19 +748,17 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								variant={"secondary"}
 								disabled={textAreaDisabled}
 								onClick={() => {
-									// if (!textAreaDisabled && textAreaRef.current) {
-									// 	const newValue =
-									// 		inputValue.slice(0, cursorPosition) +
-									// 		"@" +
-									// 		inputValue.slice(cursorPosition);
-									// 	setInputValue(newValue);
-									// 	const newCursorPosition = cursorPosition + 1;
-									// 	setCursorPosition(newCursorPosition);
-									// 	setIntendedCursorPosition(newCursorPosition);
-									// }
-									setShowContextMenu(true)
-									setSearchQuery("")
-									// textAreaRef.current.focus();
+									if (!textAreaDisabled && textAreaRef.current) {
+										setShowContextMenu(true)
+										setSearchQuery("")
+										const newValue =
+											inputValue.slice(0, cursorPosition) + "@" + inputValue.slice(cursorPosition)
+										setInputValue(newValue)
+										const newCursorPosition = cursorPosition + 1
+										setCursorPosition(newCursorPosition)
+										setIntendedCursorPosition(newCursorPosition)
+										textAreaRef.current.focus()
+									}
 								}}
 								style={{
 									color: vscForeground,
