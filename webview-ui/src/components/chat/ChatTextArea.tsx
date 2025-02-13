@@ -804,8 +804,11 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							ref={highlightLayerRef}
 							style={{
 								position: "absolute",
-								inset: 0,
-								pointerEvents: "none",
+								// inset: 0,
+								insetBlockStart: 7,
+								// insetBlockEnd: 7,
+								// insetInlineStart: 7,
+								// insetInlineEnd: 9,								pointerEvents: "none",
 								whiteSpace: "pre-wrap",
 								wordWrap: "break-word",
 								color: "transparent",
