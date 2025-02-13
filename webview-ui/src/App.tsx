@@ -90,7 +90,7 @@ const AppContent = () => {
 					isHidden={showSettings || showHistory || showMcp || showPrompts}
 					showAnnouncement={false}
 					hideAnnouncement={() => {
-						true
+						setShowAnnouncement(false)
 					}}
 				/>
 			</>

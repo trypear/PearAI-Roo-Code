@@ -10,7 +10,7 @@
 		"noFallthroughCasesInSwitch": true,
 		"noImplicitOverride": true,
 		"noImplicitReturns": true,
-		"noUnusedLocals": false,
+		"noUnusedLocals": true,
 		"resolveJsonModule": true,
 		"rootDir": ".",
 		"skipLibCheck": true,

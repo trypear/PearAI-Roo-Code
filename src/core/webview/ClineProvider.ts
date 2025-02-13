@@ -1708,7 +1708,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		await this.updateGlobalState("requestyModelId", requestyModelId)
 		await this.updateGlobalState("requestyModelInfo", requestyModelInfo)
 		await this.updateGlobalState("modelTemperature", modelTemperature)
-		await this.updateGlobalState("pearai-token", PEARAI_TOKEN)
 		await this.updateGlobalState("pearaiBaseUrl", PEARAI_URL)
 		await this.updateGlobalState("pearaiModelId", pearaiModelId)
 		await this.updateGlobalState("pearaiModelInfo", pearaiModelInfo)

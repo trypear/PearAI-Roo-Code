@@ -1,5 +1,5 @@
 import * as vscode from "vscode"
-
+import delay from "delay"
 import { ClineProvider } from "./core/webview/ClineProvider"
 import { createClineAPI } from "./exports"
 import "./utils/path" // Necessary to have access to String.prototype.toPosix.

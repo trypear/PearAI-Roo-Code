@@ -112,7 +112,7 @@ export function parseColorForHex(colorVar: string): string {
 	return hex
 }
 
-export const Button = styled.button`
+export const PrimaryActionButton = styled.button`
 	padding: 10px 12px;
 	margin: 8px 0;
 	border-radius: ${defaultBorderRadius};
