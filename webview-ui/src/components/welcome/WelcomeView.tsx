@@ -3,9 +3,27 @@ import { useState } from "react"
 import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
 import { PEARAI_URL } from "../../../../src/shared/api"
+import { validateApiConfiguration } from "@/utils/validate"
+import ApiOptions from "../settings/ApiOptions"
 
 const WelcomeView = () => {
-	const handleSubmit = () => {
+	const { apiConfiguration } = useExtensionState()
+
+	const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
+
+	const handleSubmit = async () => {
+		// Focus the active element's parent to trigger blur
+		document.activeElement?.parentElement?.focus()
+
+		// Small delay to let blur events complete
+		await new Promise((resolve) => setTimeout(resolve, 50))
+
+		const error = validateApiConfiguration(apiConfiguration)
+		if (error) {
+			setErrorMessage(error)
+			return
+		}
+		setErrorMessage(undefined)
 		vscode.postMessage({
 			type: "apiConfiguration",
 			apiConfiguration: {
@@ -13,6 +31,7 @@ const WelcomeView = () => {
 				pearaiBaseUrl: `${PEARAI_URL}/integrations/cline`,
 			},
 		})
+		// vscode.postMessage({ type: "apiConfiguration", apiConfiguration })
 	}
 
 	return (
@@ -23,10 +42,15 @@ const WelcomeView = () => {
 				projects, use the browser, and execute terminal commands!
 			</p>
 
+			<div className="mt-3">
+				<ApiOptions fromWelcomeView />
+			</div>
+
 			<div style={{ marginTop: "10px" }}>
 				<VSCodeButton onClick={handleSubmit} style={{ marginTop: "3px" }}>
 					Next
 				</VSCodeButton>
+				{errorMessage && <span className="text-destructive">{errorMessage}</span>}
 			</div>
 		</div>
 	)

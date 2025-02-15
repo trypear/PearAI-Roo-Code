@@ -1,7 +1,13 @@
 import { Fragment, memo, useCallback, useEffect, useMemo, useState } from "react"
 import { useEvent, useInterval } from "react-use"
 import { Checkbox, Dropdown, Pane, type DropdownOption } from "vscrui"
-import { VSCodeLink, VSCodeRadio, VSCodeRadioGroup, VSCodeTextField, VSCodeButton } from "@vscode/webview-ui-toolkit/react"
+import {
+	VSCodeLink,
+	VSCodeRadio,
+	VSCodeRadioGroup,
+	VSCodeTextField,
+	VSCodeButton,
+} from "@vscode/webview-ui-toolkit/react"
 import { TemperatureControl } from "./TemperatureControl"
 import * as vscodemodels from "vscode"
 
@@ -350,6 +356,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage, fromWelcomeView }: A
 						placeholder="Enter API Key...">
 						<span style={{ fontWeight: 500 }}>Mistral API Key</span>
 					</VSCodeTextField>
+
 					<p
 						style={{
 							fontSize: "12px",
@@ -359,15 +366,37 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage, fromWelcomeView }: A
 						This key is stored locally and only used to make API requests from this extension.
 						{!apiConfiguration?.mistralApiKey && (
 							<VSCodeLink
-								href="https://console.mistral.ai/codestral/"
+								href="https://console.mistral.ai/"
 								style={{
 									display: "inline",
 									fontSize: "inherit",
 								}}>
-								You can get a Mistral API key by signing up here.
+								You can get a La Plateforme (api.mistral.ai) / Codestral (codestral.mistral.ai) API key
+								by signing up here.
 							</VSCodeLink>
 						)}
 					</p>
+
+					{apiConfiguration?.apiModelId?.startsWith("codestral-") && (
+						<div>
+							<VSCodeTextField
+								value={apiConfiguration?.mistralCodestralUrl || ""}
+								style={{ width: "100%", marginTop: "10px" }}
+								type="url"
+								onBlur={handleInputChange("mistralCodestralUrl")}
+								placeholder="Default: https://codestral.mistral.ai">
+								<span style={{ fontWeight: 500 }}>Codestral Base URL (Optional)</span>
+							</VSCodeTextField>
+							<p
+								style={{
+									fontSize: "12px",
+									marginTop: 3,
+									color: "var(--vscode-descriptionForeground)",
+								}}>
+								Set alternative URL for Codestral model: https://api.mistral.ai
+							</p>
+						</div>
+					)}
 				</div>
 			)}
 
