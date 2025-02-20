@@ -274,6 +274,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("roo-cline.focus", async (...args: any[]) => {
+			try {
+				await vscode.commands.executeCommand("workbench.action.switchToPearAIIntegrationIconBar", {
+					view: "agent",
+				})
+			} catch (error) {
+				// Silently handle any errors that might occur when switching to the integration bar
+			}
 			await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
 		}),
 	)
