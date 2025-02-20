@@ -135,7 +135,7 @@ suite("Roo Code Extension Test Suite", () => {
 
 	test("Views should be registered", () => {
 		const view = vscode.window.createWebviewPanel(
-			"roo-cline.SidebarProvider",
+			"pearai-roo-cline.SidebarProvider",
 			"Roo Code",
 			vscode.ViewColumn.One,
 			{},
@@ -184,12 +184,17 @@ suite("Roo Code Extension Test Suite", () => {
 
 		// Create webview panel with development options
 		const extensionUri = extension.extensionUri
-		const panel = vscode.window.createWebviewPanel("roo-cline.SidebarProvider", "Roo Code", vscode.ViewColumn.One, {
-			enableScripts: true,
-			enableCommandUris: true,
-			retainContextWhenHidden: true,
-			localResourceRoots: [extensionUri],
-		})
+		const panel = vscode.window.createWebviewPanel(
+			"pearai-roo-cline.SidebarProvider",
+			"Roo Code",
+			vscode.ViewColumn.One,
+			{
+				enableScripts: true,
+				enableCommandUris: true,
+				retainContextWhenHidden: true,
+				localResourceRoots: [extensionUri],
+			},
+		)
 
 		try {
 			// Initialize webview with development context

@@ -274,7 +274,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("roo-cline.focus", async (...args: any[]) => {
-			await vscode.commands.executeCommand("roo-cline.SidebarProvider.focus")
+			await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
 		}),
 	)
 
