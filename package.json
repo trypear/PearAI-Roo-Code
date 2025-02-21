@@ -63,7 +63,7 @@
 			"pearai-roo-cline": [
 				{
 					"type": "webview",
-					"id": "roo-cline.SidebarProvider",
+					"id": "pearai-roo-cline.SidebarProvider",
 					"name": ""
 				}
 			]
@@ -157,32 +157,32 @@
 				{
 					"command": "roo-cline.plusButtonClicked",
 					"group": "navigation@1",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.promptsButtonClicked",
 					"group": "navigation@2",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.mcpButtonClicked",
 					"group": "navigation@3",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.historyButtonClicked",
 					"group": "navigation@4",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.popoutButtonClicked",
 					"group": "navigation@5",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.settingsButtonClicked",
 					"group": "navigation@6",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				}
 			]
 		},
