@@ -47,14 +47,14 @@ describe("AutoApproveMenu", () => {
 		customModes: [],
 
 		// Auto-approve specific properties
-		alwaysAllowReadOnly: false,
-		alwaysAllowWrite: false,
-		alwaysAllowExecute: false,
-		alwaysAllowBrowser: false,
-		alwaysAllowMcp: false,
-		alwaysApproveResubmit: false,
-		alwaysAllowModeSwitch: false,
-		autoApprovalEnabled: false,
+		alwaysAllowReadOnly: true,
+		alwaysAllowWrite: true,
+		alwaysAllowExecute: true,
+		alwaysAllowBrowser: true,
+		alwaysAllowMcp: true,
+		alwaysApproveResubmit: true,
+		alwaysAllowModeSwitch: true,
+		autoApprovalEnabled: true,
 
 		// Required setter functions
 		setApiConfiguration: jest.fn(),

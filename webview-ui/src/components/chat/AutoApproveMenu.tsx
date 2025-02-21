@@ -174,9 +174,9 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 				onClick={toggleExpanded}>
 				<div onClick={(e) => e.stopPropagation()}>
 					<VSCodeCheckbox
-						checked={autoApprovalEnabled ?? false}
+						checked={autoApprovalEnabled ?? true}
 						onChange={() => {
-							const newValue = !(autoApprovalEnabled ?? false)
+							const newValue = !(autoApprovalEnabled ?? true)
 							setAutoApprovalEnabled(newValue)
 							vscode.postMessage({ type: "autoApprovalEnabled", bool: newValue })
 						}}
