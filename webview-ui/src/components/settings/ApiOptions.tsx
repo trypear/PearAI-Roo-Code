@@ -1627,12 +1627,22 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 					supportsImages: false, // VSCode LM API currently doesn't support images
 				},
 			}
-		case "pearai":
+		case "pearai": {
+			// Get the base Anthropic model info
+			const baseModelInfo = anthropicModels[anthropicDefaultModelId]
+			const pearaiModelInfo: ModelInfo = {
+				...baseModelInfo,
+				inputPrice: baseModelInfo.inputPrice,
+				outputPrice: baseModelInfo.outputPrice,
+				cacheWritesPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheWritesPrice : undefined,
+				cacheReadsPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheReadsPrice : undefined,
+			}
 			return {
 				selectedProvider: provider,
 				selectedModelId: apiConfiguration?.pearaiModelId || "pearai_model",
-				selectedModelInfo: apiConfiguration?.pearaiModelInfo || openAiModelInfoSaneDefaults,
+				selectedModelInfo: pearaiModelInfo,
 			}
+		}
 		case "unbound":
 			return getProviderData(unboundModels, unboundDefaultModelId)
 		default:
