@@ -1639,7 +1639,7 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 			}
 			return {
 				selectedProvider: provider,
-				selectedModelId: anthropicDefaultModelId,
+				selectedModelId: apiConfiguration?.pearaiModelId || "pearai_model",
 				selectedModelInfo: pearaiModelInfo,
 			}
 		}
