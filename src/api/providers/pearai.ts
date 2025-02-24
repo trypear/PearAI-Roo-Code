@@ -1,29 +1,17 @@
-import { OpenAiHandler } from "./openai"
 import * as vscode from "vscode"
-import { ApiHandlerOptions, PEARAI_URL } from "../../shared/api"
+import { ApiHandlerOptions, PEARAI_URL, AnthropicModelId, ModelInfo } from "../../shared/api"
 import { AnthropicHandler } from "./anthropic"
 
 export class PearAiHandler extends AnthropicHandler {
 	constructor(options: ApiHandlerOptions) {
-		if (options.pearaiModelInfo) {
-			options.pearaiModelInfo = {
-				...options.pearaiModelInfo,
-				inputPrice: options.pearaiModelInfo.inputPrice ? options.pearaiModelInfo.inputPrice * 1.025 : 0,
-				outputPrice: options.pearaiModelInfo.outputPrice ? options.pearaiModelInfo.outputPrice * 1.025 : 0,
-			}
-		}
-
 		if (!options.pearaiApiKey) {
 			vscode.window.showErrorMessage("PearAI API key not found.", "Login to PearAI").then(async (selection) => {
 				if (selection === "Login to PearAI") {
 					const extensionUrl = `${vscode.env.uriScheme}://pearai.pearai/auth`
 					const callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(extensionUrl))
-
 					vscode.env.openExternal(
 						await vscode.env.asExternalUri(
-							vscode.Uri.parse(
-								`https://trypear.ai/signin?callback=${callbackUri.toString()}`, // Change to localhost if running locally
-							),
+							vscode.Uri.parse(`https://trypear.ai/signin?callback=${callbackUri.toString()}`),
 						),
 					)
 				}
@@ -35,5 +23,19 @@ export class PearAiHandler extends AnthropicHandler {
 			apiKey: options.pearaiApiKey,
 			anthropicBaseUrl: PEARAI_URL,
 		})
+	}
+
+	override getModel(): { id: AnthropicModelId; info: ModelInfo } {
+		const baseModel = super.getModel()
+		return {
+			id: baseModel.id,
+			info: {
+				...baseModel.info,
+				inputPrice: (baseModel.info.inputPrice || 0) * 1.025,
+				outputPrice: (baseModel.info.outputPrice || 0) * 1.025,
+				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice * 1.025 : undefined,
+				cacheReadsPrice: baseModel.info.cacheReadsPrice ? baseModel.info.cacheReadsPrice * 1.025 : undefined,
+			},
+		}
 	}
 }

@@ -1633,15 +1633,15 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 			// Create PearAI model info with 1.03x price multiplier
 			const pearaiModelInfo: ModelInfo = {
 				...baseModelInfo,
-				inputPrice: baseModelInfo.inputPrice * 1.03,
-				outputPrice: baseModelInfo.outputPrice * 1.03,
-				cacheWritesPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheWritesPrice * 1.03 : undefined,
-				cacheReadsPrice: baseModelInfo.cacheReadsPrice ? baseModelInfo.cacheReadsPrice * 1.03 : undefined,
+				inputPrice: baseModelInfo.inputPrice,
+				outputPrice: baseModelInfo.outputPrice,
+				cacheWritesPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheWritesPrice : undefined,
+				cacheReadsPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheReadsPrice : undefined,
 			}
 			return {
 				selectedProvider: provider,
-				selectedModelId: apiConfiguration?.pearaiModelId || anthropicDefaultModelId,
-				selectedModelInfo: apiConfiguration?.pearaiModelInfo || pearaiModelInfo,
+				selectedModelId: anthropicDefaultModelId,
+				selectedModelInfo: pearaiModelInfo,
 			}
 		}
 		case "unbound":
