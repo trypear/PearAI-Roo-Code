@@ -31,10 +31,10 @@ export class PearAiHandler extends AnthropicHandler {
 			id: baseModel.id,
 			info: {
 				...baseModel.info,
-				inputPrice: (baseModel.info.inputPrice || 0) * 1.025,
-				outputPrice: (baseModel.info.outputPrice || 0) * 1.025,
-				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice * 1.025 : undefined,
-				cacheReadsPrice: baseModel.info.cacheReadsPrice ? baseModel.info.cacheReadsPrice * 1.025 : undefined,
+				inputPrice: (baseModel.info.inputPrice || 0) * 1.03,
+				outputPrice: (baseModel.info.outputPrice || 0) * 1.03,
+				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice * 1.03 : undefined,
+				cacheReadsPrice: baseModel.info.cacheReadsPrice ? baseModel.info.cacheReadsPrice * 1.03 : undefined,
 			},
 		}
 	}
