@@ -8,8 +8,8 @@ export class PearAiHandler extends AnthropicHandler {
 		if (options.pearaiModelInfo) {
 			options.pearaiModelInfo = {
 				...options.pearaiModelInfo,
-				inputPrice: options.pearaiModelInfo.inputPrice ? options.pearaiModelInfo.inputPrice * 1.03 : 0,
-				outputPrice: options.pearaiModelInfo.outputPrice ? options.pearaiModelInfo.outputPrice * 1.03 : 0,
+				inputPrice: options.pearaiModelInfo.inputPrice ? options.pearaiModelInfo.inputPrice * 1.025 : 0,
+				outputPrice: options.pearaiModelInfo.outputPrice ? options.pearaiModelInfo.outputPrice * 1.025 : 0,
 			}
 		}
 
