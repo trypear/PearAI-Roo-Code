@@ -5,6 +5,14 @@ import { AnthropicHandler } from "./anthropic"
 
 export class PearAiHandler extends AnthropicHandler {
 	constructor(options: ApiHandlerOptions) {
+		if (options.pearaiModelInfo) {
+			options.pearaiModelInfo = {
+				...options.pearaiModelInfo,
+				inputPrice: options.pearaiModelInfo.inputPrice ? options.pearaiModelInfo.inputPrice * 1.03 : 0,
+				outputPrice: options.pearaiModelInfo.outputPrice ? options.pearaiModelInfo.outputPrice * 1.03 : 0,
+			}
+		}
+
 		if (!options.pearaiApiKey) {
 			vscode.window.showErrorMessage("PearAI API key not found.", "Login to PearAI").then(async (selection) => {
 				if (selection === "Login to PearAI") {
