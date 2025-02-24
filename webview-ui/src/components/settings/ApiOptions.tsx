@@ -1630,7 +1630,6 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 		case "pearai": {
 			// Get the base Anthropic model info
 			const baseModelInfo = anthropicModels[anthropicDefaultModelId]
-			// Create PearAI model info with 1.03x price multiplier
 			const pearaiModelInfo: ModelInfo = {
 				...baseModelInfo,
 				inputPrice: baseModelInfo.inputPrice,
