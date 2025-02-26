@@ -12,6 +12,7 @@ export interface WebviewMessage {
 	type:
 		| "apiConfiguration"
 		| "currentApiConfigName"
+		| "saveApiConfiguration"
 		| "upsertApiConfiguration"
 		| "deleteApiConfiguration"
 		| "loadApiConfiguration"
@@ -39,11 +40,11 @@ export interface WebviewMessage {
 		| "openFile"
 		| "openMention"
 		| "cancelTask"
-		| "refreshGlamaModels"
 		| "refreshOpenRouterModels"
-		| "refreshOpenAiModels"
+		| "refreshGlamaModels"
 		| "refreshUnboundModels"
 		| "refreshRequestyModels"
+		| "refreshOpenAiModels"
 		| "alwaysAllowBrowser"
 		| "alwaysAllowMcp"
 		| "alwaysAllowModeSwitch"
@@ -70,7 +71,6 @@ export interface WebviewMessage {
 		| "mcpEnabled"
 		| "enableMcpServerCreation"
 		| "searchCommits"
-		| "refreshGlamaModels"
 		| "alwaysApproveResubmit"
 		| "requestDelaySeconds"
 		| "rateLimitSeconds"
@@ -93,6 +93,7 @@ export interface WebviewMessage {
 		| "checkpointDiff"
 		| "checkpointRestore"
 		| "openPearAiAuth"
+		| "deleteMcpServer"
 		| "maxOpenTabsContext"
 	text?: string
 	disabled?: boolean

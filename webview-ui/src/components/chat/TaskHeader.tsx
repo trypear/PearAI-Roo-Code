@@ -348,40 +348,36 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 								)}
 							</div>
 
-							{
-								shouldShowPromptCacheInfo && (cacheReads !== undefined || cacheWrites !== undefined) && (
-									<div className="flex items-center gap-1 flex-wrap h-[20px]">
-										<span style={{ fontWeight: "bold" }}>Cache:</span>
-										<span className="flex items-center gap-1">
-											<i
-												className="codicon codicon-database"
-												style={{ fontSize: "12px", fontWeight: "bold" }}
-											/>
-											+{formatLargeNumber(cacheWrites || 0)}
-										</span>
-										<span className="flex items-center gap-1">
-											<i
-												className="codicon codicon-arrow-right"
-												style={{ fontSize: "12px", fontWeight: "bold" }}
-											/>
-											{formatLargeNumber(cacheReads || 0)}
-										</span>
-									</div>
-								)
-							}
+							{shouldShowPromptCacheInfo && (cacheReads !== undefined || cacheWrites !== undefined) && (
+								<div className="flex items-center gap-1 flex-wrap h-[20px]">
+									<span style={{ fontWeight: "bold" }}>Cache:</span>
+									<span className="flex items-center gap-1">
+										<i
+											className="codicon codicon-database"
+											style={{ fontSize: "12px", fontWeight: "bold" }}
+										/>
+										+{formatLargeNumber(cacheWrites || 0)}
+									</span>
+									<span className="flex items-center gap-1">
+										<i
+											className="codicon codicon-arrow-right"
+											style={{ fontSize: "12px", fontWeight: "bold" }}
+										/>
+										{formatLargeNumber(cacheReads || 0)}
+									</span>
+								</div>
+							)}
 
-							{
-								isCostAvailable && (
-									<div className="flex justify-between items-center h-[20px]">
-										<div className="flex items-center gap-1">
-											<span className="font-bold">API Cost:</span>
-											<span>${totalCost?.toFixed(4)}</span>
-										</div>
-										<TaskActions item={currentTaskItem} />
+							{isCostAvailable && (
+								<div className="flex justify-between items-center h-[20px]">
+									<div className="flex items-center gap-1">
+										<span className="font-bold">API Cost:</span>
+										<span>${totalCost?.toFixed(4)}</span>
 									</div>
-								)
-							}
-						</div >
+									<TaskActions item={currentTaskItem} />
+								</div>
+							)}
+						</div>
 					</>
 				)}
 				<Tail />
@@ -445,7 +441,7 @@ const TaskActions = ({ item }: { item: HistoryItem | undefined }) => (
 		<Button variant="ghost" size="sm" onClick={() => vscode.postMessage({ type: "exportCurrentTask" })}>
 			<span className="codicon codicon-cloud-download" />
 		</Button>
-		{item?.size && (
+		{!!item?.size && item.size > 0 && (
 			<Button
 				variant="ghost"
 				size="sm"
