@@ -79,17 +79,17 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 	)
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("roo-cline.mcpButtonClicked", () => {
-			sidebarProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
-		}),
-	)
+	// context.subscriptions.push(
+	// 	vscode.commands.registerCommand("roo-cline.mcpButtonClicked", () => {
+	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
+	// 	}),
+	// )
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("roo-cline.promptsButtonClicked", () => {
-			sidebarProvider.postMessageToWebview({ type: "action", action: "promptsButtonClicked" })
-		}),
-	)
+	// context.subscriptions.push(
+	// 	vscode.commands.registerCommand("roo-cline.promptsButtonClicked", () => {
+	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "promptsButtonClicked" })
+	// 	}),
+	// )
 
 	const openClineInNewTab = async () => {
 		outputChannel.appendLine("Opening Roo Code in new tab")
@@ -124,21 +124,21 @@ export function activate(context: vscode.ExtensionContext) {
 		await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
 	}
 
-	context.subscriptions.push(vscode.commands.registerCommand("roo-cline.popoutButtonClicked", openClineInNewTab))
-	context.subscriptions.push(vscode.commands.registerCommand("roo-cline.openInNewTab", openClineInNewTab))
+	// context.subscriptions.push(vscode.commands.registerCommand("roo-cline.popoutButtonClicked", openClineInNewTab))
+	// context.subscriptions.push(vscode.commands.registerCommand("roo-cline.openInNewTab", openClineInNewTab))
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("roo-cline.settingsButtonClicked", () => {
-			//vscode.window.showInformationMessage(message)
-			sidebarProvider.postMessageToWebview({ type: "action", action: "settingsButtonClicked" })
-		}),
-	)
+	// context.subscriptions.push(
+	// 	vscode.commands.registerCommand("roo-cline.settingsButtonClicked", () => {
+	// 		//vscode.window.showInformationMessage(message)
+	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "settingsButtonClicked" })
+	// 	}),
+	// )
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("roo-cline.historyButtonClicked", () => {
-			sidebarProvider.postMessageToWebview({ type: "action", action: "historyButtonClicked" })
-		}),
-	)
+	// context.subscriptions.push(
+	// 	vscode.commands.registerCommand("roo-cline.historyButtonClicked", () => {
+	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "historyButtonClicked" })
+	// 	}),
+	// )
 
 	/*
 	We use the text document content provider API to show the left side for diff view by creating a virtual document for the original content. This makes it readonly so users know to edit the right side if they want to keep their changes.
