@@ -245,7 +245,7 @@ export const HelperText = styled.p`
 	color: ${lightGray};
 `
 
-export const Input = styled.input`
+export const pearInput = styled.input`
 	width: 100%;
 	padding: 8px 12px;
 	margin: 8px 0;
