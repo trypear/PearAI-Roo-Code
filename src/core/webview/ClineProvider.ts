@@ -1690,6 +1690,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			requestyModelId,
 			requestyModelInfo,
 			modelTemperature,
+			modelMaxTokens,
 			pearaiApiKey,
 			pearaiBaseUrl,
 			pearaiModelId,
@@ -1742,6 +1743,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.updateGlobalState("requestyModelId", requestyModelId),
 			this.updateGlobalState("requestyModelInfo", requestyModelInfo),
 			this.updateGlobalState("modelTemperature", modelTemperature),
+			this.updateGlobalState("modelMaxTokens", modelMaxTokens),
 			await this.updateGlobalState("pearaiBaseUrl", PEARAI_URL),
 			await this.updateGlobalState("pearaiModelId", pearaiModelId),
 			await this.updateGlobalState("pearaiModelInfo", pearaiModelInfo),
@@ -2241,6 +2243,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			requestyModelId,
 			requestyModelInfo,
 			modelTemperature,
+			modelMaxTokens,
 			maxOpenTabsContext,
 		] = await Promise.all([
 			this.getGlobalState("apiProvider") as Promise<ApiProvider | undefined>,
@@ -2329,6 +2332,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.getGlobalState("requestyModelId") as Promise<string | undefined>,
 			this.getGlobalState("requestyModelInfo") as Promise<ModelInfo | undefined>,
 			this.getGlobalState("modelTemperature") as Promise<number | undefined>,
+			this.getGlobalState("modelMaxTokens") as Promise<number | undefined>,
 			this.getGlobalState("maxOpenTabsContext") as Promise<number | undefined>,
 		])
 
@@ -2398,6 +2402,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				requestyModelId,
 				requestyModelInfo,
 				modelTemperature,
+				modelMaxTokens,
 			},
 			lastShownAnnouncementId,
 			customInstructions,

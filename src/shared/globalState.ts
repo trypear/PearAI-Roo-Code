@@ -84,6 +84,7 @@ export type GlobalStateKey =
 	| "requestyModelInfo"
 	| "unboundModelInfo"
 	| "modelTemperature"
+	| "modelMaxTokens"
 	| "mistralCodestralUrl"
 	| "maxOpenTabsContext"
 	| "pearaiModelId"

@@ -87,6 +87,7 @@ export type ClineOptions = {
 
 export class Cline {
 	readonly taskId: string
+	readonly apiConfiguration: ApiConfiguration
 	api: ApiHandler
 	private terminalManager: TerminalManager
 	private urlContentFetcher: UrlContentFetcher
@@ -148,6 +149,7 @@ export class Cline {
 		}
 
 		this.taskId = crypto.randomUUID()
+		this.apiConfiguration = apiConfiguration
 		this.api = buildApiHandler(apiConfiguration)
 		this.terminalManager = new TerminalManager()
 		this.urlContentFetcher = new UrlContentFetcher(provider.context)
@@ -961,13 +963,21 @@ export class Cline {
 				cacheWrites = 0,
 				cacheReads = 0,
 			}: ClineApiReqInfo = JSON.parse(previousRequest)
+
 			const totalTokens = tokensIn + tokensOut + cacheWrites + cacheReads
 
-			const trimmedMessages = truncateConversationIfNeeded(
-				this.apiConversationHistory,
+			const modelInfo = this.api.getModel().info
+			const maxTokens = modelInfo.thinking
+				? this.apiConfiguration.modelMaxTokens || modelInfo.maxTokens
+				: modelInfo.maxTokens
+			const contextWindow = modelInfo.contextWindow
+
+			const trimmedMessages = truncateConversationIfNeeded({
+				messages: this.apiConversationHistory,
 				totalTokens,
-				this.api.getModel().info,
-			)
+				maxTokens,
+				contextWindow,
+			})
 
 			if (trimmedMessages !== this.apiConversationHistory) {
 				await this.overwriteApiConversationHistory(trimmedMessages)
@@ -1010,7 +1020,7 @@ export class Cline {
 		} catch (error) {
 			// note that this api_req_failed ask is unique in that we only present this option if the api hasn't streamed any content yet (ie it fails on the first chunk due), as it would allow them to hit a retry button. However if the api failed mid-stream, it could be in any arbitrary state where some tools may have executed, so that error is handled differently and requires cancelling the task entirely.
 			if (alwaysApproveResubmit) {
-				const errorMsg = error.message ?? "Unknown error"
+				const errorMsg = error.error?.metadata?.raw ?? error.message ?? "Unknown error"
 				const baseDelay = requestDelaySeconds || 5
 				const exponentialDelay = Math.ceil(baseDelay * Math.pow(2, retryAttempt))
 				// Wait for the greater of the exponential delay or the rate limit delay

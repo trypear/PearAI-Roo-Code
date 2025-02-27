@@ -691,6 +691,9 @@ export const ChatRowContent = ({
 								width: "60%",
 								marginLeft: "auto",
 								position: "relative",
+								overflow: "hidden",
+								wordBreak: "break-word",
+								overflowWrap: "anywhere",
 							}}>
 							<Tail2 />
 							<div
