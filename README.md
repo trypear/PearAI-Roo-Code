@@ -17,14 +17,15 @@
     ```
     - A `.vsix` file will appear in the `bin/` directory.
 4. **Install** the `.vsix` manually if desired:
+   File name will be after building: pearai-roo-cline-${VERSION}.vsix please make sure to change it manually before trying to install.
     ```bash
     code --install-extension bin/roo-code-4.0.0.vsix
     ```
-5. **Start the webview (Vite/React app with HMR)**:
+6. **Start the webview (Vite/React app with HMR)**:
     ```bash
     npm run dev
     ```
-6. **Debug**:
+7. **Debug**:
     - Press `F5` (or **Run** → **Start Debugging**) in VSCode to open a new session with Roo Code loaded.
 
 Changes to the webview will appear immediately. Changes to the core extension will require a restart of the extension host.
