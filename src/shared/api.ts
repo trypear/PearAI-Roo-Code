@@ -101,7 +101,7 @@ export interface ModelInfo {
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-claude/models
 export type AnthropicModelId = keyof typeof anthropicModels
-export const anthropicDefaultModelId: AnthropicModelId = "claude-3-7-sonnet-20250219"
+export const anthropicDefaultModelId: AnthropicModelId = "claude-3-5-sonnet-20241022"
 export const anthropicModels = {
 	"claude-3-7-sonnet-20250219:thinking": {
 		maxTokens: 64_000,

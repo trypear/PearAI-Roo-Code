@@ -12,7 +12,6 @@ export type SecretKey =
 	| "mistralApiKey"
 	| "unboundApiKey"
 	| "requestyApiKey"
-	| "pearaiApiKey"
 	| "pearai-token"
 	| "pearai-refresh" // Array of custom modes
 

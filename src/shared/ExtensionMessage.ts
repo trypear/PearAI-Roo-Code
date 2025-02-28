@@ -53,7 +53,6 @@ export interface ExtensionMessage {
 		| "historyButtonClicked"
 		| "promptsButtonClicked"
 		| "didBecomeVisible"
-		| "updatePearAIAuth"
 	invoke?: "sendMessage" | "primaryButtonClick" | "secondaryButtonClick" | "setChatBoxMessage"
 	state?: ExtensionState
 	images?: string[]
