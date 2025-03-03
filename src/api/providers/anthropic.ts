@@ -23,6 +23,8 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 	}
 
 	async *createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream {
+		console.dir("AT LEAST I MADE IT HERE6")
+		console.dir(this.getModel().id)
 		let stream: AnthropicStream<Anthropic.Beta.PromptCaching.Messages.RawPromptCachingBetaMessageStreamEvent>
 		const modelId = this.getModel().id
 		switch (modelId) {
@@ -85,7 +87,7 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 								return {
 									headers: {
 										"anthropic-beta": "prompt-caching-2024-07-31",
-										"authorization": `Bearer ${this.options.apiKey}`,
+										authorization: `Bearer ${this.options.apiKey}`,
 									},
 								}
 							default:

@@ -61,8 +61,6 @@ export interface ApiHandlerOptions {
 	includeMaxTokens?: boolean
 	pearaiApiKey?: string
 	pearaiBaseUrl?: string
-	pearaiModelId?: string
-	pearaiModelInfo?: ModelInfo
 	unboundApiKey?: string
 	unboundModelId?: string
 }
@@ -574,18 +572,22 @@ export const deepSeekModels = {
 		maxTokens: 8192,
 		contextWindow: 64_000,
 		supportsImages: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.014, // $0.014 per million tokens
 		outputPrice: 0.28, // $0.28 per million tokens
+		cacheWritesPrice: 0.27, // $0.27 per million tokens (cache miss)
+		cacheReadsPrice: 0.07, // $0.07 per million tokens (cache hit)
 		description: `DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.`,
 	},
 	"deepseek-reasoner": {
 		maxTokens: 8192,
 		contextWindow: 64_000,
 		supportsImages: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.55, // $0.55 per million tokens
 		outputPrice: 2.19, // $2.19 per million tokens
+		cacheWritesPrice: 0.55, // $0.55 per million tokens (cache miss)
+		cacheReadsPrice: 0.14, // $0.14 per million tokens (cache hit)
 		description: `DeepSeek-R1 achieves performance comparable to OpenAI-o1 across math, code, and reasoning tasks.`,
 	},
 } as const satisfies Record<string, ModelInfo>
@@ -627,39 +629,23 @@ export const pearAiDefaultModelId: PearAiModelId = "claude-3-5-sonnet-20241022"
 export const pearAiModels = {
 	"pearai-model": {
 		...anthropicModels["claude-3-5-sonnet-20241022"],
-		inputPrice: anthropicModels["claude-3-5-sonnet-20241022"].inputPrice!,
-		outputPrice: anthropicModels["claude-3-5-sonnet-20241022"].outputPrice!,
-		cacheWritesPrice: anthropicModels["claude-3-5-sonnet-20241022"].cacheWritesPrice!,
-		cacheReadsPrice: anthropicModels["claude-3-5-sonnet-20241022"].cacheReadsPrice!,
 	},
 	"claude-3-5-sonnet-20241022": {
 		...anthropicModels["claude-3-5-sonnet-20241022"],
-		inputPrice: anthropicModels["claude-3-5-sonnet-20241022"].inputPrice!,
-		outputPrice: anthropicModels["claude-3-5-sonnet-20241022"].outputPrice!,
-		cacheWritesPrice: anthropicModels["claude-3-5-sonnet-20241022"].cacheWritesPrice!,
-		cacheReadsPrice: anthropicModels["claude-3-5-sonnet-20241022"].cacheReadsPrice!,
 	},
 	"claude-3-5-haiku-20241022": {
 		...anthropicModels["claude-3-5-haiku-20241022"],
-		inputPrice: anthropicModels["claude-3-5-haiku-20241022"].inputPrice!,
-		outputPrice: anthropicModels["claude-3-5-haiku-20241022"].outputPrice!,
-		cacheWritesPrice: anthropicModels["claude-3-5-haiku-20241022"].cacheWritesPrice!,
-		cacheReadsPrice: anthropicModels["claude-3-5-haiku-20241022"].cacheReadsPrice!,
 	},
 	"deepseek-chat": {
 		...deepSeekModels["deepseek-chat"],
-		inputPrice: deepSeekModels["deepseek-chat"].inputPrice!,
-		outputPrice: deepSeekModels["deepseek-chat"].outputPrice!,
 	},
 	"deepseek-reasoner": {
 		...deepSeekModels["deepseek-reasoner"],
-		inputPrice: deepSeekModels["deepseek-reasoner"].inputPrice!,
-		outputPrice: deepSeekModels["deepseek-reasoner"].outputPrice!,
 	},
 } as const satisfies Record<string, ModelInfo>
 
 // CHANGE AS NEEDED FOR TESTING
 // PROD:
-export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+// export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
 // DEV:
-// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+export const PEARAI_URL = "http://localhost:8000/integrations/cline"

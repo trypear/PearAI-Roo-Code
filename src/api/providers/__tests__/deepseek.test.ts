@@ -149,7 +149,7 @@ describe("DeepSeekHandler", () => {
 			expect(model.info.maxTokens).toBe(8192)
 			expect(model.info.contextWindow).toBe(64_000)
 			expect(model.info.supportsImages).toBe(false)
-			expect(model.info.supportsPromptCache).toBe(false)
+			expect(model.info.supportsPromptCache).toBe(true)
 		})
 
 		it("should return provided model ID with default model info if model does not exist", () => {
