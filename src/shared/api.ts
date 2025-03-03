@@ -621,6 +621,43 @@ export const unboundModels = {
 	"mistral/codestral-latest": mistralModels["codestral-latest"],
 } as const satisfies Record<string, ModelInfo>
 
+// PearAI Models
+export type PearAiModelId = keyof typeof pearAiModels
+export const pearAiDefaultModelId: PearAiModelId = "claude-3-5-sonnet-20241022"
+export const pearAiModels = {
+	"pearai-model": {
+		...anthropicModels["claude-3-5-sonnet-20241022"],
+		inputPrice: anthropicModels["claude-3-5-sonnet-20241022"].inputPrice!,
+		outputPrice: anthropicModels["claude-3-5-sonnet-20241022"].outputPrice!,
+		cacheWritesPrice: anthropicModels["claude-3-5-sonnet-20241022"].cacheWritesPrice!,
+		cacheReadsPrice: anthropicModels["claude-3-5-sonnet-20241022"].cacheReadsPrice!,
+	},
+	"claude-3-5-sonnet-20241022": {
+		...anthropicModels["claude-3-5-sonnet-20241022"],
+		inputPrice: anthropicModels["claude-3-5-sonnet-20241022"].inputPrice!,
+		outputPrice: anthropicModels["claude-3-5-sonnet-20241022"].outputPrice!,
+		cacheWritesPrice: anthropicModels["claude-3-5-sonnet-20241022"].cacheWritesPrice!,
+		cacheReadsPrice: anthropicModels["claude-3-5-sonnet-20241022"].cacheReadsPrice!,
+	},
+	"claude-3-5-haiku-20241022": {
+		...anthropicModels["claude-3-5-haiku-20241022"],
+		inputPrice: anthropicModels["claude-3-5-haiku-20241022"].inputPrice!,
+		outputPrice: anthropicModels["claude-3-5-haiku-20241022"].outputPrice!,
+		cacheWritesPrice: anthropicModels["claude-3-5-haiku-20241022"].cacheWritesPrice!,
+		cacheReadsPrice: anthropicModels["claude-3-5-haiku-20241022"].cacheReadsPrice!,
+	},
+	"deepseek-chat": {
+		...deepSeekModels["deepseek-chat"],
+		inputPrice: deepSeekModels["deepseek-chat"].inputPrice!,
+		outputPrice: deepSeekModels["deepseek-chat"].outputPrice!,
+	},
+	"deepseek-reasoner": {
+		...deepSeekModels["deepseek-reasoner"],
+		inputPrice: deepSeekModels["deepseek-reasoner"].inputPrice!,
+		outputPrice: deepSeekModels["deepseek-reasoner"].outputPrice!,
+	},
+} as const satisfies Record<string, ModelInfo>
+
 // CHANGE AS NEEDED FOR TESTING
 // PROD:
 export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
