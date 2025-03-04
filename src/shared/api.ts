@@ -625,27 +625,40 @@ export const unboundModels = {
 
 // PearAI Models
 export type PearAiModelId = keyof typeof pearAiModels
-export const pearAiDefaultModelId: PearAiModelId = "claude-3-5-sonnet-20241022"
-export const pearAiModels = {
+export let pearAiDefaultModelId: PearAiModelId = "pearai-model"
+export let pearAiModels: Record<string, ModelInfo> = {}
+const defaultPearAiModels = {
 	"pearai-model": {
 		...anthropicModels["claude-3-5-sonnet-20241022"],
-	},
-	"claude-3-5-sonnet-20241022": {
-		...anthropicModels["claude-3-5-sonnet-20241022"],
-	},
-	"claude-3-5-haiku-20241022": {
-		...anthropicModels["claude-3-5-haiku-20241022"],
-	},
-	"deepseek-chat": {
-		...deepSeekModels["deepseek-chat"],
-	},
-	"deepseek-reasoner": {
-		...deepSeekModels["deepseek-reasoner"],
 	},
 } as const satisfies Record<string, ModelInfo>
 
 // CHANGE AS NEEDED FOR TESTING
 // PROD:
-// export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
 // DEV:
-export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+
+// Dynamically fetch models from PearAI server
+export const getPearAiModels = async () => {
+	try {
+		const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+		if (!res.ok) throw new Error("Failed to fetch models")
+		const config = await res.json()
+		if (config.models && Object.keys(config.models).length > 0) {
+			pearAiModels = config.models
+			pearAiDefaultModelId = config.defaultModelId || "pearai-model"
+			return pearAiModels
+		} else {
+			pearAiModels = defaultPearAiModels
+			return defaultPearAiModels
+		}
+	} catch (error) {
+		console.error("Error fetching PearAI models:", error)
+		pearAiModels = defaultPearAiModels
+		return defaultPearAiModels
+	}
+}
+
+// Initialize models when module loads
+getPearAiModels()
