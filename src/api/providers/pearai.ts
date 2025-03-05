@@ -3,8 +3,18 @@ import { ApiHandlerOptions, PEARAI_URL, ModelInfo } from "../../shared/api"
 import { AnthropicHandler } from "./anthropic"
 import { DeepSeekHandler } from "./deepseek"
 
+interface PearAiModelsResponse {
+	models: {
+		[key: string]: {
+			underlyingModel?: string
+			[key: string]: any
+		}
+	}
+	defaultModelId: string
+}
+
 export class PearAiHandler {
-	private handler: AnthropicHandler | DeepSeekHandler
+	private handler!: AnthropicHandler | DeepSeekHandler
 
 	constructor(options: ApiHandlerOptions) {
 		if (!options.pearaiApiKey) {
@@ -21,22 +31,57 @@ export class PearAiHandler {
 			})
 			throw new Error("PearAI API key not found. Please login to PearAI.")
 		}
-		console.dir("AT LEAST I MADE IT HERE")
-		console.dir(options.apiModelId)
-		console.dir("AT LEAST I MADE IT HERE2")
 
-		// Determine which handler to use based on model
+		this.initializeHandler(options).catch((error) => {
+			console.error("Failed to initialize PearAI handler:", error)
+			throw error
+		})
+	}
+
+	private async initializeHandler(options: ApiHandlerOptions): Promise<void> {
 		const modelId = options.apiModelId || ""
 
-		console.dir(modelId)
-		if (modelId.startsWith("claude") || modelId === "pearai-model") {
-			console.dir("AT LEAST I MADE IT HERE3")
+		if (modelId === "pearai-model") {
+			try {
+				const response = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+				if (!response.ok) {
+					throw new Error(`Failed to fetch models: ${response.statusText}`)
+				}
+				const data = (await response.json()) as PearAiModelsResponse
+				const underlyingModel = data.models[modelId]?.underlyingModel || "claude-3-5-sonnet-20241022"
+
+				if (underlyingModel.startsWith("deepseek")) {
+					this.handler = new DeepSeekHandler({
+						...options,
+						deepSeekApiKey: options.pearaiApiKey,
+						deepSeekBaseUrl: PEARAI_URL,
+						apiModelId: underlyingModel,
+					})
+				} else {
+					// Default to Claude
+					this.handler = new AnthropicHandler({
+						...options,
+						apiKey: options.pearaiApiKey,
+						anthropicBaseUrl: PEARAI_URL,
+						apiModelId: underlyingModel,
+					})
+				}
+			} catch (error) {
+				console.error("Error fetching PearAI models:", error)
+				// Default to Claude if there's an error
+				this.handler = new AnthropicHandler({
+					...options,
+					apiKey: options.pearaiApiKey,
+					anthropicBaseUrl: PEARAI_URL,
+					apiModelId: "claude-3-5-sonnet-20241022",
+				})
+			}
+		} else if (modelId.startsWith("claude")) {
 			this.handler = new AnthropicHandler({
 				...options,
 				apiKey: options.pearaiApiKey,
 				anthropicBaseUrl: PEARAI_URL,
 			})
-			console.dir("AT LEAST I MADE IT HERE DONE")
 		} else if (modelId.startsWith("deepseek")) {
 			this.handler = new DeepSeekHandler({
 				...options,
@@ -47,6 +92,7 @@ export class PearAiHandler {
 			throw new Error(`Unsupported model: ${modelId}`)
 		}
 	}
+
 	getModel(): { id: string; info: ModelInfo } {
 		const baseModel = this.handler.getModel()
 		return {
@@ -61,15 +107,8 @@ export class PearAiHandler {
 		}
 	}
 
-	// Proxy all handler methods
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {
-		console.dir("AT LEAST I MADE IT HERE5")
-		console.dir(this.handler)
-		// Start generator but don't consume it yet
 		const generator = this.handler.createMessage(systemPrompt, messages)
-		console.dir("Got generator from handler")
-
-		// Now yield from the generator (this will execute code in the generator)
 		yield* generator
 	}
 
