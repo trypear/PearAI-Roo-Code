@@ -1,68 +1,24 @@
 import { DeepSeekHandler } from "../deepseek"
 import { ApiHandlerOptions, deepSeekDefaultModelId } from "../../../shared/api"
-import OpenAI from "openai"
 import { Anthropic } from "@anthropic-ai/sdk"
 
-// Mock OpenAI client
-const mockCreate = jest.fn()
-jest.mock("openai", () => {
-	return {
-		__esModule: true,
-		default: jest.fn().mockImplementation(() => ({
-			chat: {
-				completions: {
-					create: mockCreate.mockImplementation(async (options) => {
-						if (!options.stream) {
-							return {
-								id: "test-completion",
-								choices: [
-									{
-										message: { role: "assistant", content: "Test response", refusal: null },
-										finish_reason: "stop",
-										index: 0,
-									},
-								],
-								usage: {
-									prompt_tokens: 10,
-									completion_tokens: 5,
-									total_tokens: 15,
-								},
-							}
-						}
+// Mock fetch
+const mockFetch = jest.fn()
+global.fetch = mockFetch
 
-						// Return async iterator for streaming
-						return {
-							[Symbol.asyncIterator]: async function* () {
-								yield {
-									choices: [
-										{
-											delta: { content: "Test response" },
-											index: 0,
-										},
-									],
-									usage: null,
-								}
-								yield {
-									choices: [
-										{
-											delta: {},
-											index: 0,
-										},
-									],
-									usage: {
-										prompt_tokens: 10,
-										completion_tokens: 5,
-										total_tokens: 15,
-									},
-								}
-							},
-						}
-					}),
-				},
-			},
-		})),
-	}
-})
+const mockReadableStream = (chunks: any[]) => {
+	let index = 0
+	return new ReadableStream({
+		pull(controller) {
+			if (index >= chunks.length) {
+				controller.close()
+				return
+			}
+			const chunk = chunks[index++]
+			controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(chunk)}\n\n`))
+		},
+	})
+}
 
 describe("DeepSeekHandler", () => {
 	let handler: DeepSeekHandler
@@ -75,7 +31,7 @@ describe("DeepSeekHandler", () => {
 			deepSeekBaseUrl: "https://api.deepseek.com/v1",
 		}
 		handler = new DeepSeekHandler(mockOptions)
-		mockCreate.mockClear()
+		mockFetch.mockClear()
 	})
 
 	describe("constructor", () => {
@@ -107,37 +63,6 @@ describe("DeepSeekHandler", () => {
 				deepSeekBaseUrl: undefined,
 			})
 			expect(handlerWithoutBaseUrl).toBeInstanceOf(DeepSeekHandler)
-			// The base URL is passed to OpenAI client internally
-			expect(OpenAI).toHaveBeenCalledWith(
-				expect.objectContaining({
-					baseURL: "https://api.deepseek.com/v1",
-				}),
-			)
-		})
-
-		it("should use custom base URL if provided", () => {
-			const customBaseUrl = "https://custom.deepseek.com/v1"
-			const handlerWithCustomUrl = new DeepSeekHandler({
-				...mockOptions,
-				deepSeekBaseUrl: customBaseUrl,
-			})
-			expect(handlerWithCustomUrl).toBeInstanceOf(DeepSeekHandler)
-			// The custom base URL is passed to OpenAI client
-			expect(OpenAI).toHaveBeenCalledWith(
-				expect.objectContaining({
-					baseURL: customBaseUrl,
-				}),
-			)
-		})
-
-		it("should set includeMaxTokens to true", () => {
-			// Create a new handler and verify OpenAI client was called with includeMaxTokens
-			new DeepSeekHandler(mockOptions)
-			expect(OpenAI).toHaveBeenCalledWith(
-				expect.objectContaining({
-					apiKey: mockOptions.deepSeekApiKey,
-				}),
-			)
 		})
 	})
 
@@ -149,7 +74,7 @@ describe("DeepSeekHandler", () => {
 			expect(model.info.maxTokens).toBe(8192)
 			expect(model.info.contextWindow).toBe(64_000)
 			expect(model.info.supportsImages).toBe(false)
-			expect(model.info.supportsPromptCache).toBe(false)
+			expect(model.info.supportsPromptCache).toBe(true)
 		})
 
 		it("should return provided model ID with default model info if model does not exist", () => {
@@ -188,6 +113,30 @@ describe("DeepSeekHandler", () => {
 			},
 		]
 
+		beforeEach(() => {
+			mockFetch.mockImplementation(() =>
+				Promise.resolve({
+					ok: true,
+					body: mockReadableStream([
+						{
+							choices: [{ delta: { content: "Test response" } }],
+							usage: null,
+						},
+						{
+							choices: [{ delta: {} }],
+							usage: {
+								prompt_tokens: 10,
+								completion_tokens: 5,
+								cache_creation_input_tokens: 8,
+								cache_read_input_tokens: 2,
+							},
+						},
+					]),
+					headers: new Headers({ "Content-Type": "text/event-stream" }),
+				}),
+			)
+		})
+
 		it("should handle streaming responses", async () => {
 			const stream = handler.createMessage(systemPrompt, messages)
 			const chunks: any[] = []
@@ -199,9 +148,21 @@ describe("DeepSeekHandler", () => {
 			const textChunks = chunks.filter((chunk) => chunk.type === "text")
 			expect(textChunks).toHaveLength(1)
 			expect(textChunks[0].text).toBe("Test response")
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				"https://api.deepseek.com/v1/chat/completions",
+				expect.objectContaining({
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: "Bearer test-api-key",
+					},
+					body: expect.stringContaining('"stream":true'),
+				}),
+			)
 		})
 
-		it("should include usage information", async () => {
+		it("should include usage information with cache tokens", async () => {
 			const stream = handler.createMessage(systemPrompt, messages)
 			const chunks: any[] = []
 			for await (const chunk of stream) {
@@ -212,6 +173,70 @@ describe("DeepSeekHandler", () => {
 			expect(usageChunks.length).toBeGreaterThan(0)
 			expect(usageChunks[0].inputTokens).toBe(10)
 			expect(usageChunks[0].outputTokens).toBe(5)
+			expect(usageChunks[0].cacheWriteTokens).toBe(8)
+			expect(usageChunks[0].cacheReadTokens).toBe(2)
+		})
+
+		it("should handle reasoner model format", async () => {
+			const reasonerHandler = new DeepSeekHandler({
+				...mockOptions,
+				apiModelId: "deepseek-reasoner",
+			})
+			const stream = reasonerHandler.createMessage(systemPrompt, messages)
+			for await (const _ of stream) {
+				// consume stream
+			}
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.any(String),
+				expect.objectContaining({
+					body: expect.stringContaining("deepseek-reasoner"),
+				}),
+			)
+		})
+
+		it("should handle API errors", async () => {
+			mockFetch.mockImplementationOnce(() =>
+				Promise.resolve({
+					ok: false,
+					statusText: "Bad Request",
+				}),
+			)
+
+			await expect(async () => {
+				const stream = handler.createMessage(systemPrompt, messages)
+				for await (const _ of stream) {
+					// consume stream
+				}
+			}).rejects.toThrow("DeepSeek API error: Bad Request")
+		})
+	})
+
+	describe("completePrompt", () => {
+		it("should handle non-streaming completion", async () => {
+			mockFetch.mockImplementationOnce(() =>
+				Promise.resolve({
+					ok: true,
+					json: () =>
+						Promise.resolve({
+							choices: [{ message: { content: "Test completion" } }],
+						}),
+				}),
+			)
+
+			const result = await handler.completePrompt("Test prompt")
+			expect(result).toBe("Test completion")
+		})
+
+		it("should handle API errors in completion", async () => {
+			mockFetch.mockImplementationOnce(() =>
+				Promise.resolve({
+					ok: false,
+					statusText: "Bad Request",
+				}),
+			)
+
+			await expect(handler.completePrompt("Test prompt")).rejects.toThrow("DeepSeek API error: Bad Request")
 		})
 	})
 })

@@ -34,6 +34,9 @@ import {
 	vertexModels,
 	unboundDefaultModelId,
 	unboundModels,
+	pearAiModels,
+	pearAiDefaultModelId,
+	PearAiModelId,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 import { useExtensionState } from "../../context/ExtensionStateContext"
@@ -1375,8 +1378,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 				selectedProvider !== "openrouter" &&
 				selectedProvider !== "openai" &&
 				selectedProvider !== "ollama" &&
-				selectedProvider !== "lmstudio" &&
-				selectedProvider !== "pearai" && (
+				selectedProvider !== "lmstudio" && (
 					<>
 						<div className="dropdown-container">
 							<label htmlFor="model-id">
@@ -1390,6 +1392,7 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 							{selectedProvider === "deepseek" && createDropdown(deepSeekModels)}
 							{selectedProvider === "mistral" && createDropdown(mistralModels)}
 							{selectedProvider === "unbound" && createDropdown(unboundModels)}
+							{selectedProvider === "pearai" && createDropdown(pearAiModels)}
 						</div>
 
 						<ModelInfoView
@@ -1400,7 +1403,6 @@ const ApiOptions = ({ apiErrorMessage, modelIdErrorMessage }: ApiOptionsProps) =
 						/>
 					</>
 				)}
-
 			{modelIdErrorMessage && (
 				<p
 					style={{
@@ -1628,19 +1630,19 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 				},
 			}
 		case "pearai": {
-			// Get the base Anthropic model info
-			const baseModelInfo = anthropicModels[anthropicDefaultModelId]
-			const pearaiModelInfo: ModelInfo = {
-				...baseModelInfo,
-				inputPrice: baseModelInfo.inputPrice,
-				outputPrice: baseModelInfo.outputPrice,
-				cacheWritesPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheWritesPrice : undefined,
-				cacheReadsPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheReadsPrice : undefined,
+			let selectedModelId: string
+			let selectedModelInfo: ModelInfo
+			if (modelId && modelId in pearAiModels) {
+				selectedModelId = modelId as PearAiModelId
+				selectedModelInfo = pearAiModels[modelId as PearAiModelId]
+			} else {
+				selectedModelId = pearAiDefaultModelId
+				selectedModelInfo = pearAiModels[pearAiDefaultModelId]
 			}
 			return {
 				selectedProvider: provider,
-				selectedModelId: apiConfiguration?.pearaiModelId || "pearai_model",
-				selectedModelInfo: pearaiModelInfo,
+				selectedModelId,
+				selectedModelInfo,
 			}
 		}
 		case "unbound":

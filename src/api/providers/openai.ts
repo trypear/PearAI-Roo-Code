@@ -12,6 +12,11 @@ import { convertToOpenAiMessages } from "../transform/openai-format"
 import { convertToR1Format } from "../transform/r1-format"
 import { ApiStream } from "../transform/stream"
 
+interface OpenAIUsage extends OpenAI.CompletionUsage {
+	cache_creation_input_tokens?: number
+	cache_read_input_tokens?: number
+}
+
 export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 	protected options: ApiHandlerOptions
 	private client: OpenAI
@@ -78,10 +83,13 @@ export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 					}
 				}
 				if (chunk.usage) {
+					let usage = chunk.usage as OpenAIUsage
 					yield {
 						type: "usage",
-						inputTokens: chunk.usage.prompt_tokens || 0,
-						outputTokens: chunk.usage.completion_tokens || 0,
+						inputTokens: usage.prompt_tokens || 0,
+						outputTokens: usage.completion_tokens || 0,
+						cacheReadTokens: usage.cache_read_input_tokens || 0,
+						cacheWriteTokens: usage.cache_creation_input_tokens || 0,
 					}
 				}
 			}
@@ -105,10 +113,13 @@ export class OpenAiHandler implements ApiHandler, SingleCompletionHandler {
 				type: "text",
 				text: response.choices[0]?.message.content || "",
 			}
+			let usage = response.usage as OpenAIUsage
 			yield {
 				type: "usage",
-				inputTokens: response.usage?.prompt_tokens || 0,
-				outputTokens: response.usage?.completion_tokens || 0,
+				inputTokens: usage?.prompt_tokens || 0,
+				outputTokens: usage?.completion_tokens || 0,
+				cacheReadTokens: usage?.cache_read_input_tokens || 0,
+				cacheWriteTokens: usage?.cache_creation_input_tokens || 0,
 			}
 		}
 	}
