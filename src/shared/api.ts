@@ -72,8 +72,6 @@ export interface ApiHandlerOptions {
 	modelMaxTokens?: number
 	pearaiApiKey?: string
 	pearaiBaseUrl?: string
-	pearaiModelId?: string
-	pearaiModelInfo?: ModelInfo
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -807,8 +805,11 @@ export let pearAiModels: Record<string, ModelInfo> = defaultPearAiModels
 // DEV:
 export const PEARAI_URL = "http://localhost:8000/integrations/cline"
 
-// Dynamically fetch models from PearAI server
-export const getPearAiModels = async () => {
+// Promise to track initialization status
+export let modelsInitialized: Promise<Record<string, ModelInfo>>
+
+// Immediately invoked function to initialize models
+modelsInitialized = (async () => {
 	try {
 		const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
 		if (!res.ok) throw new Error("Failed to fetch models")
@@ -816,11 +817,17 @@ export const getPearAiModels = async () => {
 		if (config.models && Object.keys(config.models).length > 0) {
 			pearAiModels = config.models
 			pearAiDefaultModelId = config.defaultModelId || "pearai-model"
-			console.dir("IM HER1111")
+			console.log("Models successfully loaded from server")
 			console.dir(pearAiModels)
+
+			window.dispatchEvent(
+				new CustomEvent("pearAiModelsUpdated", {
+					detail: { models: pearAiModels, defaultModelId: pearAiDefaultModelId },
+				}),
+			)
 			return pearAiModels
 		} else {
-			console.dir("IM HER2222")
+			console.log("Using default models (no models returned from server)")
 			pearAiModels = defaultPearAiModels
 			return defaultPearAiModels
 		}
@@ -829,7 +836,15 @@ export const getPearAiModels = async () => {
 		pearAiModels = defaultPearAiModels
 		return defaultPearAiModels
 	}
+})()
+
+// Helper function to ensure models are loaded before operations that depend on them
+export const ensureModelsLoaded = async () => {
+	return await modelsInitialized
 }
 
-// Initialize models when module loads
-getPearAiModels()
+// This will log after models are initialized
+modelsInitialized.then(() => {
+	console.log("Models initialization complete")
+	console.dir(pearAiModels)
+})

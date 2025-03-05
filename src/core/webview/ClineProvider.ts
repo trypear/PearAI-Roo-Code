@@ -1691,9 +1691,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			requestyModelInfo,
 			modelTemperature,
 			modelMaxTokens,
-			pearaiBaseUrl,
-			pearaiModelId,
-			pearaiModelInfo,
 		} = apiConfiguration
 		await Promise.all([
 			this.updateGlobalState("apiProvider", apiProvider),
@@ -1743,9 +1740,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.updateGlobalState("requestyModelInfo", requestyModelInfo),
 			this.updateGlobalState("modelTemperature", modelTemperature),
 			this.updateGlobalState("modelMaxTokens", modelMaxTokens),
-			await this.updateGlobalState("pearaiBaseUrl", PEARAI_URL),
-			await this.updateGlobalState("pearaiModelId", pearaiModelId),
-			await this.updateGlobalState("pearaiModelInfo", pearaiModelInfo),
 		])
 		if (this.cline) {
 			this.cline.api = buildApiHandler(apiConfiguration)
@@ -2190,8 +2184,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			pearaiApiKey,
 			pearaiRefreshKey,
 			pearaiBaseUrl,
-			pearaiModelId,
-			pearaiModelInfo,
 			mistralCodestralUrl,
 			azureApiVersion,
 			openAiStreamingEnabled,
@@ -2279,8 +2271,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.getSecret("pearai-token") as Promise<string | undefined>,
 			this.getSecret("pearai-refresh") as Promise<string | undefined>,
 			this.getGlobalState("pearaiBaseUrl") as Promise<string | undefined>,
-			this.getGlobalState("pearaiModelId") as Promise<string | undefined>,
-			this.getGlobalState("pearaiModelInfo") as Promise<ModelInfo | undefined>,
 			this.getGlobalState("mistralCodestralUrl") as Promise<string | undefined>,
 			this.getGlobalState("azureApiVersion") as Promise<string | undefined>,
 			this.getGlobalState("openAiStreamingEnabled") as Promise<boolean | undefined>,
@@ -2384,8 +2374,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				mistralApiKey,
 				pearaiApiKey,
 				pearaiBaseUrl,
-				pearaiModelId,
-				pearaiModelInfo,
 				mistralCodestralUrl,
 				azureApiVersion,
 				openAiStreamingEnabled,

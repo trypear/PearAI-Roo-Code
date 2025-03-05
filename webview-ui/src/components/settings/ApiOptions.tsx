@@ -53,22 +53,6 @@ import { validateApiConfiguration, validateModelId } from "@/utils/validate"
 import { ApiErrorMessage } from "./ApiErrorMessage"
 import { ThinkingBudget } from "./ThinkingBudget"
 
-const modelsByProvider: Record<string, Record<string, ModelInfo>> = {
-	anthropic: anthropicModels,
-	bedrock: bedrockModels,
-	vertex: vertexModels,
-	gemini: geminiModels,
-	"openai-native": openAiNativeModels,
-	deepseek: deepSeekModels,
-	mistral: mistralModels,
-	pearai: pearAiModels,
-}
-
-console.dir("IM HERE888")
-console.dir(pearAiModels)
-console.dir("IM HERE9999")
-console.dir(anthropicModels)
-
 interface ApiOptionsProps {
 	uriScheme: string | undefined
 	apiConfiguration: ApiConfiguration
@@ -106,6 +90,8 @@ const ApiOptions = ({
 		[requestyDefaultModelId]: requestyDefaultModelInfo,
 	})
 
+	const [pearAiModelsState, setPearAiModelsState] = useState<Record<string, ModelInfo>>(pearAiModels)
+
 	const [openAiModels, setOpenAiModels] = useState<Record<string, ModelInfo> | null>(null)
 
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
@@ -130,8 +116,8 @@ const ApiOptions = ({
 	)
 
 	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(
-		() => normalizeApiConfiguration(apiConfiguration),
-		[apiConfiguration],
+		() => normalizeApiConfiguration(apiConfiguration, pearAiModelsState),
+		[apiConfiguration, pearAiModelsState],
 	)
 
 	// Debounced refresh model updates, only executed 250ms after the user
@@ -228,10 +214,62 @@ const ApiOptions = ({
 					setVsCodeLmModels(newModels)
 				}
 				break
+			case "state":
+				if (message.state?.apiConfiguration?.pearaiApiKey) {
+					setPearAiModelsState(pearAiModels)
+				}
+				break
 		}
 	}, [])
 
+	// Update PearAI models when API key changes
+	useEffect(() => {
+		if (apiConfiguration?.pearaiApiKey) {
+			setPearAiModelsState(pearAiModels)
+		}
+	}, [apiConfiguration?.pearaiApiKey])
+
 	useEvent("message", onMessage)
+
+	type ApiProvider =
+		| "anthropic"
+		| "bedrock"
+		| "vertex"
+		| "gemini"
+		| "openai-native"
+		| "deepseek"
+		| "mistral"
+		| "pearai"
+		| "openrouter"
+		| "glama"
+		| "unbound"
+		| "requesty"
+		| "openai"
+		| "ollama"
+		| "lmstudio"
+		| "vscode-lm"
+
+	const modelsByProvider = useMemo<Record<ApiProvider, Record<string, ModelInfo>>>(
+		() => ({
+			anthropic: anthropicModels,
+			bedrock: bedrockModels,
+			vertex: vertexModels,
+			gemini: geminiModels,
+			"openai-native": openAiNativeModels,
+			deepseek: deepSeekModels,
+			mistral: mistralModels,
+			pearai: pearAiModelsState,
+			openrouter: openRouterModels,
+			glama: glamaModels,
+			unbound: unboundModels,
+			requesty: requestyModels,
+			openai: openAiModels || {},
+			ollama: {},
+			lmstudio: {},
+			"vscode-lm": {},
+		}),
+		[pearAiModelsState, openRouterModels, glamaModels, unboundModels, requestyModels, openAiModels],
+	)
 
 	const selectedProviderModelOptions: DropdownOption[] = useMemo(
 		() =>
@@ -244,7 +282,7 @@ const ApiOptions = ({
 						})),
 					]
 				: [],
-		[selectedProvider],
+		[selectedProvider, modelsByProvider],
 	)
 
 	return (
@@ -1465,7 +1503,10 @@ export function getOpenRouterAuthUrl(uriScheme?: string) {
 	return `https://openrouter.ai/auth?callback_url=${uriScheme || "vscode"}://rooveterinaryinc.roo-cline/openrouter`
 }
 
-export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
+export function normalizeApiConfiguration(
+	apiConfiguration?: ApiConfiguration,
+	pearAiModelsState?: Record<string, ModelInfo>,
+) {
 	const provider = apiConfiguration?.apiProvider || "anthropic"
 	const modelId = apiConfiguration?.apiModelId
 
@@ -1552,22 +1593,8 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 					supportsImages: false, // VSCode LM API currently doesn't support images.
 				},
 			}
-		case "pearai": {
-			// Get the base Anthropic model info
-			const baseModelInfo = anthropicModels[anthropicDefaultModelId]
-			const pearaiModelInfo: ModelInfo = {
-				...baseModelInfo,
-				inputPrice: baseModelInfo.inputPrice,
-				outputPrice: baseModelInfo.outputPrice,
-				cacheWritesPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheWritesPrice : undefined,
-				cacheReadsPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheReadsPrice : undefined,
-			}
-			return {
-				selectedProvider: provider,
-				selectedModelId: apiConfiguration?.pearaiModelId || "pearai_model",
-				selectedModelInfo: pearaiModelInfo,
-			}
-		}
+		case "pearai":
+			return getProviderData(pearAiModelsState || pearAiModels, pearAiDefaultModelId)
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
 	}
