@@ -698,18 +698,22 @@ export const deepSeekModels = {
 		maxTokens: 8192,
 		contextWindow: 64_000,
 		supportsImages: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.014, // $0.014 per million tokens
 		outputPrice: 0.28, // $0.28 per million tokens
+		cacheWritesPrice: 0.27, // $0.27 per million tokens (cache miss)
+		cacheReadsPrice: 0.07, // $0.07 per million tokens (cache hit)
 		description: `DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.`,
 	},
 	"deepseek-reasoner": {
 		maxTokens: 8192,
 		contextWindow: 64_000,
 		supportsImages: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.55, // $0.55 per million tokens
 		outputPrice: 2.19, // $2.19 per million tokens
+		cacheWritesPrice: 0.55, // $0.55 per million tokens (cache miss)
+		cacheReadsPrice: 0.14, // $0.14 per million tokens (cache hit)
 		description: `DeepSeek-R1 achieves performance comparable to OpenAI-o1 across math, code, and reasoning tasks.`,
 	},
 } as const satisfies Record<string, ModelInfo>
@@ -786,8 +790,46 @@ export const unboundDefaultModelInfo: ModelInfo = {
 	cacheWritesPrice: 3.75,
 	cacheReadsPrice: 0.3,
 }
+
+// PearAI Models
+export type PearAiModelId = keyof typeof pearAiModels
+export let pearAiDefaultModelId: PearAiModelId = "pearai-model"
+const defaultPearAiModels = {
+	"pearai-model": {
+		...anthropicModels["claude-3-5-sonnet-20241022"],
+	},
+} as const satisfies Record<string, ModelInfo>
+export let pearAiModels: Record<string, ModelInfo> = defaultPearAiModels
+
 // CHANGE AS NEEDED FOR TESTING
 // PROD:
-export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+// export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
 // DEV:
-// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+
+// Dynamically fetch models from PearAI server
+export const getPearAiModels = async () => {
+	try {
+		const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+		if (!res.ok) throw new Error("Failed to fetch models")
+		const config = await res.json()
+		if (config.models && Object.keys(config.models).length > 0) {
+			pearAiModels = config.models
+			pearAiDefaultModelId = config.defaultModelId || "pearai-model"
+			console.dir("IM HER1111")
+			console.dir(pearAiModels)
+			return pearAiModels
+		} else {
+			console.dir("IM HER2222")
+			pearAiModels = defaultPearAiModels
+			return defaultPearAiModels
+		}
+	} catch (error) {
+		console.error("Error fetching PearAI models:", error)
+		pearAiModels = defaultPearAiModels
+		return defaultPearAiModels
+	}
+}
+
+// Initialize models when module loads
+getPearAiModels()

@@ -38,6 +38,9 @@ import {
 	unboundDefaultModelInfo,
 	requestyDefaultModelId,
 	requestyDefaultModelInfo,
+	pearAiModels,
+	pearAiDefaultModelId,
+	PearAiModelId,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 
@@ -58,7 +61,13 @@ const modelsByProvider: Record<string, Record<string, ModelInfo>> = {
 	"openai-native": openAiNativeModels,
 	deepseek: deepSeekModels,
 	mistral: mistralModels,
+	pearai: pearAiModels,
 }
+
+console.dir("IM HERE888")
+console.dir(pearAiModels)
+console.dir("IM HERE9999")
+console.dir(anthropicModels)
 
 interface ApiOptionsProps {
 	uriScheme: string | undefined
