@@ -67,9 +67,7 @@ const App = () => {
 
 	// Do not conditionally load ChatView, it's expensive and there's state we
 	// don't want to lose (user input, disableInput, askResponse promise, etc.)
-	return showWelcome ? (
-		<WelcomeView />
-	) : (
+	return (
 		<>
 			{tab === "settings" && <SettingsView ref={settingsRef} onDone={() => setTab("chat")} />}
 			{tab === "history" && <HistoryView onDone={() => switchTab("chat")} />}
