@@ -8,8 +8,8 @@ import { ApiStream } from "../transform/stream"
 interface DeepSeekUsage {
 	prompt_tokens: number
 	completion_tokens: number
-	cache_creation_input_tokens?: number
-	cache_read_input_tokens?: number
+	prompt_cache_miss_tokens?: number
+	prompt_cache_hit_tokens?: number
 }
 
 export class DeepSeekHandler implements ApiHandler, SingleCompletionHandler {
@@ -99,12 +99,13 @@ export class DeepSeekHandler implements ApiHandler, SingleCompletionHandler {
 
 						if (chunk.usage) {
 							const usage = chunk.usage as DeepSeekUsage
+							let inputTokens = (usage.prompt_tokens || 0) - (usage.prompt_cache_hit_tokens || 0)
 							yield {
 								type: "usage",
-								inputTokens: usage.prompt_tokens || 0,
+								inputTokens: inputTokens,
 								outputTokens: usage.completion_tokens || 0,
-								cacheReadTokens: usage.cache_read_input_tokens || 0,
-								cacheWriteTokens: usage.cache_creation_input_tokens || 0,
+								cacheReadTokens: usage.prompt_cache_hit_tokens || 0,
+								cacheWriteTokens: usage.prompt_cache_miss_tokens || 0,
 							}
 						}
 					} catch (error) {
