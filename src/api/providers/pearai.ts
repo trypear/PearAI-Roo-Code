@@ -49,7 +49,6 @@ export class PearAiHandler {
 				}
 				const data = (await response.json()) as PearAiModelsResponse
 				const underlyingModel = data.models[modelId]?.underlyingModel || "claude-3-5-sonnet-20241022"
-
 				if (underlyingModel.startsWith("deepseek")) {
 					this.handler = new DeepSeekHandler({
 						...options,

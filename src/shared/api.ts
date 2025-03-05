@@ -72,6 +72,8 @@ export interface ApiHandlerOptions {
 	modelMaxTokens?: number
 	pearaiApiKey?: string
 	pearaiBaseUrl?: string
+	pearaiModelId?: string
+	pearaiModelInfo?: ModelInfo
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -818,11 +820,6 @@ modelsInitialized = (async () => {
 			pearAiModels = config.models
 			pearAiDefaultModelId = config.defaultModelId || "pearai-model"
 			console.log("Models successfully loaded from server")
-			window.dispatchEvent(
-				new CustomEvent("pearAiModelsUpdated", {
-					detail: { models: pearAiModels, defaultModelId: pearAiDefaultModelId },
-				}),
-			)
 			return pearAiModels
 		} else {
 			console.log("Using default models (no models returned from server)")
@@ -844,4 +841,5 @@ export const ensureModelsLoaded = async () => {
 // This will log after models are initialized
 modelsInitialized.then(() => {
 	console.log("Models initialization complete")
+	console.dir(pearAiModels)
 })
