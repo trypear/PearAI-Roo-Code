@@ -801,9 +801,9 @@ export let pearAiModels: Record<string, ModelInfo> = defaultPearAiModels
 
 // CHANGE AS NEEDED FOR TESTING
 // PROD:
-// export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
 // DEV:
-export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
 
 // Promise to track initialization status
 export let modelsInitialized: Promise<Record<string, ModelInfo>>
@@ -818,8 +818,6 @@ modelsInitialized = (async () => {
 			pearAiModels = config.models
 			pearAiDefaultModelId = config.defaultModelId || "pearai-model"
 			console.log("Models successfully loaded from server")
-			console.dir(pearAiModels)
-
 			window.dispatchEvent(
 				new CustomEvent("pearAiModelsUpdated", {
 					detail: { models: pearAiModels, defaultModelId: pearAiDefaultModelId },
@@ -846,5 +844,4 @@ export const ensureModelsLoaded = async () => {
 // This will log after models are initialized
 modelsInitialized.then(() => {
 	console.log("Models initialization complete")
-	console.dir(pearAiModels)
 })
