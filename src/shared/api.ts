@@ -792,9 +792,9 @@ export const unboundDefaultModelInfo: ModelInfo = {
 }
 // CHANGE AS NEEDED FOR TESTING
 // PROD:
-// export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
 // DEV:
-export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
 
 // PearAI
 export type PearAiModelId = keyof typeof pearAiModels
@@ -812,7 +812,7 @@ export const pearAiDefaultModelInfo: ModelInfo = {
 		"DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.",
 }
 
-export let pearAiModels = {
+export const pearAiModels = {
 	"pearai-model": {
 		maxTokens: 8192,
 		contextWindow: 64000,
@@ -826,27 +826,3 @@ export let pearAiModels = {
 			"DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.",
 	},
 } as const satisfies Record<string, ModelInfo>
-
-// Initialize models with a Promise
-export let modelsInitialized: Promise<Record<string, ModelInfo>>
-
-modelsInitialized = (async () => {
-	try {
-		const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
-		if (!res.ok) throw new Error("Failed to fetch models")
-		const config = await res.json()
-
-		if (config.models && Object.keys(config.models).length > 0) {
-			console.log("Models successfully loaded from server")
-			console.dir(config.models)
-			pearAiModels = config.models
-			return config.models
-		} else {
-			console.log("Using default models (no models returned from server)")
-			return { [pearAiDefaultModelId]: pearAiDefaultModelInfo }
-		}
-	} catch (error) {
-		console.error("Error fetching PearAI models:", error)
-		return { [pearAiDefaultModelId]: pearAiDefaultModelInfo }
-	}
-})()

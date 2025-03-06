@@ -1,4 +1,4 @@
-import { Fragment, memo, useCallback, useEffect, useMemo, useState } from "react"
+import { Fragment, memo, useCallback, useEffect, useMemo, useState, useRef } from "react"
 import { useEvent, useDebounce, useInterval } from "react-use"
 import { Checkbox, Dropdown, Pane, type DropdownOption } from "vscrui"
 import {
@@ -40,6 +40,8 @@ import {
 	requestyDefaultModelInfo,
 	pearAiModels,
 	pearAiDefaultModelId,
+	pearAiDefaultModelInfo,
+	PEARAI_URL,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 
@@ -51,17 +53,6 @@ import { ModelPicker } from "./ModelPicker"
 import { validateApiConfiguration, validateModelId } from "@/utils/validate"
 import { ApiErrorMessage } from "./ApiErrorMessage"
 import { ThinkingBudget } from "./ThinkingBudget"
-
-const modelsByProvider: Record<string, Record<string, ModelInfo>> = {
-	anthropic: anthropicModels,
-	bedrock: bedrockModels,
-	vertex: vertexModels,
-	gemini: geminiModels,
-	"openai-native": openAiNativeModels,
-	deepseek: deepSeekModels,
-	mistral: mistralModels,
-	pearai: pearAiModels,
-}
 
 interface ApiOptionsProps {
 	uriScheme: string | undefined
@@ -101,6 +92,9 @@ const ApiOptions = ({
 	})
 
 	const [openAiModels, setOpenAiModels] = useState<Record<string, ModelInfo> | null>(null)
+	const [pearAiModels, setPearAiModels] = useState<Record<string, ModelInfo>>({
+		[pearAiDefaultModelId]: pearAiDefaultModelInfo,
+	})
 
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
@@ -123,10 +117,16 @@ const ApiOptions = ({
 		[setApiConfigurationField],
 	)
 
-	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(
-		() => normalizeApiConfiguration(apiConfiguration),
-		[apiConfiguration],
-	)
+	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(() => {
+		const result = normalizeApiConfiguration(apiConfiguration)
+		if (result.selectedProvider === "pearai") {
+			return {
+				...result,
+				selectedModelInfo: pearAiModels[result.selectedModelId] || pearAiModels[pearAiDefaultModelId],
+			}
+		}
+		return result
+	}, [apiConfiguration, pearAiModels])
 
 	// Debounced refresh model updates, only executed 250ms after the user
 	// stops typing.
@@ -166,6 +166,28 @@ const ApiOptions = ({
 			apiConfiguration?.lmStudioBaseUrl,
 		],
 	)
+
+	// Fetch PearAI models when provider is selected
+	useEffect(() => {
+		if (selectedProvider === "pearai") {
+			const fetchPearAiModels = async () => {
+				try {
+					const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+					if (!res.ok) throw new Error("Failed to fetch models")
+					const config = await res.json()
+
+					if (config.models && Object.keys(config.models).length > 0) {
+						console.log("Models successfully loaded from server")
+						setPearAiModels(config.models)
+					}
+				} catch (error) {
+					console.error("Error fetching PearAI models:", error)
+				}
+			}
+
+			fetchPearAiModels()
+		}
+	}, [selectedProvider, setPearAiModels])
 
 	useEffect(() => {
 		const apiValidationResult =
@@ -227,6 +249,28 @@ const ApiOptions = ({
 
 	useEvent("message", onMessage)
 
+	const modelsByProvider = useMemo(
+		() => ({
+			anthropic: anthropicModels,
+			bedrock: bedrockModels,
+			vertex: vertexModels,
+			gemini: geminiModels,
+			"openai-native": openAiNativeModels,
+			deepseek: deepSeekModels,
+			mistral: mistralModels,
+			pearai: pearAiModels,
+			glama: glamaModels,
+			openrouter: openRouterModels,
+			unbound: unboundModels,
+			requesty: requestyModels,
+			openai: openAiModels || {},
+			ollama: {},
+			lmstudio: {},
+			"vscode-lm": {},
+		}),
+		[pearAiModels, glamaModels, openRouterModels, unboundModels, requestyModels, openAiModels],
+	)
+
 	const selectedProviderModelOptions: DropdownOption[] = useMemo(
 		() =>
 			modelsByProvider[selectedProvider]
@@ -238,7 +282,7 @@ const ApiOptions = ({
 						})),
 					]
 				: [],
-		[selectedProvider],
+		[selectedProvider, modelsByProvider],
 	)
 
 	return (
