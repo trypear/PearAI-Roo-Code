@@ -38,6 +38,8 @@ import {
 	unboundDefaultModelInfo,
 	requestyDefaultModelId,
 	requestyDefaultModelInfo,
+	pearAiModels,
+	pearAiDefaultModelId,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 
@@ -58,6 +60,7 @@ const modelsByProvider: Record<string, Record<string, ModelInfo>> = {
 	"openai-native": openAiNativeModels,
 	deepseek: deepSeekModels,
 	mistral: mistralModels,
+	pearai: pearAiModels,
 }
 
 interface ApiOptionsProps {
@@ -1544,20 +1547,7 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 				},
 			}
 		case "pearai": {
-			// Get the base Anthropic model info
-			const baseModelInfo = anthropicModels[anthropicDefaultModelId]
-			const pearaiModelInfo: ModelInfo = {
-				...baseModelInfo,
-				inputPrice: baseModelInfo.inputPrice,
-				outputPrice: baseModelInfo.outputPrice,
-				cacheWritesPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheWritesPrice : undefined,
-				cacheReadsPrice: baseModelInfo.cacheWritesPrice ? baseModelInfo.cacheReadsPrice : undefined,
-			}
-			return {
-				selectedProvider: provider,
-				selectedModelId: apiConfiguration?.pearaiModelId || "pearai_model",
-				selectedModelInfo: pearaiModelInfo,
-			}
+			return getProviderData(pearAiModels, pearAiDefaultModelId)
 		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
