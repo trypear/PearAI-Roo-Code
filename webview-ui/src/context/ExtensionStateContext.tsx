@@ -13,6 +13,7 @@ import {
 	requestyDefaultModelId,
 	requestyDefaultModelInfo,
 	PEARAI_URL,
+	pearAiModels,
 } from "../../../src/shared/api"
 import { vscode } from "../utils/vscode"
 import { convertTextMateToHljs } from "../utils/textMateToHljs"
@@ -153,6 +154,8 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 							apiConfiguration: {
 								apiProvider: "pearai",
 								pearaiBaseUrl: PEARAI_URL,
+								pearaiModelId: "pearai-model",
+								pearaiModelInfo: pearAiModels["pearai-model"],
 							},
 						})
 					}
