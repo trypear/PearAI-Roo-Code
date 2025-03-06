@@ -32,9 +32,17 @@ export class PearAiHandler {
 			throw new Error("PearAI API key not found. Please login to PearAI.")
 		}
 
+		// Initialize with a default handler synchronously
+		this.handler = new AnthropicHandler({
+			...options,
+			apiKey: options.pearaiApiKey,
+			anthropicBaseUrl: PEARAI_URL,
+			apiModelId: "claude-3-5-sonnet-20241022",
+		})
+
+		// Then try to initialize the correct handler asynchronously
 		this.initializeHandler(options).catch((error) => {
 			console.error("Failed to initialize PearAI handler:", error)
-			throw error
 		})
 	}
 
@@ -94,6 +102,7 @@ export class PearAiHandler {
 	}
 
 	getModel(): { id: string; info: ModelInfo } {
+		console.dir(this.handler)
 		const baseModel = this.handler.getModel()
 		return {
 			id: baseModel.id,
