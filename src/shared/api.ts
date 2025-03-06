@@ -792,14 +792,27 @@ export const unboundDefaultModelInfo: ModelInfo = {
 }
 // CHANGE AS NEEDED FOR TESTING
 // PROD:
-export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+// export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
 // DEV:
-// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+export const PEARAI_URL = "http://localhost:8000/integrations/cline"
 
 // PearAI
 export type PearAiModelId = keyof typeof pearAiModels
 export const pearAiDefaultModelId: PearAiModelId = "pearai-model"
-export const pearAiModels = {
+export const pearAiDefaultModelInfo: ModelInfo = {
+	maxTokens: 8192,
+	contextWindow: 64000,
+	supportsImages: false,
+	supportsPromptCache: true,
+	inputPrice: 0.014,
+	outputPrice: 0.28,
+	cacheWritesPrice: 0.27,
+	cacheReadsPrice: 0.07,
+	description:
+		"DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.",
+}
+
+export let pearAiModels = {
 	"pearai-model": {
 		maxTokens: 8192,
 		contextWindow: 64000,
@@ -812,48 +825,28 @@ export const pearAiModels = {
 		description:
 			"DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.",
 	},
-	"claude-3-5-sonnet-20241022": {
-		maxTokens: 8192,
-		contextWindow: 200000,
-		supportsImages: true,
-		supportsComputerUse: true,
-		supportsPromptCache: true,
-		inputPrice: 3.0,
-		outputPrice: 15.0,
-		cacheWritesPrice: 3.75,
-		cacheReadsPrice: 0.3,
-	},
-	"claude-3-5-haiku-20241022": {
-		maxTokens: 8192,
-		contextWindow: 200000,
-		supportsImages: false,
-		supportsPromptCache: true,
-		inputPrice: 1.0,
-		outputPrice: 5.0,
-		cacheWritesPrice: 1.25,
-		cacheReadsPrice: 0.1,
-	},
-	"deepseek-chat": {
-		maxTokens: 8192,
-		contextWindow: 64000,
-		supportsImages: false,
-		supportsPromptCache: true,
-		inputPrice: 0.014,
-		outputPrice: 0.28,
-		cacheWritesPrice: 0.27,
-		cacheReadsPrice: 0.07,
-		description:
-			"DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.",
-	},
-	"deepseek-reasoner": {
-		maxTokens: 8192,
-		contextWindow: 64000,
-		supportsImages: false,
-		supportsPromptCache: true,
-		inputPrice: 0.55,
-		outputPrice: 2.19,
-		cacheWritesPrice: 0.55,
-		cacheReadsPrice: 0.14,
-		description: "DeepSeek-R1 achieves performance comparable to OpenAI-o1 across math, code, and reasoning tasks.",
-	},
 } as const satisfies Record<string, ModelInfo>
+
+// Initialize models with a Promise
+export let modelsInitialized: Promise<Record<string, ModelInfo>>
+
+modelsInitialized = (async () => {
+	try {
+		const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+		if (!res.ok) throw new Error("Failed to fetch models")
+		const config = await res.json()
+
+		if (config.models && Object.keys(config.models).length > 0) {
+			console.log("Models successfully loaded from server")
+			console.dir(config.models)
+			pearAiModels = config.models
+			return config.models
+		} else {
+			console.log("Using default models (no models returned from server)")
+			return { [pearAiDefaultModelId]: pearAiDefaultModelInfo }
+		}
+	} catch (error) {
+		console.error("Error fetching PearAI models:", error)
+		return { [pearAiDefaultModelId]: pearAiDefaultModelInfo }
+	}
+})()
