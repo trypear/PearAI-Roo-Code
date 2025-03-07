@@ -809,7 +809,7 @@ export const pearAiDefaultModelInfo: ModelInfo = {
 	cacheWritesPrice: 0.27,
 	cacheReadsPrice: 0.07,
 	description:
-		"DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.",
+		"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
 }
 
 export const pearAiModels = {
@@ -823,6 +823,6 @@ export const pearAiModels = {
 		cacheWritesPrice: 0.27,
 		cacheReadsPrice: 0.07,
 		description:
-			"DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.",
+			"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
 	},
 } as const satisfies Record<string, ModelInfo>
