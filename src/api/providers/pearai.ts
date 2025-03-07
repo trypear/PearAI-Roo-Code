@@ -108,6 +108,11 @@ export class PearAiHandler {
 			id: baseModel.id,
 			info: {
 				...baseModel.info,
+				// Inherit all capabilities from the underlying model
+				supportsImages: baseModel.info.supportsImages,
+				supportsComputerUse: baseModel.info.supportsComputerUse,
+				supportsPromptCache: baseModel.info.supportsPromptCache,
+				// Apply PearAI's price markup
 				inputPrice: (baseModel.info.inputPrice || 0) * 1.03,
 				outputPrice: (baseModel.info.outputPrice || 0) * 1.03,
 				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice * 1.03 : undefined,
