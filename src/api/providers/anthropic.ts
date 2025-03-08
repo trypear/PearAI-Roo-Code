@@ -105,19 +105,11 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 						// prompt caching: https://x.com/alexalbert__/status/1823751995901272068
 						// https://github.com/anthropics/anthropic-sdk-typescript?tab=readme-ov-file#default-headers
 						// https://github.com/anthropics/anthropic-sdk-typescript/commit/c920b77fc67bd839bfeb6716ceab9d7c9bbe7393
-						switch (modelId) {
-							case "claude-3-5-sonnet-20241022":
-							case "claude-3-5-haiku-20241022":
-							case "claude-3-opus-20240229":
-							case "claude-3-haiku-20240307":
-								return {
-									headers: {
-										"anthropic-beta": "prompt-caching-2024-07-31",
-										authorization: `Bearer ${this.options.apiKey}`,
-									},
-								}
-							default:
-								return undefined
+						return {
+							headers: {
+								"anthropic-beta": "prompt-caching-2024-07-31",
+								authorization: `Bearer ${this.options.apiKey}`,
+							},
 						}
 					})(),
 				)
