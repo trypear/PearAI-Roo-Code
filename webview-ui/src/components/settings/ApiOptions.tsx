@@ -118,7 +118,7 @@ const ApiOptions = ({
 	)
 
 	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(() => {
-		const result = normalizeApiConfiguration(apiConfiguration)
+		const result = normalizeApiConfiguration(apiConfiguration, pearAiModels)
 		if (result.selectedProvider === "pearai") {
 			return {
 				...result,
@@ -1503,7 +1503,10 @@ export function getOpenRouterAuthUrl(uriScheme?: string) {
 	return `https://openrouter.ai/auth?callback_url=${uriScheme || "vscode"}://rooveterinaryinc.roo-cline/openrouter`
 }
 
-export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
+export function normalizeApiConfiguration(
+	apiConfiguration?: ApiConfiguration,
+	pearAiModelsQuery?: Record<string, ModelInfo>,
+) {
 	const provider = apiConfiguration?.apiProvider || "anthropic"
 	const modelId = apiConfiguration?.apiModelId
 
@@ -1591,7 +1594,7 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 				},
 			}
 		case "pearai": {
-			return getProviderData(pearAiModels, pearAiDefaultModelId)
+			return getProviderData(pearAiModelsQuery || pearAiModels, pearAiDefaultModelId)
 		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)

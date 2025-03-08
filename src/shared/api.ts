@@ -802,8 +802,11 @@ export const pearAiDefaultModelId: PearAiModelId = "pearai-model"
 export const pearAiDefaultModelInfo: ModelInfo = {
 	maxTokens: 8192,
 	contextWindow: 64000,
-	supportsImages: false,
+	// Default values for required fields, but actual values will be inherited from underlying model
 	supportsPromptCache: true,
+	supportsImages: false,
+	supportsComputerUse: false,
+	// Base pricing
 	inputPrice: 0.014,
 	outputPrice: 0.28,
 	cacheWritesPrice: 0.27,
@@ -816,8 +819,11 @@ export const pearAiModels = {
 	"pearai-model": {
 		maxTokens: 8192,
 		contextWindow: 64000,
-		supportsImages: false,
+		// Default values for required fields, but actual values will be inherited from underlying model
 		supportsPromptCache: true,
+		supportsImages: false,
+		supportsComputerUse: false,
+		// Base pricing
 		inputPrice: 0.014,
 		outputPrice: 0.28,
 		cacheWritesPrice: 0.27,
