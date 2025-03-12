@@ -14,6 +14,7 @@ import {
 import { McpServer, McpTool } from "../../../../src/shared/mcp"
 import { findLast } from "../../../../src/shared/array"
 import { combineApiRequests } from "../../../../src/shared/combineApiRequests"
+import { ModelInfo, pearAiDefaultModelId, pearAiDefaultModelInfo, PEARAI_URL } from "../../../../src/shared/api"
 import { combineCommandSequences } from "../../../../src/shared/combineCommandSequences"
 import { getApiMetrics } from "../../../../src/shared/getApiMetrics"
 import { useExtensionState } from "../../context/ExtensionStateContext"
@@ -463,9 +464,35 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		startNewTask()
 	}, [startNewTask])
 
+	const [pearAiModels, setPearAiModels] = useState<Record<string, ModelInfo>>({
+		[pearAiDefaultModelId]: pearAiDefaultModelInfo,
+	})
+
+	// Fetch PearAI models when provider is selected
+	useEffect(() => {
+		if (apiConfiguration?.apiProvider === "pearai") {
+			const fetchPearAiModels = async () => {
+				try {
+					const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+					if (!res.ok) throw new Error("Failed to fetch models")
+					const config = await res.json()
+
+					if (config.models && Object.keys(config.models).length > 0) {
+						console.log("Models successfully loaded from server")
+						setPearAiModels(config.models)
+					}
+				} catch (error) {
+					console.error("Error fetching PearAI models:", error)
+				}
+			}
+
+			fetchPearAiModels()
+		}
+	}, [apiConfiguration?.apiProvider])
+
 	const { selectedModelInfo } = useMemo(() => {
-		return normalizeApiConfiguration(apiConfiguration)
-	}, [apiConfiguration])
+		return normalizeApiConfiguration(apiConfiguration, pearAiModels)
+	}, [apiConfiguration, pearAiModels])
 
 	const selectImages = useCallback(() => {
 		vscode.postMessage({ type: "selectImages" })

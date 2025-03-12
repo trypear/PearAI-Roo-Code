@@ -821,7 +821,7 @@ export const pearAiModels = {
 		contextWindow: 64000,
 		// Default values for required fields, but actual values will be inherited from underlying model
 		supportsPromptCache: true,
-		supportsImages: true,
+		supportsImages: false,
 		supportsComputerUse: false,
 		// Base pricing
 		inputPrice: 0.014,
