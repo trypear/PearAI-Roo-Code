@@ -48,6 +48,7 @@ import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 import { vscode } from "../../utils/vscode"
 import VSCodeButtonLink from "../common/VSCodeButtonLink"
 import { ModelInfoView } from "./ModelInfoView"
+import { usePearAiModels } from "../../hooks/usePearAiModels"
 import { DROPDOWN_Z_INDEX } from "./styles"
 import { ModelPicker } from "./ModelPicker"
 import { validateApiConfiguration, validateModelId } from "@/utils/validate"
@@ -92,9 +93,7 @@ const ApiOptions = ({
 	})
 
 	const [openAiModels, setOpenAiModels] = useState<Record<string, ModelInfo> | null>(null)
-	const [pearAiModels, setPearAiModels] = useState<Record<string, ModelInfo>>({
-		[pearAiDefaultModelId]: pearAiDefaultModelInfo,
-	})
+	const pearAiModels = usePearAiModels(apiConfiguration)
 
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
@@ -166,28 +165,6 @@ const ApiOptions = ({
 			apiConfiguration?.lmStudioBaseUrl,
 		],
 	)
-
-	// Fetch PearAI models when provider is selected
-	useEffect(() => {
-		if (selectedProvider === "pearai") {
-			const fetchPearAiModels = async () => {
-				try {
-					const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
-					if (!res.ok) throw new Error("Failed to fetch models")
-					const config = await res.json()
-
-					if (config.models && Object.keys(config.models).length > 0) {
-						console.log("Models successfully loaded from server")
-						setPearAiModels(config.models)
-					}
-				} catch (error) {
-					console.error("Error fetching PearAI models:", error)
-				}
-			}
-
-			fetchPearAiModels()
-		}
-	}, [selectedProvider, setPearAiModels])
 
 	useEffect(() => {
 		const apiValidationResult =
