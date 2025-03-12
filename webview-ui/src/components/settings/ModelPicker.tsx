@@ -6,6 +6,7 @@ import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem }
 import { ApiConfiguration, ModelInfo } from "../../../../src/shared/api"
 
 import { normalizeApiConfiguration } from "./ApiOptions"
+import { usePearAiModels } from "../../hooks/usePearAiModels"
 import { ThinkingBudget } from "./ThinkingBudget"
 import { ModelInfoView } from "./ModelInfoView"
 
@@ -45,9 +46,11 @@ export const ModelPicker = ({
 
 	const modelIds = useMemo(() => Object.keys(models ?? {}).sort((a, b) => a.localeCompare(b)), [models])
 
+	const pearAiModels = usePearAiModels(apiConfiguration)
+
 	const { selectedModelId, selectedModelInfo } = useMemo(
-		() => normalizeApiConfiguration(apiConfiguration),
-		[apiConfiguration],
+		() => normalizeApiConfiguration(apiConfiguration, pearAiModels),
+		[apiConfiguration, pearAiModels],
 	)
 
 	const onSelect = useCallback(

@@ -21,6 +21,7 @@ import { useExtensionState } from "../../context/ExtensionStateContext"
 import { vscode } from "../../utils/vscode"
 import HistoryPreview from "../history/HistoryPreview"
 import { normalizeApiConfiguration } from "../settings/ApiOptions"
+import { usePearAiModels } from "../../hooks/usePearAiModels"
 import Announcement from "./Announcement"
 import BrowserSessionRow from "./BrowserSessionRow"
 import ChatRow from "./ChatRow"
@@ -464,31 +465,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		startNewTask()
 	}, [startNewTask])
 
-	const [pearAiModels, setPearAiModels] = useState<Record<string, ModelInfo>>({
-		[pearAiDefaultModelId]: pearAiDefaultModelInfo,
-	})
-
-	// Fetch PearAI models when provider is selected
-	useEffect(() => {
-		if (apiConfiguration?.apiProvider === "pearai") {
-			const fetchPearAiModels = async () => {
-				try {
-					const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
-					if (!res.ok) throw new Error("Failed to fetch models")
-					const config = await res.json()
-
-					if (config.models && Object.keys(config.models).length > 0) {
-						console.log("Models successfully loaded from server")
-						setPearAiModels(config.models)
-					}
-				} catch (error) {
-					console.error("Error fetching PearAI models:", error)
-				}
-			}
-
-			fetchPearAiModels()
-		}
-	}, [apiConfiguration?.apiProvider])
+	const pearAiModels = usePearAiModels(apiConfiguration)
 
 	const { selectedModelInfo } = useMemo(() => {
 		return normalizeApiConfiguration(apiConfiguration, pearAiModels)
