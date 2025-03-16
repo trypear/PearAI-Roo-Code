@@ -123,7 +123,31 @@ export class PearAiHandler {
 
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {
 		const generator = this.handler.createMessage(systemPrompt, messages)
-		yield* generator
+		let warningMsg = ""
+
+		for await (const chunk of generator) {
+			console.dir(chunk)
+			if (chunk.type === "text" && chunk.metadata?.ui_only) {
+				console.dir("HOLY SHIT IM HERE")
+				warningMsg += chunk.metadata?.content
+				console.dir("WARING MESSAGE")
+				console.dir(warningMsg)
+				continue
+			}
+			yield chunk
+		}
+
+		if (warningMsg) {
+			if (warningMsg.includes("pay-as-you-go") || true) {
+				vscode.window.showInformationMessage(warningMsg, "View Pay-As-You-Go").then((selection) => {
+					if (selection === "View Pay-As-You-Go") {
+						vscode.env.openExternal(vscode.Uri.parse("https://trypear.ai/pay-as-you-go"))
+					}
+				})
+			} else {
+				vscode.window.showInformationMessage(warningMsg)
+			}
+		}
 	}
 
 	async completePrompt(prompt: string): Promise<string> {
