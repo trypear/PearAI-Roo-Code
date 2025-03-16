@@ -81,9 +81,15 @@ export class DeepSeekHandler implements ApiHandler, SingleCompletionHandler {
 
 					try {
 						const chunk = JSON.parse(data)
+						// Handle regular delta format
 						const delta = chunk.choices[0]?.delta ?? {}
-
-						if (delta.content) {
+						if (delta.type === "ui") {
+							yield {
+								type: "text",
+								text: delta.metadata?.content || "",
+								metadata: delta.metadata,
+							}
+						} else if (delta.content) {
 							yield {
 								type: "text",
 								text: delta.content,

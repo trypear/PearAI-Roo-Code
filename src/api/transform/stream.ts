@@ -4,6 +4,10 @@ export type ApiStreamChunk = ApiStreamTextChunk | ApiStreamUsageChunk | ApiStrea
 export interface ApiStreamTextChunk {
 	type: "text"
 	text: string
+	metadata?: {
+		ui_only?: boolean
+		content?: string
+	}
 }
 
 export interface ApiStreamReasoningChunk {

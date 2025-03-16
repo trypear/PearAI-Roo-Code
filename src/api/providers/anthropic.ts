@@ -178,6 +178,27 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 
 							yield { type: "text", text: chunk.content_block.text }
 							break
+						default: {
+							const block = chunk.content_block as {
+								type: string
+								text?: string
+								metadata?: { ui_only?: boolean; content?: string }
+							}
+
+							if (block.type === "ui") {
+								yield {
+									type: "text",
+									text: block.text || "",
+									metadata: block.metadata,
+								}
+							} else {
+								yield {
+									type: "text",
+									text: block.text || "",
+								}
+							}
+							break
+						}
 					}
 					break
 				case "content_block_delta":
