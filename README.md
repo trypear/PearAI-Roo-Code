@@ -7,19 +7,18 @@
     ```bash
     git clone https://github.com/RooVetGit/Roo-Code.git
     ```
-2. **Install dependencies**:
+2. **Download esbuild problem matchers**
+   Install https://market.trypear.ai/items?itemName=connor4312.esbuild-problem-matchers
+3. **Install dependencies**:
     ```bash
     npm run install:all
     ```
-3. **Build** the extension:
+4. **Build** the extension:
     ```bash
     npm run build
     ```
     - A `.vsix` file will appear in the `bin/` directory.
-4. **Install** the `.vsix` manually if desired:
-    ```bash
-    code --install-extension bin/roo-code-4.0.0.vsix
-    ```
+
 5. **Start the webview (Vite/React app with HMR)**:
     ```bash
     npm run dev
@@ -30,6 +29,11 @@
 Changes to the webview will appear immediately. Changes to the core extension will require a restart of the extension host.
 
 We use [changesets](https://github.com/changesets/changesets) for versioning and publishing. Check our `CHANGELOG.md` for release notes.
+
+ **Install** the `.vsix` manually if desired:
+    ```bash
+    code --install-extension bin/roo-code-4.0.0.vsix
+    ```
 
 
 ## License
