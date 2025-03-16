@@ -128,17 +128,14 @@ export class PearAiHandler {
 		for await (const chunk of generator) {
 			console.dir(chunk)
 			if (chunk.type === "text" && chunk.metadata?.ui_only) {
-				console.dir("HOLY SHIT IM HERE")
 				warningMsg += chunk.metadata?.content
-				console.dir("WARING MESSAGE")
-				console.dir(warningMsg)
 				continue
 			}
 			yield chunk
 		}
 
 		if (warningMsg) {
-			if (warningMsg.includes("pay-as-you-go") || true) {
+			if (warningMsg.includes("pay-as-you-go")) {
 				vscode.window.showInformationMessage(warningMsg, "View Pay-As-You-Go").then((selection) => {
 					if (selection === "View Pay-As-You-Go") {
 						vscode.env.openExternal(vscode.Uri.parse("https://trypear.ai/pay-as-you-go"))
