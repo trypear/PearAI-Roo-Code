@@ -77,6 +77,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	constructor(
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
+		public viewType: "pearai.roo.agentChat" | "pearai.roo.creatorOverlayView" = "pearai.roo.agentChat",
 	) {
 		this.outputChannel.appendLine("ClineProvider instantiated")
 		ClineProvider.activeInstances.add(this)
@@ -414,6 +415,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				window.$RefreshReg$ = () => {}
 				window.$RefreshSig$ = () => (type) => type
 				window.__vite_plugin_react_preamble_installed__ = true
+				window.viewType = "${this.viewType}";
 			</script>
 		`
 
@@ -510,6 +512,9 @@ export class ClineProvider implements vscode.WebviewViewProvider {
             <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}'; connect-src ${webview.cspSource} https://stingray-app-gb2an.ondigitalocean.app;">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			<link href="${codiconsUri}" rel="stylesheet" />
+			<script nonce="${nonce}" type="module">
+				window.viewType = "${this.viewType}";
+			</script>
             <title>Roo Code</title>
           </head>
           <body>
@@ -1541,6 +1546,12 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 								),
 							),
 						)
+						break
+					case "pearAiCloseCreatorInterface":
+						await vscode.commands.executeCommand("workbench.action.closeCreatorView")
+						break
+					case "pearAiHideCreatorLoadingOverlay":
+						await vscode.commands.executeCommand("workbench.action.hideCreatorLoadingOverlay")
 						break
 				}
 			},
