@@ -67,6 +67,14 @@ export function activate(context: vscode.ExtensionContext) {
 			console.dir(data)
 			context.secrets.store("pearai-token", data.accessToken)
 			context.secrets.store("pearai-refresh", data.refreshToken)
+			// Update MCP server with new token
+			const provider = await ClineProvider.getInstance()
+			if (provider) {
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.updatePearAiApiKey(data.accessToken)
+				}
+			}
 			vscode.commands.executeCommand("roo-cline.plusButtonClicked")
 		}),
 	)
@@ -76,6 +84,14 @@ export function activate(context: vscode.ExtensionContext) {
 			console.dir("Logged out of PearAI:")
 			context.secrets.delete("pearai-token")
 			context.secrets.delete("pearai-refresh")
+			// Clear MCP server token
+			const provider = await ClineProvider.getInstance()
+			if (provider) {
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.clearPearAiApiKey()
+				}
+			}
 		}),
 	)
 

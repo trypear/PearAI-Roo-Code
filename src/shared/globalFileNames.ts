@@ -4,6 +4,6 @@ export const GlobalFileNames = {
 	glamaModels: "glama_models.json",
 	openRouterModels: "openrouter_models.json",
 	requestyModels: "requesty_models.json",
-	mcpSettings: "cline_mcp_settings.json",
+	mcpSettings: "pearai_agent_mcp_settings.json",
 	unboundModels: "unbound_models.json",
 }
