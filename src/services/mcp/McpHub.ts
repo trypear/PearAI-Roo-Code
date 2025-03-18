@@ -162,9 +162,6 @@ export class McpHub {
 
 			// Fetch default settings
 			const defaultSettings = await this.fetchDefaultSettings()
-
-			console.dir(defaultSettings)
-
 			// Only add new servers from default settings that don't exist in current settings
 			const mergedServers = { ...(config.mcpServers || {}) }
 			for (const [serverName, serverConfig] of Object.entries(defaultSettings)) {
