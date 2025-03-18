@@ -36,7 +36,7 @@ export class McpServerManager {
 			try {
 				// Double-check instance in case it was created while we were waiting
 				if (!this.instance) {
-					this.instance = new McpHub(provider)
+					this.instance = new McpHub(provider, context)
 					// Store a unique identifier in global state to track the primary instance
 					await context.globalState.update(this.GLOBAL_STATE_KEY, Date.now().toString())
 				}
