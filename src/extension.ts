@@ -84,6 +84,14 @@ export function activate(context: vscode.ExtensionContext) {
 			console.dir("Logged out of PearAI:")
 			context.secrets.delete("pearai-token")
 			context.secrets.delete("pearai-refresh")
+			// Clear MCP server token
+			const provider = await ClineProvider.getInstance()
+			if (provider) {
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.clearPearAiApiKey()
+				}
+			}
 		}),
 	)
 

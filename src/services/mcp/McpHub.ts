@@ -505,6 +505,29 @@ export class McpHub {
 		})
 	}
 
+	public async clearPearAiApiKey(): Promise<void> {
+		try {
+			const settingsPath = await this.getMcpSettingsFilePath()
+			const content = await fs.readFile(settingsPath, "utf-8")
+			const config = JSON.parse(content)
+
+			if (config.mcpServers?.pearai) {
+				config.mcpServers.pearai = {
+					...config.mcpServers.pearai,
+					args: ["pearai-mcp", "<PEARAI_API_KEY>"],
+				}
+
+				await fs.writeFile(settingsPath, JSON.stringify(config, null, 2))
+				await this.updateServerConnections(config.mcpServers)
+				vscode.window.showInformationMessage("PearAI API key cleared successfully")
+			}
+		} catch (error) {
+			console.error("Failed to clear PearAI API key:", error)
+			vscode.window.showErrorMessage("Failed to clear PearAI API key")
+			throw error
+		}
+	}
+
 	public async updatePearAiApiKey(apiKey: string): Promise<void> {
 		try {
 			const settingsPath = await this.getMcpSettingsFilePath()
