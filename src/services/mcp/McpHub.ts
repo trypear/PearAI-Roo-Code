@@ -1,4 +1,5 @@
 import { Client } from "@modelcontextprotocol/sdk/client/index.js"
+import { PEARAI_URL } from "../../shared/api"
 import { StdioClientTransport, StdioServerParameters } from "@modelcontextprotocol/sdk/client/stdio.js"
 import {
 	CallToolResultSchema,
@@ -98,7 +99,7 @@ export class McpHub {
 				mcpSettingsFilePath,
 				`{
   "mcpServers": {
-    
+
   }
 }`,
 			)
@@ -136,12 +137,46 @@ export class McpHub {
 		)
 	}
 
+	private async fetchDefaultSettings(): Promise<Record<string, any>> {
+		try {
+			const response = await fetch(`${PEARAI_URL}/getDefaultAgentMCPSettings`)
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`)
+			}
+			const data = await response.json()
+			if (data && data.mcpServers) {
+				return data.mcpServers
+			}
+			return {}
+		} catch (error) {
+			console.error("Failed to fetch default MCP settings:", error)
+			return {}
+		}
+	}
+
 	private async initializeMcpServers(): Promise<void> {
 		try {
 			const settingsPath = await this.getMcpSettingsFilePath()
 			const content = await fs.readFile(settingsPath, "utf-8")
 			const config = JSON.parse(content)
-			await this.updateServerConnections(config.mcpServers || {})
+
+			// Fetch default settings
+			const defaultSettings = await this.fetchDefaultSettings()
+
+			console.dir(defaultSettings)
+
+			// Only add new servers from default settings that don't exist in current settings
+			const mergedServers = { ...(config.mcpServers || {}) }
+			for (const [serverName, serverConfig] of Object.entries(defaultSettings)) {
+				if (!mergedServers[serverName]) {
+					mergedServers[serverName] = serverConfig
+				}
+			}
+
+			// Update the settings file with merged settings
+			await fs.writeFile(settingsPath, JSON.stringify({ mcpServers: mergedServers }, null, 2))
+
+			await this.updateServerConnections(mergedServers)
 		} catch (error) {
 			console.error("Failed to initialize MCP servers:", error)
 		}
