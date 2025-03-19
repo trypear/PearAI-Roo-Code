@@ -25,6 +25,8 @@ export interface WebviewMessage {
 		| "alwaysAllowExecute"
 		| "webviewDidLaunch"
 		| "newTask"
+		| "newCreatorModeTask"
+		| "creatorModePlannedTaskSubmit"
 		| "askResponse"
 		| "clearTask"
 		| "didShowAnnouncement"

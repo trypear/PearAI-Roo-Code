@@ -194,6 +194,8 @@ export interface ClineSayTool {
 		| "searchFiles"
 		| "switchMode"
 		| "newTask"
+		| "newCreatorModeTask"
+		| "creatorModePlannedTaskSubmit"
 	path?: string
 	diff?: string
 	content?: string

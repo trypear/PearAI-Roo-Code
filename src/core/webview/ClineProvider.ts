@@ -740,6 +740,15 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						// initializing new instance of Cline will make sure that any agentically running promises in old instance don't affect our new task. this essentially creates a fresh slate for the new task
 						await this.initClineWithTask(message.text, message.images)
 						break
+					case "newCreatorModeTask":
+						// TODO: Get back the plan from the AI model
+						// Return the plan to the UI to be edited
+
+						break
+					case "creatorModePlannedTaskSubmit":
+						// TODO: Trigger the "newTask" flow flow, initialising cline with a task
+						// Go into the planned mode shizz
+						break
 					case "apiConfiguration":
 						if (message.apiConfiguration) {
 							await this.updateApiConfiguration(message.apiConfiguration)
@@ -1343,6 +1352,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 							try {
 								await this.configManager.saveConfig(message.text, message.apiConfiguration)
 								const listApiConfig = await this.configManager.listConfig()
+
 								await this.updateGlobalState("listApiConfigMeta", listApiConfig)
 							} catch (error) {
 								this.outputChannel.appendLine(
