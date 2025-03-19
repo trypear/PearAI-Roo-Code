@@ -48,6 +48,7 @@ import { Cline } from "../Cline"
 import { openMention } from "../mentions"
 import { getNonce } from "./getNonce"
 import { getUri } from "./getUri"
+import { PearAiHandler } from "../../api/providers/pearai"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -73,6 +74,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	private latestAnnouncementId = "jan-21-2025-custom-modes" // update to some unique identifier when we add a new announcement
 	configManager: ConfigManager
 	customModesManager: CustomModesManager
+	private proprietaryContext: string[]
 
 	constructor(
 		readonly context: vscode.ExtensionContext,
@@ -318,7 +320,9 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		this.outputChannel.appendLine("Webview view resolved")
 	}
 
-	public async initClineWithTask(task?: string, images?: string[]) {
+	public async initClineWithTask(task?: string, images?: string[], proprietaryContext?: ("CreatorMode" | string)[]) {
+		this.proprietaryContext = proprietaryContext ?? []
+		// TODO - MUST DO BEFORE MERGE - WE NEED TO HANDLE THE PROPRIETARY CONTEXT
 		await this.clearTask()
 		const {
 			apiConfiguration,
@@ -743,11 +747,58 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 					case "newCreatorModeTask":
 						// TODO: Get back the plan from the AI model
 						// Return the plan to the UI to be edited
+						const { apiConfiguration } = await this.getState()
+						// apiConfiguration.apiModelId
+						// const pearAiModels = usePearAiModels(apiConfiguration)
+						// const pearAI = vscode.extensions.getExtension("pearai.pearai");
+						// if(!pearAI) {
+						// 	console.warn("COULDN'T FIND PEAR AI SUBMODULE");
+						// }
+						// pearAI?.exports
+						// console.log("PEAR AI EXPORTS", pearAI?.exports);
+						const systemPrompt = `
+							Best practices:
+							For any webapp project, ALWAYS adhere to these rules, unless otherwise specified:
+							React with TypeScript for the frontend
+							Tailwind CSS for styling
+							Shadcn/UI components (via Radix UI)
+							Supabase for backend/database
+							React Query for data management
+							React Router for navigation
+							Recharts for data visualization
+							React Hook Form for form handling
+							`
+						const pearAIClass = new PearAiHandler(apiConfiguration)
+						let responseText = ""
+						const messageGenerator = pearAIClass.createMessage(systemPrompt, [
+							{
+								role: "user",
+								content:
+									"Based on the provided best practices, create a detailed project plan that includes:\n1. Project structure and file organization\n2. Component hierarchy and relationships\n3. Data flow and state management approach\n4. Implementation steps and priorities\n5. Specific technical decisions for each requirement",
+							},
+						])
+
+						for await (const chunk of messageGenerator) {
+							if (chunk.type === "text") {
+								responseText += chunk.text
+							}
+
+							await this.postMessageToWebview({
+								type: "planCreationStream",
+								text: responseText,
+							})
+						}
+						await this.postMessageToWebview({
+							type: "planCreationSuccess",
+							text: responseText,
+						})
 
 						break
 					case "creatorModePlannedTaskSubmit":
 						// TODO: Trigger the "newTask" flow flow, initialising cline with a task
 						// Go into the planned mode shizz
+						vscode.commands.executeCommand("workbench.action.enterCreatorMode")
+						await this.initClineWithTask(message.text, message.images)
 						break
 					case "apiConfiguration":
 						if (message.apiConfiguration) {

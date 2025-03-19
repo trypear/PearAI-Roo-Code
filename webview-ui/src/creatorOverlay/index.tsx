@@ -1,7 +1,10 @@
 import { vscode } from "@/utils/vscode"
-import { EnterIcon } from "@radix-ui/react-icons"
-import { Sun } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useEvent } from "react-use"
+import { ExtensionMessage } from "../../../src/shared/ExtensionMessage"
+import { RGBWrapper } from "./rgbBackground"
+import { PlanEditor } from "./planEditor"
+import { InputBox } from "./inputBox"
 
 /**
  * CreatorOverlay component provides a full-screen overlay with an auto-focusing input field
@@ -15,7 +18,10 @@ import { useCallback, useEffect, useRef, useState } from "react"
  * - Clicking the background closes the overlay
  */
 export const CreatorOverlay = () => {
-	const [text, setText] = useState("")
+	const [initialMessage, setInitialMessage] = useState("")
+	const [newProjectPlan, setNewProjectPlan] = useState("")
+	const [planCreationDone, setPlanCreationDone] = useState(false)
+	const [isStreaming, setIsStreaming] = useState(false)
 	const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 	const isCapturingRef = useRef(false)
 
@@ -23,7 +29,7 @@ export const CreatorOverlay = () => {
 		vscode.postMessage({
 			type: "pearAiCloseCreatorInterface",
 		})
-		setText("")
+		setInitialMessage("")
 	}, [])
 
 	const forceFocus = useCallback(() => {
@@ -62,7 +68,7 @@ export const CreatorOverlay = () => {
 				forceFocus()
 
 				if (!isCapturingRef.current) {
-					setText((prevText) => prevText + e.key)
+					setInitialMessage((prevText) => prevText + e.key)
 					isCapturingRef.current = true
 
 					setTimeout(() => {
@@ -80,74 +86,69 @@ export const CreatorOverlay = () => {
 	}, [close, forceFocus])
 
 	const handleRequest = useCallback(() => {
-		if (text.trim()) {
+		if (initialMessage.trim()) {
+			setIsStreaming(true)
+			vscode.postMessage({
+				type: "newCreatorModeTask",
+				text: initialMessage,
+			})
+		}
+	}, [initialMessage])
+
+	const handleMakeIt = useCallback(() => {
+		if (newProjectPlan.trim()) {
 			vscode.postMessage({
 				type: "newTask",
-				text,
+				text: newProjectPlan,
 			})
+			setInitialMessage("")
+			setNewProjectPlan("")
+			setPlanCreationDone(false)
+			setIsStreaming(false)
 			close()
 		}
-	}, [text, close])
+	}, [newProjectPlan, close])
 
-	const handleTextareaChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setText(e.target.value)
+	const onMessage = useCallback((e: MessageEvent) => {
+		const message: ExtensionMessage = e.data
 
-		const textarea = e.target
-		textarea.style.height = "36px"
-		const scrollHeight = textarea.scrollHeight
-		textarea.style.height = Math.min(scrollHeight, 100) + "px"
+		if (message.type === "planCreationStream" && message.text) {
+			console.log(`STREAMED TEXT: ${message.text}`)
+			setNewProjectPlan(message.text)
+		} else if (message.type === "planCreationSuccess") {
+			setIsStreaming(false)
+			setPlanCreationDone(true)
+		}
 	}, [])
 
-	const handleTextareaKeyDown = useCallback(
-		(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-			if (e.key === "Enter" && !e.shiftKey && text.trim()) {
-				e.preventDefault()
-				handleRequest()
-			}
-		},
-		[handleRequest, text],
-	)
+	useEvent("message", onMessage)
 
 	return (
-		<div onClick={close} className="fixed inset-0 flex items-center justify-center">
-			<div className="relative mx-4 w-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
-				<div className="absolute -top-10 -right-10 -bottom-10 -left-10 -z-10 grid grid-cols-2 overflow-hidden rounded-3xl blur-xl opacity-50">
-					<div className="bg-gradient-to-br from-pink-500 to-blue-600"></div>
-					<div className="bg-gradient-to-tr from-blue-600 to-cyan-400"></div>
-				</div>
+		<div onClick={close} className="fixed inset-0 flex items-center justify-center bg-white">
+			<div onClick={(e) => e.stopPropagation()} className="justify-center align-middle m-auto w-full max-w-3xl ">
+				<RGBWrapper className="px-4 my-auto w-full">
+					<InputBox
+						textareaRef={textareaRef}
+						initialMessage={initialMessage}
+						setInitialMessage={setInitialMessage}
+						handleRequest={handleRequest}
+						isDisabled={isStreaming || planCreationDone}
+					/>
 
-				<div className="relative z-10 flex items-center rounded-full bg-white p-2 shadow-lg">
-					<div className="flex-1 px-4">
-						<textarea
-							ref={textareaRef}
-							value={text}
-							onChange={handleTextareaChange}
-							onKeyDown={handleTextareaKeyDown}
-							placeholder="What would you like to do?"
-							className="w-full appearance-none bg-transparent text-gray-700 outline-none focus:outline-none resize-none overflow-y-auto rounded-lg min-h-9 h-9 max-h-24 leading-normal py-2 px-2 flex items-center border-none"
-							autoFocus={true}
-							tabIndex={1}
-							rows={1}
-						/>
-					</div>
+					{(isStreaming || planCreationDone) && (
+						<>
+							<div className="my-6 border-t border-gray-200"></div>
 
-					<div className="flex items-center space-x-2 px-2">
-						<button
-							className="flex cursor-pointer gap-2 rounded-md px-4 py-2 text-gray-400 transition-colours duration-200 hover:bg-gray-100"
-							tabIndex={2}>
-							<Sun className="h-4 w-4" />
-							<div className="flex-1">Suggest</div>
-						</button>
-						<button
-							onClick={handleRequest}
-							disabled={!text.trim()}
-							className="flex cursor-pointer gap-2 rounded-md bg-black px-4 py-2 text-sm font-medium text-white transition-colours duration-200 hover:bg-gray-900 hover:text-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-							tabIndex={3}>
-							<EnterIcon className="h-4 w-4" />
-							<div className="flex-1">Start</div>
-						</button>
-					</div>
-				</div>
+							<PlanEditor
+								newProjectPlan={newProjectPlan}
+								setNewProjectPlan={setNewProjectPlan}
+								isStreaming={isStreaming}
+								planCreationDone={planCreationDone}
+								handleMakeIt={handleMakeIt}
+							/>
+						</>
+					)}
+				</RGBWrapper>
 			</div>
 		</div>
 	)

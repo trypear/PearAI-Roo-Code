@@ -45,6 +45,8 @@ export interface ExtensionMessage {
 		| "updateCustomMode"
 		| "deleteCustomMode"
 		| "currentCheckpointUpdated"
+		| "planCreationStream"
+		| "planCreationSuccess"
 	text?: string
 	action?:
 		| "chatButtonClicked"
