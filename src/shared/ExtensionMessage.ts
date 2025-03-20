@@ -45,6 +45,8 @@ export interface ExtensionMessage {
 		| "updateCustomMode"
 		| "deleteCustomMode"
 		| "currentCheckpointUpdated"
+		| "planCreationStream"
+		| "planCreationSuccess"
 	text?: string
 	action?:
 		| "chatButtonClicked"
@@ -194,6 +196,8 @@ export interface ClineSayTool {
 		| "searchFiles"
 		| "switchMode"
 		| "newTask"
+		| "newCreatorModeTask"
+		| "creatorModePlannedTaskSubmit"
 	path?: string
 	diff?: string
 	content?: string
