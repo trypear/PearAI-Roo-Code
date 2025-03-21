@@ -19,7 +19,6 @@ export const MODELS_BY_PROVIDER: Partial<Record<ApiProvider, Record<string, Mode
 	mistral: mistralModels,
 	"openai-native": openAiNativeModels,
 	vertex: vertexModels,
-	pearai: pearAiModels,
 }
 
 export const PROVIDERS = [

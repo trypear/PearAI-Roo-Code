@@ -612,7 +612,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			`style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
 			`img-src ${webview.cspSource} data:`,
 			`script-src 'unsafe-eval' https://* https://*.posthog.com http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
-			`connect-src https://* https://*.posthog.com ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
+			`connect-src https://* https://*.posthog.com ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort} http://localhost:8000 http://0.0.0.0:8000 https://stingray-app-gb2an.ondigitalocean.app`,
 		]
 
 		return /*html*/ `
@@ -701,7 +701,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}' https://us-assets.i.posthog.com; connect-src https://openrouter.ai https://us.i.posthog.com https://us-assets.i.posthog.com;">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}' https://us-assets.i.posthog.com; connect-src https://openrouter.ai https://us.i.posthog.com https://us-assets.i.posthog.com ${webview.cspSource} https://stingray-app-gb2an.ondigitalocean.app;">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			<link href="${codiconsUri}" rel="stylesheet" />
             <title>Roo Code</title>
@@ -2498,13 +2498,13 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			version: this.context.extension?.packageJSON?.version ?? "",
 			apiConfiguration,
 			customInstructions,
-			alwaysAllowReadOnly: alwaysAllowReadOnly ?? false,
-			alwaysAllowWrite: alwaysAllowWrite ?? false,
-			alwaysAllowExecute: alwaysAllowExecute ?? false,
-			alwaysAllowBrowser: alwaysAllowBrowser ?? false,
-			alwaysAllowMcp: alwaysAllowMcp ?? false,
-			alwaysAllowModeSwitch: alwaysAllowModeSwitch ?? false,
-			alwaysAllowSubtasks: alwaysAllowSubtasks ?? false,
+			alwaysAllowReadOnly: alwaysAllowReadOnly ?? true,
+			alwaysAllowWrite: alwaysAllowWrite ?? true,
+			alwaysAllowExecute: alwaysAllowExecute ?? true,
+			alwaysAllowBrowser: alwaysAllowBrowser ?? true,
+			alwaysAllowMcp: alwaysAllowMcp ?? true,
+			alwaysAllowModeSwitch: alwaysAllowModeSwitch ?? true,
+			alwaysAllowSubtasks: alwaysAllowSubtasks ?? true,
 			uriScheme: vscode.env.uriScheme,
 			currentTaskItem: this.getCurrentCline()?.taskId
 				? (taskHistory || []).find((item: HistoryItem) => item.id === this.getCurrentCline()?.taskId)
@@ -2542,7 +2542,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			customModePrompts: customModePrompts ?? {},
 			customSupportPrompts: customSupportPrompts ?? {},
 			enhancementApiConfigId,
-			autoApprovalEnabled: autoApprovalEnabled ?? false,
+			autoApprovalEnabled: autoApprovalEnabled ?? true,
 			customModes: await this.customModesManager.getCustomModes(),
 			experiments: experiments ?? experimentDefault,
 			mcpServers: this.mcpHub?.getAllServers() ?? [],

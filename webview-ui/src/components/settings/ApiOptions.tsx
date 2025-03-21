@@ -127,14 +127,7 @@ const ApiOptions = ({
 	)
 
 	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(() => {
-		const result = normalizeApiConfiguration(apiConfiguration, pearAiModels)
-		if (result.selectedProvider === "pearai") {
-			return {
-				...result,
-				selectedModelInfo: pearAiModels[result.selectedModelId] || pearAiModels[pearAiDefaultModelId],
-			}
-		}
-		return result
+		return normalizeApiConfiguration(apiConfiguration, pearAiModels)
 	}, [apiConfiguration, pearAiModels])
 
 	// Debounced refresh model updates, only executed 250ms after the user
@@ -243,16 +236,20 @@ const ApiOptions = ({
 
 	useEvent("message", onMessage)
 
-	const selectedProviderModelOptions = useMemo(
-		() =>
-			MODELS_BY_PROVIDER[selectedProvider]
-				? Object.keys(MODELS_BY_PROVIDER[selectedProvider]).map((modelId) => ({
-						value: modelId,
-						label: modelId,
-					}))
-				: [],
-		[selectedProvider],
-	)
+	const selectedProviderModelOptions = useMemo(() => {
+		if (selectedProvider === "pearai") {
+			return Object.keys(pearAiModels).map((modelId) => ({
+				value: modelId,
+				label: modelId,
+			}))
+		}
+		return MODELS_BY_PROVIDER[selectedProvider]
+			? Object.keys(MODELS_BY_PROVIDER[selectedProvider]).map((modelId) => ({
+					value: modelId,
+					label: modelId,
+				}))
+			: []
+	}, [selectedProvider, pearAiModels])
 
 	return (
 		<div className="flex flex-col gap-3">
@@ -1695,7 +1692,11 @@ export function normalizeApiConfiguration(
 				},
 			}
 		case "pearai": {
-			return getProviderData(pearAiModelsQuery || pearAiModels, pearAiDefaultModelId)
+			// Always use the models from the hook which are fetched when provider is selected
+			return getProviderData(
+				pearAiModelsQuery || { [pearAiDefaultModelId]: pearAiDefaultModelInfo },
+				pearAiDefaultModelId,
+			)
 		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
