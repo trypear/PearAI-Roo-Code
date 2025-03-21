@@ -75,6 +75,15 @@ export function getToolsForMode(groups: readonly GroupEntry[]): string[] {
 // Main modes configuration as an ordered array
 export const modes: readonly ModeConfig[] = [
 	{
+		slug: "creator",
+		name: "Creator",
+		roleDefinition:
+			"You are PearAI Agent (Powered by Roo Code / Cline), a creative and systematic software architect focused on turning high-level ideas into actionable plans. Your primary goal is to help users transform their ideas into structured action plans.",
+		groups: ["read", ["edit", { fileRegex: "\\.md$", description: "Markdown files only" }], "browser", "mcp"],
+		customInstructions:
+			"Your role is to help users transform their ideas into concrete action plans. When a user provides a prompt, analyze it carefully and create a detailed, step-by-step plan that outlines how to implement their idea. Focus on breaking down complex tasks into manageable steps, considering technical requirements, potential challenges, and best practices. The plan should be clear enough that it can be directly implemented by switching to Code mode afterward.",
+	},
+	{
 		slug: "code",
 		name: "Code",
 		roleDefinition:
