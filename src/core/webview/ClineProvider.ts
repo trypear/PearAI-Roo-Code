@@ -8,7 +8,6 @@ import pWaitFor from "p-wait-for"
 import * as path from "path"
 import * as vscode from "vscode"
 
-import { PEARAI_URL } from "../../shared/api"
 import { changeLanguage, t } from "../../i18n"
 import { setPanel } from "../../activate/registerCommands"
 import { ApiConfiguration, ApiProvider, ModelInfo, API_CONFIG_KEYS } from "../../shared/api"
@@ -36,7 +35,6 @@ import { selectImages } from "../../integrations/misc/process-images"
 import { getTheme } from "../../integrations/theme/getTheme"
 import WorkspaceTracker from "../../integrations/workspace/WorkspaceTracker"
 import { McpHub } from "../../services/mcp/McpHub"
-import { SYSTEM_PROMPT } from "../prompts/system"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { ShadowCheckpointService } from "../../services/checkpoints/ShadowCheckpointService"
 import { BrowserSession } from "../../services/browser/BrowserSession"
@@ -48,6 +46,7 @@ import { playTts, setTtsEnabled, setTtsSpeed, stopTts } from "../../utils/tts"
 import { singleCompletionHandler } from "../../utils/single-completion-handler"
 import { searchCommits } from "../../utils/git"
 import { getDiffStrategy } from "../diff/DiffStrategy"
+import { SYSTEM_PROMPT } from "../prompts/system"
 import { ConfigManager } from "../config/ConfigManager"
 import { CustomModesManager } from "../config/CustomModesManager"
 import { ContextProxy } from "../contextProxy"
@@ -68,12 +67,6 @@ import { getUri } from "./getUri"
 import { telemetryService } from "../../services/telemetry/TelemetryService"
 import { TelemetrySetting } from "../../shared/TelemetrySetting"
 import { getWorkspacePath } from "../../utils/path"
-
-/*
-https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
-
-https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
-*/
 
 /**
  * https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -571,7 +564,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	}
 
 	private async getHMRHtmlContent(webview: vscode.Webview): Promise<string> {
-		const localPort = "5174"
+		const localPort = "5173"
 		const localServerUrl = `localhost:${localPort}`
 
 		// Check if local dev server is running.
@@ -619,7 +612,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			`style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
 			`img-src ${webview.cspSource} data:`,
 			`script-src 'unsafe-eval' https://* https://*.posthog.com http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
-			`connect-src https://* https://*.posthog.com ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort} http://localhost:8000 http://0.0.0.0:8000 https://stingray-app-gb2an.ondigitalocean.app`,
+			`connect-src https://* https://*.posthog.com ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
 		]
 
 		return /*html*/ `
@@ -708,7 +701,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}' https://us-assets.i.posthog.com; connect-src https://openrouter.ai https://us.i.posthog.com https://us-assets.i.posthog.com ${webview.cspSource} https://stingray-app-gb2an.ondigitalocean.app;">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}' https://us-assets.i.posthog.com; connect-src https://openrouter.ai https://us.i.posthog.com https://us-assets.i.posthog.com;">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			<link href="${codiconsUri}" rel="stylesheet" />
             <title>Roo Code</title>
@@ -2000,18 +1993,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 							await this.postStateToWebview()
 						}
 						break
-					case "openPearAiAuth":
-						const extensionUrl = `${vscode.env.uriScheme}://pearai.pearai/auth`
-						const callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(extensionUrl))
-
-						await vscode.env.openExternal(
-							await vscode.env.asExternalUri(
-								vscode.Uri.parse(
-									`https://trypear.ai/signin?callback=${callbackUri.toString()}`, // Change to localhost if running locally
-								),
-							),
-						)
-						break
 					case "humanRelayResponse":
 						if (message.requestId && message.text) {
 							vscode.commands.executeCommand("roo-cline.handleHumanRelayResponse", {
@@ -2039,6 +2020,19 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 						await this.postStateToWebview()
 						break
 					}
+
+					case "openPearAiAuth":
+						const extensionUrl = `${vscode.env.uriScheme}://pearai.pearai/auth`
+						const callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(extensionUrl))
+
+						await vscode.env.openExternal(
+							await vscode.env.asExternalUri(
+								vscode.Uri.parse(
+									`https://trypear.ai/signin?callback=${callbackUri.toString()}`, // Change to localhost if running locally
+								),
+							),
+						)
+						break
 				}
 			},
 			null,
@@ -2147,7 +2141,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const { mode } = await this.getState()
 
 		if (mode) {
-			const currentApiConfigName = (await this.getGlobalState("currentApiConfigName")) ?? "default"
+			const currentApiConfigName = await this.getGlobalState("currentApiConfigName")
 			const listApiConfig = await this.configManager.listConfig()
 			const config = listApiConfig?.find((c) => c.name === currentApiConfigName)
 
@@ -2504,11 +2498,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			version: this.context.extension?.packageJSON?.version ?? "",
 			apiConfiguration,
 			customInstructions,
-			alwaysAllowReadOnly: alwaysAllowReadOnly ?? true,
-			alwaysAllowWrite: alwaysAllowWrite ?? true,
-			alwaysAllowExecute: alwaysAllowExecute ?? true,
-			alwaysAllowBrowser: alwaysAllowBrowser ?? true,
-			alwaysAllowMcp: alwaysAllowMcp ?? true,
+			alwaysAllowReadOnly: alwaysAllowReadOnly ?? false,
+			alwaysAllowWrite: alwaysAllowWrite ?? false,
+			alwaysAllowExecute: alwaysAllowExecute ?? false,
+			alwaysAllowBrowser: alwaysAllowBrowser ?? false,
+			alwaysAllowMcp: alwaysAllowMcp ?? false,
 			alwaysAllowModeSwitch: alwaysAllowModeSwitch ?? false,
 			alwaysAllowSubtasks: alwaysAllowSubtasks ?? false,
 			uriScheme: vscode.env.uriScheme,
@@ -2539,7 +2533,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			fuzzyMatchThreshold: fuzzyMatchThreshold ?? 1.0,
 			mcpEnabled: mcpEnabled ?? true,
 			enableMcpServerCreation: enableMcpServerCreation ?? true,
-			alwaysApproveResubmit: alwaysApproveResubmit ?? true,
+			alwaysApproveResubmit: alwaysApproveResubmit ?? false,
 			requestDelaySeconds: requestDelaySeconds ?? 10,
 			rateLimitSeconds: rateLimitSeconds ?? 0,
 			currentApiConfigName: currentApiConfigName ?? "default",
@@ -2548,7 +2542,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			customModePrompts: customModePrompts ?? {},
 			customSupportPrompts: customSupportPrompts ?? {},
 			enhancementApiConfigId,
-			autoApprovalEnabled: autoApprovalEnabled ?? true,
+			autoApprovalEnabled: autoApprovalEnabled ?? false,
 			customModes: await this.customModesManager.getCustomModes(),
 			experiments: experiments ?? experimentDefault,
 			mcpServers: this.mcpHub?.getAllServers() ?? [],

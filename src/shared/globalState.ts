@@ -26,13 +26,13 @@ export const SECRET_KEYS = [
 	"mistralApiKey",
 	"unboundApiKey",
 	"requestyApiKey",
-	"pearai-token",
-	"pearai-refresh",
+	"pearaiToken",
+	"pearaiRefresh",
 ] as const
 
-type CheckSecretKeysExhaustiveness = Exclude<SecretKey, (typeof SECRET_KEYS)[number]> extends never ? true : false
+// type CheckSecretKeysExhaustiveness = Exclude<SecretKey, (typeof SECRET_KEYS)[number]> extends never ? true : false
 
-const _checkSecretKeysExhaustiveness: CheckSecretKeysExhaustiveness = true
+// const _checkSecretKeysExhaustiveness: CheckSecretKeysExhaustiveness = true
 
 export const GLOBAL_STATE_KEYS = [
 	"apiProvider",

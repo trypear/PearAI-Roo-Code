@@ -381,6 +381,7 @@
 		"pretty-bytes": "^6.1.1",
 		"puppeteer-chromium-resolver": "^23.0.0",
 		"puppeteer-core": "^23.4.0",
+		"react-tooltip": "^5.28.0",
 		"reconnecting-eventsource": "^1.6.4",
 		"say": "^0.16.0",
 		"serialize-error": "^11.0.3",

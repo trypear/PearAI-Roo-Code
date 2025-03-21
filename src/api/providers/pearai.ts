@@ -2,6 +2,7 @@ import * as vscode from "vscode"
 import { ApiHandlerOptions, PEARAI_URL, ModelInfo } from "../../shared/api"
 import { AnthropicHandler } from "./anthropic"
 import { DeepSeekHandler } from "./deepseek"
+import Anthropic from "@anthropic-ai/sdk"
 
 interface PearAiModelsResponse {
 	models: {
@@ -149,5 +150,9 @@ export class PearAiHandler {
 
 	async completePrompt(prompt: string): Promise<string> {
 		return this.handler.completePrompt(prompt)
+	}
+
+	async countTokens(content: Array<Anthropic.Messages.ContentBlockParam>): Promise<number> {
+		return this.handler.countTokens(content)
 	}
 }

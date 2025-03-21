@@ -36,6 +36,15 @@ import { useAppTranslation } from "@/i18n/TranslationContext"
 import removeMd from "remove-markdown"
 import splashIcon from "../../../../assets/icons/pearai-agent-splash.svg"
 import { Button } from "../ui/button-pear-scn"
+import {
+	vscBackground,
+	vscBadgeBackground,
+	vscButtonBackground,
+	vscEditorBackground,
+	vscForeground,
+	vscInputBorder,
+	vscSidebarBorder,
+} from "../ui"
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -1345,6 +1354,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				}}
 				mode={mode}
 				setMode={setMode}
+				modeShortcutText={modeShortcutText}
 				// isNewTask={taskHistory.length === 0}
 			/>
 			modeShortcutText={modeShortcutText}

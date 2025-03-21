@@ -14,7 +14,6 @@ import SettingsView, { SettingsViewRef } from "./components/settings/SettingsVie
 import WelcomeView from "./components/welcome/WelcomeView"
 import McpView from "./components/mcp/McpView"
 import PromptsView from "./components/prompts/PromptsView"
-import { Inspector } from "react-dev-inspector"
 import { HumanRelayDialog } from "./components/human-relay/HumanRelayDialog"
 
 type Tab = "settings" | "history" | "mcp" | "prompts" | "chat"

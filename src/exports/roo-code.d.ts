@@ -134,7 +134,6 @@ export type ClineSay =
 	| "new_task"
 	| "checkpoint_saved"
 	| "rooignore_error"
-
 export interface ClineMessage {
 	ts: number
 	type: "ask" | "say"
@@ -163,7 +162,8 @@ export type SecretKey =
 	| "mistralApiKey"
 	| "unboundApiKey"
 	| "requestyApiKey"
-
+	| "pearaiToken"
+	| "pearaiRefresh"
 export type GlobalStateKey =
 	| "apiProvider"
 	| "apiModelId"
@@ -256,6 +256,10 @@ export type GlobalStateKey =
 	| "language"
 	| "maxReadFileLine"
 	| "fakeAi"
+	| "pearaiApiKey"
+	| "pearaiModelId"
+	| "pearaiModelInfo"
+	| "pearaiBaseUrl"
 
 export type ConfigurationKey = GlobalStateKey | SecretKey
 
