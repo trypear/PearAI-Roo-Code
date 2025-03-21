@@ -11,6 +11,7 @@ export type AudioType = "notification" | "celebration" | "progress_loop"
 export interface WebviewMessage {
 	type:
 		| "apiConfiguration"
+		| "deleteMultipleTasksWithIds"
 		| "currentApiConfigName"
 		| "saveApiConfiguration"
 		| "upsertApiConfiguration"
@@ -48,28 +49,36 @@ export interface WebviewMessage {
 		| "alwaysAllowBrowser"
 		| "alwaysAllowMcp"
 		| "alwaysAllowModeSwitch"
+		| "alwaysAllowSubtasks"
 		| "playSound"
+		| "playTts"
+		| "stopTts"
 		| "soundEnabled"
+		| "ttsEnabled"
+		| "ttsSpeed"
 		| "soundVolume"
 		| "diffEnabled"
-		| "checkpointsEnabled"
+		| "enableCheckpoints"
+		| "checkpointStorage"
 		| "browserViewportSize"
 		| "screenshotQuality"
+		| "remoteBrowserHost"
 		| "openMcpSettings"
 		| "restartMcpServer"
 		| "toggleToolAlwaysAllow"
 		| "toggleMcpServer"
 		| "updateMcpTimeout"
 		| "fuzzyMatchThreshold"
-		| "preferredLanguage"
 		| "writeDelayMs"
 		| "enhancePrompt"
 		| "enhancedPrompt"
 		| "draggedImages"
 		| "deleteMessage"
 		| "terminalOutputLineLimit"
+		| "terminalShellIntegrationTimeout"
 		| "mcpEnabled"
 		| "enableMcpServerCreation"
+		| "enableCustomModeCreation"
 		| "searchCommits"
 		| "alwaysApproveResubmit"
 		| "requestDelaySeconds"
@@ -95,6 +104,19 @@ export interface WebviewMessage {
 		| "openPearAiAuth"
 		| "deleteMcpServer"
 		| "maxOpenTabsContext"
+		| "maxWorkspaceFiles"
+		| "humanRelayResponse"
+		| "humanRelayCancel"
+		| "browserToolEnabled"
+		| "telemetrySetting"
+		| "showRooIgnoredFiles"
+		| "testBrowserConnection"
+		| "discoverBrowser"
+		| "browserConnectionResult"
+		| "remoteBrowserEnabled"
+		| "language"
+		| "maxReadFileLine"
+		| "searchFiles"
 	text?: string
 	disabled?: boolean
 	askResponse?: ClineAskResponse
@@ -118,10 +140,13 @@ export interface WebviewMessage {
 	timeout?: number
 	payload?: WebViewMessagePayload
 	source?: "global" | "project"
+	requestId?: string
+	ids?: string[]
 }
 
 export const checkoutDiffPayloadSchema = z.object({
 	ts: z.number(),
+	previousCommitHash: z.string().optional(),
 	commitHash: z.string(),
 	mode: z.enum(["full", "checkpoint"]),
 })

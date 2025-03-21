@@ -8,22 +8,22 @@ export const usePearAiModels = (apiConfiguration?: ApiConfiguration) => {
 	})
 
 	useEffect(() => {
-		if (apiConfiguration?.apiProvider === "pearai") {
-			const fetchPearAiModels = async () => {
-				try {
-					const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
-					if (!res.ok) throw new Error("Failed to fetch models")
-					const config = await res.json()
+		const fetchPearAiModels = async () => {
+			try {
+				const res = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+				if (!res.ok) throw new Error("Failed to fetch models")
+				const config = await res.json()
 
-					if (config.models && Object.keys(config.models).length > 0) {
-						console.log("Models successfully loaded from server")
-						setPearAiModels(config.models)
-					}
-				} catch (error) {
-					console.error("Error fetching PearAI models:", error)
+				if (config.models && Object.keys(config.models).length > 0) {
+					console.log("Models successfully loaded from server")
+					setPearAiModels(config.models)
 				}
+			} catch (error) {
+				console.error("Error fetching PearAI models:", error)
 			}
+		}
 
+		if (apiConfiguration?.apiProvider === "pearai") {
 			fetchPearAiModels()
 		}
 	}, [apiConfiguration?.apiProvider])

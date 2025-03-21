@@ -49,6 +49,10 @@ describe("Tree-sitter Service", () => {
 						node: {
 							startPosition: { row: 0 },
 							endPosition: { row: 0 },
+							parent: {
+								startPosition: { row: 0 },
+								endPosition: { row: 0 },
+							},
 						},
 						name: "name.definition",
 					},
@@ -85,6 +89,10 @@ describe("Tree-sitter Service", () => {
 						node: {
 							startPosition: { row: 0 },
 							endPosition: { row: 0 },
+							parent: {
+								startPosition: { row: 0 },
+								endPosition: { row: 0 },
+							},
 						},
 						name: "name.definition.class",
 					},
@@ -92,6 +100,10 @@ describe("Tree-sitter Service", () => {
 						node: {
 							startPosition: { row: 2 },
 							endPosition: { row: 2 },
+							parent: {
+								startPosition: { row: 0 },
+								endPosition: { row: 0 },
+							},
 						},
 						name: "name.definition.function",
 					},
@@ -169,6 +181,8 @@ describe("Tree-sitter Service", () => {
 				"/test/path/main.rs",
 				"/test/path/program.cpp",
 				"/test/path/code.go",
+				"/test/path/app.kt",
+				"/test/path/script.kts",
 			]
 
 			;(listFiles as jest.Mock).mockResolvedValue([mockFiles, new Set()])
@@ -185,6 +199,10 @@ describe("Tree-sitter Service", () => {
 						node: {
 							startPosition: { row: 0 },
 							endPosition: { row: 0 },
+							parent: {
+								startPosition: { row: 0 },
+								endPosition: { row: 0 },
+							},
 						},
 						name: "name",
 					},
@@ -197,6 +215,8 @@ describe("Tree-sitter Service", () => {
 				rs: { parser: mockParser, query: mockQuery },
 				cpp: { parser: mockParser, query: mockQuery },
 				go: { parser: mockParser, query: mockQuery },
+				kt: { parser: mockParser, query: mockQuery },
+				kts: { parser: mockParser, query: mockQuery },
 			})
 			;(fs.readFile as jest.Mock).mockResolvedValue("function test() {}")
 
@@ -207,6 +227,8 @@ describe("Tree-sitter Service", () => {
 			expect(result).toContain("main.rs")
 			expect(result).toContain("program.cpp")
 			expect(result).toContain("code.go")
+			expect(result).toContain("app.kt")
+			expect(result).toContain("script.kts")
 		})
 
 		it("should normalize paths in output", async () => {
@@ -225,6 +247,10 @@ describe("Tree-sitter Service", () => {
 						node: {
 							startPosition: { row: 0 },
 							endPosition: { row: 0 },
+							parent: {
+								startPosition: { row: 0 },
+								endPosition: { row: 0 },
+							},
 						},
 						name: "name",
 					},
