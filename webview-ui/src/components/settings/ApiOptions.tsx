@@ -265,7 +265,7 @@ const ApiOptions = ({
 						<SelectValue placeholder={t("settings:common.select")} />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="openrouter">OpenRouter</SelectItem>
+						<SelectItem value="pearai">PearAI</SelectItem>
 						<SelectSeparator />
 						{PROVIDERS.map(({ value, label }) => (
 							<SelectItem key={value} value={value}>

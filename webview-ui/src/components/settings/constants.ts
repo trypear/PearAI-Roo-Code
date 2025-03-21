@@ -7,6 +7,7 @@ import {
 	geminiModels,
 	mistralModels,
 	openAiNativeModels,
+	pearAiModels,
 	vertexModels,
 } from "../../../../src/shared/api"
 
@@ -18,6 +19,7 @@ export const MODELS_BY_PROVIDER: Partial<Record<ApiProvider, Record<string, Mode
 	mistral: mistralModels,
 	"openai-native": openAiNativeModels,
 	vertex: vertexModels,
+	pearai: pearAiModels,
 }
 
 export const PROVIDERS = [
@@ -36,6 +38,7 @@ export const PROVIDERS = [
 	{ value: "unbound", label: "Unbound" },
 	{ value: "requesty", label: "Requesty" },
 	{ value: "human-relay", label: "Human Relay" },
+	{ value: "openrouter", label: "OpenRouter" },
 ].sort((a, b) => a.label.localeCompare(b.label))
 
 export const AWS_REGIONS = [

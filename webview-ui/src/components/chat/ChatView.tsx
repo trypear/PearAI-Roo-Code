@@ -1183,12 +1183,12 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							</div>
 						</>
 					)}
-					{telemetrySetting === "unset" && <TelemetryBanner />}
-					{showAnnouncement && <Announcement version={version} hideAnnouncement={hideAnnouncement} />}
-					<div style={{ padding: "0 20px", flexShrink: 0 }}>
+					{/* {telemetrySetting === "unset" && <TelemetryBanner />} */}
+					{/* {showAnnouncement && <Announcement version={version} hideAnnouncement={hideAnnouncement} />} */}
+					{/* <div style={{ padding: "0 20px", flexShrink: 0 }}>
 						<h2>{t("chat:greeting")}</h2>
 						<p>{t("chat:aboutMe")}</p>
-					</div>
+					</div> */}
 					{taskHistory.length > 0 && <HistoryPreview showHistoryView={showHistoryView} />}
 				</div>
 			)}
@@ -1357,7 +1357,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				modeShortcutText={modeShortcutText}
 				// isNewTask={taskHistory.length === 0}
 			/>
-			modeShortcutText={modeShortcutText}
 			<div id="roo-portal" />
 		</div>
 	)

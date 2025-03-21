@@ -14,7 +14,7 @@
 		"node": ">=20.18.1"
 	},
 	"author": {
-		"name": "Roo Vet"
+		"name": "PearAI"
 	},
 	"repository": {
 		"type": "git",
@@ -62,19 +62,19 @@
 			}
 		],
 		"viewsContainers": {
-			"activitybar": [
+			"auxiliarybar": [
 				{
-					"id": "roo-cline-ActivityBar",
-					"title": "Roo Code",
-					"icon": "$(rocket)"
+					"id": "pearai-roo-cline",
+					"title": "PearAI Agent",
+					"icon": "assets/icons/pear.png"
 				}
 			]
 		},
 		"views": {
-			"roo-cline-ActivityBar": [
+			"pearai-roo-cline": [
 				{
 					"type": "webview",
-					"id": "roo-cline.SidebarProvider",
+					"id": "pearai-roo-cline.SidebarProvider",
 					"name": ""
 				}
 			]
@@ -164,6 +164,11 @@
 				"command": "roo-cline.terminalExplainCommandInCurrentTask",
 				"title": "Explain This Command (Current Task)",
 				"category": "Terminal"
+			},
+			{
+				"command": "roo-cline.focus",
+				"title": "Roo Code: Bring To Focus",
+				"category": "Roo Code"
 			}
 		],
 		"menus": {
@@ -223,37 +228,37 @@
 				{
 					"command": "roo-cline.plusButtonClicked",
 					"group": "navigation@1",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.promptsButtonClicked",
 					"group": "navigation@2",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.mcpButtonClicked",
 					"group": "navigation@3",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.historyButtonClicked",
 					"group": "navigation@4",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.popoutButtonClicked",
 					"group": "navigation@5",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.settingsButtonClicked",
 					"group": "navigation@6",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.helpButtonClicked",
 					"group": "navigation@7",
-					"when": "view == roo-cline.SidebarProvider"
+					"when": "view == pearai-roo-cline.SidebarProvider"
 				}
 			]
 		},
