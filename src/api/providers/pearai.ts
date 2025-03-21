@@ -3,6 +3,8 @@ import { ApiHandlerOptions, PEARAI_URL, ModelInfo } from "../../shared/api"
 import { AnthropicHandler } from "./anthropic"
 import { DeepSeekHandler } from "./deepseek"
 import Anthropic from "@anthropic-ai/sdk"
+import { BaseProvider } from "./base-provider"
+import { SingleCompletionHandler } from "../"
 
 interface PearAiModelsResponse {
 	models: {
@@ -14,10 +16,11 @@ interface PearAiModelsResponse {
 	defaultModelId: string
 }
 
-export class PearAiHandler {
+export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
 	private handler!: AnthropicHandler | DeepSeekHandler
 
 	constructor(options: ApiHandlerOptions) {
+		super()
 		if (!options.pearaiApiKey) {
 			vscode.window.showErrorMessage("PearAI API key not found.", "Login to PearAI").then(async (selection) => {
 				if (selection === "Login to PearAI") {
@@ -150,9 +153,5 @@ export class PearAiHandler {
 
 	async completePrompt(prompt: string): Promise<string> {
 		return this.handler.completePrompt(prompt)
-	}
-
-	async countTokens(content: Array<Anthropic.Messages.ContentBlockParam>): Promise<number> {
-		return this.handler.countTokens(content)
 	}
 }

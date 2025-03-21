@@ -202,7 +202,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					}))
 					const config = newState.apiConfiguration
 					const hasKey = checkExistKey(config)
-					if (!hasKey) {
+					if (!hasKey && (!config || config.apiProvider !== "pearai")) {
 						vscode.postMessage({
 							type: "apiConfiguration",
 							apiConfiguration: {

@@ -162,8 +162,8 @@ export type SecretKey =
 	| "mistralApiKey"
 	| "unboundApiKey"
 	| "requestyApiKey"
-	| "pearaiToken"
-	| "pearaiRefresh"
+	| "pearaiApiKey"
+
 export type GlobalStateKey =
 	| "apiProvider"
 	| "apiModelId"
@@ -256,7 +256,6 @@ export type GlobalStateKey =
 	| "language"
 	| "maxReadFileLine"
 	| "fakeAi"
-	| "pearaiApiKey"
 	| "pearaiModelId"
 	| "pearaiModelInfo"
 	| "pearaiBaseUrl"
