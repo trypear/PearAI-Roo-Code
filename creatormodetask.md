@@ -14,6 +14,8 @@ We are implementing a **new view called Creator Mode** into this extension. The 
 - **Flexible Code Organization:** While separation is preferred, prioritize maintainability and efficiency over strict separation.
 - **Keep This Document Updated:** Ensure this file always reflects the latest task status for continuity.
 - **Clear and Concise Development:** No unnecessary complexity—keep solutions to the point and functional.
+- no bs.
+- dont hallucinate.
 
 ## Creator Mode Details
 

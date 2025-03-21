@@ -95,6 +95,8 @@ export interface WebviewMessage {
 		| "openPearAiAuth"
 		| "deleteMcpServer"
 		| "maxOpenTabsContext"
+		| "creator"
+		| "generateActionPlan"
 	text?: string
 	disabled?: boolean
 	askResponse?: ClineAskResponse
