@@ -95,6 +95,14 @@ export function activate(context: vscode.ExtensionContext) {
 			console.dir(data)
 			context.secrets.store("pearaiApiKey", data.accessToken)
 			context.secrets.store("pearaiRefreshKey", data.refreshToken)
+			const provider = await ClineProvider.getInstance()
+			if (provider) {
+				// Update the API configuration to clear the PearAI key
+				await provider.setValues({
+					pearaiApiKey: data.accessToken,
+				})
+				await provider.postStateToWebview()
+			}
 			// Update MCP server with new token
 			// const provider = await ClineProvider.getInstance()
 			// if (provider) {
@@ -112,8 +120,18 @@ export function activate(context: vscode.ExtensionContext) {
 			console.dir("Logged out of PearAI:")
 			context.secrets.delete("pearaiApiKey")
 			context.secrets.delete("pearaiRefreshKey")
-			// Clear MCP server token
+
+			// Get the current provider instance and update webview state
 			const provider = await ClineProvider.getInstance()
+			if (provider) {
+				// Update the API configuration to clear the PearAI key
+				await provider.setValues({
+					pearaiApiKey: undefined,
+				})
+				await provider.postStateToWebview()
+			}
+			// Clear MCP server token
+			// const provider = await ClineProvider.getInstance()
 			// if (provider) {
 			// 	const mcpHub = provider.getMcpHub()
 			// 	if (mcpHub) {
