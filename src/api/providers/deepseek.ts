@@ -1,25 +1,18 @@
-import { Anthropic } from "@anthropic-ai/sdk"
-import { ApiHandlerOptions, ModelInfo, deepSeekModels, deepSeekDefaultModelId } from "../../shared/api"
-import { ApiHandler, SingleCompletionHandler } from "../index"
-import { convertToR1Format } from "../transform/r1-format"
-import { convertToOpenAiMessages } from "../transform/openai-format"
-import { ApiStream } from "../transform/stream"
+import { OpenAiHandler, OpenAiHandlerOptions } from "./openai"
+import { deepSeekModels, deepSeekDefaultModelId, ModelInfo } from "../../shared/api"
+import { ApiStreamUsageChunk } from "../transform/stream" // Import for type
+import { getModelParams } from "../index"
 
-interface DeepSeekUsage {
-	prompt_tokens: number
-	completion_tokens: number
-	prompt_cache_miss_tokens?: number
-	prompt_cache_hit_tokens?: number
-}
-
-export class DeepSeekHandler implements ApiHandler, SingleCompletionHandler {
-	private options: ApiHandlerOptions
-
-	constructor(options: ApiHandlerOptions) {
-		if (!options.deepSeekApiKey) {
-			throw new Error("DeepSeek API key is required. Please provide it in the settings.")
-		}
-		this.options = options
+export class DeepSeekHandler extends OpenAiHandler {
+	constructor(options: OpenAiHandlerOptions) {
+		super({
+			...options,
+			openAiApiKey: options.deepSeekApiKey ?? "not-provided",
+			openAiModelId: options.apiModelId ?? deepSeekDefaultModelId,
+			openAiBaseUrl: options.deepSeekBaseUrl ?? "https://api.deepseek.com",
+			openAiStreamingEnabled: true,
+			includeMaxTokens: true,
+		})
 	}
 
 	private get baseUrl(): string {
@@ -126,9 +119,23 @@ export class DeepSeekHandler implements ApiHandler, SingleCompletionHandler {
 
 	getModel(): { id: string; info: ModelInfo } {
 		const modelId = this.options.apiModelId ?? deepSeekDefaultModelId
+		const info = deepSeekModels[modelId as keyof typeof deepSeekModels] || deepSeekModels[deepSeekDefaultModelId]
+
 		return {
 			id: modelId,
-			info: deepSeekModels[modelId as keyof typeof deepSeekModels] || deepSeekModels[deepSeekDefaultModelId],
+			info,
+			...getModelParams({ options: this.options, model: info }),
+		}
+	}
+
+	// Override to handle DeepSeek's usage metrics, including caching.
+	protected override processUsageMetrics(usage: any): ApiStreamUsageChunk {
+		return {
+			type: "usage",
+			inputTokens: usage?.prompt_tokens || 0,
+			outputTokens: usage?.completion_tokens || 0,
+			cacheWriteTokens: usage?.prompt_tokens_details?.cache_miss_tokens,
+			cacheReadTokens: usage?.prompt_tokens_details?.cached_tokens,
 		}
 	}
 

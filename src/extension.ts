@@ -1,12 +1,30 @@
 import * as vscode from "vscode"
+import * as dotenvx from "@dotenvx/dotenvx"
 import delay from "delay"
-import { ClineProvider } from "./core/webview/ClineProvider"
-import { createClineAPI } from "./exports"
+
+// Load environment variables from .env file
+try {
+	// Specify path to .env file in the project root directory
+	const envPath = __dirname + "/../.env"
+	dotenvx.config({ path: envPath })
+} catch (e) {
+	// Silently handle environment loading errors
+	console.warn("Failed to load environment variables:", e)
+}
+
 import "./utils/path" // Necessary to have access to String.prototype.toPosix.
+
+import { initializeI18n } from "./i18n"
+import { ClineProvider } from "./core/webview/ClineProvider"
 import { CodeActionProvider } from "./core/CodeActionProvider"
 import { DIFF_VIEW_URI_SCHEME } from "./integrations/editor/DiffViewProvider"
-import { handleUri, registerCommands, registerCodeActions, registerTerminalActions } from "./activate"
 import { McpServerManager } from "./services/mcp/McpServerManager"
+import { telemetryService } from "./services/telemetry/TelemetryService"
+import { TerminalRegistry } from "./integrations/terminal/TerminalRegistry"
+import { API } from "./exports/api"
+
+import { handleUri, registerCommands, registerCodeActions, registerTerminalActions } from "./activate"
+import { formatLanguage } from "./shared/language"
 
 /**
  * Built using https://github.com/microsoft/vscode-webview-ui-toolkit
@@ -27,6 +45,15 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(outputChannel)
 	outputChannel.appendLine("Roo-Code extension activated")
 
+	// Initialize telemetry service after environment variables are loaded.
+	telemetryService.initialize()
+
+	// Initialize i18n for internationalization support
+	initializeI18n(context.globalState.get("language") ?? formatLanguage(vscode.env.language))
+
+	// Initialize terminal shell execution handlers.
+	TerminalRegistry.initialize()
+
 	// Get default commands from configuration.
 	const defaultCommands = vscode.workspace.getConfiguration("roo-cline").get<string[]>("allowedCommands") || []
 
@@ -35,15 +62,16 @@ export function activate(context: vscode.ExtensionContext) {
 		context.globalState.update("allowedCommands", defaultCommands)
 	}
 
-	const sidebarProvider = new ClineProvider(context, outputChannel)
+	const provider = new ClineProvider(context, outputChannel, "sidebar")
+	telemetryService.setProvider(provider)
 
 	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(ClineProvider.sideBarId, sidebarProvider, {
+		vscode.window.registerWebviewViewProvider(ClineProvider.sideBarId, provider, {
 			webviewOptions: { retainContextWhenHidden: true },
 		}),
 	)
 
-	registerCommands({ context, outputChannel, provider: sidebarProvider })
+	registerCommands({ context, outputChannel, provider })
 
 	/**
 	 * We use the text document content provider API to show the left side for diff
@@ -190,8 +218,8 @@ export function activate(context: vscode.ExtensionContext) {
 			await vscode.commands.executeCommand("roo-cline.SidebarProvider.focus")
 		}),
 	)
-
-	return createClineAPI(outputChannel, sidebarProvider)
+	// Implements the `RooCodeAPI` interface.
+	return new API(outputChannel, provider)
 }
 
 // This method is called when your extension is deactivated
@@ -199,4 +227,8 @@ export async function deactivate() {
 	outputChannel.appendLine("Roo-Code extension deactivated")
 	// Clean up MCP server manager
 	await McpServerManager.cleanup(extensionContext)
+	telemetryService.shutdown()
+
+	// Clean up terminal handlers
+	TerminalRegistry.cleanup()
 }

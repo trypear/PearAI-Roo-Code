@@ -13,10 +13,12 @@
 		"dist/**",
 		"out/**",
 		"bin/**",
+		"e2e/**",
+		"benchmark/**",
 		"src/activate/**",
 		"src/exports/**",
 		"src/extension.ts",
-		".vscode-test.mjs"
+		"scripts/**"
 	],
 	"workspaces": {
 		"webview-ui": {

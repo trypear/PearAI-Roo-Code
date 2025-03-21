@@ -9,6 +9,9 @@ import * as vscode from "vscode"
 import * as os from "os"
 import * as path from "path"
 
+// Mock RooIgnoreController
+jest.mock("../ignore/RooIgnoreController")
+
 // Mock all MCP-related modules
 jest.mock(
 	"@modelcontextprotocol/sdk/types.js",
@@ -145,6 +148,7 @@ jest.mock("vscode", () => {
 				all: [mockTabGroup],
 				onDidChangeTabs: jest.fn(() => ({ dispose: jest.fn() })),
 			},
+			showErrorMessage: jest.fn(),
 		},
 		workspace: {
 			workspaceFolders: [
@@ -237,6 +241,7 @@ describe("Cline", () => {
 						return [
 							{
 								id: "123",
+								number: 0,
 								ts: Date.now(),
 								task: "historical task",
 								tokensIn: 100,
@@ -374,7 +379,7 @@ describe("Cline", () => {
 
 			expect(cline.diffEnabled).toBe(true)
 			expect(cline.diffStrategy).toBeDefined()
-			expect(getDiffStrategySpy).toHaveBeenCalledWith("claude-3-5-sonnet-20241022", 0.9, false)
+			expect(getDiffStrategySpy).toHaveBeenCalledWith("claude-3-5-sonnet-20241022", 0.9, false, false)
 
 			getDiffStrategySpy.mockRestore()
 
@@ -395,7 +400,7 @@ describe("Cline", () => {
 
 			expect(cline.diffEnabled).toBe(true)
 			expect(cline.diffStrategy).toBeDefined()
-			expect(getDiffStrategySpy).toHaveBeenCalledWith("claude-3-5-sonnet-20241022", 1.0, false)
+			expect(getDiffStrategySpy).toHaveBeenCalledWith("claude-3-5-sonnet-20241022", 1.0, false, false)
 
 			getDiffStrategySpy.mockRestore()
 

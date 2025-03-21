@@ -3,23 +3,24 @@
 	"displayName": "PearAI Roo Code / Cline",
 	"description": "PearAI's integration of Roo Code / Cline, a coding agent.",
 	"publisher": "PearAI",
-	"version": "3.7.6",
 	"icon": "assets/icons/pear.png",
+	"version": "3.10.2",
 	"galleryBanner": {
 		"color": "#617A91",
 		"theme": "dark"
 	},
 	"engines": {
-		"vscode": "^1.84.0"
+		"vscode": "^1.84.0",
+		"node": ">=20.18.1"
 	},
 	"author": {
-		"name": "PearAI"
+		"name": "Roo Vet"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/trypear/PearAI-Roo-Code"
+		"url": "https://github.com/RooVetGit/Roo-Code"
 	},
-	"homepage": "https://github.com/trypear/PearAI-Roo-Code",
+	"homepage": "https://github.com/RooVetGit/Roo-Code",
 	"categories": [
 		"AI",
 		"Chat",
@@ -50,20 +51,30 @@
 	],
 	"main": "./dist/extension.js",
 	"contributes": {
+		"submenus": [
+			{
+				"id": "roo-code.contextMenu",
+				"label": "Roo Code"
+			},
+			{
+				"id": "roo-code.terminalMenu",
+				"label": "Roo Code"
+			}
+		],
 		"viewsContainers": {
-			"auxiliarybar": [
+			"activitybar": [
 				{
-					"id": "pearai-roo-cline",
-					"title": "PearAI Agent",
-					"icon": "assets/icons/pear.png"
+					"id": "roo-cline-ActivityBar",
+					"title": "Roo Code",
+					"icon": "$(rocket)"
 				}
 			]
 		},
 		"views": {
-			"pearai-roo-cline": [
+			"roo-cline-ActivityBar": [
 				{
 					"type": "webview",
-					"id": "pearai-roo-cline.SidebarProvider",
+					"id": "roo-cline.SidebarProvider",
 					"name": ""
 				}
 			]
@@ -111,135 +122,138 @@
 			},
 			{
 				"command": "roo-cline.explainCode",
-				"title": "Roo Code: Explain Code",
+				"title": "Explain Code",
 				"category": "Roo Code"
 			},
 			{
 				"command": "roo-cline.fixCode",
-				"title": "Roo Code: Fix Code",
+				"title": "Fix Code",
 				"category": "Roo Code"
 			},
 			{
 				"command": "roo-cline.improveCode",
-				"title": "Roo Code: Improve Code",
+				"title": "Improve Code",
 				"category": "Roo Code"
 			},
 			{
 				"command": "roo-cline.addToContext",
-				"title": "Roo Code: Add To Context",
+				"title": "Add To Context",
 				"category": "Roo Code"
 			},
 			{
 				"command": "roo-cline.terminalAddToContext",
-				"title": "Roo Code: Add Terminal Content to Context",
+				"title": "Add Terminal Content to Context",
 				"category": "Terminal"
 			},
 			{
 				"command": "roo-cline.terminalFixCommand",
-				"title": "Roo Code: Fix This Command",
+				"title": "Fix This Command",
 				"category": "Terminal"
 			},
 			{
 				"command": "roo-cline.terminalExplainCommand",
-				"title": "Roo Code: Explain This Command",
+				"title": "Explain This Command",
 				"category": "Terminal"
 			},
 			{
 				"command": "roo-cline.terminalFixCommandInCurrentTask",
-				"title": "Roo Code: Fix This Command (Current Task)",
+				"title": "Fix This Command (Current Task)",
 				"category": "Terminal"
 			},
 			{
 				"command": "roo-cline.terminalExplainCommandInCurrentTask",
-				"title": "Roo Code: Explain This Command (Current Task)",
+				"title": "Explain This Command (Current Task)",
 				"category": "Terminal"
-			},
-			{
-				"command": "roo-cline.focus",
-				"title": "Roo Code: Bring To Focus",
-				"category": "Roo Code"
 			}
 		],
 		"menus": {
 			"editor/context": [
 				{
+					"submenu": "roo-code.contextMenu",
+					"group": "navigation"
+				}
+			],
+			"roo-code.contextMenu": [
+				{
 					"command": "roo-cline.explainCode",
-					"when": "editorHasSelection",
-					"group": "Roo Code@1"
+					"group": "1_actions@1"
 				},
 				{
 					"command": "roo-cline.fixCode",
-					"when": "editorHasSelection",
-					"group": "Roo Code@2"
+					"group": "1_actions@2"
 				},
 				{
 					"command": "roo-cline.improveCode",
-					"when": "editorHasSelection",
-					"group": "Roo Code@3"
+					"group": "1_actions@3"
 				},
 				{
 					"command": "roo-cline.addToContext",
-					"when": "editorHasSelection",
-					"group": "Roo Code@4"
+					"group": "1_actions@4"
 				}
 			],
 			"terminal/context": [
 				{
+					"submenu": "roo-code.terminalMenu",
+					"group": "navigation"
+				}
+			],
+			"roo-code.terminalMenu": [
+				{
 					"command": "roo-cline.terminalAddToContext",
-					"group": "Roo Code@1"
+					"group": "1_actions@1"
 				},
 				{
 					"command": "roo-cline.terminalFixCommand",
-					"group": "Roo Code@2"
+					"group": "1_actions@2"
 				},
 				{
 					"command": "roo-cline.terminalExplainCommand",
-					"group": "Roo Code@3"
+					"group": "1_actions@3"
 				},
 				{
 					"command": "roo-cline.terminalFixCommandInCurrentTask",
-					"group": "Roo Code@5"
+					"group": "1_actions@5"
 				},
 				{
 					"command": "roo-cline.terminalExplainCommandInCurrentTask",
-					"group": "Roo Code@6"
+					"group": "1_actions@6"
 				}
 			],
 			"view/title": [
 				{
 					"command": "roo-cline.plusButtonClicked",
 					"group": "navigation@1",
-					"when": "view == pearai-roo-cline.SidebarProvider"
+					"when": "view == roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.promptsButtonClicked",
 					"group": "navigation@2",
-					"when": "view == pearai-roo-cline.SidebarProvider"
+					"when": "view == roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.mcpButtonClicked",
 					"group": "navigation@3",
-					"when": "view == pearai-roo-cline.SidebarProvider"
+					"when": "view == roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.historyButtonClicked",
 					"group": "navigation@4",
-					"when": "view == pearai-roo-cline.SidebarProvider"
+					"when": "view == roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.popoutButtonClicked",
 					"group": "navigation@5",
-					"when": "view == pearai-roo-cline.SidebarProvider"
+					"when": "view == roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.settingsButtonClicked",
 					"group": "navigation@6",
-					"when": "view == pearai-roo-cline.SidebarProvider"
+					"when": "view == roo-cline.SidebarProvider"
 				},
 				{
 					"command": "roo-cline.helpButtonClicked",
 					"group": "navigation@7",
-					"when": "view == pearai-roo-cline.SidebarProvider"
+					"when": "view == roo-cline.SidebarProvider"
 				}
 			]
 		},
@@ -279,23 +293,32 @@
 		}
 	},
 	"scripts": {
-		"build": "npm run build:webview && npm run vsix",
+		"build": "npm run vsix",
 		"build:webview": "cd webview-ui && npm run build",
-		"changeset": "changeset",
-		"check-types": "tsc --noEmit && cd webview-ui && npm run check-types",
+		"build:esbuild": "node esbuild.js --production",
 		"compile": "tsc -p . --outDir out && node esbuild.js",
-		"compile:integration": "tsc -p tsconfig.integration.json",
-		"install:all": "npm install && cd webview-ui && npm install",
-		"knip": "knip --include files",
-		"lint": "eslint src --ext ts && npm run lint --prefix webview-ui",
-		"lint-local": "eslint -c .eslintrc.local.json src --ext ts && npm run lint --prefix webview-ui",
-		"lint-fix": "eslint src --ext ts --fix && npm run lint-fix --prefix webview-ui",
-		"lint-fix-local": "eslint -c .eslintrc.local.json src --ext ts --fix && npm run lint-fix --prefix webview-ui",
-		"package": "npm run build:webview && npm run check-types && npm run lint && node esbuild.js --production",
-		"pretest": "npm run compile && npm run compile:integration",
-		"dev": "cd webview-ui && npm run dev -- --port 5174",
-		"test": "jest && cd webview-ui && npm run test",
-		"test:integration": "npm run build && npm run compile:integration && npx dotenvx run -f .env.integration -- node ./out-integration/test/runTest.js",
+		"install:all": "npm install npm-run-all && npm run install:_all",
+		"install:_all": "npm-run-all -p install-*",
+		"install-extension": "npm install",
+		"install-webview": "cd webview-ui && npm install",
+		"install-e2e": "cd e2e && npm install",
+		"install-benchmark": "cd benchmark && npm install",
+		"lint": "npm-run-all -p lint:*",
+		"lint:extension": "eslint src --ext ts",
+		"lint:webview": "cd webview-ui && npm run lint",
+		"lint:e2e": "cd e2e && npm run lint",
+		"lint:benchmark": "cd benchmark && npm run lint",
+		"check-types": "npm-run-all -p check-types:*",
+		"check-types:extension": "tsc --noEmit",
+		"check-types:webview": "cd webview-ui && npm run check-types",
+		"check-types:e2e": "cd e2e && npm run check-types",
+		"check-types:benchmark": "cd benchmark && npm run check-types",
+		"package": "npm-run-all -p build:webview build:esbuild check-types lint",
+		"pretest": "npm run compile",
+		"dev": "cd webview-ui && npm run dev",
+		"test": "npm-run-all -p test:*",
+		"test:extension": "jest",
+		"test:webview": "cd webview-ui && npm run test",
 		"prepare": "husky",
 		"publish:marketplace": "vsce publish && ovsx publish",
 		"publish": "npm run build && changeset publish && npm install --package-lock-only",
@@ -305,17 +328,25 @@
 		"watch": "npm-run-all -p watch:*",
 		"watch:esbuild": "node esbuild.js --watch",
 		"watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
-		"watch-tests": "tsc -p . -w --outDir out"
+		"watch-tests": "tsc -p . -w --outDir out",
+		"changeset": "changeset",
+		"knip": "knip --include files",
+		"clean": "npm-run-all -p clean:*",
+		"clean:extension": "rimraf bin dist out",
+		"clean:webview": "cd webview-ui && npm run clean",
+		"clean:e2e": "cd e2e && npm run clean",
+		"clean:benchmark": "cd benchmark && npm run clean",
+		"update-contributors": "node scripts/update-contributors.js"
 	},
 	"dependencies": {
 		"@anthropic-ai/bedrock-sdk": "^0.10.2",
 		"@anthropic-ai/sdk": "^0.37.0",
-		"@anthropic-ai/vertex-sdk": "^0.4.1",
+		"@anthropic-ai/vertex-sdk": "^0.7.0",
 		"@aws-sdk/client-bedrock-runtime": "^3.706.0",
+		"@google-cloud/vertexai": "^1.9.3",
 		"@google/generative-ai": "^0.18.0",
-		"@heroicons/react": "^2.2.0",
 		"@mistralai/mistralai": "^1.3.6",
-		"@modelcontextprotocol/sdk": "^1.0.1",
+		"@modelcontextprotocol/sdk": "^1.7.0",
 		"@types/clone-deep": "^4.0.4",
 		"@types/pdf-parse": "^1.1.4",
 		"@types/tmp": "^0.2.6",
@@ -331,25 +362,33 @@
 		"diff": "^5.2.0",
 		"diff-match-patch": "^1.0.5",
 		"fast-deep-equal": "^3.1.3",
+		"fast-xml-parser": "^4.5.1",
 		"fastest-levenshtein": "^1.0.16",
+		"fzf": "^0.5.2",
 		"get-folder-size": "^5.0.0",
 		"globby": "^14.0.2",
+		"i18next": "^24.2.2",
 		"isbinaryfile": "^5.0.2",
+		"js-tiktoken": "^1.0.19",
 		"mammoth": "^1.8.0",
 		"monaco-vscode-textmate-theme-converter": "^0.1.7",
 		"openai": "^4.78.1",
 		"os-name": "^6.0.0",
 		"p-wait-for": "^5.0.2",
 		"pdf-parse": "^1.1.1",
+		"pkce-challenge": "^4.1.0",
+		"posthog-node": "^4.7.0",
 		"pretty-bytes": "^6.1.1",
 		"puppeteer-chromium-resolver": "^23.0.0",
 		"puppeteer-core": "^23.4.0",
-		"react-tooltip": "^5.28.0",
+		"reconnecting-eventsource": "^1.6.4",
+		"say": "^0.16.0",
 		"serialize-error": "^11.0.3",
 		"simple-git": "^3.27.0",
 		"sound-play": "^1.1.0",
 		"string-similarity": "^4.0.4",
 		"strip-ansi": "^7.1.0",
+		"strip-bom": "^5.0.0",
 		"tmp": "^0.2.3",
 		"tree-sitter-wasms": "^0.1.11",
 		"turndown": "^7.2.0",
@@ -365,13 +404,10 @@
 		"@types/diff-match-patch": "^1.0.36",
 		"@types/glob": "^8.1.0",
 		"@types/jest": "^29.5.14",
-		"@types/mocha": "^10.0.10",
 		"@types/node": "20.x",
 		"@types/string-similarity": "^4.0.2",
 		"@typescript-eslint/eslint-plugin": "^7.14.1",
 		"@typescript-eslint/parser": "^7.11.0",
-		"@vscode/test-cli": "^0.0.9",
-		"@vscode/test-electron": "^2.4.0",
 		"esbuild": "^0.24.0",
 		"eslint": "^8.57.0",
 		"glob": "^11.0.1",
@@ -381,15 +417,11 @@
 		"knip": "^5.44.4",
 		"lint-staged": "^15.2.11",
 		"mkdirp": "^3.0.1",
-		"mocha": "^11.1.0",
 		"npm-run-all": "^4.1.5",
 		"prettier": "^3.4.2",
 		"rimraf": "^6.0.1",
 		"ts-jest": "^29.2.5",
-		"typescript": "^5.4.5",
-		"@react-dev-inspector/middleware": "^2.0.1",
-		"dotenv": "^16.4.7",
-		"react-dev-inspector": "^2.0.1"
+		"typescript": "^5.4.5"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,json,css,md}": [

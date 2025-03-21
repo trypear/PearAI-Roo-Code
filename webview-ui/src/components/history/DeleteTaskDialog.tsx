@@ -1,4 +1,7 @@
-import React from "react"
+import { useCallback, useEffect } from "react"
+import { useKeyPress } from "react-use"
+import { AlertDialogProps } from "@radix-ui/react-alert-dialog"
+
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -8,38 +11,49 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui"
+	Button,
+} from "@/components/ui"
+import { useAppTranslation } from "@/i18n/TranslationContext"
+
 import { vscode } from "@/utils/vscode"
 
-interface DeleteTaskDialogProps {
+interface DeleteTaskDialogProps extends AlertDialogProps {
 	taskId: string
-	open: boolean
-	onOpenChange: (open: boolean) => void
 }
 
-export const DeleteTaskDialog = ({ taskId, open, onOpenChange }: DeleteTaskDialogProps) => {
-	const handleDelete = () => {
-		vscode.postMessage({ type: "deleteTaskWithId", text: taskId })
-		onOpenChange(false)
-	}
+export const DeleteTaskDialog = ({ taskId, ...props }: DeleteTaskDialogProps) => {
+	const { t } = useAppTranslation()
+	const [isEnterPressed] = useKeyPress("Enter")
+
+	const { onOpenChange } = props
+
+	const onDelete = useCallback(() => {
+		if (taskId) {
+			vscode.postMessage({ type: "deleteTaskWithId", text: taskId })
+			onOpenChange?.(false)
+		}
+	}, [taskId, onOpenChange])
+
+	useEffect(() => {
+		if (taskId && isEnterPressed) {
+			onDelete()
+		}
+	}, [taskId, isEnterPressed, onDelete])
 
 	return (
-		<AlertDialog open={open} onOpenChange={onOpenChange}>
-			<AlertDialogContent>
+		<AlertDialog {...props}>
+			<AlertDialogContent onEscapeKeyDown={() => onOpenChange?.(false)}>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Delete Task</AlertDialogTitle>
-					<AlertDialogDescription>
-						Are you sure you want to delete this task? This action cannot be undone.
-					</AlertDialogDescription>
+					<AlertDialogTitle>{t("history:deleteTask")}</AlertDialogTitle>
+					<AlertDialogDescription>{t("history:deleteTaskMessage")}</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel asChild>
-						<Button variant="secondary">Cancel</Button>
+						<Button variant="secondary">{t("history:cancel")}</Button>
 					</AlertDialogCancel>
 					<AlertDialogAction asChild>
-						<Button variant="destructive" onClick={handleDelete}>
-							Delete
+						<Button variant="destructive" onClick={onDelete}>
+							{t("history:delete")}
 						</Button>
 					</AlertDialogAction>
 				</AlertDialogFooter>

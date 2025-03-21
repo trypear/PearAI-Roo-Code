@@ -5,25 +5,31 @@ import OpenAI from "openai"
 import { ApiHandlerOptions, ModelInfo, unboundDefaultModelId, unboundDefaultModelInfo } from "../../shared/api"
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { ApiStream, ApiStreamUsageChunk } from "../transform/stream"
-import { ApiHandler, SingleCompletionHandler } from "../"
+import { SingleCompletionHandler } from "../"
+import { BaseProvider } from "./base-provider"
 
 interface UnboundUsage extends OpenAI.CompletionUsage {
 	cache_creation_input_tokens?: number
 	cache_read_input_tokens?: number
 }
 
-export class UnboundHandler implements ApiHandler, SingleCompletionHandler {
-	private options: ApiHandlerOptions
+export class UnboundHandler extends BaseProvider implements SingleCompletionHandler {
+	protected options: ApiHandlerOptions
 	private client: OpenAI
 
 	constructor(options: ApiHandlerOptions) {
+		super()
 		this.options = options
 		const baseURL = "https://api.getunbound.ai/v1"
 		const apiKey = this.options.unboundApiKey ?? "not-provided"
 		this.client = new OpenAI({ baseURL, apiKey })
 	}
 
-	async *createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream {
+	private supportsTemperature(): boolean {
+		return !this.getModel().id.startsWith("openai/o3-mini")
+	}
+
+	override async *createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream {
 		// Convert Anthropic messages to OpenAI format
 		const openAiMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
 			{ role: "system", content: systemPrompt },
@@ -76,28 +82,30 @@ export class UnboundHandler implements ApiHandler, SingleCompletionHandler {
 			maxTokens = this.getModel().info.maxTokens
 		}
 
+		const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming = {
+			model: this.getModel().id.split("/")[1],
+			max_tokens: maxTokens,
+			messages: openAiMessages,
+			stream: true,
+		}
+
+		if (this.supportsTemperature()) {
+			requestOptions.temperature = this.options.modelTemperature ?? 0
+		}
+
 		const { data: completion, response } = await this.client.chat.completions
-			.create(
-				{
-					model: this.getModel().id.split("/")[1],
-					max_tokens: maxTokens,
-					temperature: this.options.modelTemperature ?? 0,
-					messages: openAiMessages,
-					stream: true,
+			.create(requestOptions, {
+				headers: {
+					"X-Unbound-Metadata": JSON.stringify({
+						labels: [
+							{
+								key: "app",
+								value: "roo-code",
+							},
+						],
+					}),
 				},
-				{
-					headers: {
-						"X-Unbound-Metadata": JSON.stringify({
-							labels: [
-								{
-									key: "app",
-									value: "roo-code",
-								},
-							],
-						}),
-					},
-				},
-			)
+			})
 			.withResponse()
 
 		for await (const chunk of completion) {
@@ -131,7 +139,7 @@ export class UnboundHandler implements ApiHandler, SingleCompletionHandler {
 		}
 	}
 
-	getModel(): { id: string; info: ModelInfo } {
+	override getModel(): { id: string; info: ModelInfo } {
 		const modelId = this.options.unboundModelId
 		const modelInfo = this.options.unboundModelInfo
 		if (modelId && modelInfo) {
@@ -148,14 +156,28 @@ export class UnboundHandler implements ApiHandler, SingleCompletionHandler {
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
 				model: this.getModel().id.split("/")[1],
 				messages: [{ role: "user", content: prompt }],
-				temperature: this.options.modelTemperature ?? 0,
+			}
+
+			if (this.supportsTemperature()) {
+				requestOptions.temperature = this.options.modelTemperature ?? 0
 			}
 
 			if (this.getModel().id.startsWith("anthropic/")) {
 				requestOptions.max_tokens = this.getModel().info.maxTokens
 			}
 
-			const response = await this.client.chat.completions.create(requestOptions)
+			const response = await this.client.chat.completions.create(requestOptions, {
+				headers: {
+					"X-Unbound-Metadata": JSON.stringify({
+						labels: [
+							{
+								key: "app",
+								value: "roo-code",
+							},
+						],
+					}),
+				},
+			})
 			return response.choices[0]?.message.content || ""
 		} catch (error) {
 			if (error instanceof Error) {
@@ -189,9 +211,6 @@ export async function getUnboundModels() {
 				}
 
 				switch (true) {
-					case modelId.startsWith("anthropic/claude-3-7-sonnet"):
-						modelInfo.maxTokens = 16384
-						break
 					case modelId.startsWith("anthropic/"):
 						modelInfo.maxTokens = 8192
 						break

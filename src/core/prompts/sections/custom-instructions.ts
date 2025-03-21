@@ -1,5 +1,7 @@
 import fs from "fs/promises"
 import path from "path"
+import * as vscode from "vscode"
+import { LANGUAGES } from "../../../shared/language"
 
 async function safeReadFile(filePath: string): Promise<string> {
 	try {
@@ -33,7 +35,7 @@ export async function addCustomInstructions(
 	globalCustomInstructions: string,
 	cwd: string,
 	mode: string,
-	options: { preferredLanguage?: string } = {},
+	options: { language?: string; rooIgnoreInstructions?: string } = {},
 ): Promise<string> {
 	const sections = []
 
@@ -45,9 +47,10 @@ export async function addCustomInstructions(
 	}
 
 	// Add language preference if provided
-	if (options.preferredLanguage) {
+	if (options.language) {
+		const languageName = LANGUAGES[options.language] || options.language
 		sections.push(
-			`Language Preference:\nYou should always speak and think in the ${options.preferredLanguage} language.`,
+			`Language Preference:\nYou should always speak and think in the "${languageName}" (${options.language}) language unless the user gives you instructions below to do otherwise.`,
 		)
 	}
 
@@ -68,6 +71,10 @@ export async function addCustomInstructions(
 	if (modeRuleContent && modeRuleContent.trim()) {
 		const modeRuleFile = `.clinerules-${mode}`
 		rules.push(`# Rules from ${modeRuleFile}:\n${modeRuleContent}`)
+	}
+
+	if (options.rooIgnoreInstructions) {
+		rules.push(options.rooIgnoreInstructions)
 	}
 
 	// Add generic rules

@@ -6,22 +6,39 @@ import { ApiHandlerOptions, ModelInfo, glamaDefaultModelId, glamaDefaultModelInf
 import { parseApiPrice } from "../../utils/cost"
 import { convertToOpenAiMessages } from "../transform/openai-format"
 import { ApiStream } from "../transform/stream"
-import { ApiHandler, SingleCompletionHandler } from "../"
+import { SingleCompletionHandler } from "../"
+import { BaseProvider } from "./base-provider"
 
 const GLAMA_DEFAULT_TEMPERATURE = 0
 
-export class GlamaHandler implements ApiHandler, SingleCompletionHandler {
-	private options: ApiHandlerOptions
+export class GlamaHandler extends BaseProvider implements SingleCompletionHandler {
+	protected options: ApiHandlerOptions
 	private client: OpenAI
 
 	constructor(options: ApiHandlerOptions) {
+		super()
 		this.options = options
 		const baseURL = "https://glama.ai/api/gateway/openai/v1"
 		const apiKey = this.options.glamaApiKey ?? "not-provided"
 		this.client = new OpenAI({ baseURL, apiKey })
 	}
 
-	async *createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream {
+	private supportsTemperature(): boolean {
+		return !this.getModel().id.startsWith("openai/o3-mini")
+	}
+
+	override getModel(): { id: string; info: ModelInfo } {
+		const modelId = this.options.glamaModelId
+		const modelInfo = this.options.glamaModelInfo
+
+		if (modelId && modelInfo) {
+			return { id: modelId, info: modelInfo }
+		}
+
+		return { id: glamaDefaultModelId, info: glamaDefaultModelInfo }
+	}
+
+	override async *createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream {
 		// Convert Anthropic messages to OpenAI format
 		const openAiMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
 			{ role: "system", content: systemPrompt },
@@ -152,21 +169,6 @@ export class GlamaHandler implements ApiHandler, SingleCompletionHandler {
 		}
 	}
 
-	private supportsTemperature(): boolean {
-		return !this.getModel().id.startsWith("openai/o3-mini")
-	}
-
-	getModel(): { id: string; info: ModelInfo } {
-		const modelId = this.options.glamaModelId
-		const modelInfo = this.options.glamaModelInfo
-
-		if (modelId && modelInfo) {
-			return { id: modelId, info: modelInfo }
-		}
-
-		return { id: glamaDefaultModelId, info: glamaDefaultModelInfo }
-	}
-
 	async completePrompt(prompt: string): Promise<string> {
 		try {
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
@@ -215,9 +217,6 @@ export async function getGlamaModels() {
 			}
 
 			switch (rawModel.id) {
-				case rawModel.id.startsWith("anthropic/claude-3-7-sonnet"):
-					modelInfo.maxTokens = 16384
-					break
 				case rawModel.id.startsWith("anthropic/"):
 					modelInfo.maxTokens = 8192
 					break

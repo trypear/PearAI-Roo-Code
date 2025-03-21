@@ -192,6 +192,11 @@ describe("UnboundHandler", () => {
 					temperature: 0,
 					max_tokens: 8192,
 				}),
+				expect.objectContaining({
+					headers: expect.objectContaining({
+						"X-Unbound-Metadata": expect.stringContaining("roo-code"),
+					}),
+				}),
 			)
 		})
 
@@ -233,8 +238,45 @@ describe("UnboundHandler", () => {
 					messages: [{ role: "user", content: "Test prompt" }],
 					temperature: 0,
 				}),
+				expect.objectContaining({
+					headers: expect.objectContaining({
+						"X-Unbound-Metadata": expect.stringContaining("roo-code"),
+					}),
+				}),
 			)
 			expect(mockCreate.mock.calls[0][0]).not.toHaveProperty("max_tokens")
+		})
+
+		it("should not set temperature for openai/o3-mini", async () => {
+			mockCreate.mockClear()
+
+			const openaiOptions = {
+				apiModelId: "openai/o3-mini",
+				unboundApiKey: "test-key",
+				unboundModelId: "openai/o3-mini",
+				unboundModelInfo: {
+					maxTokens: undefined,
+					contextWindow: 128000,
+					supportsPromptCache: true,
+					inputPrice: 0.01,
+					outputPrice: 0.03,
+				},
+			}
+			const openaiHandler = new UnboundHandler(openaiOptions)
+
+			await openaiHandler.completePrompt("Test prompt")
+			expect(mockCreate).toHaveBeenCalledWith(
+				expect.objectContaining({
+					model: "o3-mini",
+					messages: [{ role: "user", content: "Test prompt" }],
+				}),
+				expect.objectContaining({
+					headers: expect.objectContaining({
+						"X-Unbound-Metadata": expect.stringContaining("roo-code"),
+					}),
+				}),
+			)
+			expect(mockCreate.mock.calls[0][0]).not.toHaveProperty("temperature")
 		})
 	})
 

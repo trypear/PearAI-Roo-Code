@@ -1,6 +1,5 @@
 # PearAI's Integration of Roo Code / Cline, a coding agent. Name attribution will always be kept in tact.
 
-
 ## Local Setup & Development
 
 1. **Clone** the repo:
@@ -14,9 +13,11 @@
     npm run install:all
     ```
 4. **Build** the extension:
+
     ```bash
     npm run build
     ```
+
     - A `.vsix` file will appear in the `bin/` directory.
 
 5. **Start the webview (Vite/React app with HMR)**:
@@ -28,18 +29,28 @@
 
 Changes to the webview will appear immediately. Changes to the core extension will require a restart of the extension host.
 
+Alternatively you can build a .vsix and install it directly in VSCode:
+
+```sh
+npm run build
+```
+
+A `.vsix` file will appear in the `bin/` directory which can be installed with:
+
+```sh
+code --install-extension bin/roo-cline-<version>.vsix
+```
+
 We use [changesets](https://github.com/changesets/changesets) for versioning and publishing. Check our `CHANGELOG.md` for release notes.
 
- **Install** the `.vsix` manually if desired:
-    ```bash
+**Install** the `.vsix` manually if desired:
+`bash
     code --install-extension bin/roo-code-4.0.0.vsix
-    ```
+    `
+|
 
+<!-- END CONTRIBUTORS SECTION -->
 
 ## License
 
 [Apache 2.0 © 2025 Roo Veterinary, Inc.](./LICENSE)
-
----
-
-**Enjoy Roo Code!** Whether you keep it on a short leash or let it roam autonomously, we can’t wait to see what you build. If you have questions or feature ideas, drop by our [Reddit community](https://www.reddit.com/r/RooCode/) or [Discord](https://roocode.com/discord). Happy coding!
