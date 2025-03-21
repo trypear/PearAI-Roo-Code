@@ -105,16 +105,11 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 						// prompt caching: https://x.com/alexalbert__/status/1823751995901272068
 						// https://github.com/anthropics/anthropic-sdk-typescript?tab=readme-ov-file#default-headers
 						// https://github.com/anthropics/anthropic-sdk-typescript/commit/c920b77fc67bd839bfeb6716ceab9d7c9bbe7393
-						switch (modelId) {
-							case "claude-3-5-sonnet-20241022":
-							case "claude-3-5-haiku-20241022":
-							case "claude-3-opus-20240229":
-							case "claude-3-haiku-20240307":
-								return {
-									headers: { "anthropic-beta": "prompt-caching-2024-07-31" },
-								}
-							default:
-								return undefined
+						return {
+							headers: {
+								"anthropic-beta": "prompt-caching-2024-07-31",
+								authorization: `Bearer ${this.options.apiKey}`,
+							},
 						}
 					})(),
 				)
@@ -183,6 +178,27 @@ export class AnthropicHandler implements ApiHandler, SingleCompletionHandler {
 
 							yield { type: "text", text: chunk.content_block.text }
 							break
+						default: {
+							const block = chunk.content_block as {
+								type: string
+								text?: string
+								metadata?: { ui_only?: boolean; content?: string }
+							}
+
+							if (block.type === "ui") {
+								yield {
+									type: "text",
+									text: block.text || "",
+									metadata: block.metadata,
+								}
+							} else {
+								yield {
+									type: "text",
+									text: block.text || "",
+								}
+							}
+							break
+						}
 					}
 					break
 				case "content_block_delta":

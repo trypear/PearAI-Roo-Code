@@ -156,7 +156,8 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 	return (
 		<div
 			style={{
-				padding: "0 15px",
+				padding: "6px 6px 10px 6px",
+				// paddingBottom: "10px",
 				userSelect: "none",
 				borderTop: isExpanded
 					? `0.5px solid color-mix(in srgb, var(--vscode-titleBar-inactiveForeground) 20%, transparent)`
@@ -169,15 +170,15 @@ const AutoApproveMenu = ({ style }: AutoApproveMenuProps) => {
 					display: "flex",
 					alignItems: "center",
 					gap: "8px",
-					padding: isExpanded ? "8px 0" : "8px 0 0 0",
+					// padding: isExpanded ? "8px 0" : "8px 0 0 0",
 					cursor: "pointer",
 				}}
 				onClick={toggleExpanded}>
 				<div onClick={(e) => e.stopPropagation()}>
 					<VSCodeCheckbox
-						checked={autoApprovalEnabled ?? false}
+						checked={autoApprovalEnabled ?? true}
 						onChange={() => {
-							const newValue = !(autoApprovalEnabled ?? false)
+							const newValue = !(autoApprovalEnabled ?? true)
 							setAutoApprovalEnabled(newValue)
 							vscode.postMessage({ type: "autoApprovalEnabled", bool: newValue })
 						}}

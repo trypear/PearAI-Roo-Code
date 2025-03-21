@@ -92,6 +92,7 @@ export interface WebviewMessage {
 		| "openCustomModesSettings"
 		| "checkpointDiff"
 		| "checkpointRestore"
+		| "openPearAiAuth"
 		| "deleteMcpServer"
 		| "maxOpenTabsContext"
 	text?: string

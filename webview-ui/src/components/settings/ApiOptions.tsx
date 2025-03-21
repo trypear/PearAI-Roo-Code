@@ -1,7 +1,14 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from "react"
-import { useDebounce, useEvent } from "react-use"
+import { Fragment, memo, useCallback, useEffect, useMemo, useState, useRef } from "react"
+import { useEvent, useDebounce, useInterval } from "react-use"
 import { Checkbox, Dropdown, Pane, type DropdownOption } from "vscrui"
-import { VSCodeLink, VSCodeRadio, VSCodeRadioGroup, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
+import {
+	VSCodeLink,
+	VSCodeRadio,
+	VSCodeRadioGroup,
+	VSCodeTextField,
+	VSCodeButton,
+} from "@vscode/webview-ui-toolkit/react"
+import { TemperatureControl } from "./TemperatureControl"
 import * as vscodemodels from "vscode"
 
 import {
@@ -31,28 +38,22 @@ import {
 	unboundDefaultModelInfo,
 	requestyDefaultModelId,
 	requestyDefaultModelInfo,
+	pearAiModels,
+	pearAiDefaultModelId,
+	pearAiDefaultModelInfo,
+	PEARAI_URL,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 
 import { vscode } from "../../utils/vscode"
 import VSCodeButtonLink from "../common/VSCodeButtonLink"
 import { ModelInfoView } from "./ModelInfoView"
+import { usePearAiModels } from "../../hooks/usePearAiModels"
 import { DROPDOWN_Z_INDEX } from "./styles"
 import { ModelPicker } from "./ModelPicker"
-import { TemperatureControl } from "./TemperatureControl"
 import { validateApiConfiguration, validateModelId } from "@/utils/validate"
 import { ApiErrorMessage } from "./ApiErrorMessage"
 import { ThinkingBudget } from "./ThinkingBudget"
-
-const modelsByProvider: Record<string, Record<string, ModelInfo>> = {
-	anthropic: anthropicModels,
-	bedrock: bedrockModels,
-	vertex: vertexModels,
-	gemini: geminiModels,
-	"openai-native": openAiNativeModels,
-	deepseek: deepSeekModels,
-	mistral: mistralModels,
-}
 
 interface ApiOptionsProps {
 	uriScheme: string | undefined
@@ -92,6 +93,7 @@ const ApiOptions = ({
 	})
 
 	const [openAiModels, setOpenAiModels] = useState<Record<string, ModelInfo> | null>(null)
+	const pearAiModels = usePearAiModels(apiConfiguration)
 
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
@@ -114,10 +116,16 @@ const ApiOptions = ({
 		[setApiConfigurationField],
 	)
 
-	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(
-		() => normalizeApiConfiguration(apiConfiguration),
-		[apiConfiguration],
-	)
+	const { selectedProvider, selectedModelId, selectedModelInfo } = useMemo(() => {
+		const result = normalizeApiConfiguration(apiConfiguration, pearAiModels)
+		if (result.selectedProvider === "pearai") {
+			return {
+				...result,
+				selectedModelInfo: pearAiModels[result.selectedModelId] || pearAiModels[pearAiDefaultModelId],
+			}
+		}
+		return result
+	}, [apiConfiguration, pearAiModels])
 
 	// Debounced refresh model updates, only executed 250ms after the user
 	// stops typing.
@@ -218,6 +226,28 @@ const ApiOptions = ({
 
 	useEvent("message", onMessage)
 
+	const modelsByProvider = useMemo(
+		() => ({
+			anthropic: anthropicModels,
+			bedrock: bedrockModels,
+			vertex: vertexModels,
+			gemini: geminiModels,
+			"openai-native": openAiNativeModels,
+			deepseek: deepSeekModels,
+			mistral: mistralModels,
+			pearai: pearAiModels,
+			glama: glamaModels,
+			openrouter: openRouterModels,
+			unbound: unboundModels,
+			requesty: requestyModels,
+			openai: openAiModels || {},
+			ollama: {},
+			lmstudio: {},
+			"vscode-lm": {},
+		}),
+		[pearAiModels, glamaModels, openRouterModels, unboundModels, requestyModels, openAiModels],
+	)
+
 	const selectedProviderModelOptions: DropdownOption[] = useMemo(
 		() =>
 			modelsByProvider[selectedProvider]
@@ -229,7 +259,7 @@ const ApiOptions = ({
 						})),
 					]
 				: [],
-		[selectedProvider],
+		[selectedProvider, modelsByProvider],
 	)
 
 	return (
@@ -244,6 +274,7 @@ const ApiOptions = ({
 					onChange={handleInputChange("apiProvider", dropdownEventTransform)}
 					style={{ minWidth: 130, position: "relative", zIndex: DROPDOWN_Z_INDEX + 1 }}
 					options={[
+						{ value: "pearai", label: "PearAI" },
 						{ value: "openrouter", label: "OpenRouter" },
 						{ value: "anthropic", label: "Anthropic" },
 						{ value: "gemini", label: "Google Gemini" },
@@ -263,6 +294,39 @@ const ApiOptions = ({
 				/>
 			</div>
 
+			{selectedProvider === "pearai" && (
+				<div>
+					{!apiConfiguration?.pearaiApiKey ? (
+						<>
+							<VSCodeButton
+								onClick={() => {
+									vscode.postMessage({
+										type: "openPearAiAuth",
+									})
+								}}>
+								Login to PearAI
+							</VSCodeButton>
+							<p
+								style={{
+									fontSize: "12px",
+									marginTop: "5px",
+									color: "var(--vscode-descriptionForeground)",
+								}}>
+								Connect your PearAI account to use servers.
+							</p>
+						</>
+					) : (
+						<p
+							style={{
+								fontSize: "12px",
+								marginTop: "5px",
+								color: "var(--vscode-descriptionForeground)",
+							}}>
+							User already logged in to PearAI. Click 'Done' to proceed!
+						</p>
+					)}
+				</div>
+			)}
 			{errorMessage && <ApiErrorMessage errorMessage={errorMessage} />}
 
 			{selectedProvider === "anthropic" && (
@@ -1416,7 +1480,10 @@ export function getOpenRouterAuthUrl(uriScheme?: string) {
 	return `https://openrouter.ai/auth?callback_url=${uriScheme || "vscode"}://rooveterinaryinc.roo-cline/openrouter`
 }
 
-export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
+export function normalizeApiConfiguration(
+	apiConfiguration?: ApiConfiguration,
+	pearAiModelsQuery?: Record<string, ModelInfo>,
+) {
 	const provider = apiConfiguration?.apiProvider || "anthropic"
 	const modelId = apiConfiguration?.apiModelId
 
@@ -1503,6 +1570,9 @@ export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
 					supportsImages: false, // VSCode LM API currently doesn't support images.
 				},
 			}
+		case "pearai": {
+			return getProviderData(pearAiModelsQuery || pearAiModels, pearAiDefaultModelId)
+		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
 	}

@@ -12,6 +12,8 @@ export type SecretKey =
 	| "mistralApiKey"
 	| "unboundApiKey"
 	| "requestyApiKey"
+	| "pearai-token"
+	| "pearai-refresh" // Array of custom modes
 
 export type GlobalStateKey =
 	| "apiProvider"
@@ -84,3 +86,7 @@ export type GlobalStateKey =
 	| "modelMaxTokens"
 	| "mistralCodestralUrl"
 	| "maxOpenTabsContext"
+	| "pearaiModelId"
+	| "pearaiModelInfo"
+	| "pearaiBaseUrl"
+	| "pearaiApiKey"

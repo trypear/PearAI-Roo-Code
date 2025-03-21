@@ -8,7 +8,7 @@ import * as path from "path"
 import * as vscode from "vscode"
 import simpleGit from "simple-git"
 
-import { ApiConfiguration, ApiProvider, ModelInfo } from "../../shared/api"
+import { ApiConfiguration, ApiProvider, ModelInfo, PEARAI_URL } from "../../shared/api"
 import { findLast } from "../../shared/array"
 import { CustomSupportPrompts, supportPrompt } from "../../shared/support-prompt"
 import { GlobalFileNames } from "../../shared/globalFileNames"
@@ -25,13 +25,13 @@ import { selectImages } from "../../integrations/misc/process-images"
 import { getTheme } from "../../integrations/theme/getTheme"
 import WorkspaceTracker from "../../integrations/workspace/WorkspaceTracker"
 import { McpHub } from "../../services/mcp/McpHub"
+import { SYSTEM_PROMPT } from "../prompts/system"
 import { McpServerManager } from "../../services/mcp/McpServerManager"
 import { fileExistsAtPath } from "../../utils/fs"
 import { playSound, setSoundEnabled, setSoundVolume } from "../../utils/sound"
 import { singleCompletionHandler } from "../../utils/single-completion-handler"
 import { searchCommits } from "../../utils/git"
 import { getDiffStrategy } from "../diff/DiffStrategy"
-import { SYSTEM_PROMPT } from "../prompts/system"
 import { ConfigManager } from "../config/ConfigManager"
 import { CustomModesManager } from "../config/CustomModesManager"
 import { buildApiHandler } from "../../api"
@@ -49,13 +49,19 @@ import { openMention } from "../mentions"
 import { getNonce } from "./getNonce"
 import { getUri } from "./getUri"
 
+/*
+https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
+
+https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
+*/
+
 /**
  * https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
  * https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
  */
 
 export class ClineProvider implements vscode.WebviewViewProvider {
-	public static readonly sideBarId = "roo-cline.SidebarProvider" // used in package.json as the view's id. This value cannot be changed due to how vscode caches views based on their id, and updating the id would break existing instances of the extension.
+	public static readonly sideBarId = "pearai-roo-cline.SidebarProvider" // used in package.json as the view's id. This value cannot be changed due to how vscode caches views based on their id, and updating the id would break existing instances of the extension.
 	public static readonly tabPanelId = "roo-cline.TabPanelProvider"
 	private static activeInstances: Set<ClineProvider> = new Set()
 	private disposables: vscode.Disposable[] = []
@@ -130,7 +136,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 
 		// If no visible provider, try to show the sidebar view
 		if (!visibleProvider) {
-			await vscode.commands.executeCommand("roo-cline.SidebarProvider.focus")
+			await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
 			// Wait briefly for the view to become visible
 			await delay(100)
 			visibleProvider = ClineProvider.getVisibleInstance()
@@ -374,7 +380,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	private async getHMRHtmlContent(webview: vscode.Webview): Promise<string> {
-		const localPort = "5173"
+		const localPort = "5174"
 		const localServerUrl = `localhost:${localPort}`
 
 		// Check if local dev server is running.
@@ -417,7 +423,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			`style-src ${webview.cspSource} 'unsafe-inline' https://* http://${localServerUrl} http://0.0.0.0:${localPort}`,
 			`img-src ${webview.cspSource} data:`,
 			`script-src 'unsafe-eval' https://* http://${localServerUrl} http://0.0.0.0:${localPort} 'nonce-${nonce}'`,
-			`connect-src https://* ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort}`,
+			`connect-src https://* ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort} http://localhost:8000 http://0.0.0.0:8000 https://stingray-app-gb2an.ondigitalocean.app`,
 		]
 
 		return /*html*/ `
@@ -501,7 +507,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
             <meta charset="utf-8">
             <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
             <meta name="theme-color" content="#000000">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}';">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; script-src 'nonce-${nonce}'; connect-src ${webview.cspSource} https://stingray-app-gb2an.ondigitalocean.app;">
             <link rel="stylesheet" type="text/css" href="${stylesUri}">
 			<link href="${codiconsUri}" rel="stylesheet" />
             <title>Roo Code</title>
@@ -1523,6 +1529,19 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 							await this.updateGlobalState("mode", defaultModeSlug)
 							await this.postStateToWebview()
 						}
+						break
+					case "openPearAiAuth":
+						const extensionUrl = `${vscode.env.uriScheme}://pearai.pearai/auth`
+						const callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(extensionUrl))
+
+						await vscode.env.openExternal(
+							await vscode.env.asExternalUri(
+								vscode.Uri.parse(
+									`https://trypear.ai/signin?callback=${callbackUri.toString()}`, // Change to localhost if running locally
+								),
+							),
+						)
+						break
 				}
 			},
 			null,
@@ -1616,7 +1635,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		// Update mode's default config
 		const { mode } = await this.getState()
 		if (mode) {
-			const currentApiConfigName = await this.getGlobalState("currentApiConfigName")
+			const currentApiConfigName = (await this.getGlobalState("currentApiConfigName")) ?? "default"
 			const listApiConfig = await this.configManager.listConfig()
 			const config = listApiConfig?.find((c) => c.name === currentApiConfigName)
 			if (config?.id) {
@@ -1672,6 +1691,9 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			requestyModelInfo,
 			modelTemperature,
 			modelMaxTokens,
+			pearaiBaseUrl,
+			pearaiModelId,
+			pearaiModelInfo,
 		} = apiConfiguration
 		await Promise.all([
 			this.updateGlobalState("apiProvider", apiProvider),
@@ -1721,6 +1743,9 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.updateGlobalState("requestyModelInfo", requestyModelInfo),
 			this.updateGlobalState("modelTemperature", modelTemperature),
 			this.updateGlobalState("modelMaxTokens", modelMaxTokens),
+			await this.updateGlobalState("pearaiBaseUrl", PEARAI_URL),
+			await this.updateGlobalState("pearaiModelId", pearaiModelId),
+			await this.updateGlobalState("pearaiModelInfo", pearaiModelInfo),
 		])
 		if (this.cline) {
 			this.cline.api = buildApiHandler(apiConfiguration)
@@ -2032,11 +2057,11 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			version: this.context.extension?.packageJSON?.version ?? "",
 			apiConfiguration,
 			customInstructions,
-			alwaysAllowReadOnly: alwaysAllowReadOnly ?? false,
-			alwaysAllowWrite: alwaysAllowWrite ?? false,
-			alwaysAllowExecute: alwaysAllowExecute ?? false,
-			alwaysAllowBrowser: alwaysAllowBrowser ?? false,
-			alwaysAllowMcp: alwaysAllowMcp ?? false,
+			alwaysAllowReadOnly: alwaysAllowReadOnly ?? true,
+			alwaysAllowWrite: alwaysAllowWrite ?? true,
+			alwaysAllowExecute: alwaysAllowExecute ?? true,
+			alwaysAllowBrowser: alwaysAllowBrowser ?? true,
+			alwaysAllowMcp: alwaysAllowMcp ?? true,
 			alwaysAllowModeSwitch: alwaysAllowModeSwitch ?? false,
 			uriScheme: vscode.env.uriScheme,
 			currentTaskItem: this.cline?.taskId
@@ -2060,7 +2085,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			fuzzyMatchThreshold: fuzzyMatchThreshold ?? 1.0,
 			mcpEnabled: mcpEnabled ?? true,
 			enableMcpServerCreation: enableMcpServerCreation ?? true,
-			alwaysApproveResubmit: alwaysApproveResubmit ?? false,
+			alwaysApproveResubmit: alwaysApproveResubmit ?? true,
 			requestDelaySeconds: requestDelaySeconds ?? 10,
 			rateLimitSeconds: rateLimitSeconds ?? 0,
 			currentApiConfigName: currentApiConfigName ?? "default",
@@ -2069,7 +2094,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			customModePrompts: customModePrompts ?? {},
 			customSupportPrompts: customSupportPrompts ?? {},
 			enhancementApiConfigId,
-			autoApprovalEnabled: autoApprovalEnabled ?? false,
+			autoApprovalEnabled: autoApprovalEnabled ?? true,
 			customModes: await this.customModesManager.getCustomModes(),
 			experiments: experiments ?? experimentDefault,
 			mcpServers: this.mcpHub?.getAllServers() ?? [],
@@ -2162,6 +2187,11 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			openAiNativeApiKey,
 			deepSeekApiKey,
 			mistralApiKey,
+			pearaiApiKey,
+			pearaiRefreshKey,
+			pearaiBaseUrl,
+			pearaiModelId,
+			pearaiModelInfo,
 			mistralCodestralUrl,
 			azureApiVersion,
 			openAiStreamingEnabled,
@@ -2246,6 +2276,11 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			this.getSecret("openAiNativeApiKey") as Promise<string | undefined>,
 			this.getSecret("deepSeekApiKey") as Promise<string | undefined>,
 			this.getSecret("mistralApiKey") as Promise<string | undefined>,
+			this.getSecret("pearai-token") as Promise<string | undefined>,
+			this.getSecret("pearai-refresh") as Promise<string | undefined>,
+			this.getGlobalState("pearaiBaseUrl") as Promise<string | undefined>,
+			this.getGlobalState("pearaiModelId") as Promise<string | undefined>,
+			this.getGlobalState("pearaiModelInfo") as Promise<ModelInfo | undefined>,
 			this.getGlobalState("mistralCodestralUrl") as Promise<string | undefined>,
 			this.getGlobalState("azureApiVersion") as Promise<string | undefined>,
 			this.getGlobalState("openAiStreamingEnabled") as Promise<boolean | undefined>,
@@ -2347,6 +2382,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				openAiNativeApiKey,
 				deepSeekApiKey,
 				mistralApiKey,
+				pearaiApiKey,
+				pearaiBaseUrl,
+				pearaiModelId,
+				pearaiModelInfo,
 				mistralCodestralUrl,
 				azureApiVersion,
 				openAiStreamingEnabled,
@@ -2366,12 +2405,12 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			},
 			lastShownAnnouncementId,
 			customInstructions,
-			alwaysAllowReadOnly: alwaysAllowReadOnly ?? false,
-			alwaysAllowWrite: alwaysAllowWrite ?? false,
-			alwaysAllowExecute: alwaysAllowExecute ?? false,
-			alwaysAllowBrowser: alwaysAllowBrowser ?? false,
-			alwaysAllowMcp: alwaysAllowMcp ?? false,
-			alwaysAllowModeSwitch: alwaysAllowModeSwitch ?? false,
+			alwaysAllowReadOnly: alwaysAllowReadOnly ?? true,
+			alwaysAllowWrite: alwaysAllowWrite ?? true,
+			alwaysAllowExecute: alwaysAllowExecute ?? true,
+			alwaysAllowBrowser: alwaysAllowBrowser ?? true,
+			alwaysAllowMcp: alwaysAllowMcp ?? true,
+			alwaysAllowModeSwitch: alwaysAllowModeSwitch ?? true,
 			taskHistory,
 			allowedCommands,
 			soundEnabled: soundEnabled ?? false,
@@ -2417,7 +2456,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				})(),
 			mcpEnabled: mcpEnabled ?? true,
 			enableMcpServerCreation: enableMcpServerCreation ?? true,
-			alwaysApproveResubmit: alwaysApproveResubmit ?? false,
+			alwaysApproveResubmit: alwaysApproveResubmit ?? true,
 			requestDelaySeconds: Math.max(5, requestDelaySeconds ?? 10),
 			rateLimitSeconds: rateLimitSeconds ?? 0,
 			currentApiConfigName: currentApiConfigName ?? "default",
@@ -2427,7 +2466,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			customSupportPrompts: customSupportPrompts ?? {},
 			enhancementApiConfigId,
 			experiments: experiments ?? experimentDefault,
-			autoApprovalEnabled: autoApprovalEnabled ?? false,
+			autoApprovalEnabled: autoApprovalEnabled ?? true,
 			customModes,
 			maxOpenTabsContext: maxOpenTabsContext ?? 20,
 		}

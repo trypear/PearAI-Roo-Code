@@ -1,8 +1,9 @@
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
 import { useCallback, useState } from "react"
 import { useExtensionState } from "../../context/ExtensionStateContext"
-import { validateApiConfiguration } from "../../utils/validate"
 import { vscode } from "../../utils/vscode"
+import { PEARAI_URL } from "../../../../src/shared/api"
+import { validateApiConfiguration } from "@/utils/validate"
 import ApiOptions from "../settings/ApiOptions"
 
 const WelcomeView = () => {
@@ -19,20 +20,25 @@ const WelcomeView = () => {
 		}
 
 		setErrorMessage(undefined)
-		vscode.postMessage({ type: "upsertApiConfiguration", text: currentApiConfigName, apiConfiguration })
+		vscode.postMessage({
+			type: "upsertApiConfiguration",
+			text: currentApiConfigName,
+			apiConfiguration: {
+				apiProvider: "pearai",
+				pearaiBaseUrl: `${PEARAI_URL}/integrations/cline`,
+			},
+		})
+		// vscode.postMessage({ type: "apiConfiguration", apiConfiguration })
+		// vscode.postMessage({ type: "upsertApiConfiguration", text: currentApiConfigName, apiConfiguration })
 	}, [apiConfiguration, currentApiConfigName])
 
 	return (
-		<div className="flex flex-col min-h-screen px-0 pb-5">
-			<h2>Hi, I'm Roo!</h2>
+		<div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, padding: "0 20px" }}>
+			<h2>Welcome to PearAI Coding Agent (Powered by Roo Code / Cline)!</h2>
 			<p>
-				I can do all kinds of tasks thanks to the latest breakthroughs in agentic coding capabilities and access
-				to tools that let me create & edit files, explore complex projects, use the browser, and execute
-				terminal commands (with your permission, of course). I can even use MCP to create new tools and extend
-				my own capabilities.
+				Ask me to create a new feature, fix a bug, anything else. I can create & edit files, explore complex
+				projects, use the browser, and execute terminal commands!
 			</p>
-
-			<b>To get started, this extension needs an API provider.</b>
 
 			<div className="mt-3">
 				<ApiOptions
@@ -45,11 +51,11 @@ const WelcomeView = () => {
 				/>
 			</div>
 
-			<div className="sticky bottom-0 bg-[var(--vscode-sideBar-background)] py-3">
-				<div className="flex flex-col gap-1.5">
-					<VSCodeButton onClick={handleSubmit}>Let's go!</VSCodeButton>
-					{errorMessage && <span className="text-destructive">{errorMessage}</span>}
-				</div>
+			<div style={{ marginTop: "10px" }}>
+				<VSCodeButton onClick={handleSubmit} style={{ marginTop: "3px" }}>
+					Next
+				</VSCodeButton>
+				{errorMessage && <span className="text-destructive">{errorMessage}</span>}
 			</div>
 		</div>
 	)

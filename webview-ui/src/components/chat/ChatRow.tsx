@@ -22,6 +22,20 @@ import McpResourceRow from "../mcp/McpResourceRow"
 import McpToolRow from "../mcp/McpToolRow"
 import { highlightMentions } from "./TaskHeader"
 import { CheckpointSaved } from "./checkpoints/CheckpointSaved"
+import {
+	vscBackground,
+	vscBadgeBackground,
+	vscBadgeForeground,
+	vscButtonBackground,
+	vscEditorBackground,
+	vscFocusBorder,
+	vscInputBackground,
+} from "../ui"
+import { PencilIcon, PencilSquareIcon, ServerIcon, PlusCircleIcon } from "@heroicons/react/24/outline"
+import { vsCodeBadge } from "@vscode/webview-ui-toolkit"
+import { ViewfinderCircleIcon } from "@heroicons/react/24/outline"
+import { OpenInNewWindowIcon } from "@radix-ui/react-icons"
+import { Tail, Tail2 } from "../ui/tail"
 
 interface ChatRowProps {
 	message: ClineMessage
@@ -139,7 +153,9 @@ export const ChatRowContent = ({
 							className="codicon codicon-terminal"
 							style={{ color: normalColor, marginBottom: "-1.5px" }}></span>
 					),
-					<span style={{ color: normalColor, fontWeight: "bold" }}>Roo wants to execute this command:</span>,
+					<span style={{ color: normalColor, fontWeight: "bold" }}>
+						Agent wants to execute this command:
+					</span>,
 				]
 			case "use_mcp_server":
 				const mcpServerUse = JSON.parse(message.text || "{}") as ClineAskUseMcpServer
@@ -152,16 +168,23 @@ export const ChatRowContent = ({
 							style={{ color: normalColor, marginBottom: "-1.5px" }}></span>
 					),
 					<span style={{ color: normalColor, fontWeight: "bold" }}>
-						Roo wants to {mcpServerUse.type === "use_mcp_tool" ? "use a tool" : "access a resource"} on the{" "}
-						<code>{mcpServerUse.serverName}</code> MCP server:
+						Agent wants to {mcpServerUse.type === "use_mcp_tool" ? "use a tool" : "access a resource"} on
+						the <code>{mcpServerUse.serverName}</code> MCP server:
 					</span>,
 				]
 			case "completion_result":
 				return [
-					<span
-						className="codicon codicon-check"
-						style={{ color: successColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: successColor, fontWeight: "bold" }}>Task Completed</span>,
+					// <span
+					// 	className="codicon codicon-check"
+					// 	style={{ color: successColor, marginBottom: "-1.5px" }}
+					// >
+					// </span>,
+					<div
+						className="flex items-center gap-2 p-2 rounded-lg"
+						style={{ background: "linear-gradient(to bottom, #E64C9E66, #E64C9E1A)" }}>
+						<PencilIcon className="w-4 h-4" />
+						<span className="font-bold uppercase">Task Completed</span>
+					</div>,
 				]
 			case "api_req_retry_delayed":
 				return []
@@ -204,8 +227,14 @@ export const ChatRowContent = ({
 						) : (
 							<span style={{ color: errorColor, fontWeight: "bold" }}>API Streaming Failed</span>
 						)
-					) : cost !== null && cost !== undefined ? (
-						<span style={{ color: normalColor, fontWeight: "bold" }}>API Request</span>
+					) : cost != null && cost !== undefined ? (
+						<span
+							className={`font-bold flex items-center gap-2`}
+							// style={{ color: vscBadgeBackground }}
+						>
+							<ServerIcon className="w-4 h-4" />
+							API REQUEST
+						</span>
 					) : apiRequestFailedMessage ? (
 						<span style={{ color: errorColor, fontWeight: "bold" }}>API Request Failed</span>
 					) : (
@@ -214,10 +243,12 @@ export const ChatRowContent = ({
 				]
 			case "followup":
 				return [
-					<span
-						className="codicon codicon-question"
-						style={{ color: normalColor, marginBottom: "-1.5px" }}></span>,
-					<span style={{ color: normalColor, fontWeight: "bold" }}>Roo has a question:</span>,
+					<div className="flex items-center gap-2 p-2">
+						<span
+							className="codicon codicon-question"
+							style={{ color: normalColor, marginBottom: "-1.5px" }}></span>
+						,<span style={{ color: normalColor, fontWeight: "bold" }}>Roo has a question:</span>,
+					</div>,
 				]
 			default:
 				return [null, null]
@@ -257,9 +288,27 @@ export const ChatRowContent = ({
 			case "appliedDiff":
 				return (
 					<>
-						<div style={headerStyle}>
-							{toolIcon(tool.tool === "appliedDiff" ? "diff" : "edit")}
-							<span style={{ fontWeight: "bold" }}>Roo wants to edit this file:</span>
+						<div
+							style={{ backgroundColor: vscEditorBackground }}
+							className="flex items-center gap-2 p-2 rounded-lg mb-2">
+							<PencilIcon className="w-5 h-5" />
+							<div className="flex flex-col">
+								<span className="font-bold uppercase">Agent wants to edit</span>
+
+								<span
+									style={{
+										color: "var(--vscode-descriptionForeground)",
+										whiteSpace: "nowrap",
+										overflow: "hidden",
+										textOverflow: "ellipsis",
+										direction: "rtl",
+										textAlign: "left",
+										fontWeight: "bold",
+										letterSpacing: "0.03em",
+									}}>
+									{removeLeadingNonAlphanumeric(tool.path ?? "") + "\u200E"}
+								</span>
+							</div>
 						</div>
 						<CodeAccordian
 							isLoading={message.partial}
@@ -273,9 +322,12 @@ export const ChatRowContent = ({
 			case "newFileCreated":
 				return (
 					<>
-						<div style={headerStyle}>
-							{toolIcon("new-file")}
-							<span style={{ fontWeight: "bold" }}>Roo wants to create a new file:</span>
+						<div
+							style={{ ...headerStyle, backgroundColor: vscEditorBackground }}
+							className="flex items-center gap-2 p-2 rounded-lg">
+							{/* {toolIcon("new-file")} */}
+							<PlusCircleIcon className="w-5 h-5" />
+							<span className="font-bold uppercase">Agent wants to create a new file</span>
 						</div>
 						<CodeAccordian
 							isLoading={message.partial}
@@ -289,12 +341,6 @@ export const ChatRowContent = ({
 			case "readFile":
 				return (
 					<>
-						<div style={headerStyle}>
-							{toolIcon("file-code")}
-							<span style={{ fontWeight: "bold" }}>
-								{message.type === "ask" ? "Roo wants to read this file:" : "Roo read this file:"}
-							</span>
-						</div>
 						{/* <CodeAccordian
 							code={tool.content!}
 							path={tool.path!}
@@ -302,44 +348,58 @@ export const ChatRowContent = ({
 							onToggleExpand={onToggleExpand}
 						/> */}
 						<div
-							style={{
-								borderRadius: 3,
-								backgroundColor: CODE_BLOCK_BG_COLOR,
-								overflow: "hidden",
-								border: "1px solid var(--vscode-editorGroup-border)",
-							}}>
+							style={{ backgroundColor: vscEditorBackground }}
+							className="flex items-center gap-2 p-2 rounded-lg">
+							<ViewfinderCircleIcon className="w-6 h-6" />
 							<div
 								style={{
-									color: "var(--vscode-descriptionForeground)",
-									display: "flex",
-									alignItems: "center",
-									padding: "9px 10px",
-									cursor: "pointer",
-									userSelect: "none",
-									WebkitUserSelect: "none",
-									MozUserSelect: "none",
-									msUserSelect: "none",
-								}}
+									backgroundColor: CODE_BLOCK_BG_COLOR,
+									overflow: "hidden",
+									width: "fit-content",
+								}}>
+								<span style={{ fontWeight: "bold" }} className="uppercase">
+									{message.type === "ask" ? "Agent wants to read this file" : "Roo read this file:"}
+								</span>
+								<div
+									style={{
+										color: "var(--vscode-descriptionForeground)",
+										display: "flex",
+										alignItems: "center",
+										cursor: "pointer",
+										userSelect: "none",
+										WebkitUserSelect: "none",
+										MozUserSelect: "none",
+										msUserSelect: "none",
+									}}
+									onClick={() => {
+										vscode.postMessage({ type: "openFile", text: tool.content })
+									}}>
+									{tool.path?.startsWith(".") && <span>.</span>}
+									<span
+										style={{
+											whiteSpace: "nowrap",
+											overflow: "hidden",
+											textOverflow: "ellipsis",
+											direction: "rtl",
+											textAlign: "left",
+											fontWeight: "bold",
+											letterSpacing: "0.03em",
+										}}>
+										{removeLeadingNonAlphanumeric(tool.path ?? "") + "\u200E"}
+									</span>
+									<div style={{ flexGrow: 1 }}></div>
+									{/* <span
+										className={`codicon codicon-link-external`}
+										>
+										</span> */}
+								</div>
+							</div>
+							<OpenInNewWindowIcon
+								className="w-5 h-5 ml-auto cursor-pointer"
 								onClick={() => {
 									vscode.postMessage({ type: "openFile", text: tool.content })
-								}}>
-								{tool.path?.startsWith(".") && <span>.</span>}
-								<span
-									style={{
-										whiteSpace: "nowrap",
-										overflow: "hidden",
-										textOverflow: "ellipsis",
-										marginRight: "8px",
-										direction: "rtl",
-										textAlign: "left",
-									}}>
-									{removeLeadingNonAlphanumeric(tool.path ?? "") + "\u200E"}
-								</span>
-								<div style={{ flexGrow: 1 }}></div>
-								<span
-									className={`codicon codicon-link-external`}
-									style={{ fontSize: 13.5, margin: "1px 0" }}></span>
-							</div>
+								}}
+							/>
 						</div>
 					</>
 				)
@@ -350,7 +410,7 @@ export const ChatRowContent = ({
 							{toolIcon("folder-opened")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
-									? "Roo wants to view the top level files in this directory:"
+									? "Agent wants to view the top level files in this directory:"
 									: "Roo viewed the top level files in this directory:"}
 							</span>
 						</div>
@@ -370,7 +430,7 @@ export const ChatRowContent = ({
 							{toolIcon("folder-opened")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
-									? "Roo wants to recursively view all files in this directory:"
+									? "Agent wants to recursively view all files in this directory:"
 									: "Roo recursively viewed all files in this directory:"}
 							</span>
 						</div>
@@ -390,7 +450,7 @@ export const ChatRowContent = ({
 							{toolIcon("file-code")}
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask"
-									? "Roo wants to view source code definition names used in this directory:"
+									? "Agent wants to view source code definition names used in this directory:"
 									: "Roo viewed source code definition names used in this directory:"}
 							</span>
 						</div>
@@ -410,7 +470,7 @@ export const ChatRowContent = ({
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask" ? (
 									<>
-										Roo wants to search this directory for <code>{tool.regex}</code>:
+										Agent wants to search this directory for <code>{tool.regex}</code>:
 									</>
 								) : (
 									<>
@@ -437,7 +497,7 @@ export const ChatRowContent = ({
 			// 				{isInspecting ? <ProgressIndicator /> : toolIcon("inspect")}
 			// 				<span style={{ fontWeight: "bold" }}>
 			// 					{message.type === "ask" ? (
-			// 						<>Roo wants to inspect this website:</>
+			// 						<>Agent wants to inspect this website:</>
 			// 					) : (
 			// 						<>Roo is inspecting this website:</>
 			// 					)}
@@ -462,7 +522,7 @@ export const ChatRowContent = ({
 							<span style={{ fontWeight: "bold" }}>
 								{message.type === "ask" ? (
 									<>
-										Roo wants to switch to <code>{tool.mode}</code> mode
+										Agent wants to switch to <code>{tool.mode}</code> mode
 										{tool.reason ? ` because: ${tool.reason}` : ""}
 									</>
 								) : (
@@ -481,7 +541,7 @@ export const ChatRowContent = ({
 						<div style={headerStyle}>
 							{toolIcon("new-file")}
 							<span style={{ fontWeight: "bold" }}>
-								Roo wants to create a new task in <code>{tool.mode}</code> mode:
+								Agent wants to create a new task in <code>{tool.mode}</code> mode:
 							</span>
 						</div>
 						<div style={{ paddingLeft: "26px", marginTop: "4px" }}>
@@ -524,15 +584,24 @@ export const ChatRowContent = ({
 									msUserSelect: "none",
 								}}
 								onClick={onToggleExpand}>
-								<div style={{ display: "flex", alignItems: "center", gap: "10px", flexGrow: 1 }}>
-									{icon}
-									{title}
-									<VSCodeBadge
-										style={{ opacity: cost !== null && cost !== undefined && cost > 0 ? 1 : 0 }}>
-										${Number(cost || 0)?.toFixed(4)}
-									</VSCodeBadge>
+								{/* <VSCodeBadge style={{ opacity: cost != null && cost > 0 ? 1 : 0 }} className=""> */}
+								<div className="flex items-center gap-2">
+									<div
+										className="flex items-center gap-2 p-2 rounded-lg"
+										style={{ backgroundColor: "var(--vscode-list-hoverBackground)" }}>
+										<div className="flex items-center gap-2 flex-grow">
+											{title}${Number(cost || 0)?.toFixed(4)}
+										</div>
+										<span
+											className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}></span>
+									</div>
+									{isStreaming && (
+										<div className="flex items-center gap-2 w-5 h-5">
+											<VSCodeProgressRing />
+										</div>
+									)}
 								</div>
-								<span className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}></span>
+								{/* </VSCodeBadge> */}
 							</div>
 							{(((cost === null || cost === undefined) && apiRequestFailedMessage) ||
 								apiReqStreamingFailedMessage) && (
@@ -613,15 +682,20 @@ export const ChatRowContent = ({
 					return (
 						<div
 							style={{
-								backgroundColor: "var(--vscode-badge-background)",
+								backgroundColor: "var(--vscode-list-hoverBackground)",
 								color: "var(--vscode-badge-foreground)",
-								borderRadius: "3px",
+								borderRadius: "12px",
 								padding: "9px",
+								whiteSpace: "pre-line",
+								wordWrap: "break-word",
+								width: "60%",
+								marginLeft: "auto",
+								position: "relative",
 								overflow: "hidden",
-								whiteSpace: "pre-wrap",
 								wordBreak: "break-word",
 								overflowWrap: "anywhere",
 							}}>
+							<Tail2 />
 							<div
 								style={{
 									display: "flex",
@@ -632,6 +706,7 @@ export const ChatRowContent = ({
 								<span style={{ display: "block", flexGrow: 1, padding: "4px" }}>
 									{highlightMentions(message.text)}
 								</span>
+
 								<VSCodeButton
 									appearance="icon"
 									style={{

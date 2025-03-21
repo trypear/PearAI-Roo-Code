@@ -832,12 +832,12 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 					}}>
 					<p style={{ wordWrap: "break-word", margin: 0, padding: 0 }}>
 						If you have any questions or feedback, feel free to open an issue at{" "}
-						<VSCodeLink href="https://github.com/RooVetGit/Roo-Code" style={{ display: "inline" }}>
-							github.com/RooVetGit/Roo-Code
+						<VSCodeLink href="https://github.com/trypear/PearAI-Roo-Code" style={{ display: "inline" }}>
+							github.com/trypear/PearAI-Roo-Code
 						</VSCodeLink>{" "}
-						or join{" "}
-						<VSCodeLink href="https://www.reddit.com/r/RooCode/" style={{ display: "inline" }}>
-							reddit.com/r/RooCode
+						or join the{" "}
+						<VSCodeLink href="https://discord.gg/7QMraJUsQt" style={{ display: "inline" }}>
+							Discord
 						</VSCodeLink>
 					</p>
 					<p style={{ fontStyle: "italic", margin: "10px 0 0 0", padding: 0, marginBottom: 100 }}>

@@ -11,6 +11,7 @@ import SettingsView, { SettingsViewRef } from "./components/settings/SettingsVie
 import WelcomeView from "./components/welcome/WelcomeView"
 import McpView from "./components/mcp/McpView"
 import PromptsView from "./components/prompts/PromptsView"
+import { Inspector } from "react-dev-inspector"
 
 type Tab = "settings" | "history" | "mcp" | "prompts" | "chat"
 
@@ -66,9 +67,7 @@ const App = () => {
 
 	// Do not conditionally load ChatView, it's expensive and there's state we
 	// don't want to lose (user input, disableInput, askResponse promise, etc.)
-	return showWelcome ? (
-		<WelcomeView />
-	) : (
+	return (
 		<>
 			{tab === "settings" && <SettingsView ref={settingsRef} onDone={() => setTab("chat")} />}
 			{tab === "history" && <HistoryView onDone={() => switchTab("chat")} />}

@@ -28,3 +28,7 @@ docs/_site/
 
 #Logging
 logs
+.aider*
+.env
+# aider
+.aider*

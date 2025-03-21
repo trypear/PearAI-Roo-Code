@@ -1,7 +1,20 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { useEvent } from "react-use"
 import { ApiConfigMeta, ExtensionMessage, ExtensionState } from "../../../src/shared/ExtensionMessage"
-import { ApiConfiguration } from "../../../src/shared/api"
+import {
+	ApiConfiguration,
+	ModelInfo,
+	glamaDefaultModelId,
+	glamaDefaultModelInfo,
+	openRouterDefaultModelId,
+	openRouterDefaultModelInfo,
+	unboundDefaultModelId,
+	unboundDefaultModelInfo,
+	requestyDefaultModelId,
+	requestyDefaultModelInfo,
+	PEARAI_URL,
+	pearAiModels,
+} from "../../../src/shared/api"
 import { vscode } from "../utils/vscode"
 import { convertTextMateToHljs } from "../utils/textMateToHljs"
 import { findLastIndex } from "../../../src/shared/array"
@@ -76,9 +89,15 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		taskHistory: [],
 		shouldShowAnnouncement: false,
 		allowedCommands: [],
+		alwaysAllowReadOnly: true,
+		alwaysAllowWrite: true,
+		alwaysAllowExecute: true,
+		alwaysAllowBrowser: true,
+		alwaysAllowMcp: true,
+		alwaysAllowModeSwitch: true,
 		soundEnabled: false,
 		soundVolume: 0.5,
-		diffEnabled: false,
+		diffEnabled: true,
 		checkpointsEnabled: false,
 		fuzzyMatchThreshold: 1.0,
 		preferredLanguage: "English",
@@ -88,7 +107,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		terminalOutputLineLimit: 500,
 		mcpEnabled: true,
 		enableMcpServerCreation: true,
-		alwaysApproveResubmit: false,
+		alwaysApproveResubmit: true,
 		requestDelaySeconds: 5,
 		rateLimitSeconds: 0, // Minimum time between successive requests (0 = disabled)
 		currentApiConfigName: "default",
@@ -98,7 +117,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		customSupportPrompts: {},
 		experiments: experimentDefault,
 		enhancementApiConfigId: "",
-		autoApprovalEnabled: false,
+		autoApprovalEnabled: true,
 		customModes: [],
 		maxOpenTabsContext: 20,
 		cwd: "",
@@ -129,6 +148,17 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 					}))
 					const config = newState.apiConfiguration
 					const hasKey = checkExistKey(config)
+					if (!hasKey) {
+						vscode.postMessage({
+							type: "apiConfiguration",
+							apiConfiguration: {
+								apiProvider: "pearai",
+								pearaiBaseUrl: PEARAI_URL,
+								pearaiModelId: "pearai-model",
+								pearaiModelInfo: pearAiModels["pearai-model"],
+							},
+						})
+					}
 					setShowWelcome(!hasKey)
 					setDidHydrateState(true)
 					break

@@ -16,6 +16,7 @@ export type ApiProvider =
 	| "mistral"
 	| "unbound"
 	| "requesty"
+	| "pearai"
 
 export interface ApiHandlerOptions {
 	apiModelId?: string
@@ -69,6 +70,10 @@ export interface ApiHandlerOptions {
 	requestyModelInfo?: ModelInfo
 	modelTemperature?: number
 	modelMaxTokens?: number
+	pearaiApiKey?: string
+	pearaiBaseUrl?: string
+	pearaiModelId?: string
+	pearaiModelInfo?: ModelInfo
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -96,7 +101,7 @@ export interface ModelInfo {
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-claude/models
 export type AnthropicModelId = keyof typeof anthropicModels
-export const anthropicDefaultModelId: AnthropicModelId = "claude-3-7-sonnet-20250219"
+export const anthropicDefaultModelId: AnthropicModelId = "claude-3-5-sonnet-20241022"
 export const anthropicModels = {
 	"claude-3-7-sonnet-20250219:thinking": {
 		maxTokens: 64_000,
@@ -693,18 +698,22 @@ export const deepSeekModels = {
 		maxTokens: 8192,
 		contextWindow: 64_000,
 		supportsImages: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.014, // $0.014 per million tokens
 		outputPrice: 0.28, // $0.28 per million tokens
+		cacheWritesPrice: 0.27, // $0.27 per million tokens (cache miss)
+		cacheReadsPrice: 0.07, // $0.07 per million tokens (cache hit)
 		description: `DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.`,
 	},
 	"deepseek-reasoner": {
 		maxTokens: 8192,
 		contextWindow: 64_000,
 		supportsImages: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.55, // $0.55 per million tokens
 		outputPrice: 2.19, // $2.19 per million tokens
+		cacheWritesPrice: 0.55, // $0.55 per million tokens (cache miss)
+		cacheReadsPrice: 0.14, // $0.14 per million tokens (cache hit)
 		description: `DeepSeek-R1 achieves performance comparable to OpenAI-o1 across math, code, and reasoning tasks.`,
 	},
 } as const satisfies Record<string, ModelInfo>
@@ -781,3 +790,45 @@ export const unboundDefaultModelInfo: ModelInfo = {
 	cacheWritesPrice: 3.75,
 	cacheReadsPrice: 0.3,
 }
+// CHANGE AS NEEDED FOR TESTING
+// PROD:
+export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+// DEV:
+// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+
+// PearAI
+export type PearAiModelId = keyof typeof pearAiModels
+export const pearAiDefaultModelId: PearAiModelId = "pearai-model"
+export const pearAiDefaultModelInfo: ModelInfo = {
+	maxTokens: 8192,
+	contextWindow: 64000,
+	// Default values for required fields, but actual values will be inherited from underlying model
+	supportsPromptCache: true,
+	supportsImages: false,
+	supportsComputerUse: false,
+	// Base pricing
+	inputPrice: 0.014,
+	outputPrice: 0.28,
+	cacheWritesPrice: 0.27,
+	cacheReadsPrice: 0.07,
+	description:
+		"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
+}
+
+export const pearAiModels = {
+	"pearai-model": {
+		maxTokens: 8192,
+		contextWindow: 64000,
+		// Default values for required fields, but actual values will be inherited from underlying model
+		supportsPromptCache: true,
+		supportsImages: false,
+		supportsComputerUse: false,
+		// Base pricing
+		inputPrice: 0.014,
+		outputPrice: 0.28,
+		cacheWritesPrice: 0.27,
+		cacheReadsPrice: 0.07,
+		description:
+			"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
+	},
+} as const satisfies Record<string, ModelInfo>

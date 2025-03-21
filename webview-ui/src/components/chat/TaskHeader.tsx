@@ -12,6 +12,12 @@ import { formatLargeNumber } from "../../utils/format"
 import { normalizeApiConfiguration } from "../settings/ApiOptions"
 import { Button } from "../ui"
 import { HistoryItem } from "../../../../src/shared/HistoryItem"
+import { usePearAiModels } from "../../hooks/usePearAiModels"
+import { BackspaceIcon, ChatBubbleOvalLeftIcon } from "@heroicons/react/24/outline"
+import { vscBadgeBackground, vscEditorBackground, vscInputBackground } from "../ui"
+import { DownloadIcon } from "@radix-ui/react-icons"
+import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
+import { Tail } from "../ui/tail"
 
 interface TaskHeaderProps {
 	task: ClineMessage
@@ -37,7 +43,11 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 	onClose,
 }) => {
 	const { apiConfiguration, currentTaskItem } = useExtensionState()
-	const { selectedModelInfo } = useMemo(() => normalizeApiConfiguration(apiConfiguration), [apiConfiguration])
+	const pearAiModels = usePearAiModels(apiConfiguration)
+	const { selectedModelInfo } = useMemo(
+		() => normalizeApiConfiguration(apiConfiguration, pearAiModels),
+		[apiConfiguration, pearAiModels],
+	)
 	const [isTaskExpanded, setIsTaskExpanded] = useState(true)
 	const [isTextExpanded, setIsTextExpanded] = useState(false)
 	const [showSeeMore, setShowSeeMore] = useState(false)
@@ -46,7 +56,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 	const contextWindow = selectedModelInfo?.contextWindow || 1
 
 	/*
-	When dealing with event listeners in React components that depend on state variables, we face a challenge. We want our listener to always use the most up-to-date version of a callback function that relies on current state, but we don't want to constantly add and remove event listeners as that function updates. This scenario often arises with resize listeners or other window events. Simply adding the listener in a useEffect with an empty dependency array risks using stale state, while including the callback in the dependencies can lead to unnecessary re-registrations of the listener. There are react hook libraries that provide a elegant solution to this problem by utilizing the useRef hook to maintain a reference to the latest callback function without triggering re-renders or effect re-runs. This approach ensures that our event listener always has access to the most current state while minimizing performance overhead and potential memory leaks from multiple listener registrations. 
+	When dealing with event listeners in React components that depend on state variables, we face a challenge. We want our listener to always use the most up-to-date version of a callback function that relies on current state, but we don't want to constantly add and remove event listeners as that function updates. This scenario often arises with resize listeners or other window events. Simply adding the listener in a useEffect with an empty dependency array risks using stale state, while including the callback in the dependencies can lead to unnecessary re-registrations of the listener. There are react hook libraries that provide a elegant solution to this problem by utilizing the useRef hook to maintain a reference to the latest callback function without triggering re-renders or effect re-runs. This approach ensures that our event listener always has access to the most current state while minimizing performance overhead and potential memory leaks from multiple listener registrations.
 	Sources
 	- https://usehooks-ts.com/react-hook/use-event-listener
 	- https://streamich.github.io/react-use/?path=/story/sensors-useevent--docs
@@ -54,7 +64,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 	- https://stackoverflow.com/questions/55565444/how-to-register-event-with-useeffect-hooks
 
 	Before:
-	
+
 	const updateMaxHeight = useCallback(() => {
 		if (isExpanded && textContainerRef.current) {
 			const maxHeight = window.innerHeight * (3 / 5)
@@ -116,15 +126,17 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 		<div style={{ padding: "10px 13px 10px 13px" }}>
 			<div
 				style={{
-					backgroundColor: "var(--vscode-badge-background)",
+					backgroundColor: vscEditorBackground,
 					color: "var(--vscode-badge-foreground)",
-					borderRadius: "3px",
-					padding: "9px 10px 9px 14px",
+					borderRadius: "12px",
+					padding: "12px",
 					display: "flex",
 					flexDirection: "column",
 					gap: 6,
 					position: "relative",
 					zIndex: 1,
+					width: "60%",
+					marginLeft: "auto",
 				}}>
 				<div
 					style={{
@@ -146,19 +158,22 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							minWidth: 0, // This allows the div to shrink below its content size
 						}}
 						onClick={() => setIsTaskExpanded(!isTaskExpanded)}>
-						<div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+						{/* <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
 							<span className={`codicon codicon-chevron-${isTaskExpanded ? "down" : "right"}`}></span>
-						</div>
+						</div> */}
 						<div
 							style={{
-								marginLeft: 6,
+								// marginLeft: 6,
 								whiteSpace: "nowrap",
 								overflow: "hidden",
 								textOverflow: "ellipsis",
 								flexGrow: 1,
 								minWidth: 0, // This allows the div to shrink below its content size
 							}}>
-							<span style={{ fontWeight: "bold" }}>Task{!isTaskExpanded && ":"}</span>
+							<span style={{ fontWeight: "bold", color: "var(--vscode-descriptionForeground)" }}>
+								TASK
+								{!isTaskExpanded && ":"}
+							</span>
 							{!isTaskExpanded && (
 								<span style={{ marginLeft: 4 }}>{highlightMentions(task.text, false)}</span>
 							)}
@@ -180,9 +195,54 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							${totalCost?.toFixed(4)}
 						</div>
 					)}
-					<VSCodeButton appearance="icon" onClick={onClose} style={{ marginLeft: 6, flexShrink: 0 }}>
+					<div
+						className="flex items-center justify-between gap-2 py-1 px-2 rounded-lg"
+						style={{ backgroundColor: "var(--vscode-list-hoverBackground)" }}>
+						{isCostAvailable && (
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+								}}>
+								<div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+									{/* <span style={{ fontWeight: "bold" }}>API Cost:</span> */}
+									<span>${totalCost?.toFixed(4)}</span>
+								</div>
+							</div>
+						)}
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								// marginLeft: "auto",
+							}}>
+							<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
+								{/* <span style={{ }}>Tokens:</span> */}
+								<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+									<i
+										className="codicon codicon-arrow-up"
+										style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
+									/>
+									{formatLargeNumber(tokensIn || 0)}
+								</span>
+								<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+									<i
+										className="codicon codicon-arrow-down"
+										style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
+									/>
+									{formatLargeNumber(tokensOut || 0)}
+								</span>
+							</div>
+						</div>
+					</div>
+					<div className="ml-2">
+						<ExportButton />
+					</div>
+					{/* <VSCodeButton appearance="icon" onClick={onClose} style={{ marginLeft: 6, flexShrink: 0 }}>
 						<span className="codicon codicon-close"></span>
-					</VSCodeButton>
+					</VSCodeButton> */}
 				</div>
 				{isTaskExpanded && (
 					<>
@@ -218,25 +278,14 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 										display: "flex",
 										alignItems: "center",
 									}}>
-									<div
+									{/* <div
 										style={{
 											width: 30,
 											height: "1.2em",
 											background:
 												"linear-gradient(to right, transparent, var(--vscode-badge-background))",
 										}}
-									/>
-									<div
-										style={{
-											cursor: "pointer",
-											color: "var(--vscode-textLink-foreground)",
-											paddingRight: 0,
-											paddingLeft: 3,
-											backgroundColor: "var(--vscode-badge-background)",
-										}}
-										onClick={() => setIsTextExpanded(!isTextExpanded)}>
-										See more
-									</div>
+									/> */}
 								</div>
 							)}
 						</div>
@@ -257,35 +306,52 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 						{task.images && task.images.length > 0 && <Thumbnails images={task.images} />}
 
 						<div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-							<div className="flex justify-between items-center h-[20px]">
-								<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
-									<span style={{ fontWeight: "bold" }}>Tokens:</span>
-									<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-										<i
-											className="codicon codicon-arrow-up"
-											style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
-										/>
-										{formatLargeNumber(tokensIn || 0)}
-									</span>
-									<span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-										<i
-											className="codicon codicon-arrow-down"
-											style={{ fontSize: "12px", fontWeight: "bold", marginBottom: "-2px" }}
-										/>
-										{formatLargeNumber(tokensOut || 0)}
-									</span>
-								</div>
-								{!isCostAvailable && <TaskActions item={currentTaskItem} />}
-							</div>
+							<div style={{ display: "flex", alignItems: "center", gap: "4px", flexWrap: "wrap" }}>
+								{/* <span
+									style={{
+										display: "flex",
+										alignItems: "center",
+										gap: "3px",
+										padding: 4,
+										backgroundColor: vscInputBackground,
+										borderRadius: 4,
+										marginLeft: "auto",
+									}}
+									className="text-xs">
+									Context
+									<ChevronDownIcon />
+								</span> */}
 
-							{isTaskExpanded && contextWindow && (
-								<div className={`flex ${windowWidth < 270 ? "flex-col" : "flex-row"} gap-1 h-[20px]`}>
-									<ContextWindowProgress
-										contextWindow={contextWindow}
-										contextTokens={contextTokens || 0}
-									/>
+								{/* <span style={{ display: "flex", alignItems: "center", gap: "3px" }}>
+									{contextTokens ? `${formatLargeNumber(contextTokens)} (${contextPercentage}%)` : ""}
+								</span> */}
+							</div>
+							<div
+								style={{
+									display: "flex",
+									alignItems: "center",
+									justifyContent: "space-between",
+									gap: "4px",
+									flexWrap: "wrap",
+								}}>
+								<div
+									style={{
+										cursor: "pointer",
+										color: "var(--vscode-textLink-foreground)",
+										backgroundColor: vscEditorBackground,
+										stroke: "var(--vscode-editor-foreground)",
+										marginLeft: "auto",
+									}}
+									onClick={() => setIsTextExpanded(!isTextExpanded)}>
+									<ChevronDownIcon />
 								</div>
-							)}
+
+								{!isCostAvailable && (
+									<div style={{}}>
+										<ExportButton />
+									</div>
+								)}
+							</div>
 
 							{shouldShowPromptCacheInfo && (cacheReads !== undefined || cacheWrites !== undefined) && (
 								<div className="flex items-center gap-1 flex-wrap h-[20px]">
@@ -319,7 +385,36 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 						</div>
 					</>
 				)}
+				<Tail />
 			</div>
+			{/* {apiProvider === "" && (
+				<div
+					style={{
+						backgroundColor: "color-mix(in srgb, var(--vscode-badge-background) 50%, transparent)",
+						color: "var(--vscode-badge-foreground)",
+						borderRadius: "0 0 3px 3px",
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						padding: "4px 12px 6px 12px",
+						fontSize: "0.9em",
+						marginLeft: "10px",
+						marginRight: "10px",
+					}}>
+					<div style={{ fontWeight: "500" }}>Credits Remaining:</div>
+					<div>
+						{formatPrice(Credits || 0)}
+						{(Credits || 0) < 1 && (
+							<>
+								{" "}
+								<VSCodeLink style={{ fontSize: "0.9em" }} href={getAddCreditsUrl(vscodeUriScheme)}>
+									(get more?)
+								</VSCodeLink>
+							</>
+						)}
+					</div>
+				</div>
+			)} */}
 		</div>
 	)
 }
@@ -384,6 +479,18 @@ const ContextWindowProgress = ({ contextWindow, contextTokens }: { contextWindow
 			<div>{formatLargeNumber(contextWindow)}</div>
 		</div>
 	</>
+)
+
+const ExportButton = () => (
+	<div
+		onClick={() => vscode.postMessage({ type: "exportCurrentTask" })}
+		style={{
+			marginBottom: "-5px",
+			marginRight: "-2.5px",
+			cursor: "pointer",
+		}}>
+		<DownloadIcon style={{ width: "16px", height: "16px" }} />
+	</div>
 )
 
 export default memo(TaskHeader)
