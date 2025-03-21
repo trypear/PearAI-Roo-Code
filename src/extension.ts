@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
 		context.globalState.update("allowedCommands", defaultCommands)
 	}
 
-	const sidebarProvider = new ClineProvider(context, outputChannel)
+	const sidebarProvider = new ClineProvider(context, outputChannel, false)
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ClineProvider.sideBarId, sidebarProvider, {
@@ -111,7 +111,7 @@ export function activate(context: vscode.ExtensionContext) {
 		outputChannel.appendLine("Opening Roo Code in new tab")
 		// (this example uses webviewProvider activation event which is necessary to deserialize cached webview, but since we use retainContextWhenHidden, we don't need to use that event)
 		// https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
-		const tabProvider = new ClineProvider(context, outputChannel)
+		const tabProvider = new ClineProvider(context, outputChannel, true)
 		//const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined
 		const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
 
@@ -137,7 +137,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Lock the editor group so clicking on files doesn't open them over the panel
 		await delay(100)
-		await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
+		// await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
 	}
 
 	// context.subscriptions.push(vscode.commands.registerCommand("roo-cline.popoutButtonClicked", openClineInNewTab))

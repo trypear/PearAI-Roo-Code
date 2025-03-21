@@ -12,6 +12,7 @@ import WelcomeView from "./components/welcome/WelcomeView"
 import McpView from "./components/mcp/McpView"
 import PromptsView from "./components/prompts/PromptsView"
 import { Inspector } from "react-dev-inspector"
+import Creator from "./creator/creator"
 
 type Tab = "settings" | "history" | "mcp" | "prompts" | "chat"
 
@@ -83,10 +84,10 @@ const App = () => {
 	)
 }
 
+const tempIsCreator: boolean = true
+
 const AppWithProviders = () => (
-	<ExtensionStateContextProvider>
-		<App />
-	</ExtensionStateContextProvider>
+	<ExtensionStateContextProvider>{window.isCreator === "true" ? <Creator /> : <App />}</ExtensionStateContextProvider>
 )
 
 export default AppWithProviders

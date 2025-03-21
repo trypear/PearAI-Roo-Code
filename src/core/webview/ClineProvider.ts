@@ -73,11 +73,17 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	private latestAnnouncementId = "jan-21-2025-custom-modes" // update to some unique identifier when we add a new announcement
 	configManager: ConfigManager
 	customModesManager: CustomModesManager
+	private isCreator: boolean = false
 
 	constructor(
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
+		isCreator: boolean = false,
 	) {
+		this.outputChannel.appendLine(`creator = ${isCreator}`)
+		this.isCreator = isCreator
+		console.dir("CREATOR")
+		console.dir(this.isCreator)
 		this.outputChannel.appendLine("ClineProvider instantiated")
 		ClineProvider.activeInstances.add(this)
 		this.workspaceTracker = new WorkspaceTracker(this)
@@ -414,6 +420,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				window.$RefreshReg$ = () => {}
 				window.$RefreshSig$ = () => (type) => type
 				window.__vite_plugin_react_preamble_installed__ = true
+				window.isCreator="${this.isCreator}";
 			</script>
 		`
 
@@ -426,6 +433,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			`connect-src https://* ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort} http://localhost:8000 http://0.0.0.0:8000 https://stingray-app-gb2an.ondigitalocean.app`,
 		]
 
+		console.dir("CREATORRRRRR")
+		console.dir(this.isCreator)
 		return /*html*/ `
 			<!DOCTYPE html>
 			<html lang="en">
