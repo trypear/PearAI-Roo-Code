@@ -1052,16 +1052,13 @@ export type PearAiModelId = keyof typeof pearAiModels
 export const pearAiDefaultModelId: PearAiModelId = "pearai-model"
 export const pearAiDefaultModelInfo: ModelInfo = {
 	maxTokens: 8192,
-	contextWindow: 64000,
-	// Default values for required fields, but actual values will be inherited from underlying model
+	contextWindow: 200_000,
+	supportsImages: true,
 	supportsPromptCache: true,
-	supportsImages: false,
-	supportsComputerUse: false,
-	// Base pricing
-	inputPrice: 0.014,
-	outputPrice: 0.28,
-	cacheWritesPrice: 0.27,
-	cacheReadsPrice: 0.07,
+	inputPrice: 3.0,
+	outputPrice: 15.0,
+	cacheWritesPrice: 3.75,
+	cacheReadsPrice: 0.3,
 	description:
 		"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
 }
@@ -1069,16 +1066,13 @@ export const pearAiDefaultModelInfo: ModelInfo = {
 export const pearAiModels = {
 	"pearai-model": {
 		maxTokens: 8192,
-		contextWindow: 64000,
-		// Default values for required fields, but actual values will be inherited from underlying model
+		contextWindow: 200_000,
+		supportsImages: true,
 		supportsPromptCache: true,
-		supportsImages: false,
-		supportsComputerUse: false,
-		// Base pricing
-		inputPrice: 0.014,
-		outputPrice: 0.28,
-		cacheWritesPrice: 0.27,
-		cacheReadsPrice: 0.07,
+		inputPrice: 3.0,
+		outputPrice: 15.0,
+		cacheWritesPrice: 3.75,
+		cacheReadsPrice: 0.3,
 		description:
 			"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
 	},
