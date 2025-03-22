@@ -24,6 +24,7 @@ import McpToolRow from "../mcp/McpToolRow"
 import { highlightMentions } from "./TaskHeader"
 import { CheckpointSaved } from "./checkpoints/CheckpointSaved"
 import FollowUpSuggest from "./FollowUpSuggest"
+import { vscEditorBackground } from "../ui"
 
 interface ChatRowProps {
 	message: ClineMessage
@@ -646,14 +647,17 @@ export const ChatRowContent = ({
 					return (
 						<div
 							style={{
-								backgroundColor: "var(--vscode-badge-background)",
+								backgroundColor: vscEditorBackground,
 								color: "var(--vscode-badge-foreground)",
-								borderRadius: "3px",
+								borderRadius: "6px",
 								padding: "9px",
 								overflow: "hidden",
 								whiteSpace: "pre-wrap",
 								wordBreak: "break-word",
 								overflowWrap: "anywhere",
+								width: "75%",
+								marginLeft: "auto",
+								position: "relative",
 							}}>
 							<div
 								style={{

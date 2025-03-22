@@ -17,6 +17,7 @@ import { useExtensionState } from "../../context/ExtensionStateContext"
 import Thumbnails from "../common/Thumbnails"
 import { normalizeApiConfiguration } from "../settings/ApiOptions"
 import { DeleteTaskDialog } from "../history/DeleteTaskDialog"
+import { vscBadgeBackground, vscEditorBackground, vscInputBackground } from "../ui"
 
 interface TaskHeaderProps {
 	task: ClineMessage
@@ -65,7 +66,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 	function without triggering re-renders or effect re-runs. This approach
 	ensures that our event listener always has access to the most current state
 	while minimizing performance overhead and potential memory leaks from
-	multiple listener registrations. 
+	multiple listener registrations.
 
 	Sources
 	- https://usehooks-ts.com/react-hook/use-event-listener
@@ -74,7 +75,7 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 	- https://stackoverflow.com/questions/55565444/how-to-register-event-with-useeffect-hooks
 
 	Before:
-	
+
 	const updateMaxHeight = useCallback(() => {
 		if (isExpanded && textContainerRef.current) {
 			const maxHeight = window.innerHeight * (3 / 5)
@@ -136,10 +137,10 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 		<div style={{ padding: "10px 13px 10px 13px" }}>
 			<div
 				style={{
-					backgroundColor: "var(--vscode-badge-background)",
+					backgroundColor: vscEditorBackground,
 					color: "var(--vscode-badge-foreground)",
-					borderRadius: "3px",
-					padding: "9px 10px 9px 14px",
+					borderRadius: "12px",
+					padding: "12px",
 					display: "flex",
 					flexDirection: "column",
 					gap: 6,
