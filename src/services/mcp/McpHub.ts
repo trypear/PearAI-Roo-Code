@@ -30,6 +30,7 @@ import {
 } from "../../shared/mcp"
 import { fileExistsAtPath } from "../../utils/fs"
 import { arePathsEqual } from "../../utils/path"
+import { PEARAI_URL } from "../../shared/api"
 
 export type McpConnection = {
 	server: McpServer
@@ -106,11 +107,13 @@ export class McpHub {
 	private isDisposed: boolean = false
 	connections: McpConnection[] = []
 	isConnecting: boolean = false
+	private context: vscode.ExtensionContext
 
-	constructor(provider: ClineProvider) {
+	constructor(provider: ClineProvider, context: vscode.ExtensionContext) {
 		this.providerRef = new WeakRef(provider)
 		this.watchMcpSettingsFile()
 		this.initializeMcpServers()
+		this.context = context
 	}
 
 	/**
@@ -259,6 +262,33 @@ export class McpHub {
 		)
 	}
 
+	private async fetchDefaultSettings(): Promise<Record<string, any>> {
+		try {
+			const response = await fetch(`${PEARAI_URL}/getDefaultAgentMCPSettings`)
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`)
+			}
+			const data = await response.json()
+			if (data && data.mcpServers) {
+				return data.mcpServers
+			}
+			return {}
+		} catch (error) {
+			console.error("Failed to fetch default MCP settings:", error)
+			return {}
+		}
+	}
+
+	private async getPearAiApiKey(): Promise<string | null> {
+		try {
+			const token = await this.context.secrets.get("pearaiApiKey")
+			return token || null
+		} catch (error) {
+			console.error("Failed to get PearAI token from secrets:", error)
+			return null
+		}
+	}
+
 	private async initializeMcpServers(): Promise<void> {
 		try {
 			const settingsPath = await this.getMcpSettingsFilePath()
@@ -274,8 +304,36 @@ export class McpHub {
 				return
 			}
 
+			// Fetch default settings
+			const defaultSettings = await this.fetchDefaultSettings()
+			// Only add new servers from default settings that don't exist in current settings
+			const mergedServers = { ...(config.mcpServers || {}) }
+			for (const [serverName, serverConfig] of Object.entries(defaultSettings)) {
+				if (!mergedServers[serverName]) {
+					mergedServers[serverName] = serverConfig
+				}
+
+				// If this is the pearai server, check login status and update API key
+				if (serverName === "pearai") {
+					const apiKey = await this.getPearAiApiKey()
+					if (apiKey) {
+						mergedServers[serverName] = {
+							...serverConfig,
+							args: ["pearai-mcp", apiKey],
+						}
+					}
+				}
+			}
+
+			// Update mcpServers while preserving config structure
+			config.mcpServers = mergedServers
+
+			// Write updated config back to file
+			await fs.writeFile(settingsPath, JSON.stringify(config, null, 2))
+
 			// Validate the config using McpSettingsSchema
 			const result = McpSettingsSchema.safeParse(config)
+			console.log("IM HERE 10101", result)
 			if (result.success) {
 				await this.updateServerConnections(result.data.mcpServers || {})
 			} else {
@@ -919,5 +977,51 @@ export class McpHub {
 			this.settingsWatcher.dispose()
 		}
 		this.disposables.forEach((d) => d.dispose())
+	}
+
+	public async clearPearAiApiKey(): Promise<void> {
+		try {
+			const settingsPath = await this.getMcpSettingsFilePath()
+			const content = await fs.readFile(settingsPath, "utf-8")
+			const config = JSON.parse(content)
+
+			if (config.mcpServers?.pearai) {
+				config.mcpServers.pearai = {
+					...config.mcpServers.pearai,
+					args: ["pearai-mcp", "<PEARAI_API_KEY>"],
+				}
+
+				await fs.writeFile(settingsPath, JSON.stringify(config, null, 2))
+				await this.updateServerConnections(config.mcpServers)
+				vscode.window.showInformationMessage("PearAI API key cleared successfully")
+			}
+		} catch (error) {
+			console.error("Failed to clear PearAI API key:", error)
+			vscode.window.showErrorMessage("Failed to clear PearAI API key")
+			throw error
+		}
+	}
+
+	public async updatePearAiApiKey(apiKey: string): Promise<void> {
+		try {
+			const settingsPath = await this.getMcpSettingsFilePath()
+			const content = await fs.readFile(settingsPath, "utf-8")
+			const config = JSON.parse(content)
+
+			if (config.mcpServers?.pearai) {
+				config.mcpServers.pearai = {
+					...config.mcpServers.pearai,
+					args: ["pearai-mcp", apiKey],
+				}
+
+				await fs.writeFile(settingsPath, JSON.stringify(config, null, 2))
+				await this.updateServerConnections(config.mcpServers)
+				vscode.window.showInformationMessage("PearAI API key updated successfully")
+			}
+		} catch (error) {
+			console.error("Failed to update PearAI API key:", error)
+			vscode.window.showErrorMessage("Failed to update PearAI API key")
+			throw error
+		}
 	}
 }

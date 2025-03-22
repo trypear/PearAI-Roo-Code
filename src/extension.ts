@@ -102,15 +102,12 @@ export function activate(context: vscode.ExtensionContext) {
 					pearaiApiKey: data.accessToken,
 				})
 				await provider.postStateToWebview()
+				// Update MCP server with new token
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.updatePearAiApiKey(data.accessToken)
+				}
 			}
-			// Update MCP server with new token
-			// const provider = await ClineProvider.getInstance()
-			// if (provider) {
-			// 	const mcpHub = provider.getMcpHub()
-			// 	if (mcpHub) {
-			// 		await mcpHub.updatePearAiApiKey(data.accessToken)
-			// 	}
-			// }
 			vscode.commands.executeCommand("roo-cline.plusButtonClicked")
 		}),
 	)
@@ -129,15 +126,12 @@ export function activate(context: vscode.ExtensionContext) {
 					pearaiApiKey: undefined,
 				})
 				await provider.postStateToWebview()
+				// Clear MCP server token
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.clearPearAiApiKey()
+				}
 			}
-			// Clear MCP server token
-			// const provider = await ClineProvider.getInstance()
-			// if (provider) {
-			// 	const mcpHub = provider.getMcpHub()
-			// 	if (mcpHub) {
-			// 		await mcpHub.clearPearAiApiKey()
-			// 	}
-			// }
 		}),
 	)
 
