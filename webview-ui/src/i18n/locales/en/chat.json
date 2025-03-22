@@ -1,5 +1,5 @@
 {
-	"greeting": "What can Roo do for you?",
+	"greeting": "What can PearAI Agent do for you?",
 	"task": {
 		"title": "Task",
 		"seeMore": "See more",
@@ -104,44 +104,44 @@
 		"current": "Current"
 	},
 	"fileOperations": {
-		"wantsToRead": "Roo wants to read this file:",
-		"didRead": "Roo read this file:",
-		"wantsToEdit": "Roo wants to edit this file:",
-		"wantsToCreate": "Roo wants to create a new file:"
+		"wantsToRead": "PearAI Agent wantsto read this file:",
+		"didRead": "PearAI Agent read this file:",
+		"wantsToEdit": "PearAI Agent wantsto edit this file:",
+		"wantsToCreate": "PearAI Agent wantsto create a new file:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Roo wants to view the top level files in this directory:",
-		"didViewTopLevel": "Roo viewed the top level files in this directory:",
-		"wantsToViewRecursive": "Roo wants to recursively view all files in this directory:",
-		"didViewRecursive": "Roo recursively viewed all files in this directory:",
-		"wantsToViewDefinitions": "Roo wants to view source code definition names used in this directory:",
-		"didViewDefinitions": "Roo viewed source code definition names used in this directory:",
-		"wantsToSearch": "Roo wants to search this directory for <code>{{regex}}</code>:",
-		"didSearch": "Roo searched this directory for <code>{{regex}}</code>:"
+		"wantsToViewTopLevel": "PearAI Agent wantsto view the top level files in this directory:",
+		"didViewTopLevel": "PearAI Agent viewed the top level files in this directory:",
+		"wantsToViewRecursive": "PearAI Agent wantsto recursively view all files in this directory:",
+		"didViewRecursive": "PearAI Agent recursively viewed all files in this directory:",
+		"wantsToViewDefinitions": "PearAI Agent wantsto view source code definition names used in this directory:",
+		"didViewDefinitions": "PearAI Agent viewed source code definition names used in this directory:",
+		"wantsToSearch": "PearAI Agent wantsto search this directory for <code>{{regex}}</code>:",
+		"didSearch": "PearAI Agent searched this directory for <code>{{regex}}</code>:"
 	},
 	"commandOutput": "Command Output",
 	"response": "Response",
 	"arguments": "Arguments",
 	"mcp": {
-		"wantsToUseTool": "Roo wants to use a tool on the {{serverName}} MCP server:",
-		"wantsToAccessResource": "Roo wants to access a resource on the {{serverName}} MCP server:"
+		"wantsToUseTool": "PearAI Agent wantsto use a tool on the {{serverName}} MCP server:",
+		"wantsToAccessResource": "PearAI Agent wantsto access a resource on the {{serverName}} MCP server:"
 	},
 	"modes": {
-		"wantsToSwitch": "Roo wants to switch to {{mode}} mode",
-		"wantsToSwitchWithReason": "Roo wants to switch to {{mode}} mode because: {{reason}}",
-		"didSwitch": "Roo switched to {{mode}} mode",
-		"didSwitchWithReason": "Roo switched to {{mode}} mode because: {{reason}}"
+		"wantsToSwitch": "PearAI Agent wantsto switch to {{mode}} mode",
+		"wantsToSwitchWithReason": "PearAI Agent wantsto switch to {{mode}} mode because: {{reason}}",
+		"didSwitch": "PearAI Agent switched to {{mode}} mode",
+		"didSwitchWithReason": "PearAI Agent switched to {{mode}} mode because: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Roo wants to create a new subtask in {{mode}} mode:",
-		"wantsToFinish": "Roo wants to finish this subtask"
+		"wantsToCreate": "PearAI Agent wantsto create a new subtask in {{mode}} mode:",
+		"wantsToFinish": "PearAI Agent wantsto finish this subtask"
 	},
 	"questions": {
-		"hasQuestion": "Roo has a question:"
+		"hasQuestion": "PearAI Agent has a question:"
 	},
 	"taskCompleted": "Task Completed",
 	"error": "Error",
-	"troubleMessage": "Roo is having trouble...",
+	"troubleMessage": "PearAI Agent is having trouble...",
 	"shellIntegration": {
 		"unavailable": "Shell Integration Unavailable",
 		"troubleshooting": "Still having trouble?"
@@ -152,7 +152,7 @@
 	"autoApprove": {
 		"title": "Auto-approve:",
 		"none": "None",
-		"description": "Auto-approve allows Roo Code to perform actions without asking for permission. Only enable for actions you fully trust.",
+		"description": "Auto-approve allows PearAI Agent to perform actions without asking for permission. Only enable for actions you fully trust.",
 		"actions": {
 			"readFiles": {
 				"label": "Read files and directories",
@@ -197,8 +197,8 @@
 		}
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.10 Released",
-		"description": "Roo Code 3.10 brings powerful productivity enhancements!",
+		"title": "🎉 PearAI Agent Code 3.10 Released",
+		"description": "PearAI Agent Code 3.10 brings powerful productivity enhancements!",
 		"whatsNew": "What's New",
 		"feature1": "Suggested responses to questions",
 		"feature2": "Improved large file handling",
@@ -213,7 +213,7 @@
 		"seconds": "{{count}}s"
 	},
 	"browser": {
-		"rooWantsToUse": "Roo wants to use the browser:",
+		"rooWantsToUse": "PearAI Agent wantsto use the browser:",
 		"consoleLogs": "Console Logs",
 		"noNewLogs": "(No new logs)",
 		"screenshot": "Browser screenshot",

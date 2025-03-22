@@ -990,17 +990,17 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	)
 
 	const baseText = task ? t("chat:typeMessage") : t("chat:typeTask")
-	const placeholderText =
-		baseText +
-		`\n(${t("chat:addContext")}${shouldDisableImages ? `, ${t("chat:dragFiles")}` : `, ${t("chat:dragFilesImages")}`})`
+	// const placeholderText =
+	// 	baseText +
+	// 	`\n(${t("chat:addContext")}${shouldDisableImages ? `, ${t("chat:dragFiles")}` : `, ${t("chat:dragFilesImages")}`})`
 
-	// const placeholderText = useMemo(() => {
-	// 		const baseText = task ? "Ask a follow up." : "Give PearAI Agent a task here."
-	// 		const contextText = " Use @ to add context."
-	// 		const imageText = shouldDisableImages ? "" : "\nhold shift to drag in images"
-	// 		const helpText = imageText ? `\n${contextText}${imageText}` : `\n${contextText}`
-	// 		return baseText + contextText
-	// }, [task, shouldDisableImages])
+	const placeholderText = useMemo(() => {
+		const baseText = task ? "Follow up here." : "Give PearAI Agent a task here."
+		const contextText = " Use @ to add context."
+		const imageText = shouldDisableImages ? "" : "\nhold shift to drag in images"
+		const helpText = imageText ? `\n${contextText}${imageText}` : `\n${contextText}`
+		return baseText + contextText
+	}, [task, shouldDisableImages])
 
 	const itemContent = useCallback(
 		(index: number, messageOrGroup: ClineMessage | ClineMessage[]) => {
