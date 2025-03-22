@@ -279,6 +279,20 @@ export class McpHub {
 		}
 	}
 
+	private async fetchServersToRemove(): Promise<string[]> {
+		try {
+			const response = await fetch(`${PEARAI_URL}/getAgentMCPSettingsRemove`)
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`)
+			}
+			const data = await response.json()
+			return data.serversToRemove || []
+		} catch (error) {
+			console.error("Failed to fetch servers to remove:", error)
+			return []
+		}
+	}
+
 	private async getPearAiApiKey(): Promise<string | null> {
 		try {
 			const token = await this.context.secrets.get("pearaiApiKey")
@@ -304,10 +318,23 @@ export class McpHub {
 				return
 			}
 
-			// Fetch default settings
-			const defaultSettings = await this.fetchDefaultSettings()
-			// Only add new servers from default settings that don't exist in current settings
+			// Fetch servers to remove and default settings
+			const [serversToRemove, defaultSettings] = await Promise.all([
+				this.fetchServersToRemove(),
+				this.fetchDefaultSettings(),
+			])
+
+			// Remove servers that should be removed from original config
+			for (const serverName of serversToRemove) {
+				if (config.mcpServers?.[serverName]) {
+					delete config.mcpServers[serverName]
+				}
+			}
+
+			// Create merged servers from cleaned config
 			const mergedServers = { ...(config.mcpServers || {}) }
+
+			// Add new servers from default settings that don't exist in current settings
 			for (const [serverName, serverConfig] of Object.entries(defaultSettings)) {
 				if (!mergedServers[serverName]) {
 					mergedServers[serverName] = serverConfig
