@@ -1022,7 +1022,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					<div className="flex-1"></div>
 					<div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
 						<div style={{ display: "flex", alignItems: "center" }}>
-							{isEnhancingPrompt ? (
+							{/* {isEnhancingPrompt ? (
 								<span
 									className="codicon codicon-loading codicon-modifier-spin"
 									style={{
@@ -1043,7 +1043,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									onClick={() => !textAreaDisabled && handleEnhancePrompt()}
 									style={{ fontSize: 16.5 }}
 								/>
-							)}
+							)} */}
 						</div>
 
 						<Button
