@@ -24,7 +24,86 @@ import { SelectDropdown, DropdownOptionType, Button } from "@/components/ui"
 import Thumbnails from "../common/Thumbnails"
 import { MAX_IMAGES_PER_MESSAGE } from "./ChatView"
 import ContextMenu from "./ContextMenu"
-import { VolumeX } from "lucide-react"
+import { VolumeX, ChevronDown, ImageIcon } from "lucide-react"
+import { ArrowTurnDownLeftIcon } from "@heroicons/react/16/solid"
+import styled from "styled-components"
+import { Listbox } from "@headlessui/react"
+
+const StyledListboxButton = styled(Listbox.Button)`
+	border: none;
+	background-color: var(--vscode-editor-background);
+	border-radius: 12px;
+	padding: 8px;
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	user-select: none;
+	cursor: pointer;
+	font-size: var(--vscode-editor-font-size);
+	color: var(--vscode-foreground);
+	&:focus {
+		outline: none;
+	}
+`
+
+const StyledListboxOptions = styled(Listbox.Options)<{ newSession: boolean }>`
+	position: absolute;
+	bottom: 100%;
+	left: 0;
+	margin-bottom: 4px;
+	list-style: none;
+	padding: 6px;
+	white-space: nowrap;
+	cursor: default;
+	z-index: 50;
+	border: 1px solid var(--vscode-input-border);
+	border-radius: 10px;
+	background-color: var(--vscode-editor-background);
+	max-height: 300px;
+	min-width: 100px;
+	overflow-y: auto;
+	font-size: var(--vscode-editor-font-size);
+	user-select: none;
+	outline: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	& > * {
+		margin: 4px 0;
+	}
+`
+
+interface ListboxOptionProps {
+	isCurrentModel?: boolean
+}
+
+const StyledListboxOption = styled(Listbox.Option)<ListboxOptionProps>`
+	cursor: pointer;
+	border-radius: 6px;
+	padding: 5px 4px;
+	&:hover {
+		background: ${(props) =>
+			props.isCurrentModel
+				? `var(--vscode-list-activeSelectionBackground)`
+				: `var(--vscode-list-hoverBackground)`};
+	}
+	background: ${(props) => (props.isCurrentModel ? `var(--vscode-list-activeSelectionBackground)` : "transparent")};
+`
+
+const Divider = styled.div`
+	height: 2px;
+	background-color: var(--vscode-input-border);
+	margin: 0px 4px;
+`
+
+const ListboxWrapper = styled.div`
+	position: relative;
+	display: inline-block;
+`
+
+const CaretIcon = () => <ChevronDown className="size-4 opacity-50" />
 
 interface ChatTextAreaProps {
 	inputValue: string
@@ -613,13 +692,13 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					display: "flex",
 					flexDirection: "column",
 					gap: "8px",
-					backgroundColor: "var(--vscode-input-background)",
-					margin: "10px 15px",
+					backgroundColor: "var(--vscode-editor-background)",
+					// margin: "10px 15px",
 					padding: "8px",
 					outline: "none",
-					border: "1px solid",
-					borderColor: isFocused ? "var(--vscode-focusBorder)" : "transparent",
-					borderRadius: "2px",
+					// border: "1px solid",
+					borderColor: "transparent",
+					borderRadius: "12px",
 				}}
 				onDrop={async (e) => {
 					e.preventDefault()
@@ -703,6 +782,46 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				onDragOver={(e) => {
 					e.preventDefault()
 				}}>
+				<div
+					style={{
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						marginTop: "auto",
+						paddingTop: "2px",
+					}}>
+					<div
+						style={{
+							display: "flex",
+							alignItems: "center",
+							gap: "8px",
+						}}>
+						<Button
+							className="gap-1 text-xs bg-input text-input-foreground h-6 px-2 hover:bg-sidebar-background rounded-xl"
+							variant="secondary"
+							disabled={textAreaDisabled}
+							onClick={() => {
+								if (!textAreaDisabled && textAreaRef.current) {
+									setShowContextMenu(true)
+									setSearchQuery("")
+									const newValue =
+										inputValue.slice(0, cursorPosition) + "@" + inputValue.slice(cursorPosition)
+									setInputValue(newValue)
+									const newCursorPosition = cursorPosition + 1
+									setCursorPosition(newCursorPosition)
+									setIntendedCursorPosition(newCursorPosition)
+									textAreaRef.current.focus()
+								}
+							}}>
+							@ Context
+						</Button>
+						<ImageIcon
+							className={`size-4 ${shouldDisableImages ? "opacity-50" : "cursor-pointer"}`}
+							onClick={() => !shouldDisableImages && onSelectImages()}
+						/>
+					</div>
+				</div>
+
 				{showContextMenu && (
 					<div ref={contextMenuContainerRef}>
 						<ContextMenu
@@ -830,104 +949,78 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					/>
 				)}
 
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "center",
-						marginTop: "auto",
-						paddingTop: "2px",
-					}}>
-					{/* Left side - dropdowns container */}
-					<div
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: "4px",
-							overflow: "hidden",
-							minWidth: 0,
-						}}>
-						{/* Mode selector - fixed width */}
-						<div style={{ flexShrink: 0 }}>
-							<SelectDropdown
+				<div className="flex justify-between items-center mt-2">
+					<div className="flex items-center gap-2">
+						<ListboxWrapper>
+							<Listbox
 								value={mode}
-								disabled={textAreaDisabled}
-								title={t("chat:selectMode")}
-								options={[
-									{
-										value: "shortcut",
-										label: modeShortcutText,
-										disabled: true,
-										type: DropdownOptionType.SHORTCUT,
-									},
-									...getAllModes(customModes).map((mode) => ({
-										value: mode.slug,
-										label: mode.name,
-										type: DropdownOptionType.ITEM,
-									})),
-									{
-										value: "sep-1",
-										label: t("chat:separator"),
-										type: DropdownOptionType.SEPARATOR,
-									},
-									{
-										value: "promptsButtonClicked",
-										label: t("chat:edit"),
-										type: DropdownOptionType.ACTION,
-									},
-								]}
 								onChange={(value) => {
+									if (value === "prompts-action") {
+										window.postMessage({ type: "action", action: "promptsButtonClicked" })
+										return
+									}
 									setMode(value as Mode)
-									vscode.postMessage({ type: "mode", text: value })
+									vscode.postMessage({
+										type: "mode",
+										text: value,
+									})
 								}}
-								shortcutText={modeShortcutText}
-								triggerClassName="w-full"
-							/>
-						</div>
+								disabled={textAreaDisabled}>
+								<StyledListboxButton>
+									{getAllModes(customModes).find((m) => m.slug === mode)?.name}
+									<CaretIcon />
+								</StyledListboxButton>
+								<StyledListboxOptions newSession={false}>
+									{getAllModes(customModes).map((mode) => (
+										<StyledListboxOption key={mode.slug} value={mode.slug} isCurrentModel={false}>
+											{mode.name}
+										</StyledListboxOption>
+									))}
+									<Divider />
+									<StyledListboxOption value="prompts-action" isCurrentModel={false}>
+										Edit...
+									</StyledListboxOption>
+								</StyledListboxOptions>
+							</Listbox>
+						</ListboxWrapper>
 
-						{/* API configuration selector - flexible width */}
-						<div
-							style={{
-								flex: "1 1 auto",
-								minWidth: 0,
-								overflow: "hidden",
-							}}>
-							<SelectDropdown
+						<ListboxWrapper>
+							<Listbox
 								value={currentApiConfigName || ""}
-								disabled={textAreaDisabled}
-								title={t("chat:selectApiConfig")}
-								options={[
-									...(listApiConfigMeta || []).map((config) => ({
-										value: config.name,
-										label: config.name,
-										type: DropdownOptionType.ITEM,
-									})),
-									{
-										value: "sep-2",
-										label: t("chat:separator"),
-										type: DropdownOptionType.SEPARATOR,
-									},
-									{
-										value: "settingsButtonClicked",
-										label: t("chat:edit"),
-										type: DropdownOptionType.ACTION,
-									},
-								]}
-								onChange={(value) => vscode.postMessage({ type: "loadApiConfiguration", text: value })}
-								contentClassName="max-h-[300px] overflow-y-auto"
-								triggerClassName="w-full text-ellipsis overflow-hidden"
-							/>
-						</div>
+								onChange={(value) => {
+									if (value === "settings-action") {
+										window.postMessage({ type: "action", action: "settingsButtonClicked" })
+										return
+									}
+									vscode.postMessage({
+										type: "loadApiConfiguration",
+										text: value,
+									})
+								}}
+								disabled={textAreaDisabled}>
+								<StyledListboxButton>
+									{currentApiConfigName}
+									<CaretIcon />
+								</StyledListboxButton>
+								<StyledListboxOptions newSession={false}>
+									{(listApiConfigMeta || []).map((config) => (
+										<StyledListboxOption
+											key={config.name}
+											value={config.name}
+											isCurrentModel={config.name === currentApiConfigName}>
+											{config.name}
+										</StyledListboxOption>
+									))}
+									<Divider />
+									<StyledListboxOption value="settings-action" isCurrentModel={false}>
+										Edit...
+									</StyledListboxOption>
+								</StyledListboxOptions>
+							</Listbox>
+						</ListboxWrapper>
 					</div>
-
-					{/* Right side - action buttons */}
-					<div
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: "8px",
-							flexShrink: 0,
-						}}>
+					<div className="flex-1"></div>
+					<div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
 						<div style={{ display: "flex", alignItems: "center" }}>
 							{isEnhancingPrompt ? (
 								<span
@@ -936,7 +1029,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 										color: "var(--vscode-input-foreground)",
 										opacity: 0.5,
 										fontSize: 16.5,
-										marginRight: 6,
+										marginRight: 10,
 									}}
 								/>
 							) : (
@@ -944,7 +1037,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									role="button"
 									aria-label="enhance prompt"
 									data-testid="enhance-prompt-button"
-									title={t("chat:enhancePrompt")}
 									className={`input-icon-button ${
 										textAreaDisabled ? "disabled" : ""
 									} codicon codicon-sparkle`}
@@ -953,20 +1045,14 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								/>
 							)}
 						</div>
-						<span
-							className={`input-icon-button ${
-								shouldDisableImages ? "disabled" : ""
-							} codicon codicon-device-camera`}
-							title={t("chat:addImages")}
-							onClick={() => !shouldDisableImages && onSelectImages()}
-							style={{ fontSize: 16.5 }}
-						/>
-						<span
-							className={`input-icon-button ${textAreaDisabled ? "disabled" : ""} codicon codicon-send`}
-							title={t("chat:sendMessage")}
-							onClick={() => !textAreaDisabled && onSend()}
-							style={{ fontSize: 15 }}
-						/>
+
+						<Button
+							className="gap-1 h-6 bg-[#E64C9E] text-white text-xs px-2 rounded-lg"
+							disabled={textAreaDisabled}
+							onClick={() => !textAreaDisabled && onSend()}>
+							<ArrowTurnDownLeftIcon width="12px" height="12px" />
+							Send
+						</Button>
 					</div>
 				</div>
 			</div>
