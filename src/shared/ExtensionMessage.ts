@@ -196,6 +196,7 @@ export interface ClineSayTool {
 		| "searchFiles"
 		| "switchMode"
 		| "newTask"
+		| "showTaskPlan"
 	path?: string
 	diff?: string
 	content?: string
