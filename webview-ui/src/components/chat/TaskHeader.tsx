@@ -238,50 +238,41 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 								{highlightMentions(task.text, false)}
 							</div>
 							{!isTextExpanded && showSeeMore && (
-								<div
+								<Button
+									variant="ghost"
+									size="sm"
 									style={{
 										position: "absolute",
 										right: 0,
 										bottom: 0,
-										display: "flex",
-										alignItems: "center",
-									}}>
-									<div
-										style={{
-											width: 30,
-											height: "1.2em",
-											background:
-												"linear-gradient(to right, transparent, var(--vscode-badge-background))",
-										}}
-									/>
-									<div
-										style={{
-											cursor: "pointer",
-											color: "var(--vscode-badge-foreground)",
-											fontSize: "11px",
-											paddingRight: 8,
-											paddingLeft: 4,
-											backgroundColor: "var(--vscode-badge-background)",
-										}}
-										onClick={() => setIsTextExpanded(!isTextExpanded)}>
-										{t("chat:task.seeMore")}
-									</div>
-								</div>
+										fontSize: "11px",
+										padding: "2px 8px",
+										height: "auto",
+										minHeight: "unset",
+										backgroundColor: vscBadgeBackground,
+										color: "var(--vscode-badge-foreground)",
+									}}
+									onClick={() => setIsTextExpanded(!isTextExpanded)}>
+									{t("chat:task.seeMore")}
+								</Button>
 							)}
 						</div>
 						{isTextExpanded && showSeeMore && (
-							<div
+							<Button
+								variant="ghost"
+								size="sm"
 								style={{
-									cursor: "pointer",
-									color: "var(--vscode-badge-foreground)",
 									fontSize: "11px",
+									padding: "2px 8px",
+									height: "auto",
+									minHeight: "unset",
 									marginLeft: "auto",
-									textAlign: "right",
-									paddingRight: 8,
+									backgroundColor: vscBadgeBackground,
+									color: "var(--vscode-badge-foreground)",
 								}}
 								onClick={() => setIsTextExpanded(!isTextExpanded)}>
 								{t("chat:task.seeLess")}
-							</div>
+							</Button>
 						)}
 
 						{task.images && task.images.length > 0 && <Thumbnails images={task.images} />}
