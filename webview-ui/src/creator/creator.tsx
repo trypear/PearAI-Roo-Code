@@ -9,11 +9,11 @@ import splashIcon from "../../../assets/icons/pearai-agent-splash.svg"
 import AutoApproveMenu from "@/components/chat/AutoApproveMenu"
 import BrowserSessionRow from "@/components/chat/BrowserSessionRow"
 import ChatRow from "@/components/chat/ChatRow"
-import ChatTextArea from "@/components/chat/ChatTextArea"
+import ChatTextArea from "./ChatTextArea"
 import TaskHeader from "@/components/chat/TaskHeader"
 import HistoryPreview from "@/components/history/HistoryPreview"
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions"
-import { Button, vscButtonBackground } from "@/components/ui"
+import { Button, vscBackground, vscButtonBackground, vscEditorBackground, vscSidebarBorder } from "@/components/ui"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { usePearAiModels } from "@/hooks/usePearAiModels"
 import { validateCommand } from "@/utils/command-validation"
@@ -975,8 +975,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				display: isHidden ? "none" : "flex",
 				flexDirection: "column",
 				overflow: "hidden",
+				backgroundColor: vscBackground,
 			}}>
-			{task ? (
+			{task && (
 				<TaskHeader
 					task={task}
 					tokensIn={apiMetrics.totalTokensIn}
@@ -988,39 +989,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					contextTokens={apiMetrics.contextTokens}
 					onClose={handleTaskCloseButtonClick}
 				/>
-			) : (
-				<div
-					style={{
-						flex: "1 1 0", // flex-grow: 1, flex-shrink: 1, flex-basis: 0
-						minHeight: 0,
-						overflowY: "auto",
-						display: "flex",
-						flexDirection: "column-reverse",
-						paddingBottom: "10px",
-					}}>
-					{messages.length === 0 && (
-						<>
-							<div className="max-w-2xl mx-auto w-full h-[calc(100vh-270px)] text-center flex flex-col justify-center">
-								<div className="w-full text-center flex flex-col items-center justify-center relative gap-5">
-									<img src={splashIcon} alt="..." />
-									<div className="w-[300px] flex-col justify-start items-start gap-5 inline-flex">
-										<div className="flex flex-col text-left">
-											<div className="text-2xl">PearAI Casdfoding Agent</div>
-											<div className="h-[18px] opacity-50 text-xs leading-[18px]">
-												Powered by Roo Code / Cline
-											</div>
-										</div>
-									</div>
-									<div className="w-[300px] text-left opacity-50 text-xs leading-[18px]">
-										Autonomous coding agent that has access to your development environment (with
-										your permission) for a feedback loop to add features, fix bugs, and more.
-									</div>
-								</div>
-							</div>
-						</>
-					)}
-					{taskHistory.length > 0 && <HistoryPreview showHistoryView={showHistoryView} />}
-				</div>
 			)}
 
 			{/*

@@ -53,19 +53,19 @@ const openClineInNewTab = async ({ context, outputChannel }: Omit<RegisterComman
 	// https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
 	const tabProvider = new ClineProvider(context, outputChannel, true)
 	// const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined
-	const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
+	// const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
 
 	// Check if there are any visible text editors, otherwise open a new group
 	// to the right.
-	const hasVisibleEditors = vscode.window.visibleTextEditors.length > 0
+	// const hasVisibleEditors = vscode.window.visibleTextEditors.length > 0
 
-	if (!hasVisibleEditors) {
-		await vscode.commands.executeCommand("workbench.action.newGroupRight")
-	}
+	// if (!hasVisibleEditors) {
+	// 	await vscode.commands.executeCommand("workbench.action.newGroupRight")
+	// }
 
-	const targetCol = hasVisibleEditors ? Math.max(lastCol + 1, 1) : vscode.ViewColumn.Two
+	// const targetCol = hasVisibleEditors ? Math.max(lastCol + 1, 1) : vscode.ViewColumn.Two
 
-	const panel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Roo Code", targetCol, {
+	const panel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Roo Code", vscode.ViewColumn.One, {
 		enableScripts: true,
 		retainContextWhenHidden: true,
 		localResourceRoots: [context.extensionUri],
