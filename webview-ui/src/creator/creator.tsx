@@ -8,9 +8,9 @@ import styled from "styled-components"
 import splashIcon from "../../../assets/icons/pearai-agent-splash.svg"
 import AutoApproveMenu from "@/components/chat/AutoApproveMenu"
 import BrowserSessionRow from "@/components/chat/BrowserSessionRow"
-import ChatRow from "@/components/chat/ChatRow"
+import ChatRow from "./ChatRow"
 import ChatTextArea from "./ChatTextArea"
-import TaskHeader from "@/components/chat/TaskHeader"
+import TaskHeader from "./TaskHeader"
 import HistoryPreview from "@/components/history/HistoryPreview"
 import { normalizeApiConfiguration } from "@/components/settings/ApiOptions"
 import { Button, vscBackground, vscButtonBackground, vscEditorBackground, vscSidebarBorder } from "@/components/ui"
@@ -21,7 +21,13 @@ import { vscode } from "@/utils/vscode"
 import { findLast } from "../../../src/shared/array"
 import { combineApiRequests } from "../../../src/shared/combineApiRequests"
 import { combineCommandSequences } from "../../../src/shared/combineCommandSequences"
-import { ClineAsk, ClineSayTool, ExtensionMessage, ClineMessage, ClineSayBrowserAction } from "../../../src/shared/ExtensionMessage"
+import {
+	ClineAsk,
+	ClineSayTool,
+	ExtensionMessage,
+	ClineMessage,
+	ClineSayBrowserAction,
+} from "../../../src/shared/ExtensionMessage"
 import { getApiMetrics } from "../../../src/shared/getApiMetrics"
 import { McpServer, McpTool } from "../../../src/shared/mcp"
 import { AudioType } from "../../../src/shared/WebviewMessage"
@@ -877,7 +883,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	useEvent("wheel", handleWheel, window, { passive: true }) // passive improves scrolling performance
 
 	const placeholderText = useMemo(() => {
-		const baseText = task ? "Ask a follow up." : "Give PearAI Agent a task here."
+		const baseText = task ? "Ask a follow up." : "What would you like do?"
 		const contextText = " Use @ to add context."
 		const imageText = shouldDisableImages ? "" : "\nhold shift to drag in images"
 		const helpText = imageText ? `\n${contextText}${imageText}` : `\n${contextText}`
@@ -976,22 +982,38 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				flexDirection: "column",
 				overflow: "hidden",
 				backgroundColor: vscBackground,
-			}}>
-			{task && (
-				<TaskHeader
-					task={task}
-					tokensIn={apiMetrics.totalTokensIn}
-					tokensOut={apiMetrics.totalTokensOut}
-					doesModelSupportPromptCache={selectedModelInfo.supportsPromptCache}
-					cacheWrites={apiMetrics.totalCacheWrites}
-					cacheReads={apiMetrics.totalCacheReads}
-					totalCost={apiMetrics.totalCost}
-					contextTokens={apiMetrics.contextTokens}
-					onClose={handleTaskCloseButtonClick}
-				/>
-			)}
+			}}
+		>
+			<div
+				style={{
+					position: "fixed",
+					top: 0,
+					left: 0,
+					right: 0,
+					bottom: 0,
+					padding: "12px 12px",
+					display: isHidden ? "none" : "flex",
+					flexDirection: "column",
+					overflow: "hidden",
+				}}
+				className="max-w-2xl min-w-2xl mx-auto borderr border-solid">
+				{task && (
+					<TaskHeader
+						task={task}
+						tokensIn={apiMetrics.totalTokensIn}
+						tokensOut={apiMetrics.totalTokensOut}
+						doesModelSupportPromptCache={selectedModelInfo.supportsPromptCache}
+						cacheWrites={apiMetrics.totalCacheWrites}
+						cacheReads={apiMetrics.totalCacheReads}
+						totalCost={apiMetrics.totalCost}
+						contextTokens={apiMetrics.contextTokens}
+						onClose={handleTaskCloseButtonClick}
+					/>
+				)}
 
-			{/*
+				{/* <HistoryPreview showHistoryView={showHistoryView} /> */}
+
+				{/*
 			// Flex layout explanation:
 			// 1. Content div above uses flex: "1 1 0" to:
 			//    - Grow to fill available space (flex-grow: 1)
@@ -1006,124 +1028,125 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			//    This ensures it takes its natural height when there's space
 			//    but becomes scrollable when the viewport is too small
 			*/}
-			{!task && (
-				<AutoApproveMenu
-					style={{
-						marginBottom: -2,
-						flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
-						minHeight: 0,
-					}}
-				/>
-			)}
+				{!task && (
+					<AutoApproveMenu
+						style={{
+							marginBottom: -2,
+							flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
+							minHeight: 0,
+						}}
+					/>
+				)}
 
-			{task && (
-				<>
-					<div style={{ flexGrow: 1, display: "flex" }} ref={scrollContainerRef}>
-						<Virtuoso
-							ref={virtuosoRef}
-							key={task.ts} // trick to make sure virtuoso re-renders when task changes, and we use initialTopMostItemIndex to start at the bottom
-							className="scrollable"
-							style={{
-								flexGrow: 1,
-								overflowY: "scroll", // always show scrollbar
-							}}
-							components={{
-								Footer: () => <div style={{ height: 5 }} />, // Add empty padding at the bottom
-							}}
-							// increasing top by 3_000 to prevent jumping around when user collapses a row
-							increaseViewportBy={{ top: 3_000, bottom: Number.MAX_SAFE_INTEGER }} // hack to make sure the last message is always rendered to get truly perfect scroll to bottom animation when new messages are added (Number.MAX_SAFE_INTEGER is safe for arithmetic operations, which is all virtuoso uses this value for in src/sizeRangeSystem.ts)
-							data={groupedMessages} // messages is the raw format returned by extension, modifiedMessages is the manipulated structure that combines certain messages of related type, and visibleMessages is the filtered structure that removes messages that should not be rendered
-							itemContent={itemContent}
-							atBottomStateChange={(isAtBottom) => {
-								setIsAtBottom(isAtBottom)
-								if (isAtBottom) {
-									disableAutoScrollRef.current = false
-								}
-								setShowScrollToBottom(disableAutoScrollRef.current && !isAtBottom)
-							}}
-							atBottomThreshold={10} // anything lower causes issues with followOutput
-							initialTopMostItemIndex={groupedMessages.length - 1}
-						/>
-					</div>
-					{showScrollToBottom ? (
-						<div
-							style={{
-								display: "flex",
-								padding: "10px 15px 0px 15px",
-							}}>
-							<ScrollToBottomButton
-								onClick={() => {
-									scrollToBottomSmooth()
-									disableAutoScrollRef.current = false
+				{task && (
+					<>
+						<div style={{ flexGrow: 1, display: "flex", background: vscEditorBackground }} ref={scrollContainerRef} className="borderr rounded-xl">
+							<Virtuoso
+								ref={virtuosoRef}
+								key={task.ts} // trick to make sure virtuoso re-renders when task changes, and we use initialTopMostItemIndex to start at the bottom
+								className="scrollable"
+								style={{
+									flexGrow: 1,
+									overflowY: "scroll", // always show scrollbar
+								}}
+								components={{
+									Footer: () => <div style={{ height: 5 }} />, // Add empty padding at the bottom
+								}}
+								// increasing top by 3_000 to prevent jumping around when user collapses a row
+								increaseViewportBy={{ top: 3_000, bottom: Number.MAX_SAFE_INTEGER }} // hack to make sure the last message is always rendered to get truly perfect scroll to bottom animation when new messages are added (Number.MAX_SAFE_INTEGER is safe for arithmetic operations, which is all virtuoso uses this value for in src/sizeRangeSystem.ts)
+								data={groupedMessages} // messages is the raw format returned by extension, modifiedMessages is the manipulated structure that combines certain messages of related type, and visibleMessages is the filtered structure that removes messages that should not be rendered
+								itemContent={itemContent}
+								atBottomStateChange={(isAtBottom) => {
+									setIsAtBottom(isAtBottom)
+									if (isAtBottom) {
+										disableAutoScrollRef.current = false
+									}
+									setShowScrollToBottom(disableAutoScrollRef.current && !isAtBottom)
+								}}
+								atBottomThreshold={10} // anything lower causes issues with followOutput
+								initialTopMostItemIndex={groupedMessages.length - 1}
+							/>
+						</div>
+						{showScrollToBottom ? (
+							<div
+								style={{
+									display: "flex",
+									padding: "10px 15px 0px 15px",
 								}}>
-								<span className="codicon codicon-chevron-down" style={{ fontSize: "18px" }}></span>
-							</ScrollToBottomButton>
-						</div>
-					) : (
-						<div
-							style={{
-								opacity:
-									primaryButtonText || secondaryButtonText || isStreaming
-										? enableButtons || (isStreaming && !didClickCancel)
-											? 1
-											: 0.5
-										: 0,
-								display: "flex",
-								padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 15px 0px 15px`,
-							}}>
-							{primaryButtonText && !isStreaming && (
-								<Button
-									disabled={!enableButtons}
-									style={{
-										// backgroundColor: "#E64C9E",
-										backgroundColor: vscButtonBackground,
-										color: "var(--vscode-button-foreground)",
-										flex: secondaryButtonText ? 1 : 2,
-										marginRight: secondaryButtonText ? "6px" : "0",
-									}}
-									onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
-									{primaryButtonText}
-								</Button>
-							)}
-							{(secondaryButtonText || isStreaming) && (
-								<Button
-									// appearance="secondary"
-									disabled={!enableButtons && !(isStreaming && !didClickCancel)}
-									style={{
-										backgroundColor: "var(--vscode-button-secondaryBackground)",
-										color: "var(--vscode-button-secondaryForeground)",
-										flex: isStreaming ? 2 : 1,
-										marginLeft: isStreaming ? 0 : "6px",
-									}}
-									onClick={(e) => handleSecondaryButtonClick(inputValue, selectedImages)}>
-									{isStreaming ? "Cancel" : secondaryButtonText}
-								</Button>
-							)}
-						</div>
-					)}
-					<AutoApproveMenu />
-				</>
-			)}
-			<ChatTextArea
-				ref={textAreaRef}
-				inputValue={inputValue}
-				setInputValue={setInputValue}
-				textAreaDisabled={textAreaDisabled}
-				placeholderText={placeholderText}
-				selectedImages={selectedImages}
-				setSelectedImages={setSelectedImages}
-				onSend={() => handleSendMessage(inputValue, selectedImages)}
-				onSelectImages={selectImages}
-				shouldDisableImages={shouldDisableImages}
-				onHeightChange={() => {
-					if (isAtBottom) {
-						scrollToBottomAuto()
-					}
-				}}
-				mode={mode}
-				setMode={setMode}
-				isNewTask={taskHistory.length === 0}
-			/>
+								<ScrollToBottomButton
+									onClick={() => {
+										scrollToBottomSmooth()
+										disableAutoScrollRef.current = false
+									}}>
+									<span className="codicon codicon-chevron-down" style={{ fontSize: "18px" }}></span>
+								</ScrollToBottomButton>
+							</div>
+						) : (
+							<div
+								style={{
+									opacity:
+										primaryButtonText || secondaryButtonText || isStreaming
+											? enableButtons || (isStreaming && !didClickCancel)
+												? 1
+												: 0.5
+											: 0,
+									display: "flex",
+									padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 15px 0px 15px`,
+								}}>
+								{primaryButtonText && !isStreaming && (
+									<Button
+										disabled={!enableButtons}
+										style={{
+											// backgroundColor: "#E64C9E",
+											backgroundColor: vscButtonBackground,
+											color: "var(--vscode-button-foreground)",
+											flex: secondaryButtonText ? 1 : 2,
+											marginRight: secondaryButtonText ? "6px" : "0",
+										}}
+										onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
+										{primaryButtonText}
+									</Button>
+								)}
+								{(secondaryButtonText || isStreaming) && (
+									<Button
+										// appearance="secondary"
+										disabled={!enableButtons && !(isStreaming && !didClickCancel)}
+										style={{
+											backgroundColor: "var(--vscode-button-secondaryBackground)",
+											color: "var(--vscode-button-secondaryForeground)",
+											flex: isStreaming ? 2 : 1,
+											marginLeft: isStreaming ? 0 : "6px",
+										}}
+										onClick={(e) => handleSecondaryButtonClick(inputValue, selectedImages)}>
+										{isStreaming ? "Cancel" : secondaryButtonText}
+									</Button>
+								)}
+							</div>
+						)}
+						<AutoApproveMenu />
+					</>
+				)}
+				<ChatTextArea
+					ref={textAreaRef}
+					inputValue={inputValue}
+					setInputValue={setInputValue}
+					textAreaDisabled={textAreaDisabled}
+					placeholderText={placeholderText}
+					selectedImages={selectedImages}
+					setSelectedImages={setSelectedImages}
+					onSend={() => handleSendMessage(inputValue, selectedImages)}
+					onSelectImages={selectImages}
+					shouldDisableImages={shouldDisableImages}
+					onHeightChange={() => {
+						if (isAtBottom) {
+							scrollToBottomAuto()
+						}
+					}}
+					mode={mode}
+					setMode={setMode}
+					isNewTask={taskHistory.length === 0}
+				/>
+			</div>
 		</div>
 	)
 }

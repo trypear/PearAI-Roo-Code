@@ -8,13 +8,12 @@ import { convertToMentionPath } from "@/utils/path-mentions"
 import { vscode } from "@/utils/vscode"
 import { Listbox } from "@headlessui/react"
 import { ArrowTurnDownLeftIcon } from "@heroicons/react/24/outline"
-import { Mode } from "fs"
 import { TrashIcon, ImageIcon } from "lucide-react"
 import React, { forwardRef, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import DynamicTextArea from "react-textarea-autosize"
 import styled from "styled-components"
 import { mentionRegex, mentionRegexGlobal } from "../../../src/shared/context-mentions"
-import { getAllModes } from "../../../src/shared/modes"
+import { getAllModes, Mode } from "../../../src/shared/modes"
 import { WebviewMessage } from "../../../src/shared/WebviewMessage"
 import { MAX_IMAGES_PER_MESSAGE } from "./Creator"
 
@@ -769,7 +768,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						</div>
 					)}
 
-					<div
+					{inputValue && <div
 						style={{
 							display: "flex",
 							justifyContent: "space-between",
@@ -814,22 +813,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								onClick={() => !shouldDisableImages && onSelectImages()}
 							/>
 						</div>
-						{/* <div
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: "12px",
-						}}>
-
-						<Button
-							className="gap-1 h-6 bg-[#AFF349] text-[#005A4E] text-xs px-2"
-							disabled={textAreaDisabled}
-							onClick={() => !textAreaDisabled && onSend()}>
-							<ArrowTurnDownLeftIcon width="12px" height="12px" />
-							Send
-						</Button>
-					</div> */}
-					</div>
+					</div>}
 
 					<div
 						style={{
@@ -937,7 +921,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						/>
 					)}
 
-					<div
+					{inputValue && <div
 						style={{
 							display: "flex",
 							justifyContent: "space-between",
@@ -982,11 +966,13 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								className="gap-1 h-6 bg-[#E64C9E] text-white text-xs px-2"
 								disabled={textAreaDisabled}
 								onClick={() => !textAreaDisabled && onSend()}>
+									{/* 
+										// @ts-ignore */}
 								<ArrowTurnDownLeftIcon width="12px" height="12px" />
 								Send
 							</Button>
 						</div>
-					</div>
+					</div>}
 				</div>
 				<div
 					style={{
