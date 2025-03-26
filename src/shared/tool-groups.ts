@@ -20,13 +20,12 @@ export const TOOL_DISPLAY_NAMES = {
 	attempt_completion: "complete tasks",
 	switch_mode: "switch modes",
 	new_task: "create new task",
-	show_task_plan: "show task plan",
 } as const
 
 // Define available tool groups
 export const TOOL_GROUPS: Record<string, ToolGroupConfig> = {
 	read: {
-		tools: ["read_file", "search_files", "list_files", "list_code_definition_names", "show_task_plan"],
+		tools: ["read_file", "search_files", "list_files", "list_code_definition_names"],
 	},
 	edit: {
 		tools: ["apply_diff", "write_to_file", "insert_content", "search_and_replace"],

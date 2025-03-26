@@ -1183,8 +1183,6 @@ export class Cline {
 							const modeName = getModeBySlug(mode, customModes)?.name ?? mode
 							return `[${block.name} in ${modeName} mode: '${message}']`
 						}
-						case "show_task_plan":
-							return `[${block.name} for '${block.params.path}']`
 					}
 					return `[${block.name}]`
 				}
@@ -1985,75 +1983,6 @@ export class Cline {
 							}
 						} catch (error) {
 							await handleError("reading file", error)
-							break
-						}
-					}
-					case "show_task_plan": {
-						const relPath: string | undefined = block.params.path
-						const sharedMessageProps: ClineSayTool = {
-							tool: "showTaskPlan",
-							path: getReadablePath(cwd, removeClosingTag("path", relPath)),
-						}
-						try {
-							if (block.partial) {
-								const partialMessage = JSON.stringify({
-									...sharedMessageProps,
-									content: undefined,
-								} satisfies ClineSayTool)
-								await this.ask("tool", partialMessage, block.partial).catch(() => {})
-								break
-							} else {
-								if (!relPath) {
-									this.consecutiveMistakeCount++
-									pushToolResult(await this.sayAndCreateMissingParamError("show_task_plan", "path"))
-									break
-								}
-								this.consecutiveMistakeCount = 0
-								const absolutePath = path.resolve(cwd, relPath)
-								const fileExists = await fileExistsAtPath(absolutePath)
-
-								if (!fileExists) {
-									this.consecutiveMistakeCount++
-									const formattedError = `File does not exist at path: ${absolutePath}\n\n<error_details>\nThe specified file could not be found. Please verify the file path and try again.\n</error_details>`
-									await this.say("error", formattedError)
-									pushToolResult(formattedError)
-									break
-								}
-
-								const content = await fs.readFile(absolutePath, "utf-8")
-
-								console.log("[show_task_plan] Sending content to webview:", content)
-
-								// Send message to creator mode webview
-								const provider = this.providerRef.deref()
-								if (!provider) {
-									console.error("[show_task_plan] Provider not available")
-									break
-								}
-
-								console.log("[show_task_plan] About to post message to webview")
-								await provider.postMessageToWebview({
-									type: "creator",
-									text: content,
-								})
-								console.log("[show_task_plan] Message posted to webview")
-
-								const completeMessage = JSON.stringify({
-									...sharedMessageProps,
-									content,
-								} satisfies ClineSayTool)
-
-								const didApprove = await askApproval("tool", completeMessage)
-								if (!didApprove) {
-									break
-								}
-
-								pushToolResult(`Successfully displayed task plan from ${relPath.toPosix()}`)
-								break
-							}
-						} catch (error) {
-							console.error("[show_task_plan] Error:", error)
-							await handleError("showing task plan", error)
 							break
 						}
 					}
