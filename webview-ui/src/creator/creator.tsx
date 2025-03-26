@@ -189,7 +189,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(isPartial)
 							setClineAsk("completion_result")
 							setEnableButtons(!isPartial)
-							setPrimaryButtonText("Start New Task")
+							setPrimaryButtonText("Execute Plan in Agent")
 							setSecondaryButtonText(undefined)
 							break
 						case "resume_task":
@@ -204,7 +204,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(false)
 							setClineAsk("resume_completed_task")
 							setEnableButtons(true)
-							setPrimaryButtonText("Start New Task")
+							setPrimaryButtonText("Execute Plan in Agent")
 							setSecondaryButtonText(undefined)
 							setDidClickCancel(false)
 							break
@@ -982,8 +982,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				flexDirection: "column",
 				overflow: "hidden",
 				backgroundColor: vscBackground,
-			}}
-		>
+			}}>
 			<div
 				style={{
 					position: "fixed",
@@ -996,7 +995,15 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					flexDirection: "column",
 					overflow: "hidden",
 				}}
-				className="max-w-2xl min-w-2xl mx-auto borderr border-solid">
+				className={`min-w-2xl ${task ? 'max-w-2xl' : 'max-w-5xl'} mx-auto flex justify-center borderr border-solid`}> 
+				{!task && (
+					<div className="absolute bottom-[40%] left-[15%] flex justify-center mb-4" style={{ zIndex: -1 }}>
+						<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
+						<div className="w-10 h-20 origin-top-left -rotate-90 bg-pink-500 rounded-full blur-[48px]" />
+						<div className="w-80 h-10 bg-violet-600 rounded-full blur-[48px]" />
+						<div className="w-72 h-11 bg-teal-500 rounded-full blur-[48px]" />
+					</div>
+				)}
 				{task && (
 					<TaskHeader
 						task={task}
@@ -1040,7 +1047,10 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 
 				{task && (
 					<>
-						<div style={{ flexGrow: 1, display: "flex", background: vscEditorBackground }} ref={scrollContainerRef} className="borderr rounded-xl">
+						<div
+							style={{ flexGrow: 1, display: "flex", background: vscEditorBackground }}
+							ref={scrollContainerRef}
+							className="borderr rounded-xl">
 							<Virtuoso
 								ref={virtuosoRef}
 								key={task.ts} // trick to make sure virtuoso re-renders when task changes, and we use initialTopMostItemIndex to start at the bottom
@@ -1091,7 +1101,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 												: 0.5
 											: 0,
 									display: "flex",
-									padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 15px 0px 15px`,
+									padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 0px 0px 0px`,
 								}}>
 								{primaryButtonText && !isStreaming && (
 									<Button
@@ -1102,6 +1112,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 											color: "var(--vscode-button-foreground)",
 											flex: secondaryButtonText ? 1 : 2,
 											marginRight: secondaryButtonText ? "6px" : "0",
+											borderRadius: 8,
 										}}
 										onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
 										{primaryButtonText}
@@ -1116,6 +1127,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 											color: "var(--vscode-button-secondaryForeground)",
 											flex: isStreaming ? 2 : 1,
 											marginLeft: isStreaming ? 0 : "6px",
+											borderRadius: 8,
 										}}
 										onClick={(e) => handleSecondaryButtonClick(inputValue, selectedImages)}>
 										{isStreaming ? "Cancel" : secondaryButtonText}

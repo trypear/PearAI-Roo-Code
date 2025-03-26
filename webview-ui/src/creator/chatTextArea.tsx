@@ -974,7 +974,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						</div>
 					</div>}
 				</div>
-				<div
+				{/* <div
 					style={{
 						display: "flex",
 						alignItems: "center",
@@ -1048,7 +1048,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							</StyledListboxOptions>
 						</Listbox>
 					</ListboxWrapper>
-				</div>
+				</div> */}
 			</>
 		)
 	},
