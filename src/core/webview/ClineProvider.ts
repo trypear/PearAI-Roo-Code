@@ -48,6 +48,7 @@ import { Cline } from "../Cline"
 import { openMention } from "../mentions"
 import { getNonce } from "./getNonce"
 import { getUri } from "./getUri"
+import { readWorkspaceFile, writeWorkspaceFile } from '../../integrations/misc/workspace-files';
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -1551,6 +1552,32 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 							),
 						)
 						break
+					case "readWorkspaceFile":
+						if (message.values?.relativePath) {
+							const result = await readWorkspaceFile(
+								message.values.relativePath,
+								{
+									create: message.values.create,
+									ensureDirectory: message.values.ensureDirectory,
+									content: message.values.content
+								}
+							);
+							await this.postMessageToWebview(result);
+						}
+						break;
+					case "writeWorkspaceFile":
+						if (message.values?.relativePath && message.values?.content !== undefined) {
+							const result = await writeWorkspaceFile(
+								message.values.relativePath,
+								{
+									create: message.values.create,
+									ensureDirectory: message.values.ensureDirectory,
+									content: message.values.content
+								}
+							);
+							await this.postMessageToWebview(result);
+						}
+						break;
 				}
 			},
 			null,

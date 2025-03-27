@@ -31,6 +31,7 @@ import {
 import { getApiMetrics } from "../../../src/shared/getApiMetrics"
 import { McpServer, McpTool } from "../../../src/shared/mcp"
 import { AudioType } from "../../../src/shared/WebviewMessage"
+import SplitView from './SplitView'
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -86,11 +87,16 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const [isAtBottom, setIsAtBottom] = useState(false)
 
 	const [wasStreaming, setWasStreaming] = useState<boolean>(false)
+	const [editingFilePath, setEditingFilePath] = useState<string | null>(null)
 
 	// UI layout depends on the last 2 messages
 	// (since it relies on the content of these messages, we are deep comparing. i.e. the button state after hitting button sets enableButtons to false, and this effect otherwise would have to true again even if messages didn't change
 	const lastMessage = useMemo(() => messages.at(-1), [messages])
 	const secondLastMessage = useMemo(() => messages.at(-2), [messages])
+
+	const handleEditPlan = (path: string) => {
+		setEditingFilePath(path)
+	}
 
 	function playSound(audioType: AudioType) {
 		vscode.postMessage({ type: "playSound", audioType })
@@ -924,6 +930,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					isLast={index === groupedMessages.length - 1}
 					onHeightChange={handleRowHeightChange}
 					isStreaming={isStreaming}
+					onEditPlan={handleEditPlan}
 				/>
 			)
 		},
@@ -934,6 +941,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			handleRowHeightChange,
 			isStreaming,
 			toggleRowExpansion,
+			handleEditPlan,
 		],
 	)
 
@@ -988,7 +996,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					position: "fixed",
 					top: 0,
 					left: 0,
-					right: 0,
+					right: editingFilePath ? '50%' : 0,
 					bottom: 0,
 					padding: "12px 12px",
 					display: isHidden ? "none" : "flex",
@@ -1018,7 +1026,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					/>
 				)}
 
-				{/* <HistoryPreview showHistoryView={showHistoryView} /> */}
+				 <HistoryPreview showHistoryView={showHistoryView} /> 
 
 				{/*
 			// Flex layout explanation:
@@ -1053,19 +1061,51 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							className="borderr rounded-xl">
 							<Virtuoso
 								ref={virtuosoRef}
-								key={task.ts} // trick to make sure virtuoso re-renders when task changes, and we use initialTopMostItemIndex to start at the bottom
+								key={task.ts}
 								className="scrollable"
 								style={{
 									flexGrow: 1,
-									overflowY: "scroll", // always show scrollbar
+									overflowY: "scroll",
 								}}
 								components={{
-									Footer: () => <div style={{ height: 5 }} />, // Add empty padding at the bottom
+									Footer: () => <div style={{ height: 5 }} />,
 								}}
-								// increasing top by 3_000 to prevent jumping around when user collapses a row
-								increaseViewportBy={{ top: 3_000, bottom: Number.MAX_SAFE_INTEGER }} // hack to make sure the last message is always rendered to get truly perfect scroll to bottom animation when new messages are added (Number.MAX_SAFE_INTEGER is safe for arithmetic operations, which is all virtuoso uses this value for in src/sizeRangeSystem.ts)
-								data={groupedMessages} // messages is the raw format returned by extension, modifiedMessages is the manipulated structure that combines certain messages of related type, and visibleMessages is the filtered structure that removes messages that should not be rendered
-								itemContent={itemContent}
+								increaseViewportBy={{ top: 3_000, bottom: Number.MAX_SAFE_INTEGER }}
+								data={groupedMessages}
+								itemContent={(index, messageOrGroup) => {
+									if (Array.isArray(messageOrGroup)) {
+										return (
+											<BrowserSessionRow
+												messages={messageOrGroup}
+												isLast={index === groupedMessages.length - 1}
+												lastModifiedMessage={modifiedMessages.at(-1)}
+												onHeightChange={handleRowHeightChange}
+												isStreaming={isStreaming}
+												isExpanded={(messageTs: number) => expandedRows[messageTs] ?? false}
+												onToggleExpand={(messageTs: number) => {
+													setExpandedRows((prev) => ({
+														...prev,
+														[messageTs]: !prev[messageTs],
+													}))
+												}}
+											/>
+										)
+									}
+
+									return (
+										<ChatRow
+											key={messageOrGroup.ts}
+											message={messageOrGroup}
+											isExpanded={expandedRows[messageOrGroup.ts] || false}
+											onToggleExpand={() => toggleRowExpansion(messageOrGroup.ts)}
+											lastModifiedMessage={modifiedMessages.at(-1)}
+											isLast={index === groupedMessages.length - 1}
+											onHeightChange={handleRowHeightChange}
+											isStreaming={isStreaming}
+											onEditPlan={handleEditPlan}
+										/>
+									)
+								}}
 								atBottomStateChange={(isAtBottom) => {
 									setIsAtBottom(isAtBottom)
 									if (isAtBottom) {
@@ -1073,7 +1113,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 									}
 									setShowScrollToBottom(disableAutoScrollRef.current && !isAtBottom)
 								}}
-								atBottomThreshold={10} // anything lower causes issues with followOutput
+								atBottomThreshold={10}
 								initialTopMostItemIndex={groupedMessages.length - 1}
 							/>
 						</div>
@@ -1159,6 +1199,12 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					isNewTask={taskHistory.length === 0}
 				/>
 			</div>
+			{editingFilePath && (
+				<SplitView
+					filePath={editingFilePath}
+					onClose={() => setEditingFilePath(null)}
+				/>
+			)}
 		</div>
 	)
 }

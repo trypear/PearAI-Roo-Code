@@ -83,7 +83,61 @@ const extensionToLanguage: { [key: string]: string } = {
 // Example usage:
 // console.log(getLanguageFromPath('/path/to/file.js')); // Output: javascript
 
-export function getLanguageFromPath(path: string): string | undefined {
-	const extension = path.split(".").pop()?.toLowerCase() || ""
-	return extensionToLanguage[extension]
+export function getLanguageFromPath(filePath: string): string {
+	const extension = filePath.split('.').pop()?.toLowerCase() || '';
+	
+	// Map file extensions to languages
+	const languageMap: { [key: string]: string } = {
+		'js': 'javascript',
+		'jsx': 'javascript',
+		'ts': 'typescript',
+		'tsx': 'typescript',
+		'py': 'python',
+		'java': 'java',
+		'cpp': 'cpp',
+		'c': 'c',
+		'cs': 'csharp',
+		'go': 'go',
+		'rs': 'rust',
+		'rb': 'ruby',
+		'php': 'php',
+		'swift': 'swift',
+		'kt': 'kotlin',
+		'scala': 'scala',
+		'md': 'markdown',
+		'json': 'json',
+		'yaml': 'yaml',
+		'yml': 'yaml',
+		'xml': 'xml',
+		'html': 'html',
+		'css': 'css',
+		'scss': 'scss',
+		'sql': 'sql',
+		'sh': 'shell',
+		'bash': 'shell',
+		'zsh': 'shell',
+		'dockerfile': 'dockerfile',
+		'vue': 'vue',
+		'svelte': 'svelte',
+		'graphql': 'graphql',
+		'proto': 'protobuf'
+	};
+
+	return languageMap[extension] || extension || 'plaintext';
+}
+
+export function normalizePath(path: string): string {
+	// Convert Windows backslashes to forward slashes
+	let normalized = path.replace(/\\/g, '/');
+	
+	// Remove any drive letter prefix (e.g., C:)
+	normalized = normalized.replace(/^[A-Za-z]:/, '');
+	
+	// Remove any leading slashes
+	normalized = normalized.replace(/^\/+/, '');
+	
+	// Remove any double slashes
+	normalized = normalized.replace(/\/+/g, '/');
+	
+	return normalized;
 }

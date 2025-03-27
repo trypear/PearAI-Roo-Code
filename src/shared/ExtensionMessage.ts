@@ -46,6 +46,8 @@ export interface ExtensionMessage {
 		| "deleteCustomMode"
 		| "currentCheckpointUpdated"
 		| "creator"
+		| "fileContent"
+		| "error"
 	text?: string
 	action?:
 		| "chatButtonClicked"
@@ -79,6 +81,8 @@ export interface ExtensionMessage {
 	mode?: Mode
 	customMode?: ModeConfig
 	slug?: string
+	content?: string
+	error?: string
 }
 
 export interface ApiConfigMeta {

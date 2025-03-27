@@ -29,10 +29,11 @@ interface ChatRowProps {
     message: ClineMessage
     isExpanded: boolean
     onToggleExpand: () => void
-    lastModifiedMessage?: ClineMessage
+    lastModifiedMessage: ClineMessage | undefined
     isLast: boolean
     onHeightChange: (isTaller: boolean) => void
     isStreaming: boolean
+    onEditPlan?: (path: string) => void
 }
 
 interface ChatRowContentProps extends Omit<ChatRowProps, "onHeightChange"> {}
@@ -82,6 +83,7 @@ export const ChatRowContent = ({
     lastModifiedMessage,
     isLast,
     isStreaming,
+    onEditPlan,
 }: ChatRowContentProps) => {
     const { mcpServers, alwaysAllowMcp, currentCheckpoint } = useExtensionState()
     const [reasoningCollapsed, setReasoningCollapsed] = useState(false)
@@ -304,6 +306,7 @@ export const ChatRowContent = ({
                             path={tool.path!}
                             isExpanded={isExpanded}
                             onToggleExpand={onToggleExpand}
+                            onEditPlan={onEditPlan}
                         />
                     </>
                 )
@@ -322,6 +325,7 @@ export const ChatRowContent = ({
                             path={tool.path!}
                             isExpanded={true}
                             onToggleExpand={onToggleExpand}
+                            onEditPlan={onEditPlan}
                         />
                     </div>
                 )
@@ -409,6 +413,7 @@ export const ChatRowContent = ({
                             language="shell-session"
                             isExpanded={isExpanded}
                             onToggleExpand={onToggleExpand}
+                            onEditPlan={onEditPlan}
                         />
                     </>
                 )
@@ -429,6 +434,7 @@ export const ChatRowContent = ({
                             language="shell-session"
                             isExpanded={isExpanded}
                             onToggleExpand={onToggleExpand}
+                            onEditPlan={onEditPlan}
                         />
                     </>
                 )
@@ -448,6 +454,7 @@ export const ChatRowContent = ({
                             path={tool.path!}
                             isExpanded={isExpanded}
                             onToggleExpand={onToggleExpand}
+                            onEditPlan={onEditPlan}
                         />
                     </>
                 )
@@ -474,6 +481,7 @@ export const ChatRowContent = ({
                             language="plaintext"
                             isExpanded={isExpanded}
                             onToggleExpand={onToggleExpand}
+                            onEditPlan={onEditPlan}
                         />
                     </>
                 )

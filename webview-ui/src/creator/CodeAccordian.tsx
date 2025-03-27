@@ -1,6 +1,7 @@
 import CodeBlock, { CODE_BLOCK_BG_COLOR } from "./CodeBlock"
 import { getLanguageFromPath } from "@/utils/getLanguageFromPath"
 import { useMemo, memo } from "react"
+import { Button } from "@/components/ui"
 
 
 interface CodeAccordianProps {
@@ -13,6 +14,7 @@ interface CodeAccordianProps {
     isExpanded: boolean
     onToggleExpand: () => void
     isLoading?: boolean
+    onEditPlan?: (path: string) => void
 }
 
 /*
@@ -33,6 +35,7 @@ const CodeAccordian = ({
     isExpanded,
     onToggleExpand,
     isLoading,
+    onEditPlan,
 }: CodeAccordianProps) => {
     const inferredLanguage = useMemo(
         () => code && (language ?? (path ? getLanguageFromPath(path) : undefined)),
@@ -93,11 +96,26 @@ const CodeAccordian = ({
                                     textAlign: "left",
                                 }}
                                 className="font-bold">
-                                {removeLeadingNonAlphanumeric(path ?? "") + "\u200E"}
+                                {/* {removeLeadingNonAlphanumeric(path ?? "") + "\u200E"} */}
+                                {path}
                             </span>
                         </>
                     )}
                     <div style={{ flexGrow: 1 }}></div>
+                    {path && !isFeedback && !isConsoleLogs && (
+                        <Button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEditPlan?.(path);
+                            }}
+                            style={{
+                                marginRight: "8px",
+                                padding: "4px 8px",
+                                fontSize: "12px",
+                            }}>
+                            Edit Plan
+                        </Button>
+                    )}
                     <span className={`codicon codicon-chevron-${isExpanded ? "up" : "down"}`}></span>
                 </div>
             )}

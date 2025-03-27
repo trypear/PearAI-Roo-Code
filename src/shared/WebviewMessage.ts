@@ -38,6 +38,8 @@ export interface WebviewMessage {
 		| "requestLmStudioModels"
 		| "openImage"
 		| "openFile"
+		| "readWorkspaceFile"
+		| "writeWorkspaceFile"
 		| "openMention"
 		| "cancelTask"
 		| "refreshOpenRouterModels"
@@ -113,7 +115,12 @@ export interface WebviewMessage {
 	promptMode?: PromptMode
 	customPrompt?: PromptComponent
 	dataUrls?: string[]
-	values?: Record<string, any>
+	values?: {
+		create?: boolean;
+		ensureDirectory?: boolean;
+		content?: string;
+		relativePath?: string;
+	} & Record<string, any>
 	query?: string
 	slug?: string
 	modeConfig?: ModeConfig
