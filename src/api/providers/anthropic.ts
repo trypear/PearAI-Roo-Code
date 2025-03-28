@@ -99,8 +99,11 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 							case "claude-3-haiku-20240307":
 								betas.push("prompt-caching-2024-07-31")
 								return {
-									headers: { "anthropic-beta": betas.join(",") },
-									authorization: `Bearer ${this.options.apiKey}`,
+									headers: {
+										"anthropic-beta": betas.join(","),
+										authorization: `Bearer ${this.options.apiKey}`,
+										"creator-mode": String(this.options.creatorMode),
+									},
 								}
 							default:
 								return undefined
