@@ -32,12 +32,6 @@ export class PearAiHandler {
 			throw new Error("PearAI API key not found. Please login to PearAI.")
 		}
 
-		if (!options.creatorMode) {
-			// TODO: REMOVE, TESTING
-			options.creatorMode = true
-			// options.creatorMode = false
-		}
-
 		// Initialize with a default handler synchronously
 		this.handler = new AnthropicHandler({
 			...options,
