@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react"
 import styled from "styled-components"
-import { vscEditorBackground, vscButtonBackground } from "@/components/ui"
+import { vscEditorBackground, vscButtonBackground, vscBackground } from "@/components/ui"
 import { vscode } from "@/utils/vscode"
 import CodeBlock from "./CodeBlock"
 import { getLanguageFromPath, normalizePath } from "@/utils/getLanguageFromPath"
@@ -18,18 +18,19 @@ interface FileContentMessage {
 }
 
 const SplitViewContainer = styled.div`
+    padding: 12px 12px;
 	position: fixed;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	width: 50%;
 	background-color: ${vscEditorBackground};
-	border-left: 1px solid var(--vscode-editorGroup-border);
+    overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	z-index: 1000;
+    margin: 12px 12px;
     // border: 2px solid red;
-    margin: 10px;
     border-radius: 12px;
 `
 
@@ -49,7 +50,8 @@ const Title = styled.div`
 const Content = styled.div`
 	flex-grow: 1;
 	overflow: auto;
-	padding: 12px;
+    margin: 12px 0px;
+    border-radius: 12px;
 `
 
 const StyledButton = styled.button`
@@ -189,7 +191,7 @@ const SplitView: React.FC<SplitViewProps> = ({ filePath, onClose }) => {
 	const language = getLanguageFromPath(normalizedPath)
 
 	return (
-		<SplitViewContainer>
+	<SplitViewContainer>
 			<Header>
 				<Title>{normalizedPath}</Title>
 				{isEditing ? (
@@ -219,12 +221,13 @@ const SplitView: React.FC<SplitViewProps> = ({ filePath, onClose }) => {
 							style={{
 								width: "100%",
 								height: "100%",
-								backgroundColor: "var(--vscode-editor-background)",
+								backgroundColor: vscBackground,
 								color: "var(--vscode-editor-foreground)",
 								border: "none",
-								padding: "8px",
-								fontFamily: "monospace",
+								padding: "20px",
+								fontFamily: "inherit",
 								resize: "none",
+                                borderRadius: "12px",
 							}}
 						/>
 					</>

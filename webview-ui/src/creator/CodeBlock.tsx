@@ -28,6 +28,7 @@ const StyledMarkdown = styled.div<{ forceWrap: boolean }>`
       white-space: pre-wrap;
       word-break: break-all;
       overflow-wrap: anywhere;
+	  padding: 12px 12px;
     }
   `}
 
@@ -150,6 +151,7 @@ const CodeBlock = memo(({ source, forceWrap = false }: CodeBlockProps) => {
 				overflowY: forceWrap ? "visible" : "auto",
 				maxHeight: forceWrap ? "none" : "100%",
 				backgroundColor: CODE_BLOCK_BG_COLOR,
+				padding: "12px 12px",
 			}}>
 			<StyledMarkdown forceWrap={forceWrap}>{reactContent}</StyledMarkdown>
 		</div>
