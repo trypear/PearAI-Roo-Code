@@ -31,7 +31,7 @@ import {
 import { getApiMetrics } from "../../../src/shared/getApiMetrics"
 import { McpServer, McpTool } from "../../../src/shared/mcp"
 import { AudioType } from "../../../src/shared/WebviewMessage"
-import SplitView from './SplitView'
+import SplitView from "./SplitView"
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -94,9 +94,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const lastMessage = useMemo(() => messages.at(-1), [messages])
 	const secondLastMessage = useMemo(() => messages.at(-2), [messages])
 
-	const handleEditPlan = (path: string) => {
+	const handleEditPlan = useCallback((path: string) => {
 		setEditingFilePath(path)
-	}
+	}, [])
 
 	function playSound(audioType: AudioType) {
 		vscode.postMessage({ type: "playSound", audioType })
@@ -195,7 +195,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(isPartial)
 							setClineAsk("completion_result")
 							setEnableButtons(!isPartial)
-							setPrimaryButtonText("Execute Plan in Agent")
+							setPrimaryButtonText("Create in Agent")
 							setSecondaryButtonText(undefined)
 							break
 						case "resume_task":
@@ -210,7 +210,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(false)
 							setClineAsk("resume_completed_task")
 							setEnableButtons(true)
-							setPrimaryButtonText("Execute Plan in Agent")
+							setPrimaryButtonText("Create in Agent")
 							setSecondaryButtonText(undefined)
 							setDidClickCancel(false)
 							break
@@ -303,6 +303,12 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 
 	const handleSendMessage = useCallback(
 		(text: string, images: string[]) => {
+			// ALways set mode to creator in creator mode
+			if (window.isCreator) {
+				setMode("creator")
+				vscode.postMessage({ type: "mode", text: "creator" })
+			}
+
 			text = text.trim()
 			if (text || images.length > 0) {
 				if (messages.length === 0) {
@@ -341,7 +347,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				disableAutoScrollRef.current = false
 			}
 		},
-		[messages.length, clineAsk],
+		[messages.length, clineAsk, setMode],
 	)
 
 	const handleSetChatBoxMessage = useCallback(
@@ -397,8 +403,16 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					break
 				case "completion_result":
 				case "resume_completed_task":
-					// extension waiting for feedback. but we can just present a new task button
-					startNewTask()
+					vscode.postMessage({
+						type: "invoke",
+						invoke: "executeCommand",
+						command: "roo-cline.executeCreatorPlan",
+						args: {
+							filePath: editingFilePath,
+							// code: 'function test() { return true; }',
+							// context: 'This is a test context'
+						},
+					})
 					break
 			}
 			setTextAreaDisabled(true)
@@ -406,7 +420,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			setEnableButtons(false)
 			disableAutoScrollRef.current = false
 		},
-		[clineAsk, startNewTask],
+		[clineAsk, editingFilePath],
 	)
 
 	const handleSecondaryButtonClick = useCallback(
@@ -996,14 +1010,14 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					position: "fixed",
 					top: 0,
 					left: 0,
-					right: editingFilePath ? '50%' : 0,
+					right: editingFilePath ? "50%" : 0,
 					bottom: 0,
 					padding: "12px 12px",
 					display: isHidden ? "none" : "flex",
 					flexDirection: "column",
 					overflow: "hidden",
 				}}
-				className={`min-w-2xl ${task ? 'max-w-2xl' : 'max-w-5xl'} mx-auto flex justify-center borderr border-solid`}> 
+				className={`min-w-2xl ${task ? "max-w-2xl" : "max-w-5xl"} mx-auto flex justify-center borderr border-solid`}>
 				{!task && (
 					<div className="absolute bottom-[40%] left-[15%] flex justify-center mb-4" style={{ zIndex: -1 }}>
 						<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
@@ -1026,7 +1040,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					/>
 				)}
 
-				 <HistoryPreview showHistoryView={showHistoryView} /> 
+				{/* <HistoryPreview showHistoryView={showHistoryView} />  */}
 
 				{/*
 			// Flex layout explanation:
@@ -1178,6 +1192,32 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						<AutoApproveMenu />
 					</>
 				)}
+				{/* <Button
+					onClick={() => {
+						vscode.postMessage({
+							type: 'invoke',
+							invoke: 'executeCommand',
+							command: 'roo-cline.executeCreatorPlan',
+							args: {
+								filePath: 'test/file.ts',
+								code: 'function test() { return true; }',
+								context: 'This is a test context'
+							}
+						});
+					}}
+					style={{
+						position: "fixed",
+						padding: "12px 12px",
+						backgroundColor: "var(--vscode-button-background)",
+						color: "var(--vscode-button-foreground)",
+						borderRadius: "8px",
+						cursor: "pointer",
+						userSelect: "none",
+						pointerEvents: "auto",
+					}}
+				>
+					TEMP BUTTON
+				</Button> */}
 				<ChatTextArea
 					ref={textAreaRef}
 					inputValue={inputValue}
@@ -1199,12 +1239,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					isNewTask={taskHistory.length === 0}
 				/>
 			</div>
-			{editingFilePath && (
-				<SplitView
-					filePath={editingFilePath}
-					onClose={() => setEditingFilePath(null)}
-				/>
-			)}
+			{editingFilePath && <SplitView filePath={editingFilePath} onClose={() => setEditingFilePath(null)} />}
 		</div>
 	)
 }

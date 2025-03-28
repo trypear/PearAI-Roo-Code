@@ -99,6 +99,7 @@ export interface WebviewMessage {
 		| "maxOpenTabsContext"
 		| "creator"
 		| "generateActionPlan"
+		| "invoke"
 	text?: string
 	disabled?: boolean
 	askResponse?: ClineAskResponse
@@ -116,10 +117,10 @@ export interface WebviewMessage {
 	customPrompt?: PromptComponent
 	dataUrls?: string[]
 	values?: {
-		create?: boolean;
-		ensureDirectory?: boolean;
-		content?: string;
-		relativePath?: string;
+		create?: boolean
+		ensureDirectory?: boolean
+		content?: string
+		relativePath?: string
 	} & Record<string, any>
 	query?: string
 	slug?: string
@@ -127,6 +128,9 @@ export interface WebviewMessage {
 	timeout?: number
 	payload?: WebViewMessagePayload
 	source?: "global" | "project"
+	invoke?: "sendMessage" | "setChatBoxMessage" | "executeCommand"
+	command?: string
+	args?: any
 }
 
 export const checkoutDiffPayloadSchema = z.object({

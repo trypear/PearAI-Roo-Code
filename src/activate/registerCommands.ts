@@ -41,6 +41,38 @@ const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOpt
 		"roo-cline.helpButtonClicked": () => {
 			vscode.env.openExternal(vscode.Uri.parse("https://docs.roocode.com"))
 		},
+		"roo-cline.executeCreatorPlan": async (args: any) => {
+			const sidebarProvider = ClineProvider.getSidebarInstance()
+			if (sidebarProvider) {
+				// Start a new chat in the sidebar
+				vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+				await sidebarProvider.clearTask()
+				await sidebarProvider.handleModeSwitch("code")
+				await sidebarProvider.postStateToWebview()
+				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+
+				// Create the template message using the args
+				let executePlanTemplate = `This file contains detailed plan to my task. please read it and Execute the plan accordingly.
+					File: ${args.filePath || "No file specified"}`
+
+				if (args.code) {
+					executePlanTemplate += `Code: \`\`\`
+						${args.code}
+						\`\`\`
+					`
+				}
+
+				if (args.context) {
+					executePlanTemplate += `Additional context: ${args.context}`
+				}
+
+				await sidebarProvider.postMessageToWebview({
+					type: "invoke",
+					invoke: "sendMessage",
+					text: executePlanTemplate,
+				})
+			}
+		},
 	}
 }
 

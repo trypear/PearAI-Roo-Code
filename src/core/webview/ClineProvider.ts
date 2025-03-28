@@ -48,7 +48,7 @@ import { Cline } from "../Cline"
 import { openMention } from "../mentions"
 import { getNonce } from "./getNonce"
 import { getUri } from "./getUri"
-import { readWorkspaceFile, writeWorkspaceFile } from '../../integrations/misc/workspace-files';
+import { readWorkspaceFile, writeWorkspaceFile } from "../../integrations/misc/workspace-files"
 
 /*
 https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -132,6 +132,16 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 
 		// Unregister from McpServerManager
 		McpServerManager.unregisterProvider(this)
+	}
+
+	public static getSidebarInstance(): ClineProvider | undefined {
+		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreator)
+
+		if (!sidebar?.view?.visible) {
+			vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+		}
+
+		return sidebar
 	}
 
 	public static getVisibleInstance(): ClineProvider | undefined {
@@ -1554,30 +1564,45 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						break
 					case "readWorkspaceFile":
 						if (message.values?.relativePath) {
-							const result = await readWorkspaceFile(
-								message.values.relativePath,
-								{
-									create: message.values.create,
-									ensureDirectory: message.values.ensureDirectory,
-									content: message.values.content
-								}
-							);
-							await this.postMessageToWebview(result);
+							const result = await readWorkspaceFile(message.values.relativePath, {
+								create: message.values.create,
+								ensureDirectory: message.values.ensureDirectory,
+								content: message.values.content,
+							})
+							await this.postMessageToWebview(result)
 						}
-						break;
+						break
 					case "writeWorkspaceFile":
 						if (message.values?.relativePath && message.values?.content !== undefined) {
-							const result = await writeWorkspaceFile(
-								message.values.relativePath,
-								{
-									create: message.values.create,
-									ensureDirectory: message.values.ensureDirectory,
-									content: message.values.content
-								}
-							);
-							await this.postMessageToWebview(result);
+							const result = await writeWorkspaceFile(message.values.relativePath, {
+								create: message.values.create,
+								ensureDirectory: message.values.ensureDirectory,
+								content: message.values.content,
+							})
+							await this.postMessageToWebview(result)
 						}
-						break;
+						break
+					case "invoke":
+						switch (message.invoke) {
+							case "sendMessage":
+								if (message.text) {
+									await this.cline?.ask("followup", message.text, false)
+								}
+								break
+							case "setChatBoxMessage":
+								if (message.text) {
+									await this.cline?.ask("followup", message.text, false)
+								}
+								break
+							case "executeCommand":
+								if (message.command) {
+									await vscode.commands.executeCommand(message.command, message.args)
+								}
+								break
+							default:
+								console.warn("Unknown invoke:", message.invoke)
+						}
+						break
 				}
 			},
 			null,
