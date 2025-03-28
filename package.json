@@ -171,6 +171,13 @@
 				"category": "Roo Code"
 			}
 		],
+		"keybindings": [
+			{
+				"command": "roo-cline.addToContext",
+				"mac": "cmd+l",
+				"key": "ctrl+l"
+			}
+		],
 		"menus": {
 			"editor/context": [
 				{
