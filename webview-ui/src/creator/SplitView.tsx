@@ -28,6 +28,9 @@ const SplitViewContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	z-index: 1000;
+    // border: 2px solid red;
+    margin: 10px;
+    border-radius: 12px;
 `
 
 const Header = styled.div`
@@ -61,6 +64,16 @@ const StyledButton = styled.button`
 	&:hover {
 		opacity: 0.9;
 	}
+`
+
+const EmptyFileMessage = styled.div`
+	color: var(--vscode-descriptionForeground);
+	font-style: italic;
+	padding: 8px;
+	text-align: center;
+	border: 1px dashed var(--vscode-editorGroup-border);
+	border-radius: 4px;
+	margin: 8px 0;
 `
 
 const SplitView: React.FC<SplitViewProps> = ({ filePath, onClose }) => {
@@ -194,22 +207,39 @@ const SplitView: React.FC<SplitViewProps> = ({ filePath, onClose }) => {
 					<div style={{ color: "var(--vscode-errorForeground)", marginBottom: "12px" }}>{error}</div>
 				)}
 				{isEditing ? (
-					<textarea
-						value={editedContent}
-						onChange={(e) => setEditedContent(e.target.value)}
-						style={{
-							width: "100%",
-							height: "100%",
-							backgroundColor: "var(--vscode-editor-background)",
-							color: "var(--vscode-editor-foreground)",
-							border: "none",
-							padding: "8px",
-							fontFamily: "monospace",
-							resize: "none",
-						}}
-					/>
+					<>
+						{!editedContent && (
+							<EmptyFileMessage>
+								File is empty. Start typing to add content to {normalizedPath}
+							</EmptyFileMessage>
+						)}
+						<textarea
+							value={editedContent}
+							onChange={(e) => setEditedContent(e.target.value)}
+							style={{
+								width: "100%",
+								height: "100%",
+								backgroundColor: "var(--vscode-editor-background)",
+								color: "var(--vscode-editor-foreground)",
+								border: "none",
+								padding: "8px",
+								fontFamily: "monospace",
+								resize: "none",
+							}}
+						/>
+					</>
 				) : (
-					<CodeBlock source={`${"```"}${language}\n${content}\n${"```"}`} />
+					<>
+						{!content ? (
+							<EmptyFileMessage>
+								File {normalizedPath} is empty
+							</EmptyFileMessage>
+						) : (
+							<CodeBlock
+								source={`${"```"}${language}\n${content}\n${"```"}`}
+							/>
+						)}
+					</>
 				)}
 			</Content>
 		</SplitViewContainer>
