@@ -54,7 +54,7 @@
 		"submenus": [
 			{
 				"id": "roo-code.contextMenu",
-				"label": "Roo Code"
+				"label": "PearAI Agent (Roo Code)"
 			},
 			{
 				"id": "roo-code.terminalMenu",
@@ -122,22 +122,22 @@
 			},
 			{
 				"command": "roo-cline.explainCode",
-				"title": "Explain Code",
+				"title": "PearAI Agent (Roo Code): Explain Code",
 				"category": "Roo Code"
 			},
 			{
 				"command": "roo-cline.fixCode",
-				"title": "Fix Code",
+				"title": "PearAI Agent (Roo Code): Fix Code",
 				"category": "Roo Code"
 			},
 			{
 				"command": "roo-cline.improveCode",
-				"title": "Improve Code",
+				"title": "PearAI Agent (Roo Code): Improve Code",
 				"category": "Roo Code"
 			},
 			{
 				"command": "roo-cline.addToContext",
-				"title": "Add To Context",
+				"title": "PearAI Agent (Roo Code): Add To Context",
 				"category": "Roo Code"
 			},
 			{
@@ -182,7 +182,7 @@
 			"editor/context": [
 				{
 					"submenu": "roo-code.contextMenu",
-					"group": "navigation"
+					"group": "0_acontinue"
 				}
 			],
 			"roo-code.contextMenu": [
