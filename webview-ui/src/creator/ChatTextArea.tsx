@@ -1,9 +1,23 @@
 import ContextMenu from "@/components/chat/ContextMenu"
 import { CaretIcon } from "@/components/common/CaretIcon"
 import Thumbnails from "@/components/common/Thumbnails"
-import { vscEditorBackground, getFontSize, lightGray, vscForeground, vscInputBackground, vscInputBorder, Button } from "@/components/ui"
+import {
+	vscEditorBackground,
+	getFontSize,
+	lightGray,
+	vscForeground,
+	vscInputBackground,
+	vscInputBorder,
+	Button,
+} from "@/components/ui"
 import { useExtensionState } from "@/context/ExtensionStateContext"
-import { ContextMenuOptionType, insertMention, getContextMenuOptions, removeMention, shouldShowContextMenu } from "@/utils/context-mentions"
+import {
+	ContextMenuOptionType,
+	insertMention,
+	getContextMenuOptions,
+	removeMention,
+	shouldShowContextMenu,
+} from "@/utils/context-mentions"
 import { convertToMentionPath } from "@/utils/path-mentions"
 import { vscode } from "@/utils/vscode"
 import { Listbox } from "@headlessui/react"
@@ -16,7 +30,6 @@ import { mentionRegex, mentionRegexGlobal } from "../../../src/shared/context-me
 import { getAllModes, Mode } from "../../../src/shared/modes"
 import { WebviewMessage } from "../../../src/shared/WebviewMessage"
 import { MAX_IMAGES_PER_MESSAGE } from "./Creator"
-
 
 const StyledListboxButton = styled(Listbox.Button)`
 	border: none;
@@ -768,52 +781,56 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						</div>
 					)}
 
-					{inputValue && <div
-						style={{
-							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "center",
-							marginTop: "auto",
-							paddingTop: "2px",
-						}}>
+					{inputValue && (
 						<div
 							style={{
 								display: "flex",
+								justifyContent: "space-between",
 								alignItems: "center",
-								gap: "8px",
+								marginTop: "auto",
+								paddingTop: "2px",
 							}}>
-							<Button
-								className={`gap-1 text-xs bg-input text-input-foreground  h-6 px-2 hover:bg-sidebar-background`}
-								variant={"secondary"}
-								disabled={textAreaDisabled}
-								onClick={() => {
-									if (!textAreaDisabled && textAreaRef.current) {
-										setShowContextMenu(true)
-										setSearchQuery("")
-										const newValue =
-											inputValue.slice(0, cursorPosition) + "@" + inputValue.slice(cursorPosition)
-										setInputValue(newValue)
-										const newCursorPosition = cursorPosition + 1
-										setCursorPosition(newCursorPosition)
-										setIntendedCursorPosition(newCursorPosition)
-										textAreaRef.current.focus()
-									}
-								}}
+							<div
 								style={{
-									color: vscForeground,
-									backgroundColor: vscInputBackground,
-									border: `1px solid ${vscInputBorder}`,
+									display: "flex",
+									alignItems: "center",
+									gap: "8px",
 								}}>
-								@ Context
-							</Button>
-							<ImageIcon
-								width={16}
-								height={16}
-								className={`${shouldDisableImages ? "disabled" : ""} `}
-								onClick={() => !shouldDisableImages && onSelectImages()}
-							/>
+								<Button
+									className={`gap-1 text-xs bg-input text-input-foreground  h-6 px-2 hover:bg-sidebar-background`}
+									variant={"secondary"}
+									disabled={textAreaDisabled}
+									onClick={() => {
+										if (!textAreaDisabled && textAreaRef.current) {
+											setShowContextMenu(true)
+											setSearchQuery("")
+											const newValue =
+												inputValue.slice(0, cursorPosition) +
+												"@" +
+												inputValue.slice(cursorPosition)
+											setInputValue(newValue)
+											const newCursorPosition = cursorPosition + 1
+											setCursorPosition(newCursorPosition)
+											setIntendedCursorPosition(newCursorPosition)
+											textAreaRef.current.focus()
+										}
+									}}
+									style={{
+										color: vscForeground,
+										backgroundColor: vscInputBackground,
+										border: `1px solid ${vscInputBorder}`,
+									}}>
+									@ Context
+								</Button>
+								<ImageIcon
+									width={16}
+									height={16}
+									className={`${shouldDisableImages ? "disabled" : ""} `}
+									onClick={() => !shouldDisableImages && onSelectImages()}
+								/>
+							</div>
 						</div>
-					</div>}
+					)}
 
 					<div
 						style={{
@@ -921,58 +938,60 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						/>
 					)}
 
-					{inputValue && <div
-						style={{
-							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "center",
-							marginTop: "auto",
-							paddingTop: "2px",
-						}}>
-						<div className="flex-1"></div>
-
+					{inputValue && (
 						<div
 							style={{
 								display: "flex",
+								justifyContent: "space-between",
 								alignItems: "center",
-								gap: "12px",
+								marginTop: "auto",
+								paddingTop: "2px",
 							}}>
-							<div style={{ display: "flex", alignItems: "center" }}>
-								{isEnhancingPrompt ? (
-									<span
-										className="codicon codicon-loading codicon-modifier-spin"
-										style={{
-											color: "var(--vscode-input-foreground)",
-											opacity: 0.5,
-											fontSize: 16.5,
-											marginRight: 10,
-										}}
-									/>
-								) : (
-									<span
-										role="button"
-										aria-label="enhance prompt"
-										data-testid="enhance-prompt-button"
-										className={`input-icon-button ${
-											textAreaDisabled ? "disabled" : ""
-										} codicon codicon-sparkle`}
-										onClick={() => !textAreaDisabled && handleEnhancePrompt()}
-										style={{ fontSize: 16.5 }}
-									/>
-								)}
-							</div>
+							<div className="flex-1"></div>
 
-							<Button
-								className="gap-1 h-6 bg-[#E64C9E] text-white text-xs px-2"
-								disabled={textAreaDisabled}
-								onClick={() => !textAreaDisabled && onSend()}>
-									{/* 
+							<div
+								style={{
+									display: "flex",
+									alignItems: "center",
+									gap: "12px",
+								}}>
+								<div style={{ display: "flex", alignItems: "center" }}>
+									{isEnhancingPrompt ? (
+										<span
+											className="codicon codicon-loading codicon-modifier-spin"
+											style={{
+												color: "var(--vscode-input-foreground)",
+												opacity: 0.5,
+												fontSize: 16.5,
+												marginRight: 10,
+											}}
+										/>
+									) : (
+										<span
+											role="button"
+											aria-label="enhance prompt"
+											data-testid="enhance-prompt-button"
+											className={`input-icon-button ${
+												textAreaDisabled ? "disabled" : ""
+											} codicon codicon-sparkle`}
+											onClick={() => !textAreaDisabled && handleEnhancePrompt()}
+											style={{ fontSize: 16.5 }}
+										/>
+									)}
+								</div>
+
+								<Button
+									className="gap-1 h-6 bg-[#E64C9E] text-white text-xs px-2"
+									disabled={textAreaDisabled}
+									onClick={() => !textAreaDisabled && onSend()}>
+									{/*
 										// @ts-ignore */}
-								<ArrowTurnDownLeftIcon width="12px" height="12px" />
-								Send
-							</Button>
+									<ArrowTurnDownLeftIcon width="12px" height="12px" />
+									Send
+								</Button>
+							</div>
 						</div>
-					</div>}
+					)}
 				</div>
 				<div
 					style={{
