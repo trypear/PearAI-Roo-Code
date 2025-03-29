@@ -34,10 +34,10 @@ import { AudioType } from "../../../src/shared/WebviewMessage"
 import SplitView from "./SplitView"
 
 interface ChatViewProps {
-	isHidden: boolean
-	showAnnouncement: boolean
-	hideAnnouncement: () => void
-	showHistoryView: () => void
+	isHidden?: boolean
+	showAnnouncement?: boolean
+	hideAnnouncement?: () => void
+	showHistoryView?: () => void
 }
 
 export const MAX_IMAGES_PER_MESSAGE = 20 // Anthropic limits to 20 images
