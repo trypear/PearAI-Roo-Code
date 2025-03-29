@@ -326,7 +326,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							command: "roo-cline.createInAgent",
 							args: {
 								text,
-								mode: "code"
+								mode: "code",
+								creatorMode: true
 							},
 						})
 					}
@@ -364,7 +365,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				disableAutoScrollRef.current = false
 			}
 		},
-		[messages.length, clineAsk, setMode, setIncludePlanningPhase],
+		[messages.length, clineAsk, setMode, includePlanningPhase],
 	)
 
 	const handleSetChatBoxMessage = useCallback(
@@ -439,7 +440,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							command: "roo-cline.createInAgent",
 							args: {
 								text: lastMessage?.text || "",
-								mode: "code"
+								mode: "code",
+								creatorMode: true
 							},
 						})
 					}

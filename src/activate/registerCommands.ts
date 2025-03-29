@@ -45,9 +45,12 @@ const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOpt
 			const sidebarProvider = ClineProvider.getSidebarInstance()
 			if (sidebarProvider) {
 				// Start a new chat in the sidebar
+				console.log("I AM IN createInAgent and creatorMode is", args.creatorMode)
 				vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
 				await sidebarProvider.clearTask()
-				await sidebarProvider.handleModeSwitch("code")
+				console.log("I AM IN about to call handleModeSwitch", args.creatorMode)
+				await sidebarProvider.handleModeSwitch("code", args.creatorMode)
+				console.log("I AM IN just called handleModeSwitch", args.creatorMode)
 				await sidebarProvider.postStateToWebview()
 				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 

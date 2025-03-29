@@ -334,7 +334,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		this.outputChannel.appendLine("Webview view resolved")
 	}
 
-	public async initClineWithTask(task?: string, images?: string[]) {
+	public async initClineWithTask(task?: string, images?: string[], creatorMode?: boolean) {
 		await this.clearTask()
 		const {
 			apiConfiguration,
@@ -353,7 +353,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				creatorMode: mode === "creator",
+				creatorMode: mode === "creator" || creatorMode,
 			},
 			customInstructions: effectiveInstructions,
 			enableDiff: diffEnabled,
@@ -365,7 +365,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		})
 	}
 
-	public async initClineWithHistoryItem(historyItem: HistoryItem) {
+	public async initClineWithHistoryItem(historyItem: HistoryItem, creatorMode?: boolean) {
 		await this.clearTask()
 
 		const {
@@ -386,7 +386,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				creatorMode: mode === "creator",
+				creatorMode: mode === "creator" || creatorMode,
 			},
 			customInstructions: effectiveInstructions,
 			enableDiff: diffEnabled,
@@ -1663,7 +1663,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	 * Handle switching to a new mode, including updating the associated API configuration
 	 * @param newMode The mode to switch to
 	 */
-	public async handleModeSwitch(newMode: Mode) {
+	public async handleModeSwitch(newMode: Mode, creatorMode?: boolean) {
+		console.log("I AM IN handleModeSwitch and creatorMode is", creatorMode)
 		await this.updateGlobalState("mode", newMode)
 
 		// Load the saved API config for the new mode if it exists
@@ -1995,7 +1996,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		if (id !== this.cline?.taskId) {
 			// non-current task
 			const { historyItem } = await this.getTaskWithId(id)
-			await this.initClineWithHistoryItem(historyItem) // clears existing task
+			await this.initClineWithHistoryItem(historyItem, this.isCreator) // clears existing task
 		}
 		await this.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 	}
