@@ -88,6 +88,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 
 	const [wasStreaming, setWasStreaming] = useState<boolean>(false)
 	const [editingFilePath, setEditingFilePath] = useState<string | null>(null)
+	const [includePlanningPhase, setIncludePlanningPhase] = useState<boolean>(true)
 
 	// UI layout depends on the last 2 messages
 	// (since it relies on the content of these messages, we are deep comparing. i.e. the button state after hitting button sets enableButtons to false, and this effect otherwise would have to true again even if messages didn't change
@@ -403,16 +404,28 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					break
 				case "completion_result":
 				case "resume_completed_task":
-					vscode.postMessage({
-						type: "invoke",
-						invoke: "executeCommand",
-						command: "roo-cline.executeCreatorPlan",
-						args: {
-							filePath: editingFilePath,
-							// code: 'function test() { return true; }',
-							// context: 'This is a test context'
-						},
-					})
+					if (includePlanningPhase) {
+						vscode.postMessage({
+							type: "invoke",
+							invoke: "executeCommand",
+							command: "roo-cline.executeCreatorPlan",
+							args: {
+								filePath: editingFilePath,
+								includePlanning: true
+							},
+						})
+					} else {
+						// When skipping planning, send directly to agent sidebar
+						vscode.postMessage({
+							type: "invoke",
+							invoke: "executeCommand",
+							command: "roo-cline.createInAgent",
+							args: {
+								text: lastMessage?.text || "",
+								mode: "code"
+							},
+						})
+					}
 					break
 			}
 			setTextAreaDisabled(true)
@@ -1018,6 +1031,25 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					overflow: "hidden",
 				}}
 				className={`min-w-2xl ${task ? "max-w-2xl" : "max-w-5xl"} mx-auto flex justify-center borderr border-solid`}>
+				<div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+					<input
+						type="checkbox"
+						id="includePlanningPhase"
+						checked={includePlanningPhase}
+						onChange={(e) => setIncludePlanningPhase(e.target.checked)}
+						style={{ cursor: 'pointer' }}
+					/>
+					<label
+						htmlFor="includePlanningPhase"
+						style={{
+							color: 'var(--vscode-foreground)',
+							fontSize: '12px',
+							cursor: 'pointer'
+						}}>
+						Include Planning Phase
+					</label>
+				</div>
+
 				{!task && (
 					<div className="absolute bottom-[40%] left-[15%] flex justify-center mb-4" style={{ zIndex: -1 }}>
 						<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
@@ -1158,19 +1190,19 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 									padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 0px 0px 0px`,
 								}}>
 								{primaryButtonText && !isStreaming && (
-									<Button
-										disabled={!enableButtons}
-										style={{
+										<Button
+											disabled={!enableButtons}
+											style={{
 											// backgroundColor: "#E64C9E",
-											backgroundColor: vscButtonBackground,
-											color: "var(--vscode-button-foreground)",
+												backgroundColor: vscButtonBackground,
+												color: "var(--vscode-button-foreground)",
 											flex: secondaryButtonText ? 1 : 2,
-											marginRight: secondaryButtonText ? "6px" : "0",
-											borderRadius: 8,
-										}}
-										onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
-										{primaryButtonText}
-									</Button>
+												marginRight: secondaryButtonText ? "6px" : "0",
+												borderRadius: 8,
+											}}
+											onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
+											{primaryButtonText}
+										</Button>
 								)}
 								{(secondaryButtonText || isStreaming) && (
 									<Button

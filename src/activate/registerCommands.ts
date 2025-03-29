@@ -41,6 +41,24 @@ const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOpt
 		"roo-cline.helpButtonClicked": () => {
 			vscode.env.openExternal(vscode.Uri.parse("https://docs.roocode.com"))
 		},
+		"roo-cline.createInAgent": async (args: any) => {
+			const sidebarProvider = ClineProvider.getSidebarInstance()
+			if (sidebarProvider) {
+				// Start a new chat in the sidebar
+				vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+				await sidebarProvider.clearTask()
+				await sidebarProvider.handleModeSwitch("code")
+				await sidebarProvider.postStateToWebview()
+				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+
+				// Send the completion result directly
+				await sidebarProvider.postMessageToWebview({
+					type: "invoke",
+					invoke: "sendMessage",
+					text: args.text,
+				})
+			}
+		},
 		"roo-cline.executeCreatorPlan": async (args: any) => {
 			const sidebarProvider = ClineProvider.getSidebarInstance()
 			if (sidebarProvider) {
