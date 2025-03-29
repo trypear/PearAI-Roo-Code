@@ -1,4 +1,4 @@
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
+import { VSCodeButton, VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react"
 import debounce from "debounce"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useDeepCompareEffect, useEvent, useMount } from "react-use"
@@ -32,6 +32,7 @@ import { getApiMetrics } from "../../../src/shared/getApiMetrics"
 import { McpServer, McpTool } from "../../../src/shared/mcp"
 import { AudioType } from "../../../src/shared/WebviewMessage"
 import SplitView from "./SplitView"
+import { set } from "zod"
 
 interface ChatViewProps {
 	isHidden?: boolean
@@ -313,7 +314,22 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			text = text.trim()
 			if (text || images.length > 0) {
 				if (messages.length === 0) {
-					vscode.postMessage({ type: "newTask", text, images })
+					console.log("I AM IN handleSendMessage messages is 0", includePlanningPhase)
+					if (includePlanningPhase) {
+						console.log('Starting new task with planning phase');
+						vscode.postMessage({ type: "newTask", text, images })
+					} else {
+						console.log('Skipping planning phase, sending directly to agent');
+						vscode.postMessage({
+							type: "invoke",
+							invoke: "executeCommand",
+							command: "roo-cline.createInAgent",
+							args: {
+								text,
+								mode: "code"
+							},
+						})
+					}
 				} else if (clineAsk) {
 					switch (clineAsk) {
 						case "followup":
@@ -348,7 +364,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				disableAutoScrollRef.current = false
 			}
 		},
-		[messages.length, clineAsk, setMode],
+		[messages.length, clineAsk, setMode, setIncludePlanningPhase],
 	)
 
 	const handleSetChatBoxMessage = useCallback(
@@ -404,6 +420,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					break
 				case "completion_result":
 				case "resume_completed_task":
+					console.log("I AM IN resume_completed_task", includePlanningPhase)
 					if (includePlanningPhase) {
 						vscode.postMessage({
 							type: "invoke",
@@ -1031,32 +1048,29 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					overflow: "hidden",
 				}}
 				className={`min-w-2xl ${task ? "max-w-2xl" : "max-w-5xl"} mx-auto flex justify-center borderr border-solid`}>
-				<div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-					<input
-						type="checkbox"
-						id="includePlanningPhase"
-						checked={includePlanningPhase}
-						onChange={(e) => setIncludePlanningPhase(e.target.checked)}
-						style={{ cursor: 'pointer' }}
-					/>
-					<label
-						htmlFor="includePlanningPhase"
-						style={{
-							color: 'var(--vscode-foreground)',
-							fontSize: '12px',
-							cursor: 'pointer'
-						}}>
-						Include Planning Phase
-					</label>
-				</div>
-
 				{!task && (
-					<div className="absolute bottom-[40%] left-[15%] flex justify-center mb-4" style={{ zIndex: -1 }}>
-						<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
-						<div className="w-10 h-20 origin-top-left -rotate-90 bg-pink-500 rounded-full blur-[48px]" />
-						<div className="w-80 h-10 bg-violet-600 rounded-full blur-[48px]" />
-						<div className="w-72 h-11 bg-teal-500 rounded-full blur-[48px]" />
-					</div>
+					<>
+						<div style={{ padding: "6px 6px 10px 6px", userSelect: "none" }}>
+							<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+								<VSCodeCheckbox
+									checked={includePlanningPhase}
+									onChange={() => {
+										const newValue = !includePlanningPhase;
+										console.log('Checkbox changed - includePlanningPhase:', newValue);
+										setIncludePlanningPhase(newValue);
+									}}
+								>
+									Include Planning Phase
+								</VSCodeCheckbox>
+							</div>
+						</div>
+						<div className="absolute bottom-[40%] left-[15%] flex justify-center mb-4" style={{ zIndex: -1 }}>
+							<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
+							<div className="w-10 h-20 origin-top-left -rotate-90 bg-pink-500 rounded-full blur-[48px]" />
+							<div className="w-80 h-10 bg-violet-600 rounded-full blur-[48px]" />
+							<div className="w-72 h-11 bg-teal-500 rounded-full blur-[48px]" />
+						</div>
+					</>
 				)}
 				{task && (
 					<TaskHeader
