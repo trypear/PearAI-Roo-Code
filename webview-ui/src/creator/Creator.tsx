@@ -437,18 +437,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 								includePlanning: true
 							},
 						})
-					} else {
-						// When skipping planning, send directly to agent sidebar
-						vscode.postMessage({
-							type: "invoke",
-							invoke: "executeCommand",
-							command: "roo-cline.createInAgent",
-							args: {
-								text: lastMessage?.text || "",
-								mode: "code",
-								creatorMode: true
-							},
-						})
 					}
 					break
 			}
@@ -1319,3 +1307,4 @@ const ScrollToBottomButton = styled.div`
 `
 
 export default ChatView
+
