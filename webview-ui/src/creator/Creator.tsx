@@ -1057,20 +1057,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				className={`min-w-2xl ${task ? "max-w-2xl" : "max-w-5xl"} mx-auto flex justify-center borderr border-solid`}>
 				{!task && (
 					<>
-						<div style={{ padding: "6px 6px 10px 6px", userSelect: "none" }}>
-							<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-								<VSCodeCheckbox
-									checked={includePlanningPhase}
-									onChange={() => {
-										const newValue = !includePlanningPhase;
-										console.log('Checkbox changed - includePlanningPhase:', newValue);
-										setIncludePlanningPhase(newValue);
-									}}
-								>
-									Include Planning Phase
-								</VSCodeCheckbox>
-							</div>
-						</div>
 						<div className="absolute bottom-[40%] left-[15%] flex justify-center mb-4" style={{ zIndex: -1 }}>
 							<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
 							<div className="w-10 h-20 origin-top-left -rotate-90 bg-pink-500 rounded-full blur-[48px]" />
@@ -1110,15 +1096,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			//    This ensures it takes its natural height when there's space
 			//    but becomes scrollable when the viewport is too small
 			*/}
-				{!task && (
-					<AutoApproveMenu
-						style={{
-							marginBottom: -2,
-							flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
-							minHeight: 0,
-						}}
-					/>
-				)}
 
 				{task && (
 					<>
@@ -1291,6 +1268,29 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					setMode={setMode}
 					isNewTask={taskHistory.length === 0}
 				/>
+				<div style={{ padding: "10px 6px 6px 6px", userSelect: "none" }}>
+					<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+						<VSCodeCheckbox
+							checked={includePlanningPhase}
+							onChange={() => {
+								const newValue = !includePlanningPhase;
+								console.log('Checkbox changed - includePlanningPhase:', newValue);
+								setIncludePlanningPhase(newValue);
+							}}
+						>
+							Include Planning Phase
+						</VSCodeCheckbox>
+					</div>
+				</div>
+				{!task && (
+					<AutoApproveMenu
+						style={{
+							marginTop: 10,
+							flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
+							minHeight: 0,
+						}}
+					/>
+				)}
 			</div>
 			{editingFilePath && <SplitView filePath={editingFilePath} onClose={() => {
 			}} />}
