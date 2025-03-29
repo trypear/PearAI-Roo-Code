@@ -38,6 +38,7 @@ export class PearAiHandler {
 			apiKey: options.pearaiApiKey,
 			anthropicBaseUrl: PEARAI_URL,
 			apiModelId: "claude-3-5-sonnet-20241022",
+			creatorMode: options.creatorMode,
 		})
 
 		// Then try to initialize the correct handler asynchronously
@@ -64,6 +65,7 @@ export class PearAiHandler {
 						deepSeekApiKey: options.pearaiApiKey,
 						deepSeekBaseUrl: PEARAI_URL,
 						apiModelId: underlyingModel,
+						creatorMode: options.creatorMode,
 					})
 				} else {
 					// Default to Claude
@@ -72,6 +74,7 @@ export class PearAiHandler {
 						apiKey: options.pearaiApiKey,
 						anthropicBaseUrl: PEARAI_URL,
 						apiModelId: underlyingModel,
+						creatorMode: options.creatorMode,
 					})
 				}
 			} catch (error) {
@@ -82,6 +85,7 @@ export class PearAiHandler {
 					apiKey: options.pearaiApiKey,
 					anthropicBaseUrl: PEARAI_URL,
 					apiModelId: "claude-3-5-sonnet-20241022",
+					creatorMode: options.creatorMode,
 				})
 			}
 		} else if (modelId.startsWith("claude")) {

@@ -349,10 +349,12 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
-
 		this.cline = new Cline({
 			provider: this,
-			apiConfiguration,
+			apiConfiguration: {
+				...apiConfiguration,
+				creatorMode: mode === "creator",
+			},
 			customInstructions: effectiveInstructions,
 			enableDiff: diffEnabled,
 			enableCheckpoints: checkpointsEnabled,
@@ -382,7 +384,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 
 		this.cline = new Cline({
 			provider: this,
-			apiConfiguration,
+			apiConfiguration: {
+				...apiConfiguration,
+				creatorMode: mode === "creator",
+			},
 			customInstructions: effectiveInstructions,
 			enableDiff: diffEnabled,
 			enableCheckpoints: checkpointsEnabled,
@@ -1809,7 +1814,10 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			await this.updateGlobalState("pearaiModelInfo", pearaiModelInfo),
 		])
 		if (this.cline) {
-			this.cline.api = buildApiHandler(apiConfiguration)
+			this.cline.api = buildApiHandler({
+				...apiConfiguration,
+				creatorMode: mode === "creator",
+			})
 		}
 	}
 
