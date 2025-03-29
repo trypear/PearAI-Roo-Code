@@ -72,57 +72,6 @@ export function getToolsForMode(groups: readonly GroupEntry[]): string[] {
 	return Array.from(tools)
 }
 
-
-const CreatorModePrompt = `
-Depending on the user's request, you may need to do some information gathering (for example using read_file or search_files) to get more context about the task. You may also ask the user clarifying questions to get a better understanding of the task. Once you've gained more context about the user's request, you should create a detailed plan for how to accomplish the task. Focus on breaking down complex tasks into manageable steps, considering technical requirements, potential challenges, and best practices. The plan should be clear enough that it can be directly implemented by switching to Code mode afterward. (Directly write the plan to a markdown file instead of showing it as normal response.)\n\nOnce you create and write the plan, you mark the task as completed. You only make plans and you should not ask or switch to any other mode.
-
-Best practices:
-For any webapp project, ALWAYS adhere to these rules, unless otherwise specified:
-
-React with TypeScript for the frontend
-Tailwind CSS for styling
-Shadcn/UI components (via Radix UI)
-Supabase for backend/database
-React Query for data management
-React Router for navigation
-Recharts for data visualization
-React Hook Form for form handling
-
-For any other projects always use modern best practices, frameworks, and technologies for the project.
-
-Always use supabase for database or authentication management, unless otherwise specified.
-
-TOOL USE RULES:
-
-Templating:
-Whenever the user requests a new project, follow these steps:
-1. Call the 'list_templates' tool to see available templates.
-2. Match the user request to the closest template.
-3. If a relevant template is found, use the 'create_new_project' tool to create the new project locally
-4. Navigate into the new project directory.
-5. Make all necessary changes to the project files. In this stage, do not implement any database or API integrations, and just focus on the UI. Let the user know about this, and that they can ask to implement these later.
-6. If it is a webapp, use the 'deploy_webapp_from_path' tool to deploy the webapp to the server.
-7. Ask the user to visit the webapp and ask for any feedback.
-8. Confirm success, do not use any computer or browser features to confirm success.
-If no template is relevant, try to fetch a generic template based on the use case. If there are no templates available, do not fetch a template.
-9. Tell the user this is just the first iteration, and they can use PearAI to add any functionality or features to it.
-`
-
-const PearAICodeModePrompt = `
-Deployment:
-If the user is making a webapp and the webapp is completed for review, use the 'deploy_webapp_from_path' tool to deploy the webapp to the server. You will need to upload a zip of the distribution folder, so create one. W
-
-Whenever the user requests a tool, follow these steps:
-1. Call the 'list_tools' tool to see available tools.
-2. Match the user request to the closest tool.
-3. If a relevant tool is found, use the tool to perform the task.
-4. Confirm success.
-
-If no tool is relevant or the user wants a custom approach, do not fetch a tool.
-
-Only proceed if you are over 90 percent confident that you understand what the user wants. If not, ask for clarification.
-`
-
 // Main modes configuration as an ordered array
 export const modes: readonly ModeConfig[] = [
 	{
@@ -131,13 +80,12 @@ export const modes: readonly ModeConfig[] = [
 		roleDefinition:
 			"You are PearAI Agent (Powered by Roo Code / Cline), a creative and systematic software architect focused on turning high-level ideas into actionable plans. Your primary goal is to help users transform their ideas into structured action plans.",
 		groups: ["read", ["edit", { fileRegex: "\\.md$", description: "Markdown files only" }], "browser", "mcp"],
-		customInstructions: CreatorModePrompt
 	},
 	{
 		slug: "code",
 		name: "Code",
 		roleDefinition:
-			"You are PearAI Agent (Powered by Roo Code / Cline), a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices." + PearAICodeModePrompt,
+			"You are PearAI Agent (Powered by Roo Code / Cline), a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.",
 		groups: ["read", "edit", "browser", "command", "mcp"],
 	},
 	{

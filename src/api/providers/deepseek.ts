@@ -41,6 +41,7 @@ export class DeepSeekHandler implements ApiHandler, SingleCompletionHandler {
 			headers: {
 				"Content-Type": "application/json",
 				Authorization: `Bearer ${this.options.deepSeekApiKey}`,
+				"creator-mode": String(this.options.creatorMode),
 			},
 			body: JSON.stringify({
 				model: modelId,
@@ -139,6 +140,7 @@ export class DeepSeekHandler implements ApiHandler, SingleCompletionHandler {
 				headers: {
 					"Content-Type": "application/json",
 					Authorization: `Bearer ${this.options.deepSeekApiKey}`,
+					"creator-mode": String(this.options.creatorMode),
 				},
 				body: JSON.stringify({
 					model: this.getModel().id,
