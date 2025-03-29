@@ -75,6 +75,7 @@ const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOpt
 				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 
 				// Create the template message using the args
+				// Todo: add structure to it i.e. You should have these sections: Architecutre, Features, etc.
 				let executePlanTemplate = `This file contains detailed plan to my task. please read it and Execute the plan accordingly.
 					File: ${args.filePath || "No file specified"}`
 
@@ -89,11 +90,15 @@ const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOpt
 					executePlanTemplate += `Additional context: ${args.context}`
 				}
 
-				await sidebarProvider.postMessageToWebview({
-					type: "invoke",
-					invoke: "sendMessage",
-					text: executePlanTemplate,
-				})
+				args.text = executePlanTemplate
+
+				await sidebarProvider.initClineWithTask(args.text, undefined, args.creatorMode)
+
+				// await sidebarProvider.postMessageToWebview({
+				// 	type: "invoke",
+				// 	invoke: "sendMessage",
+				// 	text: executePlanTemplate,
+				// })
 			}
 		},
 	}
