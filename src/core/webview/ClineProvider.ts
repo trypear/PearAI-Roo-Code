@@ -356,7 +356,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				creatorMode: mode === "creator" || creatorMode,
+				creatorMode: creatorMode,
 			},
 			customInstructions: effectiveInstructions,
 			enableDiff: diffEnabled,
@@ -389,7 +389,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				creatorMode: mode === "creator" || creatorMode,
+				creatorMode: creatorMode,
 			},
 			customInstructions: effectiveInstructions,
 			enableDiff: diffEnabled,
@@ -1820,7 +1820,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		if (this.cline) {
 			this.cline.api = buildApiHandler({
 				...apiConfiguration,
-				creatorMode: mode === "creator",
 			})
 		}
 	}
