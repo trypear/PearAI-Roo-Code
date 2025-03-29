@@ -74,17 +74,17 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	private latestAnnouncementId = "jan-21-2025-custom-modes" // update to some unique identifier when we add a new announcement
 	configManager: ConfigManager
 	customModesManager: CustomModesManager
-	private isCreator: boolean = false
+	private isCreatorView: boolean = false
 
 	constructor(
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
-		isCreator: boolean = false,
+		isCreatorView: boolean = false,
 	) {
-		this.outputChannel.appendLine(`creator = ${isCreator}`)
-		this.isCreator = isCreator
+		this.outputChannel.appendLine(`creator = ${isCreatorView}`)
+		this.isCreatorView = isCreatorView
 		console.dir("CREATOR")
-		console.dir(this.isCreator)
+		console.dir(this.isCreatorView)
 		this.outputChannel.appendLine("ClineProvider instantiated")
 		ClineProvider.activeInstances.add(this)
 		this.workspaceTracker = new WorkspaceTracker(this)
@@ -135,7 +135,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	public static getSidebarInstance(): ClineProvider | undefined {
-		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreator)
+		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreatorView)
 
 		if (!sidebar?.view?.visible) {
 			vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
@@ -439,7 +439,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				window.$RefreshReg$ = () => {}
 				window.$RefreshSig$ = () => (type) => type
 				window.__vite_plugin_react_preamble_installed__ = true
-				window.isCreator="${this.isCreator}";
+				window.isCreator="${this.isCreatorView}";
 			</script>
 		`
 
@@ -453,7 +453,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		]
 
 		console.dir("CREATORRRRRR")
-		console.dir(this.isCreator)
+		console.dir(this.isCreatorView)
 		return /*html*/ `
 			<!DOCTYPE html>
 			<html lang="en">
@@ -1999,7 +1999,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		if (id !== this.cline?.taskId) {
 			// non-current task
 			const { historyItem } = await this.getTaskWithId(id)
-			await this.initClineWithHistoryItem(historyItem, this.isCreator) // clears existing task
+			await this.initClineWithHistoryItem(historyItem) // clears existing task
 		}
 		await this.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 	}
