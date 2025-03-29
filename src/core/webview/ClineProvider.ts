@@ -347,6 +347,9 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			experiments,
 		} = await this.getState()
 
+		console.log("IM IN INIT CLINE mode: ", mode)
+		console.log("IM IN INIT CLINE creatorMode", creatorMode)
+
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 		this.cline = new Cline({

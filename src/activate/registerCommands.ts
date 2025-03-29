@@ -54,12 +54,14 @@ const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOpt
 				await sidebarProvider.postStateToWebview()
 				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 
-				// Send the completion result directly
-				await sidebarProvider.postMessageToWebview({
-					type: "invoke",
-					invoke: "sendMessage",
-					text: args.text,
-				})
+				await sidebarProvider.initClineWithTask(args.text, undefined, args.creatorMode)
+
+				// // Send the completion result directly
+				// await sidebarProvider.postMessageToWebview({
+				// 	type: "invoke",
+				// 	invoke: "sendMessage",
+				// 	text: args.text,
+				// })
 			}
 		},
 		"roo-cline.executeCreatorPlan": async (args: any) => {
