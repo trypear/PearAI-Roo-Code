@@ -88,7 +88,10 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const [isAtBottom, setIsAtBottom] = useState(false)
 
 	const [wasStreaming, setWasStreaming] = useState<boolean>(false)
-	const [editingFilePath, setEditingFilePath] = useState<string | null>(null)
+	const [editingFilePath, setEditingFilePath] = useState<string | null>(() => {
+		console.log('Initial editingFilePath:', null)
+		return null
+	})
 	const [includePlanningPhase, setIncludePlanningPhase] = useState<boolean>(true)
 
 	// UI layout depends on the last 2 messages
@@ -97,6 +100,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const secondLastMessage = useMemo(() => messages.at(-2), [messages])
 
 	const handleEditPlan = useCallback((path: string) => {
+		console.log('Setting editingFilePath:', path)
 		setEditingFilePath(path)
 	}, [])
 
@@ -422,6 +426,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				case "completion_result":
 				case "resume_completed_task":
 					console.log("I AM IN resume_completed_task", includePlanningPhase)
+					console.log("I AM IN resume_completed_task HERES THE PATH", editingFilePath)
 					if (includePlanningPhase) {
 						vscode.postMessage({
 							type: "invoke",
@@ -1287,7 +1292,8 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					isNewTask={taskHistory.length === 0}
 				/>
 			</div>
-			{editingFilePath && <SplitView filePath={editingFilePath} onClose={() => setEditingFilePath(null)} />}
+			{editingFilePath && <SplitView filePath={editingFilePath} onClose={() => {
+			}} />}
 		</div>
 	)
 }

@@ -92,7 +92,7 @@ const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOpt
 
 				args.text = executePlanTemplate
 
-				await sidebarProvider.initClineWithTask(args.text, undefined, args.creatorMode)
+				await sidebarProvider.initClineWithTask(args.text, undefined, true)
 
 				// await sidebarProvider.postMessageToWebview({
 				// 	type: "invoke",
