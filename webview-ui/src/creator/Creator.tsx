@@ -1,4 +1,4 @@
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
+import { VSCodeButton, VSCodeCheckbox } from "@vscode/webview-ui-toolkit/react"
 import debounce from "debounce"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useDeepCompareEffect, useEvent, useMount } from "react-use"
@@ -32,6 +32,7 @@ import { getApiMetrics } from "../../../src/shared/getApiMetrics"
 import { McpServer, McpTool } from "../../../src/shared/mcp"
 import { AudioType } from "../../../src/shared/WebviewMessage"
 import SplitView from "./SplitView"
+import { set } from "zod"
 
 interface ChatViewProps {
 	isHidden?: boolean
@@ -87,7 +88,10 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const [isAtBottom, setIsAtBottom] = useState(false)
 
 	const [wasStreaming, setWasStreaming] = useState<boolean>(false)
-	const [editingFilePath, setEditingFilePath] = useState<string | null>(null)
+	const [editingFilePath, setEditingFilePath] = useState<string | null>(() => {
+		return null
+	})
+	const [includePlanningPhase, setIncludePlanningPhase] = useState<boolean>(true)
 
 	// UI layout depends on the last 2 messages
 	// (since it relies on the content of these messages, we are deep comparing. i.e. the button state after hitting button sets enableButtons to false, and this effect otherwise would have to true again even if messages didn't change
@@ -195,7 +199,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(isPartial)
 							setClineAsk("completion_result")
 							setEnableButtons(!isPartial)
-							setPrimaryButtonText("Create in Agent")
+							setPrimaryButtonText("Create!")
 							setSecondaryButtonText(undefined)
 							break
 						case "resume_task":
@@ -210,7 +214,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(false)
 							setClineAsk("resume_completed_task")
 							setEnableButtons(true)
-							setPrimaryButtonText("Create in Agent")
+							setPrimaryButtonText("Create!")
 							setSecondaryButtonText(undefined)
 							setDidClickCancel(false)
 							break
@@ -312,7 +316,22 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			text = text.trim()
 			if (text || images.length > 0) {
 				if (messages.length === 0) {
-					vscode.postMessage({ type: "newTask", text, images })
+					if (includePlanningPhase) {
+						console.log("Starting new task with planning phase")
+						vscode.postMessage({ type: "newTask", text, images })
+					} else {
+						console.log("Skipping planning phase, sending directly to agent")
+						vscode.postMessage({
+							type: "invoke",
+							invoke: "executeCommand",
+							command: "roo-cline.createInAgent",
+							args: {
+								text,
+								mode: "code",
+								creatorMode: true,
+							},
+						})
+					}
 				} else if (clineAsk) {
 					switch (clineAsk) {
 						case "followup":
@@ -347,7 +366,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				disableAutoScrollRef.current = false
 			}
 		},
-		[messages.length, clineAsk, setMode],
+		[messages.length, clineAsk, setMode, includePlanningPhase],
 	)
 
 	const handleSetChatBoxMessage = useCallback(
@@ -403,16 +422,17 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					break
 				case "completion_result":
 				case "resume_completed_task":
-					vscode.postMessage({
-						type: "invoke",
-						invoke: "executeCommand",
-						command: "roo-cline.executeCreatorPlan",
-						args: {
-							filePath: editingFilePath,
-							// code: 'function test() { return true; }',
-							// context: 'This is a test context'
-						},
-					})
+					if (includePlanningPhase) {
+						vscode.postMessage({
+							type: "invoke",
+							invoke: "executeCommand",
+							command: "roo-cline.executeCreatorPlan",
+							args: {
+								filePath: editingFilePath,
+								includePlanning: true,
+							},
+						})
+					}
 					break
 			}
 			setTextAreaDisabled(true)
@@ -420,7 +440,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			setEnableButtons(false)
 			disableAutoScrollRef.current = false
 		},
-		[clineAsk, editingFilePath],
+		[clineAsk, editingFilePath, includePlanningPhase],
 	)
 
 	const handleSecondaryButtonClick = useCallback(
@@ -1019,12 +1039,16 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				}}
 				className={`min-w-2xl ${task ? "max-w-2xl" : "max-w-5xl"} mx-auto flex justify-center borderr border-solid`}>
 				{!task && (
-					<div className="absolute bottom-[40%] left-[15%] flex justify-center mb-4" style={{ zIndex: -1 }}>
-						<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
-						<div className="w-10 h-20 origin-top-left -rotate-90 bg-pink-500 rounded-full blur-[48px]" />
-						<div className="w-80 h-10 bg-violet-600 rounded-full blur-[48px]" />
-						<div className="w-72 h-11 bg-teal-500 rounded-full blur-[48px]" />
-					</div>
+					<>
+						<div
+							className="absolute bottom-[40%] left-[15%] flex justify-center mb-4"
+							style={{ zIndex: -1 }}>
+							<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
+							<div className="w-10 h-20 origin-top-left -rotate-90 bg-pink-500 rounded-full blur-[48px]" />
+							<div className="w-80 h-10 bg-violet-600 rounded-full blur-[48px]" />
+							<div className="w-72 h-11 bg-teal-500 rounded-full blur-[48px]" />
+						</div>
+					</>
 				)}
 				{task && (
 					<TaskHeader
@@ -1057,15 +1081,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			//    This ensures it takes its natural height when there's space
 			//    but becomes scrollable when the viewport is too small
 			*/}
-				{!task && (
-					<AutoApproveMenu
-						style={{
-							marginBottom: -2,
-							flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
-							minHeight: 0,
-						}}
-					/>
-				)}
 
 				{task && (
 					<>
@@ -1238,8 +1253,29 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					setMode={setMode}
 					isNewTask={taskHistory.length === 0}
 				/>
+				<div style={{ padding: "10px 6px 6px 6px", userSelect: "none" }}>
+					<div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+						<VSCodeCheckbox
+							checked={includePlanningPhase}
+							onChange={() => {
+								const newValue = !includePlanningPhase
+								setIncludePlanningPhase(newValue)
+							}}>
+							Include Planning Phase
+						</VSCodeCheckbox>
+					</div>
+				</div>
+				{!task && (
+					<AutoApproveMenu
+						style={{
+							marginTop: 10,
+							flex: "0 1 auto", // flex-grow: 0, flex-shrink: 1, flex-basis: auto
+							minHeight: 0,
+						}}
+					/>
+				)}
 			</div>
-			{editingFilePath && <SplitView filePath={editingFilePath} onClose={() => setEditingFilePath(null)} />}
+			{editingFilePath && <SplitView filePath={editingFilePath} onClose={() => {}} />}
 		</div>
 	)
 }

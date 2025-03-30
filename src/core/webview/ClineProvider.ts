@@ -74,17 +74,17 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	private latestAnnouncementId = "jan-21-2025-custom-modes" // update to some unique identifier when we add a new announcement
 	configManager: ConfigManager
 	customModesManager: CustomModesManager
-	private isCreator: boolean = false
+	private isCreatorView: boolean = false
 
 	constructor(
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
-		isCreator: boolean = false,
+		isCreatorView: boolean = false,
 	) {
-		this.outputChannel.appendLine(`creator = ${isCreator}`)
-		this.isCreator = isCreator
+		this.outputChannel.appendLine(`creator = ${isCreatorView}`)
+		this.isCreatorView = isCreatorView
 		console.dir("CREATOR")
-		console.dir(this.isCreator)
+		console.dir(this.isCreatorView)
 		this.outputChannel.appendLine("ClineProvider instantiated")
 		ClineProvider.activeInstances.add(this)
 		this.workspaceTracker = new WorkspaceTracker(this)
@@ -135,7 +135,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	}
 
 	public static getSidebarInstance(): ClineProvider | undefined {
-		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreator)
+		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreatorView)
 
 		if (!sidebar?.view?.visible) {
 			vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
@@ -334,7 +334,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		this.outputChannel.appendLine("Webview view resolved")
 	}
 
-	public async initClineWithTask(task?: string, images?: string[]) {
+	public async initClineWithTask(task?: string, images?: string[], creatorMode?: boolean) {
 		await this.clearTask()
 		const {
 			apiConfiguration,
@@ -353,7 +353,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				creatorMode: mode === "creator",
+				creatorMode: creatorMode,
 			},
 			customInstructions: effectiveInstructions,
 			enableDiff: diffEnabled,
@@ -365,7 +365,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		})
 	}
 
-	public async initClineWithHistoryItem(historyItem: HistoryItem) {
+	public async initClineWithHistoryItem(historyItem: HistoryItem, creatorMode?: boolean) {
 		await this.clearTask()
 
 		const {
@@ -386,7 +386,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				creatorMode: mode === "creator",
+				creatorMode: creatorMode,
 			},
 			customInstructions: effectiveInstructions,
 			enableDiff: diffEnabled,
@@ -436,7 +436,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 				window.$RefreshReg$ = () => {}
 				window.$RefreshSig$ = () => (type) => type
 				window.__vite_plugin_react_preamble_installed__ = true
-				window.isCreator="${this.isCreator}";
+				window.isCreator="${this.isCreatorView}";
 			</script>
 		`
 
@@ -450,7 +450,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		]
 
 		console.dir("CREATORRRRRR")
-		console.dir(this.isCreator)
+		console.dir(this.isCreatorView)
 		return /*html*/ `
 			<!DOCTYPE html>
 			<html lang="en">
@@ -1663,7 +1663,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	 * Handle switching to a new mode, including updating the associated API configuration
 	 * @param newMode The mode to switch to
 	 */
-	public async handleModeSwitch(newMode: Mode) {
+	public async handleModeSwitch(newMode: Mode, creatorMode?: boolean) {
 		await this.updateGlobalState("mode", newMode)
 
 		// Load the saved API config for the new mode if it exists
@@ -1816,7 +1816,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 		if (this.cline) {
 			this.cline.api = buildApiHandler({
 				...apiConfiguration,
-				creatorMode: mode === "creator",
 			})
 		}
 	}
