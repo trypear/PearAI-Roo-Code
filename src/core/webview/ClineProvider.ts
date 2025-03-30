@@ -347,9 +347,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			experiments,
 		} = await this.getState()
 
-		console.log("IM IN INIT CLINE mode: ", mode)
-		console.log("IM IN INIT CLINE creatorMode", creatorMode)
-
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 		this.cline = new Cline({
@@ -1667,7 +1664,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 	 * @param newMode The mode to switch to
 	 */
 	public async handleModeSwitch(newMode: Mode, creatorMode?: boolean) {
-		console.log("I AM IN handleModeSwitch and creatorMode is", creatorMode)
 		await this.updateGlobalState("mode", newMode)
 
 		// Load the saved API config for the new mode if it exists

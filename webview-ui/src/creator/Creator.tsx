@@ -89,7 +89,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 
 	const [wasStreaming, setWasStreaming] = useState<boolean>(false)
 	const [editingFilePath, setEditingFilePath] = useState<string | null>(() => {
-		console.log('Initial editingFilePath:', null)
 		return null
 	})
 	const [includePlanningPhase, setIncludePlanningPhase] = useState<boolean>(true)
@@ -100,7 +99,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 	const secondLastMessage = useMemo(() => messages.at(-2), [messages])
 
 	const handleEditPlan = useCallback((path: string) => {
-		console.log('Setting editingFilePath:', path)
 		setEditingFilePath(path)
 	}, [])
 
@@ -201,7 +199,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(isPartial)
 							setClineAsk("completion_result")
 							setEnableButtons(!isPartial)
-							setPrimaryButtonText("Create in Agent")
+							setPrimaryButtonText("Create!")
 							setSecondaryButtonText(undefined)
 							break
 						case "resume_task":
@@ -216,7 +214,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							setTextAreaDisabled(false)
 							setClineAsk("resume_completed_task")
 							setEnableButtons(true)
-							setPrimaryButtonText("Create in Agent")
+							setPrimaryButtonText("Create!")
 							setSecondaryButtonText(undefined)
 							setDidClickCancel(false)
 							break
@@ -318,12 +316,11 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			text = text.trim()
 			if (text || images.length > 0) {
 				if (messages.length === 0) {
-					console.log("I AM IN handleSendMessage messages is 0", includePlanningPhase)
 					if (includePlanningPhase) {
-						console.log('Starting new task with planning phase');
+						console.log("Starting new task with planning phase")
 						vscode.postMessage({ type: "newTask", text, images })
 					} else {
-						console.log('Skipping planning phase, sending directly to agent');
+						console.log("Skipping planning phase, sending directly to agent")
 						vscode.postMessage({
 							type: "invoke",
 							invoke: "executeCommand",
@@ -331,7 +328,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							args: {
 								text,
 								mode: "code",
-								creatorMode: true
+								creatorMode: true,
 							},
 						})
 					}
@@ -425,8 +422,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					break
 				case "completion_result":
 				case "resume_completed_task":
-					console.log("I AM IN resume_completed_task", includePlanningPhase)
-					console.log("I AM IN resume_completed_task HERES THE PATH", editingFilePath)
 					if (includePlanningPhase) {
 						vscode.postMessage({
 							type: "invoke",
@@ -434,7 +429,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							command: "roo-cline.executeCreatorPlan",
 							args: {
 								filePath: editingFilePath,
-								includePlanning: true
+								includePlanning: true,
 							},
 						})
 					}
@@ -445,7 +440,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 			setEnableButtons(false)
 			disableAutoScrollRef.current = false
 		},
-		[clineAsk, editingFilePath],
+		[clineAsk, editingFilePath, includePlanningPhase],
 	)
 
 	const handleSecondaryButtonClick = useCallback(
@@ -1045,7 +1040,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				className={`min-w-2xl ${task ? "max-w-2xl" : "max-w-5xl"} mx-auto flex justify-center borderr border-solid`}>
 				{!task && (
 					<>
-						<div className="absolute bottom-[40%] left-[15%] flex justify-center mb-4" style={{ zIndex: -1 }}>
+						<div
+							className="absolute bottom-[40%] left-[15%] flex justify-center mb-4"
+							style={{ zIndex: -1 }}>
 							<div className="w-24 h-12 bg-green-400 rounded-full blur-[48px]" />
 							<div className="w-10 h-20 origin-top-left -rotate-90 bg-pink-500 rounded-full blur-[48px]" />
 							<div className="w-80 h-10 bg-violet-600 rounded-full blur-[48px]" />
@@ -1176,19 +1173,19 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 									padding: `${primaryButtonText || secondaryButtonText || isStreaming ? "10" : "0"}px 0px 0px 0px`,
 								}}>
 								{primaryButtonText && !isStreaming && (
-										<Button
-											disabled={!enableButtons}
-											style={{
+									<Button
+										disabled={!enableButtons}
+										style={{
 											// backgroundColor: "#E64C9E",
-												backgroundColor: vscButtonBackground,
-												color: "var(--vscode-button-foreground)",
+											backgroundColor: vscButtonBackground,
+											color: "var(--vscode-button-foreground)",
 											flex: secondaryButtonText ? 1 : 2,
-												marginRight: secondaryButtonText ? "6px" : "0",
-												borderRadius: 8,
-											}}
-											onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
-											{primaryButtonText}
-										</Button>
+											marginRight: secondaryButtonText ? "6px" : "0",
+											borderRadius: 8,
+										}}
+										onClick={(e) => handlePrimaryButtonClick(inputValue, selectedImages)}>
+										{primaryButtonText}
+									</Button>
 								)}
 								{(secondaryButtonText || isStreaming) && (
 									<Button
@@ -1261,11 +1258,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						<VSCodeCheckbox
 							checked={includePlanningPhase}
 							onChange={() => {
-								const newValue = !includePlanningPhase;
-								console.log('Checkbox changed - includePlanningPhase:', newValue);
-								setIncludePlanningPhase(newValue);
-							}}
-						>
+								const newValue = !includePlanningPhase
+								setIncludePlanningPhase(newValue)
+							}}>
 							Include Planning Phase
 						</VSCodeCheckbox>
 					</div>
@@ -1280,8 +1275,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 					/>
 				)}
 			</div>
-			{editingFilePath && <SplitView filePath={editingFilePath} onClose={() => {
-			}} />}
+			{editingFilePath && <SplitView filePath={editingFilePath} onClose={() => {}} />}
 		</div>
 	)
 }
@@ -1307,4 +1301,3 @@ const ScrollToBottomButton = styled.div`
 `
 
 export default ChatView
-

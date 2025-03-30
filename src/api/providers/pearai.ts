@@ -17,9 +17,6 @@ export class PearAiHandler {
 	private handler!: AnthropicHandler | DeepSeekHandler
 
 	constructor(options: ApiHandlerOptions) {
-		console.dir("PearAI Handler initialized with creatorMode:", options.creatorMode)
-		console.dir("PearAI Handler initialized with pearaiApiKey:")
-		console.dir(options.pearaiApiKey)
 		if (!options.pearaiApiKey) {
 			vscode.window.showErrorMessage("PearAI API key not found.", "Login to PearAI").then(async (selection) => {
 				if (selection === "Login to PearAI") {

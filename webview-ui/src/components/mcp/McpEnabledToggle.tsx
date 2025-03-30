@@ -25,7 +25,7 @@ const McpEnabledToggle = () => {
 					color: "var(--vscode-descriptionForeground)",
 				}}>
 				When enabled, Roo will be able to interact with MCP servers for advanced functionality. If you're not
-				using MCP, you can disable this to reduce Roo's token usage.
+				using MCP, you can disable this to reduce Agent's token usage.
 			</p>
 		</div>
 	)
