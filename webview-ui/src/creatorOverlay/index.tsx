@@ -26,6 +26,10 @@ export const CreatorOverlay = () => {
 	const isCapturingRef = useRef(false)
 
 	const close = useCallback(() => {
+		setInitialMessage("")
+		setNewProjectPlan("")
+		setPlanCreationDone(false)
+		setIsStreaming(false)
 		vscode.postMessage({
 			type: "pearAiCloseCreatorInterface",
 		})
@@ -98,13 +102,9 @@ export const CreatorOverlay = () => {
 	const handleMakeIt = useCallback(() => {
 		if (newProjectPlan.trim()) {
 			vscode.postMessage({
-				type: "newTask",
-				text: newProjectPlan,
+				type: "creatorModePlannedTaskSubmit",
+				text: `INITIAL IDEA: ${initialMessage} -- PLAN: ${newProjectPlan}`,
 			})
-			setInitialMessage("")
-			setNewProjectPlan("")
-			setPlanCreationDone(false)
-			setIsStreaming(false)
 			close()
 		}
 	}, [newProjectPlan, close])
