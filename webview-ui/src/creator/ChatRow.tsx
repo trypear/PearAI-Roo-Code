@@ -1,5 +1,5 @@
 import { CheckpointSaved } from "@/components/chat/checkpoints/CheckpointSaved"
-import ReasoningBlock from "@/components/chat/ReasoningBlock"
+import { ReasoningBlock } from "@/components/chat/ReasoningBlock"
 import { highlightMentions } from "@/components/chat/TaskHeader"
 import { removeLeadingNonAlphanumeric } from "@/components/common/CodeAccordian"
 import CodeAccordian from "./CodeAccordian"

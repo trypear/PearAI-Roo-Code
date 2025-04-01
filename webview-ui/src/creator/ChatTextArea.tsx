@@ -1,5 +1,5 @@
 import ContextMenu from "@/components/chat/ContextMenu"
-import { CaretIcon } from "@/components/common/CaretIcon"
+import { ChevronDown } from "lucide-react"
 import Thumbnails from "@/components/common/Thumbnails"
 import {
 	vscEditorBackground,
@@ -360,12 +360,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 						event.preventDefault()
 						setSelectedMenuIndex((prevIndex) => {
 							const direction = event.key === "ArrowUp" ? -1 : 1
-							const options = getContextMenuOptions(
-								searchQuery,
-								selectedType,
-								queryItems,
-								getAllModes(customModes),
-							)
+							const options = getContextMenuOptions(searchQuery, selectedType, queryItems)
 							const optionsLength = options.length
 
 							if (optionsLength === 0) return prevIndex
@@ -395,12 +390,9 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					}
 					if ((event.key === "Enter" || event.key === "Tab") && selectedMenuIndex !== -1) {
 						event.preventDefault()
-						const selectedOption = getContextMenuOptions(
-							searchQuery,
-							selectedType,
-							queryItems,
-							getAllModes(customModes),
-						)[selectedMenuIndex]
+						const selectedOption = getContextMenuOptions(searchQuery, selectedType, queryItems)[
+							selectedMenuIndex
+						]
 						if (
 							selectedOption &&
 							selectedOption.type !== ContextMenuOptionType.URL &&
@@ -466,7 +458,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 				setInputValue,
 				justDeletedSpaceAfterMention,
 				queryItems,
-				customModes,
 			],
 		)
 
@@ -1017,7 +1008,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							disabled={textAreaDisabled}>
 							<StyledListboxButton>
 								{getAllModes(customModes).find((m) => m.slug === mode)?.name}
-								<CaretIcon />
+								<ChevronDown />
 							</StyledListboxButton>
 							<StyledListboxOptions newSession={false}>
 								{getAllModes(customModes).map((mode) => (
@@ -1049,7 +1040,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							disabled={textAreaDisabled}>
 							<StyledListboxButton>
 								{currentApiConfigName}
-								<CaretIcon />
+								<ChevronDown />
 							</StyledListboxButton>
 							<StyledListboxOptions newSession={false}>
 								{(listApiConfigMeta || []).map((config) => (
