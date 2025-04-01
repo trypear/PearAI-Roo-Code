@@ -63,11 +63,11 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				const underlyingModel = data.models[modelId]?.underlyingModel || "claude-3-5-sonnet-20241022"
 				console.dir(underlyingModel)
 				if (underlyingModel.startsWith("deepseek")) {
-					this.handler = new DeepSeekHandler({
+					this.handler = new OpenRouterHandler({
 						...options,
-						deepSeekApiKey: options.pearaiApiKey,
-						deepSeekBaseUrl: PEARAI_URL,
-						apiModelId: underlyingModel,
+						openRouterBaseUrl: PEARAI_URL,
+						openRouterApiKey: options.pearaiApiKey,
+						openRouterModelId: underlyingModel,
 					})
 				} else {
 					// Default to Claude
