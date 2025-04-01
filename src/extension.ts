@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
 		context.globalState.update("allowedCommands", defaultCommands)
 	}
 
-	const provider = new ClineProvider(context, outputChannel, "sidebar")
+	const provider = new ClineProvider(context, outputChannel, "sidebar", false)
 	telemetryService.setProvider(provider)
 
 	context.subscriptions.push(
@@ -177,7 +177,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Lock the editor group so clicking on files doesn't open them over the panel
 		await delay(100)
-		await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
+		// await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
 	}
 
 	// context.subscriptions.push(vscode.commands.registerCommand("roo-cline.popoutButtonClicked", openClineInNewTab))

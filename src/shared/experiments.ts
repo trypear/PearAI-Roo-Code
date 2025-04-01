@@ -29,7 +29,7 @@ export const experimentConfigsMap: Record<ExperimentKey, ExperimentConfig> = {
 		enabled: false,
 	},
 	MULTI_SEARCH_AND_REPLACE: {
-		enabled: false,
+		enabled: true,
 	},
 }
 

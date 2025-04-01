@@ -1,4 +1,3 @@
-import { Tooltip } from "react-tooltip"
 import styled, { keyframes } from "styled-components"
 
 const FONT_SIZE = 13
@@ -181,10 +180,6 @@ const TooltipStyles = {
 
 	textAlign: "center",
 	overflow: "hidden",
-}
-
-export function StyledTooltip(props: any) {
-	return <Tooltip {...props} style={TooltipStyles} />
 }
 
 export const TextArea = styled.textarea`

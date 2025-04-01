@@ -39,6 +39,8 @@ export interface WebviewMessage {
 		| "requestLmStudioModels"
 		| "openImage"
 		| "openFile"
+		| "readWorkspaceFile"
+		| "writeWorkspaceFile"
 		| "openMention"
 		| "cancelTask"
 		| "refreshOpenRouterModels"
@@ -117,6 +119,9 @@ export interface WebviewMessage {
 		| "language"
 		| "maxReadFileLine"
 		| "searchFiles"
+		| "creator"
+		| "generateActionPlan"
+		| "invoke"
 	text?: string
 	disabled?: boolean
 	askResponse?: ClineAskResponse
@@ -133,7 +138,12 @@ export interface WebviewMessage {
 	promptMode?: PromptMode
 	customPrompt?: PromptComponent
 	dataUrls?: string[]
-	values?: Record<string, any>
+	values?: {
+		create?: boolean
+		ensureDirectory?: boolean
+		content?: string
+		relativePath?: string
+	} & Record<string, any>
 	query?: string
 	slug?: string
 	modeConfig?: ModeConfig
@@ -142,6 +152,9 @@ export interface WebviewMessage {
 	source?: "global" | "project"
 	requestId?: string
 	ids?: string[]
+	invoke?: "sendMessage" | "setChatBoxMessage" | "executeCommand"
+	command?: string
+	args?: any
 }
 
 export const checkoutDiffPayloadSchema = z.object({

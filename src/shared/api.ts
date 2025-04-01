@@ -22,6 +22,7 @@ export type ApiProvider =
 
 export interface ApiHandlerOptions {
 	apiModelId?: string
+	creatorMode?: boolean
 	apiKey?: string // anthropic
 	anthropicBaseUrl?: string
 	vsCodeLmModelSelector?: vscode.LanguageModelChatSelector
