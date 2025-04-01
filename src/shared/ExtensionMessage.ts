@@ -58,6 +58,9 @@ export interface ExtensionMessage {
 		| "ttsStop"
 		| "maxReadFileLine"
 		| "fileSearchResults"
+		| "creator"
+		| "fileContent"
+		| "error"
 	text?: string
 	action?:
 		| "chatButtonClicked"
@@ -66,6 +69,7 @@ export interface ExtensionMessage {
 		| "historyButtonClicked"
 		| "promptsButtonClicked"
 		| "didBecomeVisible"
+		| "generateActionPlan"
 	invoke?: "newChat" | "sendMessage" | "primaryButtonClick" | "secondaryButtonClick" | "setChatBoxMessage"
 	state?: ExtensionState
 	images?: string[]
@@ -99,6 +103,7 @@ export interface ExtensionMessage {
 		type: "file" | "folder"
 		label?: string
 	}>
+	content?: string
 	error?: string
 }
 
@@ -185,6 +190,7 @@ export interface ClineSayTool {
 		| "switchMode"
 		| "newTask"
 		| "finishTask"
+		| "showTaskPlan"
 	path?: string
 	diff?: string
 	content?: string

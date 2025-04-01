@@ -85,6 +85,48 @@ const getCommandsMap = ({ context, outputChannel, provider }: RegisterCommandOpt
 		"roo-cline.registerHumanRelayCallback": registerHumanRelayCallback,
 		"roo-cline.unregisterHumanRelayCallback": unregisterHumanRelayCallback,
 		"roo-cline.handleHumanRelayResponse": handleHumanRelayResponse,
+		"roo-cline.createInAgent": async (args: any) => {
+			const sidebarProvider = ClineProvider.getSidebarInstance()
+			if (sidebarProvider) {
+				// Start a new chat in the sidebar
+				vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+				await sidebarProvider.handleModeSwitch("code", args.creatorMode)
+				await sidebarProvider.postStateToWebview()
+				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+
+				await sidebarProvider.initClineWithTask(args.text, undefined, args.creatorMode)
+			}
+		},
+		"roo-cline.executeCreatorPlan": async (args: any) => {
+			const sidebarProvider = ClineProvider.getSidebarInstance()
+			if (sidebarProvider) {
+				// Start a new chat in the sidebar
+				vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+				await sidebarProvider.handleModeSwitch("code")
+				await sidebarProvider.postStateToWebview()
+				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+
+				// Create the template message using the args
+				// Todo: add structure to it i.e. You should have these sections: Architecutre, Features, etc.
+				let executePlanTemplate = `This file contains detailed plan to my task. please read it and Execute the plan accordingly.
+					File: ${args.filePath || "No file specified"}`
+
+				if (args.code) {
+					executePlanTemplate += `Code: \`\`\`
+						${args.code}
+						\`\`\`
+					`
+				}
+
+				if (args.context) {
+					executePlanTemplate += `Additional context: ${args.context}`
+				}
+
+				args.text = executePlanTemplate
+
+				await sidebarProvider.initClineWithTask(args.text, undefined, undefined, true)
+			}
+		},
 	}
 }
 
@@ -93,20 +135,20 @@ const openClineInNewTab = async ({ context, outputChannel }: Omit<RegisterComman
 	// deserialize cached webview, but since we use retainContextWhenHidden, we
 	// don't need to use that event).
 	// https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
-	const tabProvider = new ClineProvider(context, outputChannel, "editor")
+	const tabProvider = new ClineProvider(context, outputChannel, "editor", true)
 	const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
 
 	// Check if there are any visible text editors, otherwise open a new group
 	// to the right.
-	const hasVisibleEditors = vscode.window.visibleTextEditors.length > 0
+	// const hasVisibleEditors = vscode.window.visibleTextEditors.length > 0
 
-	if (!hasVisibleEditors) {
-		await vscode.commands.executeCommand("workbench.action.newGroupRight")
-	}
+	// if (!hasVisibleEditors) {
+	// 	await vscode.commands.executeCommand("workbench.action.newGroupRight")
+	// }
 
-	const targetCol = hasVisibleEditors ? Math.max(lastCol + 1, 1) : vscode.ViewColumn.Two
+	// const targetCol = hasVisibleEditors ? Math.max(lastCol + 1, 1) : vscode.ViewColumn.Two
 
-	const newPanel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Roo Code", targetCol, {
+	const newPanel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Roo Code", vscode.ViewColumn.One, {
 		enableScripts: true,
 		retainContextWhenHidden: true,
 		localResourceRoots: [context.extensionUri],
@@ -131,5 +173,5 @@ const openClineInNewTab = async ({ context, outputChannel }: Omit<RegisterComman
 
 	// Lock the editor group so clicking on files doesn't open them over the panel.
 	await delay(100)
-	await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
+	// await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
 }

@@ -67,6 +67,13 @@ import { getUri } from "./getUri"
 import { telemetryService } from "../../services/telemetry/TelemetryService"
 import { TelemetrySetting } from "../../shared/TelemetrySetting"
 import { getWorkspacePath } from "../../utils/path"
+import { readWorkspaceFile, writeWorkspaceFile } from "../../integrations/misc/workspace-files"
+
+/*
+https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
+
+https://github.com/KumarVariable/vscode-extension-sidebar-html/blob/master/src/customSidebarViewProvider.ts
+*/
 
 /**
  * https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -91,6 +98,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	private contextProxy: ContextProxy
 	configManager: ConfigManager
 	customModesManager: CustomModesManager
+	private isCreatorView: boolean = false
 	get cwd() {
 		return getWorkspacePath()
 	}
@@ -98,9 +106,13 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
 		private readonly renderContext: "sidebar" | "editor" = "sidebar",
+		isCreatorView: boolean = false,
 	) {
 		super()
-
+		this.outputChannel.appendLine(`creator = ${isCreatorView}`)
+		this.isCreatorView = isCreatorView
+		console.dir("CREATOR")
+		console.dir(this.isCreatorView)
 		this.outputChannel.appendLine("ClineProvider instantiated")
 		this.contextProxy = new ContextProxy(context)
 		ClineProvider.activeInstances.add(this)
@@ -234,6 +246,16 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		// Unregister from McpServerManager
 		McpServerManager.unregisterProvider(this)
+	}
+
+	public static getSidebarInstance(): ClineProvider | undefined {
+		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreatorView)
+
+		if (!sidebar?.view?.visible) {
+			vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+		}
+
+		return sidebar
 	}
 
 	public static getVisibleInstance(): ClineProvider | undefined {
@@ -455,7 +477,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	// when initializing a new task, (not from history but from a tool command new_task) there is no need to remove the previouse task
 	// since the new task is a sub task of the previous one, and when it finishes it is removed from the stack and the caller is resumed
 	// in this way we can have a chain of tasks, each one being a sub task of the previous one until the main task is finished
-	public async initClineWithTask(task?: string, images?: string[], parentTask?: Cline) {
+	public async initClineWithTask(task?: string, images?: string[], parentTask?: Cline, creatorMode?: boolean) {
 		const {
 			apiConfiguration,
 			customModePrompts,
@@ -473,7 +495,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		const cline = new Cline({
 			provider: this,
-			apiConfiguration,
+			apiConfiguration: {
+				...apiConfiguration,
+				creatorMode: creatorMode,
+			},
 			customInstructions: effectiveInstructions,
 			enableDiff,
 			enableCheckpoints,
@@ -494,7 +519,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		return cline
 	}
 
-	public async initClineWithHistoryItem(historyItem: HistoryItem & { rootTask?: Cline; parentTask?: Cline }) {
+	public async initClineWithHistoryItem(
+		historyItem: HistoryItem & { rootTask?: Cline; parentTask?: Cline },
+		creatorMode?: boolean,
+	) {
 		await this.removeClineFromStack()
 
 		const {
@@ -540,7 +568,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		const cline = new Cline({
 			provider: this,
-			apiConfiguration,
+			apiConfiguration: {
+				...apiConfiguration,
+				creatorMode: creatorMode,
+			},
 			customInstructions: effectiveInstructions,
 			enableDiff,
 			...checkpoints,
@@ -603,6 +634,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 				window.$RefreshReg$ = () => {}
 				window.$RefreshSig$ = () => (type) => type
 				window.__vite_plugin_react_preamble_installed__ = true
+				window.isCreator="${this.isCreatorView}";
 			</script>
 		`
 
@@ -615,6 +647,8 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			`connect-src https://* https://*.posthog.com ws://${localServerUrl} ws://0.0.0.0:${localPort} http://${localServerUrl} http://0.0.0.0:${localPort} http://localhost:8000 http://0.0.0.0:8000 https://stingray-app-gb2an.ondigitalocean.app`,
 		]
 
+		console.dir("CREATORRRRRR")
+		console.dir(this.isCreatorView)
 		return /*html*/ `
 			<!DOCTYPE html>
 			<html lang="en">
@@ -2033,6 +2067,47 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 							),
 						)
 						break
+					case "readWorkspaceFile":
+						if (message.values?.relativePath) {
+							const result = await readWorkspaceFile(message.values.relativePath, {
+								create: message.values.create,
+								ensureDirectory: message.values.ensureDirectory,
+								content: message.values.content,
+							})
+							await this.postMessageToWebview(result)
+						}
+						break
+					case "writeWorkspaceFile":
+						if (message.values?.relativePath && message.values?.content !== undefined) {
+							const result = await writeWorkspaceFile(message.values.relativePath, {
+								create: message.values.create,
+								ensureDirectory: message.values.ensureDirectory,
+								content: message.values.content,
+							})
+							await this.postMessageToWebview(result)
+						}
+						break
+					case "invoke":
+						switch (message.invoke) {
+							case "sendMessage":
+								if (message.text) {
+									await this.getCurrentCline()?.ask("followup", message.text, false)
+								}
+								break
+							case "setChatBoxMessage":
+								if (message.text) {
+									await this.getCurrentCline()?.ask("followup", message.text, false)
+								}
+								break
+							case "executeCommand":
+								if (message.command) {
+									await vscode.commands.executeCommand(message.command, message.args)
+								}
+								break
+							default:
+								console.warn("Unknown invoke:", message.invoke)
+						}
+						break
 				}
 			},
 			null,
@@ -2096,7 +2171,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	 * Handle switching to a new mode, including updating the associated API configuration
 	 * @param newMode The mode to switch to
 	 */
-	public async handleModeSwitch(newMode: Mode) {
+	public async handleModeSwitch(newMode: Mode, creatorMode?: boolean) {
 		// Capture mode switch telemetry event
 		const currentTaskId = this.getCurrentCline()?.taskId
 		if (currentTaskId) {
