@@ -13,7 +13,7 @@ const buttonVariants = cva(
 					"border border-vscode-input-border bg-primary text-primary-foreground shadow hover:bg-primary/90",
 				destructive: "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
 				outline:
-					"border border-vscode-input-border bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+					"border border-vscode-input-border bg-vscode-input-background shadow-sm hover:bg-accent hover:text-accent-foreground",
 				secondary:
 					"border border-vscode-input-border bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
 				ghost: "hover:bg-accent hover:text-accent-foreground",
