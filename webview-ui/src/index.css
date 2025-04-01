@@ -13,6 +13,10 @@
  * Reference: https://tailwindcss.com/docs/preflight
  */
 
+* {
+	/* border: 1px solid red; */
+}
+
 @layer theme, base, components, utilities;
 
 @import "tailwindcss/theme.css" layer(theme);

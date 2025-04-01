@@ -14,6 +14,8 @@ import SettingsView, { SettingsViewRef } from "./components/settings/SettingsVie
 import McpView from "./components/mcp/McpView"
 import PromptsView from "./components/prompts/PromptsView"
 import { HumanRelayDialog } from "./components/human-relay/HumanRelayDialog"
+import { Inspector } from "react-dev-inspector"
+import Creator from "./creator/Creator"
 
 type Tab = "settings" | "history" | "mcp" | "prompts" | "chat"
 
@@ -120,13 +122,14 @@ const App = () => {
 	)
 }
 
+const tempIsCreator: boolean = true
 const queryClient = new QueryClient()
 
 const AppWithProviders = () => (
 	<ExtensionStateContextProvider>
 		<TranslationProvider>
 			<QueryClientProvider client={queryClient}>
-				<App />
+				{window.isCreator === "true" ? <Creator /> : <App />}
 			</QueryClientProvider>
 		</TranslationProvider>
 	</ExtensionStateContextProvider>
