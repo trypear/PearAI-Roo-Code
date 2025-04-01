@@ -37,14 +37,6 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 			throw new Error("PearAI API key not found. Please login to PearAI.")
 		}
 
-		// // Initialize with a default handler synchronously
-		// this.handler = new AnthropicHandler({
-		// 	...options,
-		// 	apiKey: options.pearaiApiKey,
-		// 	anthropicBaseUrl: PEARAI_URL,
-		// 	apiModelId: "claude-3-5-sonnet-20241022",
-		// })
-
 		this.handler = new OpenRouterHandler({
 			...options,
 			openRouterBaseUrl: PEARAI_URL,
@@ -103,11 +95,6 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				anthropicBaseUrl: PEARAI_URL,
 			})
 		} else if (modelId.startsWith("deepseek")) {
-			// this.handler = new DeepSeekHandler({
-			// 	...options,
-			// 	deepSeekApiKey: options.pearaiApiKey,
-			// 	deepSeekBaseUrl: PEARAI_URL,
-			// })
 			this.handler = new OpenRouterHandler({
 				...options,
 				openRouterBaseUrl: PEARAI_URL,
