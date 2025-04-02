@@ -127,14 +127,19 @@ export const CreatorOverlay = () => {
 		<div onClick={close} className="fixed inset-0 flex items-center justify-center bg-white">
 			<div onClick={(e) => e.stopPropagation()} className="justify-center align-middle m-auto w-full max-w-3xl ">
 				<RGBWrapper className="px-4 my-auto w-full">
-					<InputBox
-						textareaRef={textareaRef}
-						initialMessage={initialMessage}
-						setInitialMessage={setInitialMessage}
-						handleRequest={handleRequest}
-						isDisabled={isStreaming || planCreationDone}
-					/>
-
+					{/* Stage 1: get the input from the user about what to make */}
+					{
+						(!isStreaming && !planCreationDone) && (
+							<InputBox
+								textareaRef={textareaRef}
+								initialMessage={initialMessage}
+								setInitialMessage={setInitialMessage}
+								handleRequest={handleRequest}
+								isDisabled={isStreaming || planCreationDone}
+							/>
+						)
+					}
+					{/* Stage 2: Stream down the plan and display it to the user, let them comment and formulate the plan */}
 					{(isStreaming || planCreationDone) && (
 						<>
 							<div className="my-6 border-t border-gray-200"></div>

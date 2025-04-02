@@ -1,5 +1,6 @@
 import { Wand2 } from "lucide-react"
 import React, { useCallback, useEffect, useRef } from "react"
+import { PlanningBar } from "./ui/planningBar"
 
 interface PlanEditorProps {
 	newProjectPlan: string
@@ -51,6 +52,7 @@ export const PlanEditor: React.FC<PlanEditorProps> = ({
 
 	return (
 		<div className="rounded-lg bg-white p-4">
+			<PlanningBar />
 			<textarea
 				ref={planTextareaRef}
 				value={newProjectPlan}
