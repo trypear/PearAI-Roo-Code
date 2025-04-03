@@ -94,15 +94,13 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				apiKey: options.pearaiApiKey,
 				anthropicBaseUrl: PEARAI_URL,
 			})
-		} else if (modelId.startsWith("deepseek")) {
+		} else {
 			this.handler = new OpenRouterHandler({
 				...options,
 				openRouterBaseUrl: PEARAI_URL,
 				openRouterApiKey: options.pearaiApiKey,
 				openRouterModelId: modelId,
 			})
-		} else {
-			throw new Error(`Unsupported model: ${modelId}`)
 		}
 	}
 
