@@ -64,8 +64,6 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 					data.models[modelId]?.underlyingModelUpdated ||
 					data.models[modelId]?.underlyingModelUpdated ||
 					"claude-3-5-sonnet-20241022"
-				console.dir("IM HERE")
-				console.dir(underlyingModel)
 				if (underlyingModel.startsWith("deepseek")) {
 					this.handler = new OpenRouterHandler({
 						...options,
