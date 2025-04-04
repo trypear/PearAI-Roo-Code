@@ -60,8 +60,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 					throw new Error(`Failed to fetch models: ${response.statusText}`)
 				}
 				const data = (await response.json()) as PearAiModelsResponse
-				const underlyingModel = data.models[modelId]?.underlyingModel || "claude-3-5-sonnet-20241022"
-				console.dir(underlyingModel)
+				const underlyingModel = data.models[modelId]?.underlyingModelUpdated || "claude-3-5-sonnet-20241022"
 				if (underlyingModel.startsWith("deepseek")) {
 					this.handler = new OpenRouterHandler({
 						...options,
