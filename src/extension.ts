@@ -113,6 +113,28 @@ export function activate(context: vscode.ExtensionContext) {
 	)
 
 	context.subscriptions.push(
+		vscode.commands.registerCommand("pearai-roo-cline.updatePearAITokens", async (data) => {
+			console.dir("Updated PearAI tokens:")
+			console.dir(data)
+			context.secrets.store("pearaiApiKey", data.accessToken)
+			context.secrets.store("pearaiRefreshKey", data.refreshToken)
+			const provider = await ClineProvider.getInstance()
+			if (provider) {
+				// Update the API configuration to clear the PearAI key
+				await provider.setValues({
+					pearaiApiKey: data.accessToken,
+				})
+				await provider.postStateToWebview()
+				// Update MCP server with new token
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.updatePearAiApiKey(data.accessToken)
+				}
+			}
+		}),
+	)
+
+	context.subscriptions.push(
 		vscode.commands.registerCommand("pearai-roo-cline.pearaiLogout", async () => {
 			console.dir("Logged out of PearAI:")
 			context.secrets.delete("pearaiApiKey")

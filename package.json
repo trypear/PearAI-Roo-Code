@@ -327,7 +327,7 @@
 		"check-types:benchmark": "cd benchmark && npm run check-types",
 		"package": "npm-run-all -p build:webview build:esbuild check-types lint",
 		"pretest": "npm run compile",
-		"dev": "cd webview-ui && npm run dev",
+		"dev": "cd webview-ui && npm run dev -- --port 5174",
 		"test": "npm-run-all -p test:*",
 		"test:extension": "jest",
 		"test:webview": "cd webview-ui && npm run test",

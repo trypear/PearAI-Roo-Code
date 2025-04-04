@@ -1043,7 +1043,7 @@ export class McpHub {
 
 				await fs.writeFile(settingsPath, JSON.stringify(config, null, 2))
 				await this.updateServerConnections(config.mcpServers)
-				vscode.window.showInformationMessage("PearAI API key updated successfully")
+				// vscode.window.showInformationMessage("PearAI API key updated successfully")
 			}
 		} catch (error) {
 			console.error("Failed to update PearAI API key:", error)
