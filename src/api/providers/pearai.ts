@@ -35,6 +35,8 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				}
 			})
 			throw new Error("PearAI API key not found. Please login to PearAI.")
+		} else {
+			vscode.commands.executeCommand("pearai.checkPearAITokens", undefined)
 		}
 
 		this.handler = new OpenRouterHandler({

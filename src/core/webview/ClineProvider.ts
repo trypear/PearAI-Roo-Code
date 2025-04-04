@@ -565,6 +565,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 	private async getHMRHtmlContent(webview: vscode.Webview): Promise<string> {
 		const localPort = "5173"
+		// const localPort = "5174" for devving at the same time as submodule
 		const localServerUrl = `localhost:${localPort}`
 
 		// Check if local dev server is running.
