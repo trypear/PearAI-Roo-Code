@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
-import { ModelInfo, pearAiDefaultModelId, pearAiDefaultModelInfo, PEARAI_URL } from "../../../src/shared/api"
+import { ModelInfo } from "../../../src/shared/api"
+import { pearAiDefaultModelId, pearAiDefaultModelInfo, PEARAI_URL } from "../../../src/shared/pearaiApi"
 import type { ApiConfiguration } from "../../../src/shared/api"
 
 export const usePearAiModels = (apiConfiguration?: ApiConfiguration) => {

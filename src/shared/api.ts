@@ -1043,9 +1043,9 @@ export const unboundDefaultModelInfo: ModelInfo = {
 }
 // CHANGE AS NEEDED FOR TESTING
 // PROD:
-export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
+// export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
 // DEV:
-// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+export const PEARAI_URL = "http://localhost:8000/integrations/cline"
 
 // PearAI
 export type PearAiModelId = keyof typeof pearAiModels
@@ -1076,4 +1076,90 @@ export const pearAiModels = {
 		description:
 			"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
 	},
+} as const satisfies Record<string, ModelInfo>
+
+export const allModels = {
+	// Anthropic models
+	...Object.entries(anthropicModels).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[`anthropic/${key}`]: value,
+		}),
+		{},
+	),
+
+	// Bedrock models
+	...Object.entries(bedrockModels).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[`bedrock/${key}`]: value,
+		}),
+		{},
+	),
+
+	// Glama models (single default model)
+	[`glama/${glamaDefaultModelId}`]: glamaDefaultModelInfo,
+
+	// Requesty models (single default model)
+	[`requesty/${requestyDefaultModelId}`]: requestyDefaultModelInfo,
+
+	// OpenRouter models (single default model)
+	[`openrouter/${openRouterDefaultModelId}`]: openRouterDefaultModelInfo,
+
+	// Vertex models
+	...Object.entries(vertexModels).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[`vertex/${key}`]: value,
+		}),
+		{},
+	),
+
+	// Gemini models
+	...Object.entries(geminiModels).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[`gemini/${key}`]: value,
+		}),
+		{},
+	),
+
+	// OpenAI Native models
+	...Object.entries(openAiNativeModels).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[`openai-native/${key}`]: value,
+		}),
+		{},
+	),
+
+	// DeepSeek models
+	...Object.entries(deepSeekModels).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[`deepseek/${key}`]: value,
+		}),
+		{},
+	),
+
+	// Mistral models
+	...Object.entries(mistralModels).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[`mistral/${key}`]: value,
+		}),
+		{},
+	),
+
+	// Unbound models (single default model)
+	[`unbound/${unboundDefaultModelId}`]: unboundDefaultModelInfo,
+
+	// PearAI models
+	...Object.entries(pearAiModels).reduce(
+		(acc, [key, value]) => ({
+			...acc,
+			[`pearai/${key}`]: value,
+		}),
+		{},
+	),
 } as const satisfies Record<string, ModelInfo>

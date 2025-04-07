@@ -1,13 +1,15 @@
 import * as vscode from "vscode"
-import { ApiHandlerOptions, PEARAI_URL, ModelInfo } from "../../shared/api"
-import { AnthropicHandler } from "./anthropic"
-import { DeepSeekHandler } from "./deepseek"
+import { ApiHandlerOptions, ModelInfo } from "../../../shared/api"
+import { AnthropicHandler } from "../anthropic"
+import { DeepSeekHandler } from "../deepseek"
 import Anthropic from "@anthropic-ai/sdk"
-import { BaseProvider } from "./base-provider"
-import { SingleCompletionHandler } from "../"
-import { OpenRouterHandler } from "./openrouter"
-import { GeminiHandler } from "./gemini"
-import { OpenAiHandler } from "./openai"
+import { BaseProvider } from "../base-provider"
+import { SingleCompletionHandler } from "../.."
+import { OpenRouterHandler } from "../openrouter"
+import { GeminiHandler } from "../gemini"
+import { OpenAiHandler } from "../openai"
+import { PearAIGenericHandler } from "./pearaiGeneric"
+import { PEARAI_URL } from "../../../shared/pearaiApi"
 
 interface PearAiModelsResponse {
 	models: {
@@ -20,7 +22,7 @@ interface PearAiModelsResponse {
 }
 
 export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
-	private handler!: AnthropicHandler | OpenAiHandler
+	private handler!: AnthropicHandler | PearAIGenericHandler
 
 	constructor(options: ApiHandlerOptions) {
 		super()
@@ -41,7 +43,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 			vscode.commands.executeCommand("pearai.checkPearAITokens", undefined)
 		}
 
-		this.handler = new OpenAiHandler({
+		this.handler = new PearAIGenericHandler({
 			...options,
 			openAiBaseUrl: PEARAI_URL,
 			openAiApiKey: options.pearaiApiKey,
@@ -74,7 +76,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 						apiModelId: underlyingModel,
 					})
 				} else {
-					this.handler = new OpenAiHandler({
+					this.handler = new PearAIGenericHandler({
 						...options,
 						openAiBaseUrl: PEARAI_URL,
 						openAiApiKey: options.pearaiApiKey,
@@ -98,7 +100,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				anthropicBaseUrl: PEARAI_URL,
 			})
 		} else {
-			this.handler = new OpenAiHandler({
+			this.handler = new PearAIGenericHandler({
 				...options,
 				openAiBaseUrl: PEARAI_URL,
 				openAiApiKey: options.pearaiApiKey,
@@ -108,7 +110,6 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	}
 
 	getModel(): { id: string; info: ModelInfo } {
-		console.dir(this.handler)
 		const baseModel = this.handler.getModel()
 		return {
 			id: baseModel.id,
