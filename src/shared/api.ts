@@ -88,6 +88,7 @@ export interface ApiHandlerOptions {
 export type ApiConfiguration = ApiHandlerOptions & {
 	apiProvider?: ApiProvider
 	id?: string // stable unique identifier
+	creatorMode?: boolean
 }
 
 // Import GlobalStateKey type from globalState.ts

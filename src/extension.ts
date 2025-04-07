@@ -23,7 +23,13 @@ import { telemetryService } from "./services/telemetry/TelemetryService"
 import { TerminalRegistry } from "./integrations/terminal/TerminalRegistry"
 import { API } from "./exports/api"
 
-import { handleUri, registerCommands, registerCodeActions, registerTerminalActions } from "./activate"
+import {
+	handleUri,
+	registerCommands,
+	registerCodeActions,
+	registerTerminalActions,
+	registerPearListener,
+} from "./activate"
 import { formatLanguage } from "./shared/language"
 
 /**
@@ -246,6 +252,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	registerCodeActions(context)
 	registerTerminalActions(context)
+	registerPearListener()
 
 	context.subscriptions.push(
 		vscode.commands.registerCommand("roo-cline.focus", async (...args: any[]) => {
