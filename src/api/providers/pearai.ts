@@ -6,6 +6,8 @@ import Anthropic from "@anthropic-ai/sdk"
 import { BaseProvider } from "./base-provider"
 import { SingleCompletionHandler } from "../"
 import { OpenRouterHandler } from "./openrouter"
+import { GeminiHandler } from "./gemini"
+import { OpenAiHandler } from "./openai"
 
 interface PearAiModelsResponse {
 	models: {
@@ -18,7 +20,7 @@ interface PearAiModelsResponse {
 }
 
 export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
-	private handler!: AnthropicHandler | DeepSeekHandler | OpenRouterHandler
+	private handler!: AnthropicHandler | OpenAiHandler
 
 	constructor(options: ApiHandlerOptions) {
 		super()
@@ -39,11 +41,11 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 			vscode.commands.executeCommand("pearai.checkPearAITokens", undefined)
 		}
 
-		this.handler = new OpenRouterHandler({
+		this.handler = new OpenAiHandler({
 			...options,
-			openRouterBaseUrl: PEARAI_URL,
-			openRouterApiKey: options.pearaiApiKey,
-			openRouterModelId: "deepseek/deepseek-chat-v3-0324",
+			openAiBaseUrl: PEARAI_URL,
+			openAiApiKey: options.pearaiApiKey,
+			openAiModelId: "deepseek/deepseek-chat",
 		})
 
 		// Then try to initialize the correct handler asynchronously
@@ -63,20 +65,20 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				}
 				const data = (await response.json()) as PearAiModelsResponse
 				const underlyingModel = data.models[modelId]?.underlyingModelUpdated || "claude-3-5-sonnet-20241022"
-				if (underlyingModel.startsWith("deepseek")) {
-					this.handler = new OpenRouterHandler({
-						...options,
-						openRouterBaseUrl: PEARAI_URL,
-						openRouterApiKey: options.pearaiApiKey,
-						openRouterModelId: underlyingModel,
-					})
-				} else {
+				if (underlyingModel.startsWith("claude")) {
 					// Default to Claude
 					this.handler = new AnthropicHandler({
 						...options,
 						apiKey: options.pearaiApiKey,
 						anthropicBaseUrl: PEARAI_URL,
 						apiModelId: underlyingModel,
+					})
+				} else {
+					this.handler = new OpenAiHandler({
+						...options,
+						openAiBaseUrl: PEARAI_URL,
+						openAiApiKey: options.pearaiApiKey,
+						openAiModelId: underlyingModel,
 					})
 				}
 			} catch (error) {
@@ -96,11 +98,11 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				anthropicBaseUrl: PEARAI_URL,
 			})
 		} else {
-			this.handler = new OpenRouterHandler({
+			this.handler = new OpenAiHandler({
 				...options,
-				openRouterBaseUrl: PEARAI_URL,
-				openRouterApiKey: options.pearaiApiKey,
-				openRouterModelId: modelId,
+				openAiBaseUrl: PEARAI_URL,
+				openAiApiKey: options.pearaiApiKey,
+				openAiModelId: modelId,
 			})
 		}
 	}
@@ -116,11 +118,10 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				supportsImages: baseModel.info.supportsImages,
 				supportsComputerUse: baseModel.info.supportsComputerUse,
 				supportsPromptCache: baseModel.info.supportsPromptCache,
-				// Apply PearAI's price markup
-				inputPrice: (baseModel.info.inputPrice || 0) * 1.03,
-				outputPrice: (baseModel.info.outputPrice || 0) * 1.03,
-				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice * 1.03 : undefined,
-				cacheReadsPrice: baseModel.info.cacheReadsPrice ? baseModel.info.cacheReadsPrice * 1.03 : undefined,
+				inputPrice: baseModel.info.inputPrice || 0,
+				outputPrice: baseModel.info.outputPrice || 0,
+				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice : undefined,
+				cacheReadsPrice: baseModel.info.cacheReadsPrice ? baseModel.info.cacheReadsPrice : undefined,
 			},
 		}
 	}
