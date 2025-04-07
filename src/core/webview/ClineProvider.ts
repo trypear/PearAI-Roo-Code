@@ -89,6 +89,8 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 			await this.postStateToWebview()
 		})
 
+		this.listenForPearAiMessages()
+
 		// Initialize MCP Hub through the singleton manager
 		McpServerManager.getInstance(this.context, this)
 			.then((hub) => {
@@ -128,6 +130,30 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 
 		// Unregister from McpServerManager
 		McpServerManager.unregisterProvider(this)
+	}
+
+	private async listenForPearAiMessages() {
+		// Getting the pear ai extension instance
+		const pearaiExtension = vscode.extensions.getExtension("pearai.pearai")
+
+		if (!pearaiExtension) {
+			console.log("PearAI Extension not found")
+			return
+		}
+
+		if (!pearaiExtension.isActive) {
+			await pearaiExtension.activate()
+		}
+
+		// Access the API directly from exports
+		if (pearaiExtension.exports) {
+			// TODO: SETUP TYPES FOR THE PEAR AI EXPORT
+			pearaiExtension.exports.pearAPI.creatorMode.onDidRequestExecutePlan((msg: any) => {
+				console.dir(`onDidRequestNewTask triggered with: ${JSON.stringify(msg)}`)
+			})
+		} else {
+			console.log("PearAI API not available in exports")
+		}
 	}
 
 	public static getVisibleInstance(): ClineProvider | undefined {
@@ -772,7 +798,7 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						const messageGenerator = pearAIClass.createMessage(systemPrompt, [
 							{
 								role: "user",
-								content: message.text
+								content: message.text,
 							},
 						])
 
@@ -796,7 +822,11 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 						// TODO: Trigger the "newTask" flow flow, initialising cline with a task
 						// Go into the planned mode shizz
 						// vscode.commands.executeCommand("workbench.action.enterCreatorMode")
-						await this.postMessageToWebview({ type: "invoke", invoke: "setChatBoxMessage", text: message.text})
+						await this.postMessageToWebview({
+							type: "invoke",
+							invoke: "setChatBoxMessage",
+							text: message.text,
+						})
 						await this.postMessageToWebview({ type: "invoke", invoke: "primaryButtonClick" })
 
 						await this.initClineWithTask(message.text, message.images)
@@ -1609,12 +1639,6 @@ export class ClineProvider implements vscode.WebviewViewProvider {
 								),
 							),
 						)
-						break
-					case "pearAiCloseCreatorInterface":
-						await vscode.commands.executeCommand("workbench.action.closeCreatorView")
-						break
-					case "pearAiHideCreatorLoadingOverlay":
-						await vscode.commands.executeCommand("workbench.action.hideCreatorLoadingOverlay")
 						break
 				}
 			},
