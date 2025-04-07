@@ -25,6 +25,8 @@ export interface WebviewMessage {
 		| "alwaysAllowExecute"
 		| "webviewDidLaunch"
 		| "newTask"
+		| "newCreatorModeTask"
+		| "creatorModePlannedTaskSubmit"
 		| "askResponse"
 		| "clearTask"
 		| "didShowAnnouncement"
@@ -95,6 +97,8 @@ export interface WebviewMessage {
 		| "openPearAiAuth"
 		| "deleteMcpServer"
 		| "maxOpenTabsContext"
+		| "pearAiHideCreatorLoadingOverlay"
+		| "pearAiCloseCreatorInterface"
 	text?: string
 	disabled?: boolean
 	askResponse?: ClineAskResponse

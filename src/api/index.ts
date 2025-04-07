@@ -19,7 +19,7 @@ import { RequestyHandler } from "./providers/requesty"
 import { PearAiHandler } from "./providers/pearai"
 
 export interface SingleCompletionHandler {
-	completePrompt(prompt: string): Promise<string>
+	completePrompt(prompt: string, useCreatorMode?: boolean): Promise<string>
 }
 
 export interface ApiHandler {
