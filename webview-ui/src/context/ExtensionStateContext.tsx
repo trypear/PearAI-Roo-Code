@@ -12,9 +12,8 @@ import {
 	unboundDefaultModelInfo,
 	requestyDefaultModelId,
 	requestyDefaultModelInfo,
-	PEARAI_URL,
-	pearAiModels,
 } from "../../../src/shared/api"
+
 import { vscode } from "../utils/vscode"
 import { convertTextMateToHljs } from "../utils/textMateToHljs"
 import { findLastIndex } from "../../../src/shared/array"
@@ -24,6 +23,7 @@ import { Mode, CustomModePrompts, defaultModeSlug, defaultPrompts, ModeConfig } 
 import { CustomSupportPrompts } from "../../../src/shared/support-prompt"
 import { experimentDefault, ExperimentId } from "../../../src/shared/experiments"
 import { TelemetrySetting } from "../../../src/shared/TelemetrySetting"
+import { PEARAI_URL, pearAiModels } from "../../../src/shared/pearaiApi"
 
 export interface ExtensionStateContextType extends ExtensionState {
 	didHydrateState: boolean

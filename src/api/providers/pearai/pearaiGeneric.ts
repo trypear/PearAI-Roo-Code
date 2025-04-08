@@ -198,7 +198,6 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 	}
 
 	protected processUsageMetrics(usage: any, modelInfo?: ModelInfo): ApiStreamUsageChunk {
-		console.dir("USAGE")
 		console.dir(usage?.prompt_tokens_details)
 		return {
 			type: "usage",
@@ -210,7 +209,7 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 	}
 
 	override getModel(): { id: string; info: ModelInfo } {
-		const modelId = this.options.pearaiModelId ?? pearAiDefaultModelId
+		const modelId = this.options.openAiModelId ?? pearAiDefaultModelId
 		return {
 			id: modelId,
 			info: allModels[modelId] ?? pearAiDefaultModelInfo,
@@ -292,6 +291,7 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 					type: "usage",
 					inputTokens: chunk.usage.prompt_tokens || 0,
 					outputTokens: chunk.usage.completion_tokens || 0,
+					cacheReadTokens: chunk.usage.prompt_tokens_details?.cached_tokens,
 				}
 			}
 		}
