@@ -14,7 +14,7 @@ import { PEARAI_URL } from "../../../shared/pearaiApi"
 interface PearAiModelsResponse {
 	models: {
 		[key: string]: {
-			underlyingModel?: string
+			underlyingModel?: { [key: string]: any }
 			[key: string]: any
 		}
 	}
@@ -70,7 +70,10 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				}
 				const data = (await response.json()) as PearAiModelsResponse
 				this.pearAiModelsResponse = data
-				const underlyingModel = data.models[modelId]?.underlyingModelUpdated || "claude-3-5-sonnet-20241022"
+				const underlyingModel =
+					data.models[modelId]?.underlyingModelUpdated?.underlyingModel ||
+					data.models[modelId]?.underlyingModel ||
+					"claude-3-5-sonnet-20241022"
 				if (underlyingModel.startsWith("claude") || modelId.startsWith("anthropic/")) {
 					// Default to Claude
 					this.handler = new AnthropicHandler({
@@ -114,25 +117,25 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	}
 
 	getModel(): { id: string; info: ModelInfo } {
-		if (
-			this.pearAiModelsResponse &&
-			this.options.apiModelId === "pearai-model" &&
-			this.pearAiModelsResponse.models
-		) {
-			const modelInfo = this.pearAiModelsResponse.models[this.options.apiModelId]
-			if (modelInfo) {
-				return {
-					id: this.options.apiModelId,
-					info: {
-						contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
-						supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
-						...modelInfo,
-					},
-				}
+		if (this.options.apiModelId) {
+			let modelInfo = null
+			if (this.options.apiModelId === "pearai-model") {
+				modelInfo = this.pearAiModelsResponse?.models["pearai-model"].underlyingModelUpdated
+			} else if (this.pearAiModelsResponse) {
+				modelInfo = this.pearAiModelsResponse.models[this.options.apiModelId || "pearai-model"]
 			}
+			return {
+				id: this.options.apiModelId,
+				info: {
+					contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
+					supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
+					...modelInfo,
+				},
+			}
+		} else {
+			const baseModel = this.handler.getModel()
+			return baseModel
 		}
-		const baseModel = this.handler.getModel()
-		return baseModel
 	}
 
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {
