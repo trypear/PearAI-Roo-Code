@@ -767,6 +767,14 @@ export const geminiModels = {
 		inputPrice: 0,
 		outputPrice: 0,
 	},
+	"gemini-2.0-flash": {
+		maxTokens: 8192,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.15,
+		outputPrice: 0.6,
+	},
 	"gemini-2.0-flash-lite-preview-02-05": {
 		maxTokens: 8192,
 		contextWindow: 1_048_576,
@@ -1041,39 +1049,3 @@ export const unboundDefaultModelInfo: ModelInfo = {
 	cacheWritesPrice: 3.75,
 	cacheReadsPrice: 0.3,
 }
-// CHANGE AS NEEDED FOR TESTING
-// PROD:
-export const PEARAI_URL = "https://server.trypear.ai/pearai-server-api2/integrations/cline"
-// DEV:
-// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
-
-// PearAI
-export type PearAiModelId = keyof typeof pearAiModels
-export const pearAiDefaultModelId: PearAiModelId = "pearai-model"
-export const pearAiDefaultModelInfo: ModelInfo = {
-	maxTokens: 8192,
-	contextWindow: 200_000,
-	supportsImages: true,
-	supportsPromptCache: true,
-	inputPrice: 3.0,
-	outputPrice: 15.0,
-	cacheWritesPrice: 3.75,
-	cacheReadsPrice: 0.3,
-	description:
-		"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
-}
-
-export const pearAiModels = {
-	"pearai-model": {
-		maxTokens: 8192,
-		contextWindow: 200_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 3.0,
-		outputPrice: 15.0,
-		cacheWritesPrice: 3.75,
-		cacheReadsPrice: 0.3,
-		description:
-			"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
-	},
-} as const satisfies Record<string, ModelInfo>

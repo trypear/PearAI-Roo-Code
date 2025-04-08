@@ -1,13 +1,15 @@
 import * as vscode from "vscode"
-import { ApiHandlerOptions, PEARAI_URL, ModelInfo } from "../../shared/api"
-import { AnthropicHandler } from "./anthropic"
-import { DeepSeekHandler } from "./deepseek"
+import { ApiHandlerOptions, ModelInfo } from "../../../shared/api"
+import { AnthropicHandler } from "../anthropic"
+import { DeepSeekHandler } from "../deepseek"
 import Anthropic from "@anthropic-ai/sdk"
-import { BaseProvider } from "./base-provider"
-import { SingleCompletionHandler } from "../"
-import { OpenRouterHandler } from "./openrouter"
-import { GeminiHandler } from "./gemini"
-import { OpenAiHandler } from "./openai"
+import { BaseProvider } from "../base-provider"
+import { SingleCompletionHandler } from "../.."
+import { OpenRouterHandler } from "../openrouter"
+import { GeminiHandler } from "../gemini"
+import { OpenAiHandler } from "../openai"
+import { PearAIGenericHandler } from "./pearaiGeneric"
+import { PEARAI_URL } from "../../../shared/pearaiApi"
 
 interface PearAiModelsResponse {
 	models: {
@@ -20,7 +22,9 @@ interface PearAiModelsResponse {
 }
 
 export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
-	private handler!: AnthropicHandler | OpenAiHandler
+	private handler!: AnthropicHandler | PearAIGenericHandler
+	private pearAiModelsResponse: PearAiModelsResponse | null = null
+	private options: ApiHandlerOptions
 
 	constructor(options: ApiHandlerOptions) {
 		super()
@@ -40,8 +44,9 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 		} else {
 			vscode.commands.executeCommand("pearai.checkPearAITokens", undefined)
 		}
+		this.options = options
 
-		this.handler = new OpenAiHandler({
+		this.handler = new PearAIGenericHandler({
 			...options,
 			openAiBaseUrl: PEARAI_URL,
 			openAiApiKey: options.pearaiApiKey,
@@ -64,8 +69,9 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 					throw new Error(`Failed to fetch models: ${response.statusText}`)
 				}
 				const data = (await response.json()) as PearAiModelsResponse
+				this.pearAiModelsResponse = data
 				const underlyingModel = data.models[modelId]?.underlyingModelUpdated || "claude-3-5-sonnet-20241022"
-				if (underlyingModel.startsWith("claude")) {
+				if (underlyingModel.startsWith("claude") || modelId.startsWith("anthropic/")) {
 					// Default to Claude
 					this.handler = new AnthropicHandler({
 						...options,
@@ -74,7 +80,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 						apiModelId: underlyingModel,
 					})
 				} else {
-					this.handler = new OpenAiHandler({
+					this.handler = new PearAIGenericHandler({
 						...options,
 						openAiBaseUrl: PEARAI_URL,
 						openAiApiKey: options.pearaiApiKey,
@@ -91,14 +97,14 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 					apiModelId: "claude-3-5-sonnet-20241022",
 				})
 			}
-		} else if (modelId.startsWith("claude")) {
+		} else if (modelId.startsWith("claude") || modelId.startsWith("anthropic/")) {
 			this.handler = new AnthropicHandler({
 				...options,
 				apiKey: options.pearaiApiKey,
 				anthropicBaseUrl: PEARAI_URL,
 			})
 		} else {
-			this.handler = new OpenAiHandler({
+			this.handler = new PearAIGenericHandler({
 				...options,
 				openAiBaseUrl: PEARAI_URL,
 				openAiApiKey: options.pearaiApiKey,
@@ -108,22 +114,25 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	}
 
 	getModel(): { id: string; info: ModelInfo } {
-		console.dir(this.handler)
-		const baseModel = this.handler.getModel()
-		return {
-			id: baseModel.id,
-			info: {
-				...baseModel.info,
-				// Inherit all capabilities from the underlying model
-				supportsImages: baseModel.info.supportsImages,
-				supportsComputerUse: baseModel.info.supportsComputerUse,
-				supportsPromptCache: baseModel.info.supportsPromptCache,
-				inputPrice: baseModel.info.inputPrice || 0,
-				outputPrice: baseModel.info.outputPrice || 0,
-				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice : undefined,
-				cacheReadsPrice: baseModel.info.cacheReadsPrice ? baseModel.info.cacheReadsPrice : undefined,
-			},
+		if (
+			this.pearAiModelsResponse &&
+			this.options.apiModelId === "pearai-model" &&
+			this.pearAiModelsResponse.models
+		) {
+			const modelInfo = this.pearAiModelsResponse.models[this.options.apiModelId]
+			if (modelInfo) {
+				return {
+					id: this.options.apiModelId,
+					info: {
+						contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
+						supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
+						...modelInfo,
+					},
+				}
+			}
 		}
+		const baseModel = this.handler.getModel()
+		return baseModel
 	}
 
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {

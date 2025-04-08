@@ -14,7 +14,6 @@ import {
 import { McpServer, McpTool } from "../../../../src/shared/mcp"
 import { findLast } from "../../../../src/shared/array"
 import { combineApiRequests } from "../../../../src/shared/combineApiRequests"
-import { ModelInfo, pearAiDefaultModelId, pearAiDefaultModelInfo, PEARAI_URL } from "../../../../src/shared/api"
 import { combineCommandSequences } from "../../../../src/shared/combineCommandSequences"
 import { getApiMetrics } from "../../../../src/shared/getApiMetrics"
 import { useExtensionState } from "../../context/ExtensionStateContext"

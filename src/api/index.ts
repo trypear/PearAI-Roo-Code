@@ -19,7 +19,7 @@ import { VsCodeLmHandler } from "./providers/vscode-lm"
 import { ApiStream } from "./transform/stream"
 import { UnboundHandler } from "./providers/unbound"
 import { RequestyHandler } from "./providers/requesty"
-import { PearAiHandler } from "./providers/pearai"
+import { PearAiHandler } from "./providers/pearai/pearai"
 import { HumanRelayHandler } from "./providers/human-relay"
 import { FakeAIHandler } from "./providers/fake-ai"
 

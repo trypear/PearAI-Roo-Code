@@ -30,7 +30,7 @@ import {
 } from "../../shared/mcp"
 import { fileExistsAtPath } from "../../utils/fs"
 import { arePathsEqual } from "../../utils/path"
-import { PEARAI_URL } from "../../shared/api"
+import { PEARAI_URL } from "../../shared/pearaiApi"
 
 export type McpConnection = {
 	server: McpServer

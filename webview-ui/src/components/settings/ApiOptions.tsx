@@ -37,10 +37,6 @@ import {
 	unboundDefaultModelInfo,
 	requestyDefaultModelId,
 	requestyDefaultModelInfo,
-	pearAiModels,
-	pearAiDefaultModelId,
-	pearAiDefaultModelInfo,
-	PEARAI_URL,
 	ApiProvider,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
@@ -60,6 +56,7 @@ import { validateApiConfiguration, validateModelId, validateBedrockArn } from "@
 import { ApiErrorMessage } from "./ApiErrorMessage"
 import { ThinkingBudget } from "./ThinkingBudget"
 import { usePearAiModels } from "../../hooks/usePearAiModels"
+import { allModels, pearAiDefaultModelId, pearAiDefaultModelInfo } from "../../../../src/shared/pearaiApi"
 
 interface ApiOptionsProps {
 	uriScheme: string | undefined
@@ -1693,10 +1690,8 @@ export function normalizeApiConfiguration(
 			}
 		case "pearai": {
 			// Always use the models from the hook which are fetched when provider is selected
-			return getProviderData(
-				pearAiModelsQuery || { [pearAiDefaultModelId]: pearAiDefaultModelInfo },
-				pearAiDefaultModelId,
-			)
+			let query = pearAiModelsQuery
+			return getProviderData(pearAiModelsQuery || {}, pearAiDefaultModelId)
 		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
