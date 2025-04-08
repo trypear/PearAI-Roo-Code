@@ -1,3 +1,7 @@
+/*
+pearaiGeneric.ts is a copy of openai.ts, with minor changes to support the PearAI API. It currently is used for all hosted non-Anthropic models.
+*/
+
 import { Anthropic } from "@anthropic-ai/sdk"
 import OpenAI, { AzureOpenAI } from "openai"
 import axios from "axios"
