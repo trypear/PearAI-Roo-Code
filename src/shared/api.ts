@@ -159,8 +159,9 @@ export interface ModelInfo {
 	description?: string
 	reasoningEffort?: "low" | "medium" | "high"
 	thinking?: boolean
+	underlyingModel?: string
+	underlyingModelUpdated?: Record<string, any>
 }
-
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-claude/models
 export type AnthropicModelId = keyof typeof anthropicModels

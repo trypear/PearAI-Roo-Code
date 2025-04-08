@@ -1598,7 +1598,16 @@ export function normalizeApiConfiguration(
 
 		if (modelId && modelId in models) {
 			selectedModelId = modelId
-			selectedModelInfo = models[modelId]
+			if (modelId === "pearai-model" && models[modelId].underlyingModelUpdated) {
+				let modelInfo = models[modelId].underlyingModelUpdated
+				selectedModelInfo = {
+					contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
+					supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
+					...modelInfo,
+				}
+			} else {
+				selectedModelInfo = models[modelId]
+			}
 		} else {
 			selectedModelId = defaultId
 			selectedModelInfo = models[defaultId]
