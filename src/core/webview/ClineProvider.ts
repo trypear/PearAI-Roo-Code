@@ -98,6 +98,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
 		private readonly renderContext: "sidebar" | "editor" = "sidebar",
+		private readonly isCreatorView: boolean = false,
 	) {
 		super()
 
@@ -122,6 +123,16 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			.catch((error) => {
 				this.outputChannel.appendLine(`Failed to initialize MCP Hub: ${error}`)
 			})
+	}
+
+	public static getSidebarInstance(): ClineProvider | undefined {
+		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreatorView)
+
+		if (!sidebar?.view?.visible) {
+			vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+		}
+
+		return sidebar
 	}
 
 	// Adds a new Cline instance to clineStack, marking the start of a new task.
@@ -455,7 +466,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	// when initializing a new task, (not from history but from a tool command new_task) there is no need to remove the previouse task
 	// since the new task is a sub task of the previous one, and when it finishes it is removed from the stack and the caller is resumed
 	// in this way we can have a chain of tasks, each one being a sub task of the previous one until the main task is finished
-	public async initClineWithTask(task?: string, images?: string[], parentTask?: Cline) {
+	public async initClineWithTask(task?: string, images?: string[], parentTask?: Cline, creatorMode?: boolean) {
 		const {
 			apiConfiguration,
 			customModePrompts,
@@ -473,7 +484,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		const cline = new Cline({
 			provider: this,
-			apiConfiguration,
+			apiConfiguration: {
+				...apiConfiguration,
+				creatorMode,
+			},
 			customInstructions: effectiveInstructions,
 			enableDiff,
 			enableCheckpoints,
