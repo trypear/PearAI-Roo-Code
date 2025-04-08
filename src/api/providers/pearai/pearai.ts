@@ -124,18 +124,21 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 			} else if (this.pearAiModelsResponse) {
 				modelInfo = this.pearAiModelsResponse.models[this.options.apiModelId || "pearai-model"]
 			}
-			return {
-				id: this.options.apiModelId,
-				info: {
-					contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
-					supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
-					...modelInfo,
-				},
+			if (modelInfo) {
+				return {
+					id: this.options.apiModelId,
+					info: {
+						contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
+						supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
+						...modelInfo,
+					},
+				}
 			}
-		} else {
-			const baseModel = this.handler.getModel()
-			return baseModel
 		}
+
+		// Fallback to using what's available on client side
+		const baseModel = this.handler.getModel()
+		return baseModel
 	}
 
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {
