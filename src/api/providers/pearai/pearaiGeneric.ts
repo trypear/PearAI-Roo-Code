@@ -1,5 +1,5 @@
 /*
-pearaiGeneric.ts is a copy of openai.ts, with minor changes to support the PearAI API. It currently is used for all hosted non-Anthropic models.
+pearaiGeneric.ts is the same as openai.ts, with changes to support the PearAI API. It currently is used for all hosted non-Anthropic models.
 */
 
 import { Anthropic } from "@anthropic-ai/sdk"
@@ -70,9 +70,6 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 		const modelUrl = this.options.openAiBaseUrl ?? ""
 		const modelId = this.options.openAiModelId ?? ""
 
-		console.dir("MODEL INFO")
-		console.dir(modelInfo)
-		console.dir(modelId)
 		const deepseekReasoner = modelId.includes("deepseek-reasoner")
 		const ark = modelUrl.includes(".volces.com")
 
@@ -213,11 +210,6 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 		const totalCost = modelInfo
 			? calculateApiCostOpenAI(modelInfo, inputTokens, outputTokens, cacheWriteTokens, cacheReadTokens)
 			: 0
-
-		console.dir("COST")
-		console.log(totalCost)
-		console.dir("MODEL")
-		console.dir(modelInfo)
 		return {
 			type: "usage",
 			inputTokens: inputTokens,
@@ -230,9 +222,6 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 
 	override getModel(): { id: string; info: ModelInfo } {
 		const modelId = this.options.openAiModelId ?? "none"
-		console.log("MODEL INFO IN GETMODEL", allModels[modelId])
-		console.log("Available models:", Object.keys(allModels))
-		console.log("Keys: ", Object.keys(allModels[modelId]))
 		return {
 			id: modelId,
 			info: allModels[modelId],

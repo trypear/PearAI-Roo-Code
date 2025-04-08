@@ -1691,7 +1691,6 @@ export function normalizeApiConfiguration(
 		case "pearai": {
 			// Always use the models from the hook which are fetched when provider is selected
 			let query = pearAiModelsQuery
-			console.log("query", query)
 			return getProviderData(pearAiModelsQuery || {}, pearAiDefaultModelId)
 		}
 		default:
