@@ -18,6 +18,7 @@ import Thumbnails from "../common/Thumbnails"
 import { normalizeApiConfiguration } from "../settings/ApiOptions"
 import { DeleteTaskDialog } from "../history/DeleteTaskDialog"
 import { vscBadgeBackground, vscEditorBackground, vscInputBackground } from "../ui"
+import { usePearAiModels } from "@/hooks/usePearAiModels"
 
 interface TaskHeaderProps {
 	task: ClineMessage
@@ -44,7 +45,11 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 }) => {
 	const { t } = useTranslation()
 	const { apiConfiguration, currentTaskItem } = useExtensionState()
-	const { selectedModelInfo } = useMemo(() => normalizeApiConfiguration(apiConfiguration), [apiConfiguration])
+	const pearAiModels = usePearAiModels(apiConfiguration)
+	const { selectedModelInfo } = useMemo(() => {
+		return normalizeApiConfiguration(apiConfiguration, pearAiModels)
+	}, [apiConfiguration, pearAiModels])
+
 	const [isTaskExpanded, setIsTaskExpanded] = useState(true)
 	const [isTextExpanded, setIsTextExpanded] = useState(false)
 	const [showSeeMore, setShowSeeMore] = useState(false)

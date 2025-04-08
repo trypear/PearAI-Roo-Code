@@ -130,13 +130,4 @@ export const allModels: { [key: string]: ModelInfo } = {
 
 	// Unbound models (single default model)
 	[`unbound/${unboundDefaultModelId}`]: unboundDefaultModelInfo,
-
-	// PearAI models
-	...Object.entries(pearAiModels).reduce(
-		(acc, [key, value]) => ({
-			...acc,
-			[key]: value,
-		}),
-		{},
-	),
 } as const satisfies Record<string, ModelInfo>

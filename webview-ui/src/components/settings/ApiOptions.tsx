@@ -1692,7 +1692,7 @@ export function normalizeApiConfiguration(
 			// Always use the models from the hook which are fetched when provider is selected
 			let query = pearAiModelsQuery
 			console.log("query", query)
-			return getProviderData(pearAiModelsQuery || allModels, pearAiDefaultModelId)
+			return getProviderData(pearAiModelsQuery || {}, pearAiDefaultModelId)
 		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)

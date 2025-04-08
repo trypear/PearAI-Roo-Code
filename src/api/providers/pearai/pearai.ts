@@ -23,6 +23,8 @@ interface PearAiModelsResponse {
 
 export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
 	private handler!: AnthropicHandler | PearAIGenericHandler
+	private pearAiModelsResponse: PearAiModelsResponse | null = null
+	private options: ApiHandlerOptions
 
 	constructor(options: ApiHandlerOptions) {
 		super()
@@ -42,6 +44,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 		} else {
 			vscode.commands.executeCommand("pearai.checkPearAITokens", undefined)
 		}
+		this.options = options
 
 		this.handler = new PearAIGenericHandler({
 			...options,
@@ -66,6 +69,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 					throw new Error(`Failed to fetch models: ${response.statusText}`)
 				}
 				const data = (await response.json()) as PearAiModelsResponse
+				this.pearAiModelsResponse = data
 				const underlyingModel = data.models[modelId]?.underlyingModelUpdated || "claude-3-5-sonnet-20241022"
 				if (underlyingModel.startsWith("claude") || modelId.startsWith("anthropic/")) {
 					// Default to Claude
@@ -110,6 +114,23 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	}
 
 	getModel(): { id: string; info: ModelInfo } {
+		if (
+			this.pearAiModelsResponse &&
+			this.options.apiModelId === "pearai-model" &&
+			this.pearAiModelsResponse.models
+		) {
+			const modelInfo = this.pearAiModelsResponse.models[this.options.apiModelId]
+			if (modelInfo) {
+				return {
+					id: this.options.apiModelId,
+					info: {
+						contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
+						supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
+						...modelInfo,
+					},
+				}
+			}
+		}
 		const baseModel = this.handler.getModel()
 		return baseModel
 	}
