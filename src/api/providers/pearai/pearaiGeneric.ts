@@ -16,6 +16,7 @@ import { ApiStream, ApiStreamUsageChunk } from "../../transform/stream"
 import { BaseProvider } from "../base-provider"
 import { XmlMatcher } from "../../../utils/xml-matcher"
 import { allModels, pearAiDefaultModelId, pearAiDefaultModelInfo } from "../../../shared/pearaiApi"
+import { calculateApiCostOpenAI } from "../../../utils/cost"
 
 const DEEP_SEEK_DEFAULT_TEMPERATURE = 0.6
 
@@ -65,6 +66,9 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 		const modelUrl = this.options.openAiBaseUrl ?? ""
 		const modelId = this.options.openAiModelId ?? ""
 
+		console.dir("MODEL INFO")
+		console.dir(modelInfo)
+		console.dir(modelId)
 		const deepseekReasoner = modelId.includes("deepseek-reasoner")
 		const ark = modelUrl.includes(".volces.com")
 
@@ -198,21 +202,36 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 	}
 
 	protected processUsageMetrics(usage: any, modelInfo?: ModelInfo): ApiStreamUsageChunk {
-		console.dir(usage?.prompt_tokens_details)
+		const inputTokens = usage?.prompt_tokens || 0
+		const outputTokens = usage?.completion_tokens || 0
+		const cacheWriteTokens = usage?.prompt_tokens_details?.caching_tokens || 0
+		const cacheReadTokens = usage?.prompt_tokens_details?.cached_tokens || 0
+		const totalCost = modelInfo
+			? calculateApiCostOpenAI(modelInfo, inputTokens, outputTokens, cacheWriteTokens, cacheReadTokens)
+			: 0
+
+		console.dir("COST")
+		console.log(totalCost)
+		console.dir("MODEL")
+		console.dir(modelInfo)
 		return {
 			type: "usage",
-			inputTokens: usage?.prompt_tokens || 0,
-			outputTokens: usage?.completion_tokens || 0,
-			cacheWriteTokens: usage?.prompt_tokens_details?.cache_miss_tokens,
-			cacheReadTokens: usage?.prompt_tokens_details?.cached_tokens,
+			inputTokens: inputTokens,
+			outputTokens: outputTokens,
+			cacheWriteTokens: cacheWriteTokens,
+			cacheReadTokens: cacheReadTokens,
+			totalCost: totalCost,
 		}
 	}
 
 	override getModel(): { id: string; info: ModelInfo } {
-		const modelId = this.options.openAiModelId ?? pearAiDefaultModelId
+		const modelId = this.options.openAiModelId ?? "none"
+		console.log("MODEL INFO IN GETMODEL", allModels[modelId])
+		console.log("Available models:", Object.keys(allModels))
+		console.log("Keys: ", Object.keys(allModels[modelId]))
 		return {
 			id: modelId,
-			info: allModels[modelId] ?? pearAiDefaultModelInfo,
+			info: allModels[modelId],
 		}
 	}
 

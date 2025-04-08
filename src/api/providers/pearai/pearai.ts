@@ -67,7 +67,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				}
 				const data = (await response.json()) as PearAiModelsResponse
 				const underlyingModel = data.models[modelId]?.underlyingModelUpdated || "claude-3-5-sonnet-20241022"
-				if (underlyingModel.startsWith("claude")) {
+				if (underlyingModel.startsWith("claude") || modelId.startsWith("anthropic/")) {
 					// Default to Claude
 					this.handler = new AnthropicHandler({
 						...options,
@@ -93,7 +93,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 					apiModelId: "claude-3-5-sonnet-20241022",
 				})
 			}
-		} else if (modelId.startsWith("claude")) {
+		} else if (modelId.startsWith("claude") || modelId.startsWith("anthropic/")) {
 			this.handler = new AnthropicHandler({
 				...options,
 				apiKey: options.pearaiApiKey,
@@ -111,20 +111,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 
 	getModel(): { id: string; info: ModelInfo } {
 		const baseModel = this.handler.getModel()
-		return {
-			id: baseModel.id,
-			info: {
-				...baseModel.info,
-				// Inherit all capabilities from the underlying model
-				supportsImages: baseModel.info.supportsImages,
-				supportsComputerUse: baseModel.info.supportsComputerUse,
-				supportsPromptCache: baseModel.info.supportsPromptCache,
-				inputPrice: baseModel.info.inputPrice || 0,
-				outputPrice: baseModel.info.outputPrice || 0,
-				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice : undefined,
-				cacheReadsPrice: baseModel.info.cacheReadsPrice ? baseModel.info.cacheReadsPrice : undefined,
-			},
-		}
+		return baseModel
 	}
 
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {

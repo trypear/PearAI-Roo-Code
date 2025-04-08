@@ -135,7 +135,7 @@ export const allModels: { [key: string]: ModelInfo } = {
 	...Object.entries(pearAiModels).reduce(
 		(acc, [key, value]) => ({
 			...acc,
-			[`{key}`]: value,
+			[key]: value,
 		}),
 		{},
 	),
