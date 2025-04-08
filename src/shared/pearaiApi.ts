@@ -1,8 +1,8 @@
 // CHANGE AS NEEDED FOR DEVELOPMENT
 // PROD:
-export const PEARAI_URL = "https://server.trypear.ai/pearai-server-api2/integrations/cline"
+// export const PEARAI_URL = "https://server.trypear.ai/pearai-server-api2/integrations/cline"
 // DEV:
-// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+export const PEARAI_URL = "http://localhost:8000/integrations/cline"
 
 import {
 	anthropicModels,
@@ -86,7 +86,7 @@ export const allModels: { [key: string]: ModelInfo } = {
 	...Object.entries(vertexModels).reduce(
 		(acc, [key, value]) => ({
 			...acc,
-			[`vertex/${key}`]: value,
+			[`vertex_ai/${key}`]: value,
 		}),
 		{},
 	),
