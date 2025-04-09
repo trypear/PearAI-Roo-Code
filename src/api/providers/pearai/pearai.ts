@@ -62,7 +62,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	private async initializeHandler(options: ApiHandlerOptions): Promise<void> {
 		const modelId = options.apiModelId || "pearai-model"
 
-		if (modelId.startsWith("pearai-model")) {
+		if (modelId.startsWith("pearai")) {
 			try {
 				const response = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
 				if (!response.ok) {
