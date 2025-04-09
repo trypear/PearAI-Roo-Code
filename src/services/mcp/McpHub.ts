@@ -220,10 +220,6 @@ export class McpHub {
 				mcpSettingsFilePath,
 				`{
   "mcpServers": {
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
   }
 }`,
 			)
