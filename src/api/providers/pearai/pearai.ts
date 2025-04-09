@@ -119,8 +119,8 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	getModel(): { id: string; info: ModelInfo } {
 		if (this.options.apiModelId) {
 			let modelInfo = null
-			if (this.options.apiModelId === "pearai-model") {
-				modelInfo = this.pearAiModelsResponse?.models["pearai-model"].underlyingModelUpdated
+			if (this.options.apiModelId.startsWith("pearai")) {
+				modelInfo = this.pearAiModelsResponse?.models[this.options.apiModelId].underlyingModelUpdated
 			} else if (this.pearAiModelsResponse) {
 				modelInfo = this.pearAiModelsResponse.models[this.options.apiModelId || "pearai-model"]
 			}
