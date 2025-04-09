@@ -1591,7 +1591,10 @@ const ApiOptions = ({
 	)
 }
 
-export function normalizeApiConfiguration(apiConfiguration?: ApiConfiguration) {
+export function normalizeApiConfiguration(
+	apiConfiguration?: ApiConfiguration,
+	pearAiModelsQuery?: Record<string, ModelInfo>,
+) {
 	const provider = apiConfiguration?.apiProvider || "anthropic"
 	const modelId = apiConfiguration?.apiModelId
 
