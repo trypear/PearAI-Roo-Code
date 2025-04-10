@@ -325,6 +325,12 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		return false
 	}, [modifiedMessages, clineAsk, enableButtons, primaryButtonText])
 
+	const pearAiModels = usePearAiModels(apiConfiguration)
+
+	const { selectedModelInfo, selectedProvider } = useMemo(() => {
+		return normalizeApiConfiguration(apiConfiguration, pearAiModels)
+	}, [apiConfiguration, pearAiModels])
+
 	const handleChatReset = useCallback(() => {
 		// Only reset message-specific state, preserving mode.
 		setInputValue("")
@@ -361,10 +367,15 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 						// There is no other case that a textfield should be enabled.
 					}
 				}
+
+				if (selectedProvider === "pearai") {
+					return
+				}
+
 				handleChatReset()
 			}
 		},
-		[messages.length, clineAsk, handleChatReset],
+		[messages.length, clineAsk, handleChatReset, selectedProvider],
 	)
 
 	const handleSetChatBoxMessage = useCallback(
@@ -483,12 +494,6 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 		startNewTask()
 	}, [startNewTask])
 
-	const pearAiModels = usePearAiModels(apiConfiguration)
-
-	const { selectedModelInfo } = useMemo(() => {
-		return normalizeApiConfiguration(apiConfiguration, pearAiModels)
-	}, [apiConfiguration, pearAiModels])
-
 	const selectImages = useCallback(() => {
 		vscode.postMessage({ type: "selectImages" })
 	}, [])
@@ -506,6 +511,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 							if (!isHidden && !textAreaDisabled && !enableButtons) {
 								textAreaRef.current?.focus()
 							}
+							break
+						case "pearaiTokensValidated":
+							handleChatReset()
 							break
 					}
 					break
