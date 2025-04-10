@@ -227,6 +227,28 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 			id = "claude-3-7-sonnet-20250219"
 		}
 
+		// Prioritize serverside model info
+		if (this.options.apiModelId && this.options.pearaiAgentModels) {
+			let modelInfo = null
+			if (this.options.apiModelId.startsWith("pearai")) {
+				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId].underlyingModelUpdated
+			} else {
+				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId || "pearai-model"]
+			}
+			if (modelInfo) {
+				return {
+					id: this.options.apiModelId,
+					info: modelInfo,
+					virtualId,
+					...getModelParams({
+						options: this.options,
+						model: info,
+						defaultMaxTokens: ANTHROPIC_DEFAULT_MAX_TOKENS,
+					}),
+				}
+			}
+		}
+
 		return {
 			id,
 			info,

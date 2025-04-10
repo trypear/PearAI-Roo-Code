@@ -11,7 +11,7 @@ import { OpenAiHandler } from "../openai"
 import { PearAIGenericHandler } from "./pearaiGeneric"
 import { PEARAI_URL } from "../../../shared/pearaiApi"
 
-interface PearAiModelsResponse {
+export interface PearAIAgentModelsConfig {
 	models: {
 		[key: string]: {
 			underlyingModel?: { [key: string]: any }
@@ -23,7 +23,7 @@ interface PearAiModelsResponse {
 
 export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
 	private handler!: AnthropicHandler | PearAIGenericHandler
-	private pearAiModelsResponse: PearAiModelsResponse | null = null
+	private pearAIAgentModels: PearAIAgentModelsConfig | null = null
 	private options: ApiHandlerOptions
 
 	constructor(options: ApiHandlerOptions) {
@@ -64,15 +64,13 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 
 		if (modelId.startsWith("pearai")) {
 			try {
-				const response = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
-				if (!response.ok) {
-					throw new Error(`Failed to fetch models: ${response.statusText}`)
+				if (!options.pearaiAgentModels) {
+					throw new Error("PearAI models not found")
 				}
-				const data = (await response.json()) as PearAiModelsResponse
-				this.pearAiModelsResponse = data
+				const pearaiAgentModels = options.pearaiAgentModels
 				const underlyingModel =
-					data.models[modelId]?.underlyingModelUpdated?.underlyingModel ||
-					data.models[modelId]?.underlyingModel ||
+					pearaiAgentModels.models[modelId]?.underlyingModelUpdated?.underlyingModel ||
+					pearaiAgentModels.models[modelId]?.underlyingModel ||
 					"claude-3-5-sonnet-20241022"
 				if (underlyingModel.startsWith("claude") || modelId.startsWith("anthropic/")) {
 					// Default to Claude
@@ -116,26 +114,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 		}
 	}
 
-	getModel(): { id: string; info: ModelInfo } {
-		if (this.options.apiModelId) {
-			let modelInfo = null
-			if (this.options.apiModelId.startsWith("pearai")) {
-				modelInfo = this.pearAiModelsResponse?.models[this.options.apiModelId].underlyingModelUpdated
-			} else if (this.pearAiModelsResponse) {
-				modelInfo = this.pearAiModelsResponse.models[this.options.apiModelId || "pearai-model"]
-			}
-			if (modelInfo) {
-				return {
-					id: this.options.apiModelId,
-					info: {
-						contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
-						supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
-						...modelInfo,
-					},
-				}
-			}
-		}
-
+	public getModel(): { id: string; info: ModelInfo } {
 		// Fallback to using what's available on client side
 		const baseModel = this.handler.getModel()
 		return baseModel

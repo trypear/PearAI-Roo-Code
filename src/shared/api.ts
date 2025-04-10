@@ -1,4 +1,5 @@
 import * as vscode from "vscode"
+import { PearAIAgentModelsConfig } from "../api/providers/pearai/pearai"
 
 export type ApiProvider =
 	| "anthropic"
@@ -81,6 +82,7 @@ export interface ApiHandlerOptions {
 	pearaiBaseUrl?: string
 	pearaiModelId?: string
 	pearaiModelInfo?: ModelInfo
+	pearaiAgentModels?: PearAIAgentModelsConfig
 	modelMaxThinkingTokens?: number
 	fakeAi?: unknown
 }

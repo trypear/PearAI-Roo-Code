@@ -222,6 +222,21 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 
 	override getModel(): { id: string; info: ModelInfo } {
 		const modelId = this.options.openAiModelId ?? "none"
+		// Prioritize serverside model info
+		if (this.options.apiModelId && this.options.pearaiAgentModels) {
+			let modelInfo = null
+			if (this.options.apiModelId.startsWith("pearai")) {
+				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId].underlyingModelUpdated
+			} else {
+				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId || "pearai-model"]
+			}
+			if (modelInfo) {
+				return {
+					id: this.options.apiModelId,
+					info: modelInfo,
+				}
+			}
+		}
 		return {
 			id: modelId,
 			info: allModels[modelId],
