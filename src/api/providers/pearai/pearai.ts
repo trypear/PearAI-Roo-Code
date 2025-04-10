@@ -71,7 +71,6 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 					console.log("AMAZING")
 				}
 				const pearaiAgentModels = options.pearaiAgentModels
-				this.pearAIAgentModels = pearaiAgentModels
 				const underlyingModel =
 					pearaiAgentModels.models[modelId]?.underlyingModelUpdated?.underlyingModel ||
 					pearaiAgentModels.models[modelId]?.underlyingModel ||
@@ -118,26 +117,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 		}
 	}
 
-	getModel(): { id: string; info: ModelInfo } {
-		if (this.options.apiModelId) {
-			let modelInfo = null
-			if (this.options.apiModelId.startsWith("pearai")) {
-				modelInfo = this.pearAIAgentModels?.models[this.options.apiModelId].underlyingModelUpdated
-			} else if (this.pearAIAgentModels) {
-				modelInfo = this.pearAIAgentModels.models[this.options.apiModelId || "pearai-model"]
-			}
-			if (modelInfo) {
-				return {
-					id: this.options.apiModelId,
-					info: {
-						contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
-						supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
-						...modelInfo,
-					},
-				}
-			}
-		}
-
+	public getModel(): { id: string; info: ModelInfo } {
 		// Fallback to using what's available on client side
 		const baseModel = this.handler.getModel()
 		return baseModel
