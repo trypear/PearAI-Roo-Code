@@ -65,10 +65,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 		if (modelId.startsWith("pearai")) {
 			try {
 				if (!options.pearaiAgentModels) {
-					console.log("NOT AMAZING")
 					throw new Error("PearAI models not found")
-				} else {
-					console.log("AMAZING")
 				}
 				const pearaiAgentModels = options.pearaiAgentModels
 				const underlyingModel =
