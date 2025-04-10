@@ -253,20 +253,16 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 									}}>
 									<div
 										style={{
-											width: 30,
-											height: "1.2em",
-											background:
-												"linear-gradient(to right, transparent, var(--vscode-badge-background))",
-										}}
-									/>
-									<div
-										style={{
 											cursor: "pointer",
-											color: "var(--vscode-badge-foreground)",
+											color: "var(--vscode-foreground)",
 											fontSize: "11px",
-											paddingRight: 8,
-											paddingLeft: 4,
+											padding: "2px 8px",
 											backgroundColor: "var(--vscode-badge-background)",
+											borderRadius: "3px",
+											border: "1px solid var(--vscode-button-secondaryBackground)",
+											display: "flex",
+											alignItems: "center",
+											height: "18px",
 										}}
 										onClick={() => setIsTextExpanded(!isTextExpanded)}>
 										{t("chat:task.seeMore")}
@@ -278,11 +274,17 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							<div
 								style={{
 									cursor: "pointer",
-									color: "var(--vscode-badge-foreground)",
+									color: "var(--vscode-foreground)",
 									fontSize: "11px",
 									marginLeft: "auto",
-									textAlign: "right",
-									paddingRight: 8,
+									padding: "2px 8px",
+									backgroundColor: "var(--vscode-badge-background)",
+									borderRadius: "3px",
+									border: "1px solid var(--vscode-button-secondaryBackground)",
+									display: "inline-flex",
+									alignItems: "center",
+									height: "18px",
+									width: "fit-content",
 								}}
 								onClick={() => setIsTextExpanded(!isTextExpanded)}>
 								{t("chat:task.seeLess")}

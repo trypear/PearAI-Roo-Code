@@ -359,7 +359,6 @@ export class McpHub {
 
 			// Validate the config using McpSettingsSchema
 			const result = McpSettingsSchema.safeParse(config)
-			console.log("IM HERE 10101", result)
 			if (result.success) {
 				await this.updateServerConnections(result.data.mcpServers || {})
 			} else {
