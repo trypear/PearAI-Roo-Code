@@ -64,7 +64,6 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 
 		if (modelId.startsWith("pearai")) {
 			try {
-				// TODO: For some reason, if we move this fetch to above this if statement, it breaks everything)
 				const response = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
 				if (!response.ok) {
 					throw new Error(`Failed to fetch models: ${response.statusText}`)
@@ -118,7 +117,6 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	}
 
 	getModel(): { id: string; info: ModelInfo } {
-		// TODO: this.pearAiModelsResponse is always undefined so we curretly have to just use client side model info
 		if (this.options.apiModelId) {
 			let modelInfo = null
 			if (this.options.apiModelId.startsWith("pearai")) {

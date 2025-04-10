@@ -38,8 +38,6 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 	constructor(options: OpenAiHandlerOptions) {
 		super()
 		this.options = options
-		console.dir("Model ID")
-		console.dir(this.options.openAiModelId)
 
 		const baseURL = this.options.openAiBaseUrl ?? "https://api.openai.com/v1"
 		const apiKey = this.options.openAiApiKey ?? "not-provided"
