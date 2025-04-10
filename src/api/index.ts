@@ -28,8 +28,9 @@ export interface SingleCompletionHandler {
 }
 
 export interface ApiHandler {
-	createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream
-	getModel(): { id: string; info: ModelInfo }
+	// completePrompt(prompt: string): Promise<string>
+	createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any>
+	getModel(): { id: string; info: ModelInfo } | Promise<{ id: string; info: ModelInfo }>
 
 	/**
 	 * Counts tokens for content blocks
@@ -42,7 +43,7 @@ export interface ApiHandler {
 	countTokens(content: Array<Anthropic.Messages.ContentBlockParam>): Promise<number>
 }
 
-export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
+export function buildApiHandler(configuration: ApiConfiguration): ApiHandler | Promise<ApiHandler> {
 	const { apiProvider, ...options } = configuration
 	switch (apiProvider) {
 		case "anthropic":
@@ -76,7 +77,7 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
 		case "requesty":
 			return new RequestyHandler(options)
 		case "pearai":
-			return new PearAiHandler(options)
+			return PearAiHandler.create(options)
 		case "human-relay":
 			return new HumanRelayHandler(options)
 		case "fake-ai":

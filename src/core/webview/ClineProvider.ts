@@ -2159,7 +2159,12 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		await this.contextProxy.setApiConfiguration(apiConfiguration)
 
 		if (this.getCurrentCline()) {
-			this.getCurrentCline()!.api = buildApiHandler(apiConfiguration)
+			const apiHandler = buildApiHandler(apiConfiguration)
+			if (apiHandler instanceof Promise) {
+				this.getCurrentCline()!.api = await apiHandler
+			} else {
+				this.getCurrentCline()!.api = apiHandler
+			}
 		}
 	}
 

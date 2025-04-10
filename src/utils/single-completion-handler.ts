@@ -13,7 +13,8 @@ export async function singleCompletionHandler(apiConfiguration: ApiConfiguration
 		throw new Error("No valid API configuration provided")
 	}
 
-	const handler = buildApiHandler(apiConfiguration)
+	const handlerPromise = buildApiHandler(apiConfiguration)
+	const handler = await (handlerPromise instanceof Promise ? handlerPromise : Promise.resolve(handlerPromise))
 
 	// Check if handler supports single completions
 	if (!("completePrompt" in handler)) {
