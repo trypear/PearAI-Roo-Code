@@ -37,7 +37,8 @@ describe("enhancePrompt", () => {
 		const result = await singleCompletionHandler(mockApiConfig, "Test prompt")
 
 		expect(result).toBe("Enhanced prompt")
-		const handler = buildApiHandler(mockApiConfig)
+		const handlerPromise = buildApiHandler(mockApiConfig)
+		const handler = await (handlerPromise instanceof Promise ? handlerPromise : Promise.resolve(handlerPromise))
 		expect((handler as any).completePrompt).toHaveBeenCalledWith(`Test prompt`)
 	})
 
@@ -59,7 +60,8 @@ describe("enhancePrompt", () => {
 		)
 
 		expect(result).toBe("Enhanced prompt")
-		const handler = buildApiHandler(mockApiConfig)
+		const handlerPromise = buildApiHandler(mockApiConfig)
+		const handler = await (handlerPromise instanceof Promise ? handlerPromise : Promise.resolve(handlerPromise))
 		expect((handler as any).completePrompt).toHaveBeenCalledWith(`${customEnhancePrompt}\n\nTest prompt`)
 	})
 

@@ -25,8 +25,10 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	private handler!: AnthropicHandler | PearAIGenericHandler
 	private pearAiModelsResponse: PearAiModelsResponse | null = null
 	private options: ApiHandlerOptions
+	private initializationPromise: Promise<void> | null = null
 
-	constructor(options: ApiHandlerOptions) {
+	// Private constructor - use the static create method instead
+	private constructor(options: ApiHandlerOptions) {
 		super()
 		if (!options.pearaiApiKey) {
 			vscode.window.showErrorMessage("PearAI API key not found.", "Login to PearAI").then(async (selection) => {
@@ -45,18 +47,16 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 			vscode.commands.executeCommand("pearai.checkPearAITokens", undefined)
 		}
 		this.options = options
+		// Start initialization immediately
+		this.initializationPromise = this.initializeHandler(options)
+	}
 
-		this.handler = new PearAIGenericHandler({
-			...options,
-			openAiBaseUrl: PEARAI_URL,
-			openAiApiKey: options.pearaiApiKey,
-			openAiModelId: "deepseek/deepseek-chat",
-		})
-
-		// Then try to initialize the correct handler asynchronously
-		this.initializeHandler(options).catch((error) => {
-			console.error("Failed to initialize PearAI handler:", error)
-		})
+	// Static factory method that properly awaits initialization
+	public static async create(options: ApiHandlerOptions): Promise<PearAiHandler> {
+		const instance = new PearAiHandler(options)
+		// Wait for initialization to complete
+		await instance.initializationPromise
+		return instance
 	}
 
 	private async initializeHandler(options: ApiHandlerOptions): Promise<void> {
@@ -116,7 +116,15 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 		}
 	}
 
-	getModel(): { id: string; info: ModelInfo } {
+	private async ensureInitialized(): Promise<void> {
+		if (this.initializationPromise) {
+			await this.initializationPromise
+		}
+	}
+
+	async getModel(): Promise<{ id: string; info: ModelInfo }> {
+		await this.ensureInitialized()
+		
 		if (this.options.apiModelId) {
 			let modelInfo = null
 			if (this.options.apiModelId.startsWith("pearai")) {
@@ -142,6 +150,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	}
 
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {
+		await this.ensureInitialized()
 		const generator = this.handler.createMessage(systemPrompt, messages)
 		let warningMsg = ""
 
@@ -168,6 +177,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	}
 
 	async completePrompt(prompt: string): Promise<string> {
+		await this.ensureInitialized()
 		return this.handler.completePrompt(prompt)
 	}
 }

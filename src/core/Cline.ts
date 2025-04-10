@@ -83,6 +83,7 @@ import { parseXml } from "../utils/xml"
 import { readLines } from "../integrations/misc/read-lines"
 import { getWorkspacePath } from "../utils/path"
 import { isBinaryFile } from "isbinaryfile"
+import { AnthropicHandler } from "../api/providers/anthropic"
 
 type ToolResponse = string | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>
 type UserContent = Array<Anthropic.Messages.ContentBlockParam>
@@ -208,7 +209,15 @@ export class Cline extends EventEmitter<ClineEvents> {
 		this.instanceId = crypto.randomUUID().slice(0, 8)
 		this.taskNumber = -1
 		this.apiConfiguration = apiConfiguration
-		this.api = buildApiHandler(apiConfiguration)
+		
+		// Initialize with a temporary handler that will be replaced
+		this.api = new AnthropicHandler(apiConfiguration)
+		
+		// Then asynchronously initialize the correct handler
+		this.initializeApiHandler(apiConfiguration).catch(error => {
+			console.error("Failed to initialize API handler:", error)
+		})
+		
 		this.urlContentFetcher = new UrlContentFetcher(provider.context)
 		this.browserSession = new BrowserSession(provider.context)
 		this.customInstructions = customInstructions
@@ -4171,6 +4180,15 @@ export class Cline extends EventEmitter<ClineEvents> {
 		} catch (err) {
 			this.providerRef.deref()?.log("[checkpointRestore] disabling checkpoints for this task")
 			this.enableCheckpoints = false
+		}
+	}
+
+	private async initializeApiHandler(apiConfiguration: ApiConfiguration): Promise<void> {
+		const apiHandler = buildApiHandler(apiConfiguration)
+		if (apiHandler instanceof Promise) {
+			this.api = await apiHandler
+		} else {
+			this.api = apiHandler
 		}
 	}
 }
