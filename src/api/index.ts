@@ -1,5 +1,5 @@
 import { Anthropic } from "@anthropic-ai/sdk"
-import { BetaThinkingConfigParam } from "@anthropic-ai/sdk/resources/beta/messages/index.mjs"
+import { BetaThinkingConfigParam } from "@anthropic-ai/sdk/resources/beta/messages"
 
 import { ApiConfiguration, ModelInfo, ApiHandlerOptions } from "../shared/api"
 import { ANTHROPIC_DEFAULT_MAX_TOKENS } from "./providers/constants"
