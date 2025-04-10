@@ -78,6 +78,8 @@ import { getUri } from "./getUri"
 import { telemetryService } from "../../services/telemetry/TelemetryService"
 import { TelemetrySetting } from "../../shared/TelemetrySetting"
 import { getWorkspacePath } from "../../utils/path"
+import { PEARAI_URL } from "../../shared/pearaiApi"
+import { PearAIAgentModelsConfig } from "../../api/providers/pearai/pearai"
 
 /**
  * https://github.com/microsoft/vscode-webview-ui-toolkit-samples/blob/main/default/weather-webview/src/providers/WeatherViewProvider.ts
@@ -459,6 +461,15 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		this.outputChannel.appendLine("Webview view resolved")
 	}
 
+	public async getPearAIAgentModels() {
+		const response = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+		if (!response.ok) {
+			throw new Error(`Failed to fetch models: ${response.statusText}`)
+		}
+		const data = (await response.json()) as PearAIAgentModelsConfig
+		return data
+	}
+
 	public async initClineWithSubTask(parent: Cline, task?: string, images?: string[]) {
 		return this.initClineWithTask(task, images, parent)
 	}
@@ -482,9 +493,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 
+		const pearaiAgentModels = await this.getPearAIAgentModels()
+
 		const cline = new Cline({
 			provider: this,
-			apiConfiguration,
+			apiConfiguration: { ...apiConfiguration, pearaiAgentModels },
 			customInstructions: effectiveInstructions,
 			enableDiff,
 			enableCheckpoints,
@@ -549,9 +562,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			}
 		}
 
+		const pearaiAgentModels = await this.getPearAIAgentModels()
+
 		const cline = new Cline({
 			provider: this,
-			apiConfiguration,
+			apiConfiguration: { ...apiConfiguration, pearaiAgentModels },
 			customInstructions: effectiveInstructions,
 			enableDiff,
 			...checkpoints,
