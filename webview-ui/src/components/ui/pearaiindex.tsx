@@ -183,10 +183,6 @@ const TooltipStyles = {
 	overflow: "hidden",
 }
 
-export function StyledTooltip(props: any) {
-	return <Tooltip {...props} style={TooltipStyles} />
-}
-
 export const TextArea = styled.textarea`
 	padding: 8px;
 	font-family: inherit;
