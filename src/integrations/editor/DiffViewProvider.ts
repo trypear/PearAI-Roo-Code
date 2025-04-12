@@ -299,7 +299,7 @@ export class DiffViewProvider {
 					query: Buffer.from(this.originalContent ?? "").toString("base64"),
 				}),
 				uri,
-				`${fileName}: ${fileExists ? "Original ↔ Roo's Changes" : "New File"} (Editable)`,
+				`${fileName}: ${fileExists ? "Original ↔ Agent's Changes" : "New File"} (Editable)`,
 			)
 			// This may happen on very slow machines ie project idx
 			setTimeout(() => {
