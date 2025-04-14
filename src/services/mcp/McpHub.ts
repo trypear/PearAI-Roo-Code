@@ -30,7 +30,7 @@ import {
 } from "../../shared/mcp"
 import { fileExistsAtPath } from "../../utils/fs"
 import { arePathsEqual } from "../../utils/path"
-import { PEARAI_URL } from "../../shared/api"
+import { PEARAI_URL } from "../../shared/pearaiApi"
 
 export type McpConnection = {
 	server: McpServer
@@ -220,7 +220,6 @@ export class McpHub {
 				mcpSettingsFilePath,
 				`{
   "mcpServers": {
-
   }
 }`,
 			)
@@ -360,7 +359,6 @@ export class McpHub {
 
 			// Validate the config using McpSettingsSchema
 			const result = McpSettingsSchema.safeParse(config)
-			console.log("IM HERE 10101", result)
 			if (result.success) {
 				await this.updateServerConnections(result.data.mcpServers || {})
 			} else {
@@ -390,7 +388,7 @@ export class McpHub {
 		try {
 			const client = new Client(
 				{
-					name: "Roo Code",
+					name: "Agent",
 					version: this.providerRef.deref()?.context.extension?.packageJSON?.version ?? "1.0.0",
 				},
 				{

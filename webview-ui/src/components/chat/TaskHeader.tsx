@@ -18,6 +18,7 @@ import Thumbnails from "../common/Thumbnails"
 import { normalizeApiConfiguration } from "../settings/ApiOptions"
 import { DeleteTaskDialog } from "../history/DeleteTaskDialog"
 import { vscBadgeBackground, vscEditorBackground, vscInputBackground } from "../ui"
+import { usePearAiModels } from "@/hooks/usePearAiModels"
 
 interface TaskHeaderProps {
 	task: ClineMessage
@@ -44,7 +45,11 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 }) => {
 	const { t } = useTranslation()
 	const { apiConfiguration, currentTaskItem } = useExtensionState()
-	const { selectedModelInfo } = useMemo(() => normalizeApiConfiguration(apiConfiguration), [apiConfiguration])
+	const pearAiModels = usePearAiModels(apiConfiguration)
+	const { selectedModelInfo } = useMemo(() => {
+		return normalizeApiConfiguration(apiConfiguration, pearAiModels)
+	}, [apiConfiguration, pearAiModels])
+
 	const [isTaskExpanded, setIsTaskExpanded] = useState(true)
 	const [isTextExpanded, setIsTextExpanded] = useState(false)
 	const [showSeeMore, setShowSeeMore] = useState(false)
@@ -248,20 +253,16 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 									}}>
 									<div
 										style={{
-											width: 30,
-											height: "1.2em",
-											background:
-												"linear-gradient(to right, transparent, var(--vscode-badge-background))",
-										}}
-									/>
-									<div
-										style={{
 											cursor: "pointer",
-											color: "var(--vscode-badge-foreground)",
+											color: "var(--vscode-foreground)",
 											fontSize: "11px",
-											paddingRight: 8,
-											paddingLeft: 4,
+											padding: "2px 8px",
 											backgroundColor: "var(--vscode-badge-background)",
+											borderRadius: "3px",
+											border: "1px solid var(--vscode-button-secondaryBackground)",
+											display: "flex",
+											alignItems: "center",
+											height: "18px",
 										}}
 										onClick={() => setIsTextExpanded(!isTextExpanded)}>
 										{t("chat:task.seeMore")}
@@ -273,11 +274,17 @@ const TaskHeader: React.FC<TaskHeaderProps> = ({
 							<div
 								style={{
 									cursor: "pointer",
-									color: "var(--vscode-badge-foreground)",
+									color: "var(--vscode-foreground)",
 									fontSize: "11px",
 									marginLeft: "auto",
-									textAlign: "right",
-									paddingRight: 8,
+									padding: "2px 8px",
+									backgroundColor: "var(--vscode-badge-background)",
+									borderRadius: "3px",
+									border: "1px solid var(--vscode-button-secondaryBackground)",
+									display: "inline-flex",
+									alignItems: "center",
+									height: "18px",
+									width: "fit-content",
 								}}
 								onClick={() => setIsTextExpanded(!isTextExpanded)}>
 								{t("chat:task.seeLess")}

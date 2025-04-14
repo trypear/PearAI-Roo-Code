@@ -163,6 +163,15 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 	)
 
+	context.subscriptions.push(
+		vscode.commands.registerCommand("pearai-roo-cline.pearaiTokensValidated", async () => {
+			const provider = await ClineProvider.getInstance()
+			if (provider) {
+				provider.postMessageToWebview({ type: "action", action: "pearaiTokensValidated" })
+			}
+		}),
+	)
+
 	// context.subscriptions.push(
 	// 	vscode.commands.registerCommand("roo-cline.mcpButtonClicked", () => {
 	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
@@ -176,7 +185,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// )
 
 	const openClineInNewTab = async () => {
-		outputChannel.appendLine("Opening Roo Code in new tab")
+		outputChannel.appendLine("Opening Agent in new tab")
 		// (this example uses webviewProvider activation event which is necessary to deserialize cached webview, but since we use retainContextWhenHidden, we don't need to use that event)
 		// https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
 		const tabProvider = new ClineProvider(context, outputChannel)
@@ -190,7 +199,7 @@ export function activate(context: vscode.ExtensionContext) {
 		}
 		const targetCol = hasVisibleEditors ? Math.max(lastCol + 1, 1) : vscode.ViewColumn.Two
 
-		const panel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Roo Code", targetCol, {
+		const panel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Agent", targetCol, {
 			enableScripts: true,
 			retainContextWhenHidden: true,
 			localResourceRoots: [context.extensionUri],

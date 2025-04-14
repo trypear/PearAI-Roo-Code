@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useEffect, useMemo, useState } from "react"
 import { useAppTranslation } from "@/i18n/TranslationContext"
 import { Trans } from "react-i18next"
+import { getRequestyAuthUrl, getOpenRouterAuthUrl, getGlamaAuthUrl } from "../../oauth/urls"
 import { useDebounce, useEvent } from "react-use"
 import { LanguageModelChatSelector } from "vscode"
 import { Checkbox } from "vscrui"
@@ -37,10 +38,6 @@ import {
 	unboundDefaultModelInfo,
 	requestyDefaultModelId,
 	requestyDefaultModelInfo,
-	pearAiModels,
-	pearAiDefaultModelId,
-	pearAiDefaultModelInfo,
-	PEARAI_URL,
 	ApiProvider,
 } from "../../../../src/shared/api"
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
@@ -60,6 +57,7 @@ import { validateApiConfiguration, validateModelId, validateBedrockArn } from "@
 import { ApiErrorMessage } from "./ApiErrorMessage"
 import { ThinkingBudget } from "./ThinkingBudget"
 import { usePearAiModels } from "../../hooks/usePearAiModels"
+import { allModels, pearAiDefaultModelId, pearAiDefaultModelInfo } from "../../../../src/shared/pearaiApi"
 
 interface ApiOptionsProps {
 	uriScheme: string | undefined
@@ -322,7 +320,10 @@ const ApiOptions = ({
 						{t("settings:providers.apiKeyStorageNotice")}
 					</div>
 					{!apiConfiguration?.openRouterApiKey && (
-						<VSCodeButtonLink href={getOpenRouterAuthUrl(uriScheme)} appearance="secondary">
+						<VSCodeButtonLink
+							href={getOpenRouterAuthUrl(uriScheme)}
+							style={{ width: "100%" }}
+							appearance="primary">
 							{t("settings:providers.getOpenRouterApiKey")}
 						</VSCodeButtonLink>
 					)}
@@ -423,7 +424,10 @@ const ApiOptions = ({
 						{t("settings:providers.apiKeyStorageNotice")}
 					</div>
 					{!apiConfiguration?.glamaApiKey && (
-						<VSCodeButtonLink href={getGlamaAuthUrl(uriScheme)} appearance="secondary">
+						<VSCodeButtonLink
+							href={getGlamaAuthUrl(uriScheme)}
+							style={{ width: "100%" }}
+							appearance="primary">
 							{t("settings:providers.getGlamaApiKey")}
 						</VSCodeButtonLink>
 					)}
@@ -443,6 +447,14 @@ const ApiOptions = ({
 					<div className="text-sm text-vscode-descriptionForeground -mt-2">
 						{t("settings:providers.apiKeyStorageNotice")}
 					</div>
+					{!apiConfiguration?.requestyApiKey && (
+						<VSCodeButtonLink
+							href={getRequestyAuthUrl(uriScheme)}
+							style={{ width: "100%" }}
+							appearance="primary">
+							{t("settings:providers.getRequestyApiKey")}
+						</VSCodeButtonLink>
+					)}
 				</>
 			)}
 
@@ -1579,15 +1591,6 @@ const ApiOptions = ({
 	)
 }
 
-export function getGlamaAuthUrl(uriScheme?: string) {
-	const callbackUrl = `${uriScheme || "vscode"}://rooveterinaryinc.roo-cline/glama`
-	return `https://glama.ai/oauth/authorize?callback_url=${encodeURIComponent(callbackUrl)}`
-}
-
-export function getOpenRouterAuthUrl(uriScheme?: string) {
-	return `https://openrouter.ai/auth?callback_url=${uriScheme || "vscode"}://rooveterinaryinc.roo-cline/openrouter`
-}
-
 export function normalizeApiConfiguration(
 	apiConfiguration?: ApiConfiguration,
 	pearAiModelsQuery?: Record<string, ModelInfo>,
@@ -1601,7 +1604,16 @@ export function normalizeApiConfiguration(
 
 		if (modelId && modelId in models) {
 			selectedModelId = modelId
-			selectedModelInfo = models[modelId]
+			if (modelId === "pearai-model" && models[modelId].underlyingModelUpdated) {
+				let modelInfo = models[modelId].underlyingModelUpdated
+				selectedModelInfo = {
+					contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
+					supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
+					...modelInfo,
+				}
+			} else {
+				selectedModelInfo = models[modelId]
+			}
 		} else {
 			selectedModelId = defaultId
 			selectedModelInfo = models[defaultId]
@@ -1693,10 +1705,8 @@ export function normalizeApiConfiguration(
 			}
 		case "pearai": {
 			// Always use the models from the hook which are fetched when provider is selected
-			return getProviderData(
-				pearAiModelsQuery || { [pearAiDefaultModelId]: pearAiDefaultModelInfo },
-				pearAiDefaultModelId,
-			)
+			let query = pearAiModelsQuery
+			return getProviderData(pearAiModelsQuery || {}, pearAiDefaultModelId)
 		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
