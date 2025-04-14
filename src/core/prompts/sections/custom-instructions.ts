@@ -17,7 +17,7 @@ async function safeReadFile(filePath: string): Promise<string> {
 }
 
 export async function loadRuleFiles(cwd: string): Promise<string> {
-	const ruleFiles = [".clinerules", ".cursorrules", ".windsurfrules"]
+	const ruleFiles = [".agentrules", ".cursorrules", ".windsurfrules"]
 	let combinedRules = ""
 
 	for (const file of ruleFiles) {
@@ -42,7 +42,7 @@ export async function addCustomInstructions(
 	// Load mode-specific rules if mode is provided
 	let modeRuleContent = ""
 	if (mode) {
-		const modeRuleFile = `.clinerules-${mode}`
+		const modeRuleFile = `.agentrules-${mode}`
 		modeRuleContent = await safeReadFile(path.join(cwd, modeRuleFile))
 	}
 
@@ -69,7 +69,7 @@ export async function addCustomInstructions(
 
 	// Add mode-specific rules first if they exist
 	if (modeRuleContent && modeRuleContent.trim()) {
-		const modeRuleFile = `.clinerules-${mode}`
+		const modeRuleFile = `.agentrules-${mode}`
 		rules.push(`# Rules from ${modeRuleFile}:\n${modeRuleContent}`)
 	}
 

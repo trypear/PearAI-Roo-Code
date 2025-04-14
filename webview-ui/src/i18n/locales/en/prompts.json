@@ -7,7 +7,7 @@
 		"editModesConfig": "Edit modes configuration",
 		"editGlobalModes": "Edit Global Modes",
 		"editProjectModes": "Edit Project Modes (.roomodes)",
-		"createModeHelpText": "Hit the + to create a new custom mode, or just ask Roo in chat to create one for you!"
+		"createModeHelpText": "Hit the + to create a new custom mode, or just ask Agent in chat to create one for you!"
 	},
 	"apiConfiguration": {
 		"title": "API Configuration",
@@ -30,18 +30,18 @@
 	"roleDefinition": {
 		"title": "Role Definition",
 		"resetToDefault": "Reset to default",
-		"description": "Define Roo's expertise and personality for this mode. This description shapes how Roo presents itself and approaches tasks."
+		"description": "Define Agent's expertise and personality for this mode. This description shapes how Agent presents itself and approaches tasks."
 	},
 	"customInstructions": {
 		"title": "Mode-specific Custom Instructions (optional)",
 		"resetToDefault": "Reset to default",
 		"description": "Add behavioral guidelines specific to {{modeName}} mode.",
-		"loadFromFile": "Custom instructions specific to {{mode}} mode can also be loaded from <span>.clinerules-{{slug}}</span> in your workspace."
+		"loadFromFile": "Custom instructions specific to {{mode}} mode can also be loaded from <span>.agentrules-{{slug}}</span> in your workspace."
 	},
 	"globalCustomInstructions": {
 		"title": "Custom Instructions for All Modes",
-		"description": "These instructions apply to all modes. They provide a base set of behaviors that can be enhanced by mode-specific instructions below.\nIf you would like Roo to think and speak in a different language than your editor display language ({{language}}), you can specify it here.",
-		"loadFromFile": "Instructions can also be loaded from <span>.clinerules</span> in your workspace."
+		"description": "These instructions apply to all modes. They provide a base set of behaviors that can be enhanced by mode-specific instructions below.\nIf you would like Agent to think and speak in a different language than your editor display language ({{language}}), you can specify it here.",
+		"loadFromFile": "Instructions can also be loaded from <span>.agentrules</span> in your workspace."
 	},
 	"systemPrompt": {
 		"preview": "Preview System Prompt",
@@ -62,7 +62,7 @@
 		"types": {
 			"ENHANCE": {
 				"label": "Enhance Prompt",
-				"description": "Use prompt enhancement to get tailored suggestions or improvements for your inputs. This ensures Roo understands your intent and provides the best possible responses. Available via the ✨ icon in chat."
+				"description": "Use prompt enhancement to get tailored suggestions or improvements for your inputs. This ensures Agent understands your intent and provides the best possible responses. Available via the ✨ icon in chat."
 			},
 			"EXPLAIN": {
 				"label": "Explain Code",
@@ -96,7 +96,7 @@
 	},
 	"customModeCreation": {
 		"enableTitle": "Enable Custom Mode Creation Through Prompts",
-		"description": "When enabled, Roo allows you to create custom modes using prompts like 'Make me a custom mode that…'. Disabling this reduces your system prompt by about 700 tokens when this feature isn't needed. When disabled you can still manually create custom modes using the + button above or by editing the related config JSON."
+		"description": "When enabled, Agent allows you to create custom modes using prompts like 'Make me a custom mode that…'. Disabling this reduces your system prompt by about 700 tokens when this feature isn't needed. When disabled you can still manually create custom modes using the + button above or by editing the related config JSON."
 	},
 	"advancedSystemPrompt": {
 		"title": "Advanced: Override System Prompt",
@@ -127,7 +127,7 @@
 		},
 		"roleDefinition": {
 			"label": "Role Definition",
-			"description": "Define Roo's expertise and personality for this mode."
+			"description": "Define Agent's expertise and personality for this mode."
 		},
 		"tools": {
 			"label": "Available Tools",

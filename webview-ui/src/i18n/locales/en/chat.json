@@ -1,5 +1,5 @@
 {
-	"greeting": "What can PearAI Agent do for you?",
+	"greeting": "What can Agent do for you?",
 	"task": {
 		"title": "Task",
 		"seeMore": "See more",
@@ -104,44 +104,44 @@
 		"current": "Current"
 	},
 	"fileOperations": {
-		"wantsToRead": "PearAI Agent wants to read this file:",
-		"didRead": "PearAI Agent read this file:",
-		"wantsToEdit": "PearAI Agent wants to edit this file:",
-		"wantsToCreate": "PearAI Agent wants to create a new file:"
+		"wantsToRead": "Agent wants to read this file:",
+		"didRead": "Agent read this file:",
+		"wantsToEdit": "Agent wants to edit this file:",
+		"wantsToCreate": "Agent wants to create a new file:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "PearAI Agent wants to view the top level files in this directory:",
-		"didViewTopLevel": "PearAI Agent viewed the top level files in this directory:",
-		"wantsToViewRecursive": "PearAI Agent wants to recursively view all files in this directory:",
-		"didViewRecursive": "PearAI Agent recursively viewed all files in this directory:",
-		"wantsToViewDefinitions": "PearAI Agent wants to view source code definition names used in this directory:",
-		"didViewDefinitions": "PearAI Agent viewed source code definition names used in this directory:",
-		"wantsToSearch": "PearAI Agent wants to search this directory for <code>{{regex}}</code>:",
-		"didSearch": "PearAI Agent searched this directory for <code>{{regex}}</code>:"
+		"wantsToViewTopLevel": "Agent wants to view the top level files in this directory:",
+		"didViewTopLevel": "Agent viewed the top level files in this directory:",
+		"wantsToViewRecursive": "Agent wants to recursively view all files in this directory:",
+		"didViewRecursive": "Agent recursively viewed all files in this directory:",
+		"wantsToViewDefinitions": "Agent wants to view source code definition names used in this directory:",
+		"didViewDefinitions": "Agent viewed source code definition names used in this directory:",
+		"wantsToSearch": "Agent wants to search this directory for <code>{{regex}}</code>:",
+		"didSearch": "Agent searched this directory for <code>{{regex}}</code>:"
 	},
 	"commandOutput": "Command Output",
 	"response": "Response",
 	"arguments": "Arguments",
 	"mcp": {
-		"wantsToUseTool": "PearAI Agent wants to use a tool on the {{serverName}} MCP server:",
-		"wantsToAccessResource": "PearAI Agent wants to access a resource on the {{serverName}} MCP server:"
+		"wantsToUseTool": "Agent wants to use a tool on the {{serverName}} MCP server:",
+		"wantsToAccessResource": "Agent wants to access a resource on the {{serverName}} MCP server:"
 	},
 	"modes": {
-		"wantsToSwitch": "PearAI Agent wants to switch to {{mode}} mode",
-		"wantsToSwitchWithReason": "PearAI Agent wants to switch to {{mode}} mode because: {{reason}}",
-		"didSwitch": "PearAI Agent switched to {{mode}} mode",
-		"didSwitchWithReason": "PearAI Agent switched to {{mode}} mode because: {{reason}}"
+		"wantsToSwitch": "Agent wants to switch to {{mode}} mode",
+		"wantsToSwitchWithReason": "Agent wants to switch to {{mode}} mode because: {{reason}}",
+		"didSwitch": "Agent switched to {{mode}} mode",
+		"didSwitchWithReason": "Agent switched to {{mode}} mode because: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "PearAI Agent wants to create a new subtask in {{mode}} mode:",
-		"wantsToFinish": "PearAI Agent wants to finish this subtask"
+		"wantsToCreate": "Agent wants to create a new subtask in {{mode}} mode:",
+		"wantsToFinish": "Agent wants to finish this subtask"
 	},
 	"questions": {
-		"hasQuestion": "PearAI Agent has a question:"
+		"hasQuestion": "Agent has a question:"
 	},
 	"taskCompleted": "Task Completed",
 	"error": "Error",
-	"troubleMessage": "PearAI Agent is having trouble...",
+	"troubleMessage": "Agent is having trouble...",
 	"shellIntegration": {
 		"unavailable": "Shell Integration Unavailable",
 		"troubleshooting": "Still having trouble?"
@@ -152,7 +152,7 @@
 	"autoApprove": {
 		"title": "Auto-approve:",
 		"none": "None",
-		"description": "Auto-approve allows PearAI Agent to perform actions without asking for permission. Only enable for actions you fully trust.",
+		"description": "Auto-approve allows Agent to perform actions without asking for permission. Only enable for actions you fully trust.",
 		"actions": {
 			"readFiles": {
 				"label": "Read files and directories",
@@ -197,8 +197,8 @@
 		}
 	},
 	"announcement": {
-		"title": "🎉 PearAI Agent Code 3.10 Released",
-		"description": "PearAI Agent Code 3.10 brings powerful productivity enhancements!",
+		"title": "🎉 Agent Code 3.10 Released",
+		"description": "Agent Code 3.10 brings powerful productivity enhancements!",
 		"whatsNew": "What's New",
 		"feature1": "Suggested responses to questions",
 		"feature2": "Improved large file handling",
@@ -213,7 +213,7 @@
 		"seconds": "{{count}}s"
 	},
 	"browser": {
-		"rooWantsToUse": "PearAI Agent wants to use the browser:",
+		"rooWantsToUse": "Agent wants to use the browser:",
 		"consoleLogs": "Console Logs",
 		"noNewLogs": "(No new logs)",
 		"screenshot": "Browser screenshot",

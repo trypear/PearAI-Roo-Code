@@ -380,9 +380,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -855,9 +855,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -1294,9 +1294,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -1680,9 +1680,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -2066,9 +2066,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -2452,9 +2452,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -2887,9 +2887,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -3727,9 +3727,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -4162,9 +4162,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -4598,9 +4598,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -4984,9 +4984,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -5005,9 +5005,9 @@ Mode-specific Instructions:
 Custom test instructions
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -5026,9 +5026,9 @@ Mode-specific Instructions:
 Mode-specific instructions
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -5559,9 +5559,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -5574,9 +5574,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -6036,9 +6036,9 @@ Mode-specific Instructions:
 6. Use the switch_mode tool to request that the user switch to another mode to implement the solution.
 
 Rules:
-# Rules from .clinerules-architect:
+# Rules from .agentrules-architect:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -6366,9 +6366,9 @@ Mode-specific Instructions:
 You can analyze code, explain concepts, and access external resources. Make sure to answer the user's questions and don't rush to switch to implementing code. Include Mermaid diagrams if they help make your response clearer.
 
 Rules:
-# Rules from .clinerules-ask:
+# Rules from .agentrules-ask:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -6381,9 +6381,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -6396,9 +6396,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7321,9 +7321,9 @@ Language Preference:
 You should always speak and think in the "en" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7339,9 +7339,9 @@ Mode-specific Instructions:
 Custom test instructions
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7357,9 +7357,9 @@ Language Preference:
 You should always speak and think in the "es" language.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7378,9 +7378,9 @@ Mode-specific Instructions:
 Second instruction
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7393,9 +7393,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-architect:
+# Rules from .agentrules-architect:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7408,9 +7408,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-ask:
+# Rules from .agentrules-ask:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7423,9 +7423,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7438,9 +7438,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-review:
+# Rules from .agentrules-review:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7453,9 +7453,9 @@ USER'S CUSTOM INSTRUCTIONS
 The following additional instructions are provided by the user, and should be followed to the best of your ability without interfering with the TOOL USE guidelines.
 
 Rules:
-# Rules from .clinerules-test:
+# Rules from .agentrules-test:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
 
@@ -7471,8 +7471,8 @@ Mode-specific Instructions:
   Custom mode instructions
 
 Rules:
-# Rules from .clinerules-code:
+# Rules from .agentrules-code:
 Mock mode-specific rules
-# Rules from .clinerules:
+# Rules from .agentrules:
 Mock generic rules"
 `;
