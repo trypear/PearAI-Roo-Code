@@ -61,9 +61,9 @@ __setMockImplementation(
 		// Add rules
 		const rules = []
 		if (mode) {
-			rules.push(`# Rules from .clinerules-${mode}:\nMock mode-specific rules`)
+			rules.push(`# Rules from .agentrules-${mode}:\nMock mode-specific rules`)
 		}
-		rules.push(`# Rules from .clinerules:\nMock generic rules`)
+		rules.push(`# Rules from .agentrules:\nMock generic rules`)
 
 		if (rules.length > 0) {
 			sections.push(`Rules:\n${rules.join("\n")}`)
