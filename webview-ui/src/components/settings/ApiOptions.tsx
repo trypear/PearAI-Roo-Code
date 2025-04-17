@@ -1607,8 +1607,8 @@ export function normalizeApiConfiguration(
 			if (modelId === "pearai-model" && models[modelId].underlyingModelUpdated) {
 				let modelInfo = models[modelId].underlyingModelUpdated
 				selectedModelInfo = {
-					contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
-					supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
+					contextWindow: modelInfo.contextWindow || 4096,
+					supportsPromptCache: modelInfo.supportsPromptCaching || false,
 					...modelInfo,
 				}
 			} else {
@@ -1619,7 +1619,13 @@ export function normalizeApiConfiguration(
 			selectedModelInfo = models[defaultId]
 		}
 
-		return { selectedProvider: provider, selectedModelId, selectedModelInfo }
+		// Preserve all original configuration fields while updating model-specific ones
+		return {
+			selectedProvider: provider,
+			selectedModelId,
+			selectedModelInfo,
+			...apiConfiguration,
+		}
 	}
 
 	switch (provider) {
@@ -1705,8 +1711,16 @@ export function normalizeApiConfiguration(
 			}
 		case "pearai": {
 			// Always use the models from the hook which are fetched when provider is selected
-			let query = pearAiModelsQuery
-			return getProviderData(pearAiModelsQuery || {}, pearAiDefaultModelId)
+			const { selectedProvider, selectedModelId, selectedModelInfo } = getProviderData(
+				pearAiModelsQuery || {},
+				pearAiDefaultModelId,
+			)
+			return {
+				selectedProvider,
+				selectedModelId,
+				selectedModelInfo,
+				creatorMode: apiConfiguration?.creatorMode,
+			}
 		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)

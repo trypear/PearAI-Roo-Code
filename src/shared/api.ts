@@ -85,12 +85,12 @@ export interface ApiHandlerOptions {
 	pearaiAgentModels?: PearAIAgentModelsConfig
 	modelMaxThinkingTokens?: number
 	fakeAi?: unknown
+	creatorMode?: boolean
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
 	apiProvider?: ApiProvider
 	id?: string // stable unique identifier
-	creatorMode?: boolean
 }
 
 // Import GlobalStateKey type from globalState.ts

@@ -115,6 +115,7 @@ export type ClineOptions = {
 	rootTask?: Cline
 	parentTask?: Cline
 	taskNumber?: number
+	creatorMode?: boolean
 }
 
 export class Cline extends EventEmitter<ClineEvents> {
@@ -131,6 +132,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 	private pausedModeSlug: string = defaultModeSlug
 	private pauseInterval: NodeJS.Timeout | undefined
 
+	public creatorMode: boolean
 	readonly apiConfiguration: ApiConfiguration
 	api: ApiHandler
 	private urlContentFetcher: UrlContentFetcher
@@ -192,6 +194,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		rootTask,
 		parentTask,
 		taskNumber,
+		creatorMode,
 	}: ClineOptions) {
 		super()
 
@@ -218,6 +221,8 @@ export class Cline extends EventEmitter<ClineEvents> {
 		this.diffViewProvider = new DiffViewProvider(this.cwd)
 		this.enableCheckpoints = enableCheckpoints
 		this.checkpointStorage = checkpointStorage
+
+		this.creatorMode = creatorMode ?? false
 
 		this.rootTask = rootTask
 		this.parentTask = parentTask

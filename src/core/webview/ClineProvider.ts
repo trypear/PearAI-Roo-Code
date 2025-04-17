@@ -501,6 +501,15 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			experiments,
 		} = await this.getState()
 
+		// Update API configuration with creator mode
+		await this.updateApiConfiguration({
+			...apiConfiguration,
+			creatorMode,
+		})
+
+		// Post updated state to webview immediately
+		await this.postStateToWebview()
+
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 
@@ -524,6 +533,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			rootTask: this.clineStack.length > 0 ? this.clineStack[0] : undefined,
 			parentTask,
 			taskNumber: this.clineStack.length + 1,
+			creatorMode,
 		})
 
 		await this.addClineToStack(cline)
@@ -2175,6 +2185,13 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	private async updateApiConfiguration(apiConfiguration: ApiConfiguration) {
 		// Update mode's default config.
 		const { mode } = await this.getState()
+		const currentCline = this.getCurrentCline()
+
+		// Preserve creator mode when updating configuration
+		const updatedConfig = {
+			...apiConfiguration,
+			creatorMode: currentCline?.creatorMode,
+		}
 
 		if (mode) {
 			const currentApiConfigName = await this.getGlobalState("currentApiConfigName")
@@ -2186,7 +2203,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			}
 		}
 
-		await this.contextProxy.setApiConfiguration(apiConfiguration)
+		await this.contextProxy.setApiConfiguration(updatedConfig)
 
 		if (this.getCurrentCline()) {
 			this.getCurrentCline()!.api = buildApiHandler(apiConfiguration)
@@ -2511,8 +2528,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	}
 
 	async getStateToPostToWebview() {
+		const currentCline = this.getCurrentCline()
+		// Get base state
 		const {
-			apiConfiguration,
+			apiConfiguration: baseApiConfiguration,
 			lastShownAnnouncementId,
 			customInstructions,
 			alwaysAllowReadOnly,
@@ -2559,6 +2578,12 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			language,
 			maxReadFileLine,
 		} = await this.getState()
+
+		// Construct API configuration with creator mode
+		const apiConfiguration = {
+			...baseApiConfiguration,
+			creatorMode: currentCline?.creatorMode,
+		}
 
 		const telemetryKey = process.env.POSTHOG_API_KEY
 		const machineId = vscode.env.machineId
