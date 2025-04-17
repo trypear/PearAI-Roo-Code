@@ -44,6 +44,7 @@ import {
 	vscInputBorder,
 	vscSidebarBorder,
 } from "../ui"
+import { CreatorModeBar } from "./CreatorModeBar"
 
 interface ChatViewProps {
 	isHidden: boolean
@@ -1138,6 +1139,9 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				flexDirection: "column",
 				overflow: "hidden",
 			}}>
+			{apiConfiguration?.creatorMode === true && (
+				<CreatorModeBar requestedPlan="YEET" isGenerating={isStreaming} />
+			)}
 			{task ? (
 				<>
 					<TaskHeader
