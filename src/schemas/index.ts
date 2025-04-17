@@ -449,6 +449,7 @@ export const providerSettingsSchema = z.object({
 			defaultModelId: z.string().optional(),
 		})
 		.optional(),
+	creatorMode: z.boolean().optional(),
 })
 
 export type ProviderSettings = z.infer<typeof providerSettingsSchema>
@@ -546,6 +547,7 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	pearaiApiKey: undefined,
 	pearaiModelInfo: undefined,
 	pearaiAgentModels: undefined,
+	creatorMode: undefined,
 	// X.AI (Grok)
 	xaiApiKey: undefined,
 }
