@@ -33,10 +33,11 @@ export const registerPearListener = async () => {
 				// Wait for the view to be ready using a helper function
 				await ensureViewIsReady(sidebarProvider)
 
-				// Switch to creator mode
-				await sidebarProvider.handleModeSwitch("creator")
-				await sidebarProvider.postStateToWebview()
-
+				if (msg.newProject) {
+					// Switch to creator mode
+					await sidebarProvider.handleModeSwitch("creator")
+					await sidebarProvider.postStateToWebview()
+				}
 				// Navigate to chat view
 				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 
@@ -44,7 +45,7 @@ export const registerPearListener = async () => {
 				await new Promise((resolve) => setTimeout(resolve, 300))
 
 				// Initialize with task
-				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, true)
+				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, msg.newProject)
 			}
 		})
 	} else {
