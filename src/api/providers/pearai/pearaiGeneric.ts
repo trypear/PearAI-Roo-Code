@@ -221,28 +221,30 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 	}
 
 	override getModel(): { id: string; info: ModelInfo } {
-		const modelId = this.options.openAiModelId ?? "none"
+		const modelId = this.options.openAiModelId
 		// Prioritize serverside model info
-		if (this.options.apiModelId && this.options.pearaiAgentModels) {
+		if (modelId && this.options.pearaiAgentModels) {
 			let modelInfo = null
-			if (this.options.apiModelId.startsWith("pearai")) {
-				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId].underlyingModelUpdated
+			if (modelId.startsWith("pearai")) {
+				modelInfo = this.options.pearaiAgentModels.models[modelId].underlyingModelUpdated
 			} else {
-				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId || "pearai-model"]
+				modelInfo = this.options.pearaiAgentModels.models[modelId || "pearai-model"]
 			}
 			if (modelInfo) {
-				return {
-					id: this.options.apiModelId,
+				const result = {
+					id: modelId,
 					info: modelInfo,
 				}
+				return result
 			}
 		}
-		return {
-			id: modelId,
-			info: allModels[modelId],
-		}
-	}
 
+		const result = {
+			id: modelId ?? pearAiDefaultModelId,
+			info: allModels[modelId ?? pearAiDefaultModelId],
+		}
+		return result
+	}
 	async completePrompt(prompt: string): Promise<string> {
 		try {
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
