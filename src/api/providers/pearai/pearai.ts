@@ -82,6 +82,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 						apiModelId: underlyingModel,
 					})
 				} else {
+					// Use OpenAI fields here as we are using the same handler structure as OpenAI Hander lin PearAIGenericHandler
 					this.handler = new PearAIGenericHandler({
 						...options,
 						openAiBaseUrl: PEARAI_URL,
