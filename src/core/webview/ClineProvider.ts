@@ -500,15 +500,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 
-		let pearaiAgentModels
-
-		try {
-			pearaiAgentModels = await this.getPearAIAgentModels()
-		} catch (error) {
-			vscode.window.showErrorMessage(
-				"Failed to fetch PearAI Agent Models. PearAI services may be down, please contact PearAI Support.",
-			)
-		}
+		const pearaiAgentModels = await this.getPearAIAgentModels()
 
 		const cline = new Cline({
 			provider: this,
