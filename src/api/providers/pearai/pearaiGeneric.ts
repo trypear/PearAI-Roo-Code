@@ -221,53 +221,30 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 	}
 
 	override getModel(): { id: string; info: ModelInfo } {
-		const modelId = this.options.openAiModelId ?? "none"
-
-		// PATCH for issue with update
-		const fallbackModelInfo: ModelInfo = {
-			maxTokens: 8192,
-			contextWindow: 200_000,
-			supportsImages: true,
-			supportsComputerUse: true,
-			supportsPromptCache: true,
-			inputPrice: 3.0,
-			outputPrice: 15.0,
-			cacheWritesPrice: 3.75,
-			cacheReadsPrice: 0.3,
-		}
-
+		const modelId = this.options.openAiModelId
 		// Prioritize serverside model info
-		if (this.options.apiModelId && this.options.pearaiAgentModels) {
+		if (modelId && this.options.pearaiAgentModels) {
 			let modelInfo = null
-			if (this.options.apiModelId.startsWith("pearai")) {
-				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId].underlyingModelUpdated
+			if (modelId.startsWith("pearai")) {
+				modelInfo = this.options.pearaiAgentModels.models[modelId].underlyingModelUpdated
 			} else {
-				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId || "pearai-model"]
+				modelInfo = this.options.pearaiAgentModels.models[modelId || "pearai-model"]
 			}
 			if (modelInfo) {
 				const result = {
-					id: this.options.apiModelId,
+					id: modelId,
 					info: modelInfo,
-				}
-				// If model info is missing or has undefined context window, use fallback
-				if (!result.info || !result.info.contextWindow) {
-					result.info = fallbackModelInfo
 				}
 				return result
 			}
 		}
 
 		const result = {
-			id: modelId,
-			info: allModels[modelId],
-		}
-		// If model info is missing or has undefined context window, use fallback
-		if (!result.info || !result.info.contextWindow) {
-			result.info = fallbackModelInfo
+			id: modelId ?? pearAiDefaultModelId,
+			info: allModels[modelId ?? pearAiDefaultModelId],
 		}
 		return result
 	}
-
 	async completePrompt(prompt: string): Promise<string> {
 		try {
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
