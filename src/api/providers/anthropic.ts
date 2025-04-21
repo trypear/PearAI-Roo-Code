@@ -227,6 +227,19 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 			id = "claude-3-7-sonnet-20250219"
 		}
 
+		// PATCH for issue with update
+		const fallbackModelInfo: ModelInfo = {
+			maxTokens: 8192,
+			contextWindow: 200_000,
+			supportsImages: true,
+			supportsComputerUse: true,
+			supportsPromptCache: true,
+			inputPrice: 3.0,
+			outputPrice: 15.0,
+			cacheWritesPrice: 3.75,
+			cacheReadsPrice: 0.3,
+		}
+
 		// Prioritize serverside model info
 		if (this.options.apiModelId && this.options.pearaiAgentModels) {
 			let modelInfo = null
@@ -236,7 +249,7 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId || "pearai-model"]
 			}
 			if (modelInfo) {
-				return {
+				let result = {
 					id: this.options.apiModelId,
 					info: modelInfo,
 					virtualId,
@@ -246,15 +259,36 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 						defaultMaxTokens: ANTHROPIC_DEFAULT_MAX_TOKENS,
 					}),
 				}
+				if (result.info.contextWindow === undefined) {
+					result.info = {
+						maxTokens: 8192,
+						contextWindow: 200_000,
+						supportsImages: true,
+						supportsComputerUse: true,
+						supportsPromptCache: true,
+						inputPrice: 3.0,
+						outputPrice: 15.0,
+						cacheWritesPrice: 3.75,
+						cacheReadsPrice: 0.3,
+					}
+				}
+				if (result.info.contextWindow === undefined) {
+					result.info = fallbackModelInfo
+				}
+				return result
 			}
 		}
 
-		return {
+		const result = {
 			id,
 			info,
 			virtualId, // Include the original ID to use for header selection
 			...getModelParams({ options: this.options, model: info, defaultMaxTokens: ANTHROPIC_DEFAULT_MAX_TOKENS }),
 		}
+		if (result.info.contextWindow === undefined) {
+			result.info = fallbackModelInfo
+		}
+		return result
 	}
 
 	async completePrompt(prompt: string) {
