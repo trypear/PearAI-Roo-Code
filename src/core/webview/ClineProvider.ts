@@ -462,12 +462,19 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	}
 
 	public async getPearAIAgentModels() {
-		const response = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
-		if (!response.ok) {
-			throw new Error(`Failed to fetch models: ${response.statusText}`)
+		try {
+			const response = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
+			if (!response.ok) {
+				throw new Error(`Failed to fetch models: ${response.statusText}`)
+			}
+			const data = (await response.json()) as PearAIAgentModelsConfig
+			return data
+		} catch (error) {
+			vscode.window.showErrorMessage(
+				"Failed to fetch PearAI Agent Models. PearAI services may be down, please contact PearAI Support.",
+			)
+			return undefined
 		}
-		const data = (await response.json()) as PearAIAgentModelsConfig
-		return data
 	}
 
 	public async initClineWithSubTask(parent: Cline, task?: string, images?: string[]) {
@@ -493,7 +500,15 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 
-		const pearaiAgentModels = await this.getPearAIAgentModels()
+		let pearaiAgentModels
+
+		try {
+			pearaiAgentModels = await this.getPearAIAgentModels()
+		} catch (error) {
+			vscode.window.showErrorMessage(
+				"Failed to fetch PearAI Agent Models. PearAI services may be down, please contact PearAI Support.",
+			)
+		}
 
 		const cline = new Cline({
 			provider: this,
@@ -655,7 +670,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 					<script nonce="${nonce}">
 						window.IMAGES_BASE_URI = "${imagesUri}"
 					</script>
-					<title>Roo Code</title>
+					<title>Agent</title>
 				</head>
 				<body>
 					<div id="root"></div>
