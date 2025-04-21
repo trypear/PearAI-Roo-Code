@@ -259,20 +259,8 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 						defaultMaxTokens: ANTHROPIC_DEFAULT_MAX_TOKENS,
 					}),
 				}
-				if (result.info.contextWindow === undefined) {
-					result.info = {
-						maxTokens: 8192,
-						contextWindow: 200_000,
-						supportsImages: true,
-						supportsComputerUse: true,
-						supportsPromptCache: true,
-						inputPrice: 3.0,
-						outputPrice: 15.0,
-						cacheWritesPrice: 3.75,
-						cacheReadsPrice: 0.3,
-					}
-				}
-				if (result.info.contextWindow === undefined) {
+				// If model info is missing or has undefined context window, use fallback
+				if (!result.info || !result.info.contextWindow) {
 					result.info = fallbackModelInfo
 				}
 				return result
@@ -285,7 +273,7 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 			virtualId, // Include the original ID to use for header selection
 			...getModelParams({ options: this.options, model: info, defaultMaxTokens: ANTHROPIC_DEFAULT_MAX_TOKENS }),
 		}
-		if (result.info.contextWindow === undefined) {
+		if (!result.info || !result.info.contextWindow) {
 			result.info = fallbackModelInfo
 		}
 		return result
