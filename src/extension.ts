@@ -157,15 +157,6 @@ export function activate(context: vscode.ExtensionContext) {
 		}),
 	)
 
-	context.subscriptions.push(
-		vscode.commands.registerCommand("pearai-roo-cline.pearaiTokensValidated", async () => {
-			const provider = await ClineProvider.getInstance()
-			if (provider) {
-				provider.postMessageToWebview({ type: "action", action: "pearaiTokensValidated" })
-			}
-		}),
-	)
-
 	// context.subscriptions.push(
 	// 	vscode.commands.registerCommand("roo-cline.mcpButtonClicked", () => {
 	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
