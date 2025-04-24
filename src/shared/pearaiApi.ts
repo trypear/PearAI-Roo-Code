@@ -130,3 +130,9 @@ export const allModels: { [key: string]: ModelInfo } = {
 	// Unbound models (single default model)
 	[`unbound/${unboundDefaultModelId}`]: unboundDefaultModelInfo,
 } as const satisfies Record<string, ModelInfo>
+
+export interface creatorModeConfig {
+	creatorMode?: boolean // Defaults to false when not set
+	newProjectType?: string
+	newProjectPath?: string
+}

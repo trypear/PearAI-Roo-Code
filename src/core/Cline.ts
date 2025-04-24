@@ -83,6 +83,7 @@ import { parseXml } from "../utils/xml"
 import { readLines } from "../integrations/misc/read-lines"
 import { getWorkspacePath } from "../utils/path"
 import { isBinaryFile } from "isbinaryfile"
+import { creatorModeConfig } from "../shared/pearaiApi"
 
 type ToolResponse = string | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>
 type UserContent = Array<Anthropic.Messages.ContentBlockParam>
@@ -115,7 +116,7 @@ export type ClineOptions = {
 	rootTask?: Cline
 	parentTask?: Cline
 	taskNumber?: number
-	creatorMode?: boolean
+	creatorModeConfig?: creatorModeConfig
 }
 
 export class Cline extends EventEmitter<ClineEvents> {
@@ -132,7 +133,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 	private pausedModeSlug: string = defaultModeSlug
 	private pauseInterval: NodeJS.Timeout | undefined
 
-	public creatorMode: boolean
+	public creatorModeConfig: creatorModeConfig
 	readonly apiConfiguration: ApiConfiguration
 	api: ApiHandler
 	private urlContentFetcher: UrlContentFetcher
@@ -194,7 +195,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		rootTask,
 		parentTask,
 		taskNumber,
-		creatorMode,
+		creatorModeConfig,
 	}: ClineOptions) {
 		super()
 
@@ -222,7 +223,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		this.enableCheckpoints = enableCheckpoints
 		this.checkpointStorage = checkpointStorage
 
-		this.creatorMode = creatorMode ?? false
+		this.creatorModeConfig = creatorModeConfig ?? { creatorMode: false }
 
 		this.rootTask = rootTask
 		this.parentTask = parentTask

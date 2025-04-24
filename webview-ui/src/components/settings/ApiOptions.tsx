@@ -1719,7 +1719,7 @@ export function normalizeApiConfiguration(
 				selectedProvider,
 				selectedModelId,
 				selectedModelInfo,
-				creatorMode: apiConfiguration?.creatorMode,
+				creatorMode: apiConfiguration?.creatorModeConfig?.creatorMode,
 			}
 		}
 		default:

@@ -1139,7 +1139,7 @@ const ChatView = ({ isHidden, showAnnouncement, hideAnnouncement, showHistoryVie
 				flexDirection: "column",
 				overflow: "hidden",
 			}}>
-			{apiConfiguration?.creatorMode === true && (
+			{apiConfiguration?.creatorModeConfig?.creatorMode === true && (
 				<CreatorModeBar requestedPlan="YEET" isGenerating={isStreaming} />
 			)}
 			{task ? (
