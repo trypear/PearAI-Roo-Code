@@ -464,12 +464,9 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		return this.initClineWithTask(task, images, parent)
 	}
 
-	// When initializing a new task, (not from history but from a tool command
-	// new_task) there is no need to remove the previouse task since the new
-	// task is a subtask of the previous one, and when it finishes it is removed
-	// from the stack and the caller is resumed in this way we can have a chain
-	// of tasks, each one being a sub task of the previous one until the main
-	// task is finished.
+	// when initializing a new task, (not from history but from a tool command new_task) there is no need to remove the previouse task
+	// since the new task is a sub task of the previous one, and when it finishes it is removed from the stack and the caller is resumed
+	// in this way we can have a chain of tasks, each one being a sub task of the previous one until the main task is finished
 	public async initClineWithTask(
 		task?: string,
 		images?: string[],
@@ -485,7 +482,8 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 				| "experiments"
 			>
 		> = {},
-		creatorMode?: boolean
+		creatorMode?: boolean,
+		newProjectType?: string,
 	) {
 		const {
 			apiConfiguration,
@@ -502,6 +500,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		await this.updateApiConfiguration({
 			...apiConfiguration,
 			creatorMode,
+			newProjectType,
 		})
 
 		// Post updated state to webview immediately
@@ -516,7 +515,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				...apiConfiguration, 
 				pearaiAgentModels: pearaiAgentModels,
 				creatorMode,
 			},
@@ -533,6 +531,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			onCreated: (cline) => this.emit("clineCreated", cline),
 			...options,
 			creatorMode,
+			newProjectType,
 		})
 
 		await this.addClineToStack(cline)
@@ -857,6 +856,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const updatedConfig = {
 			...providerSettings,
 			creatorMode: currentCline?.creatorMode,
+			newProjectType: currentCline?.newProjectType,
 		} satisfies ProviderSettings;
 
 		if (mode) {
@@ -1251,6 +1251,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const apiConfiguration = {
 			...baseApiConfiguration,
 			creatorMode: currentCline?.creatorMode,
+			newProjectType: currentCline?.newProjectType,
 		}
 
 		const telemetryKey = process.env.POSTHOG_API_KEY

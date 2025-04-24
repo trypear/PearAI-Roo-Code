@@ -105,8 +105,15 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 							case "claude-3-opus-20240229":
 							case "claude-3-haiku-20240307":
 								betas.push("prompt-caching-2024-07-31")
+
+								// Include prompt_key if newProjectType is set
 								return {
-									headers: { "anthropic-beta": betas.join(",") },
+									headers: {
+										"anthropic-beta": betas.join(","),
+										...(String(this.options.newProjectType)
+											? { prompt_key: String(this.options.newProjectType) }
+											: {}),
+									},
 									authorization: `Bearer ${this.options.apiKey}`,
 								}
 							default:

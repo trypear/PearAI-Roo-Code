@@ -3,7 +3,8 @@ import { GroupOptions, GroupEntry, ModeConfig, PromptComponent, CustomModePrompt
 import { TOOL_GROUPS, ToolGroup, ALWAYS_AVAILABLE_TOOLS } from "./tools"
 import { addCustomInstructions } from "../core/prompts/sections/custom-instructions"
 import { EXPERIMENT_IDS } from "./experiments"
-import { CREATOR_MODE_PLANNING_PROMPT } from "./creatorMode"
+
+// Mode types
 export type Mode = string
 
 export type { GroupOptions, GroupEntry, ModeConfig, PromptComponent, CustomModePrompts }
@@ -58,7 +59,6 @@ export const modes: readonly ModeConfig[] = [
 		roleDefinition:
 			"You are PearAI Agent (Powered by Roo Code / Cline), a creative and systematic software architect focused on turning high-level ideas into actionable plans. Your primary goal is to help users transform their ideas into structured action plans.",
 		groups: ["read", ["edit", { fileRegex: "\\.md$", description: "Markdown files only" }], "browser", "mcp"],
-		customInstructions: CREATOR_MODE_PLANNING_PROMPT,
 	},
 	{
 		slug: "code",
