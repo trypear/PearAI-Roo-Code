@@ -339,6 +339,14 @@ export type Experiments = z.infer<typeof experimentsSchema>
 
 type _AssertExperiments = AssertEqual<Equals<ExperimentId, Keys<Experiments>>>
 
+export const creatorModeConfigSchema = z.object({
+	creatorMode: z.boolean().optional(),
+	newProjectType: z.string().optional(),
+	newProjectPath: z.string().optional(),
+});
+
+export type CreatorModeConfig = z.infer<typeof creatorModeConfigSchema>
+
 /**
  * ProviderSettings
  */
@@ -449,8 +457,7 @@ export const providerSettingsSchema = z.object({
 			defaultModelId: z.string().optional(),
 		})
 		.optional(),
-	creatorMode: z.boolean().optional(),
-	newProjectType: z.string().optional(),
+	creatorModeConfig: creatorModeConfigSchema.optional(),
 })
 
 export type ProviderSettings = z.infer<typeof providerSettingsSchema>
@@ -548,8 +555,7 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	pearaiApiKey: undefined,
 	pearaiModelInfo: undefined,
 	pearaiAgentModels: undefined,
-	creatorMode: undefined,
-	newProjectType: undefined,
+	creatorModeConfig: undefined,
 	// X.AI (Grok)
 	xaiApiKey: undefined,
 }

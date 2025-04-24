@@ -202,8 +202,13 @@ type ProviderSettings = {
 				defaultModelId?: string | undefined
 		  }
 		| undefined
-	creatorMode?: boolean | undefined
-	newProjectType?: string | undefined
+	creatorModeConfig?:
+		| {
+				creatorMode?: boolean | undefined
+				newProjectType?: string | undefined
+				newProjectPath?: string | undefined
+		  }
+		| undefined
 }
 
 type GlobalSettings = {

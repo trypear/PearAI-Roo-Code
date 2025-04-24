@@ -1,6 +1,8 @@
 import * as vscode from "vscode"
 import { ClineProvider } from "../core/webview/ClineProvider"
 import { assert } from "../utils/util"
+import { CreatorModeConfig } from "../schemas"
+
 
 export const getPearaiExtension = async () => {
 	const pearAiExtension = vscode.extensions.getExtension("pearai.pearai")
@@ -33,7 +35,7 @@ export const registerPearListener = async () => {
 				// Wait for the view to be ready using a helper function
 				await ensureViewIsReady(sidebarProvider)
 
-				if (msg.creatorMode) {
+				if (msg.creatorModeConfig?.creatorMode) {
 					// Switch to creator mode
 					await sidebarProvider.handleModeSwitch("creator")
 					await sidebarProvider.postStateToWebview()
@@ -44,14 +46,14 @@ export const registerPearListener = async () => {
 				// Wait a brief moment for UI to update
 				await new Promise((resolve) => setTimeout(resolve, 300))
 
+				let creatorModeConifig = {
+					creatorMode: msg.creatorMode,
+					newProjectType: msg.newProjectType,
+					newProjectPath: msg.newProjectPath,
+				} satisfies CreatorModeConfig;
+
 				// Initialize with task
-				await sidebarProvider.initClineWithTask(
-					msg.plan,
-					undefined,
-					undefined,
-					msg.creatorMode,
-					msg.newProjectType,
-				)
+				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConifig)
 			}
 		})
 	} else {
@@ -68,9 +70,9 @@ async function ensureViewIsReady(provider: ClineProvider): Promise<void> {
 	}
 
 	// Otherwise, we need to wait for it to initialize
-	return new Promise((resolve) => {
+	return new Promise<void>((resolve) => {
 		// Set up a one-time listener for when the view is ready
-		const disposable = provider.on("clineAdded", () => {
+		const disposable = provider.on("clineCreated", () => {
 			// Clean up the listener
 			disposable.dispose()
 			resolve()
