@@ -488,7 +488,13 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	// when initializing a new task, (not from history but from a tool command new_task) there is no need to remove the previouse task
 	// since the new task is a sub task of the previous one, and when it finishes it is removed from the stack and the caller is resumed
 	// in this way we can have a chain of tasks, each one being a sub task of the previous one until the main task is finished
-	public async initClineWithTask(task?: string, images?: string[], parentTask?: Cline, creatorMode?: boolean) {
+	public async initClineWithTask(
+		task?: string,
+		images?: string[],
+		parentTask?: Cline,
+		creatorMode?: boolean,
+		newProjectType?: string,
+	) {
 		const {
 			apiConfiguration,
 			customModePrompts,
@@ -505,6 +511,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		await this.updateApiConfiguration({
 			...apiConfiguration,
 			creatorMode,
+			newProjectType,
 		})
 
 		// Post updated state to webview immediately
@@ -519,7 +526,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				creatorMode,
+				newProjectType,
 				pearaiAgentModels,
 			},
 			customInstructions: effectiveInstructions,
@@ -534,6 +541,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			parentTask,
 			taskNumber: this.clineStack.length + 1,
 			creatorMode,
+			newProjectType,
 		})
 
 		await this.addClineToStack(cline)
@@ -2191,6 +2199,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const updatedConfig = {
 			...apiConfiguration,
 			creatorMode: currentCline?.creatorMode,
+			newProjectType: currentCline?.newProjectType,
 		}
 
 		if (mode) {
@@ -2583,6 +2592,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const apiConfiguration = {
 			...baseApiConfiguration,
 			creatorMode: currentCline?.creatorMode,
+			newProjectType: currentCline?.newProjectType,
 		}
 
 		const telemetryKey = process.env.POSTHOG_API_KEY

@@ -86,6 +86,7 @@ export interface ApiHandlerOptions {
 	modelMaxThinkingTokens?: number
 	fakeAi?: unknown
 	creatorMode?: boolean
+	newProjectType?: string
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
