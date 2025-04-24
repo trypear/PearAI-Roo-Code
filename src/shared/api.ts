@@ -85,8 +85,7 @@ export interface ApiHandlerOptions {
 	pearaiAgentModels?: PearAIAgentModelsConfig
 	modelMaxThinkingTokens?: number
 	fakeAi?: unknown
-	creatorMode?: boolean
-	newProjectType?: string
+	creatorModeConfig?: creatorModeConfig
 }
 
 export type ApiConfiguration = ApiHandlerOptions & {
@@ -96,6 +95,7 @@ export type ApiConfiguration = ApiHandlerOptions & {
 
 // Import GlobalStateKey type from globalState.ts
 import { GlobalStateKey } from "./globalState"
+import { creatorModeConfig } from "./pearaiApi"
 
 // Define API configuration keys for dynamic object building.
 // TODO: This needs actual type safety; a type error should be thrown if

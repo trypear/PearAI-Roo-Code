@@ -78,7 +78,7 @@ import { getUri } from "./getUri"
 import { telemetryService } from "../../services/telemetry/TelemetryService"
 import { TelemetrySetting } from "../../shared/TelemetrySetting"
 import { getWorkspacePath } from "../../utils/path"
-import { PEARAI_URL } from "../../shared/pearaiApi"
+import { PEARAI_URL, creatorModeConfig } from "../../shared/pearaiApi"
 import { PearAIAgentModelsConfig } from "../../api/providers/pearai/pearai"
 
 /**
@@ -492,8 +492,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		task?: string,
 		images?: string[],
 		parentTask?: Cline,
-		creatorMode?: boolean,
-		newProjectType?: string,
+		creatorModeConfig?: creatorModeConfig,
 	) {
 		const {
 			apiConfiguration,
@@ -510,8 +509,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		// Update API configuration with creator mode
 		await this.updateApiConfiguration({
 			...apiConfiguration,
-			creatorMode,
-			newProjectType,
+			creatorModeConfig,
 		})
 
 		// Post updated state to webview immediately
@@ -526,7 +524,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
-				newProjectType,
+				creatorModeConfig,
 				pearaiAgentModels,
 			},
 			customInstructions: effectiveInstructions,
@@ -540,8 +538,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			rootTask: this.clineStack.length > 0 ? this.clineStack[0] : undefined,
 			parentTask,
 			taskNumber: this.clineStack.length + 1,
-			creatorMode,
-			newProjectType,
+			creatorModeConfig,
 		})
 
 		await this.addClineToStack(cline)
@@ -2198,8 +2195,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		// Preserve creator mode when updating configuration
 		const updatedConfig = {
 			...apiConfiguration,
-			creatorMode: currentCline?.creatorMode,
-			newProjectType: currentCline?.newProjectType,
+			creatorModeConfig: currentCline?.creatorModeConfig,
 		}
 
 		if (mode) {
@@ -2591,8 +2587,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		// Construct API configuration with creator mode
 		const apiConfiguration = {
 			...baseApiConfiguration,
-			creatorMode: currentCline?.creatorMode,
-			newProjectType: currentCline?.newProjectType,
+			creatorModeConfig: currentCline?.creatorModeConfig,
 		}
 
 		const telemetryKey = process.env.POSTHOG_API_KEY
