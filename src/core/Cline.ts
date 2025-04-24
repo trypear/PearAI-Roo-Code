@@ -128,6 +128,7 @@ export type ClineOptions = {
 	onCreated?: (cline: Cline) => void
 	pearaiModels?: Record<string, ModelInfo>
 	creatorMode?: boolean
+	newProjectType?: string
 }
 
 export class Cline extends EventEmitter<ClineEvents> {
@@ -144,6 +145,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 	private pauseInterval: NodeJS.Timeout | undefined
 
 	public creatorMode: boolean
+	public newProjectType: string
 	readonly apiConfiguration: ApiConfiguration
 	api: ApiHandler
 	private promptCacheKey: string
@@ -223,6 +225,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		taskNumber = -1,
 		onCreated,
 		creatorMode,
+		newProjectType,
 	}: ClineOptions) {
 		super()
 
@@ -261,6 +264,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		this.enableCheckpoints = enableCheckpoints
 
 		this.creatorMode = creatorMode ?? false
+		this.newProjectType = newProjectType ?? ""
 
 		this.rootTask = rootTask
 		this.parentTask = parentTask

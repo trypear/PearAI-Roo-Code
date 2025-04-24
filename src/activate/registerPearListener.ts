@@ -33,7 +33,7 @@ export const registerPearListener = async () => {
 				// Wait for the view to be ready using a helper function
 				await ensureViewIsReady(sidebarProvider)
 
-				if (msg.newProject) {
+				if (msg.creatorMode) {
 					// Switch to creator mode
 					await sidebarProvider.handleModeSwitch("creator")
 					await sidebarProvider.postStateToWebview()
@@ -45,7 +45,13 @@ export const registerPearListener = async () => {
 				await new Promise((resolve) => setTimeout(resolve, 300))
 
 				// Initialize with task
-				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, msg.newProject)
+				await sidebarProvider.initClineWithTask(
+					msg.plan,
+					undefined,
+					undefined,
+					msg.creatorMode,
+					msg.newProjectType,
+				)
 			}
 		})
 	} else {
