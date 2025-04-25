@@ -29,6 +29,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	constructor(options: ApiHandlerOptions) {
 		super()
 		if (!options.pearaiApiKey) {
+			vscode.commands.executeCommand("pearai-roo-cline.PearAIKeysNotFound", undefined)
 			vscode.window.showErrorMessage("PearAI API key not found.", "Login to PearAI").then(async (selection) => {
 				if (selection === "Login to PearAI") {
 					const extensionUrl = `${vscode.env.uriScheme}://pearai.pearai/auth`
