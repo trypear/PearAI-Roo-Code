@@ -20,7 +20,7 @@ export interface APIMemory {
 	type: string
 }
 
-const MEMORIES_FILE = "memories.json"
+const MEMORIES_FILE = "pearai_memories.json"
 
 function convertToAPIMemory(localMemory: Memory): APIMemory {
 	return {
