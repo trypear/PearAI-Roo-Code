@@ -1,4 +1,5 @@
 import * as vscode from "vscode"
+import { PearAIAgentModelsConfig } from "../api/providers/pearai/pearai"
 
 export type ApiProvider =
 	| "anthropic"
@@ -81,6 +82,7 @@ export interface ApiHandlerOptions {
 	pearaiBaseUrl?: string
 	pearaiModelId?: string
 	pearaiModelInfo?: ModelInfo
+	pearaiAgentModels?: PearAIAgentModelsConfig
 	modelMaxThinkingTokens?: number
 	fakeAi?: unknown
 }
@@ -159,8 +161,9 @@ export interface ModelInfo {
 	description?: string
 	reasoningEffort?: "low" | "medium" | "high"
 	thinking?: boolean
+	underlyingModel?: string
+	underlyingModelUpdated?: Record<string, any>
 }
-
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-claude/models
 export type AnthropicModelId = keyof typeof anthropicModels
@@ -619,6 +622,14 @@ export const vertexModels = {
 		inputPrice: 0.15,
 		outputPrice: 0.6,
 	},
+	"gemini-2.0-flash": {
+		maxTokens: 8192,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.15,
+		outputPrice: 0.6,
+	},
 	"gemini-2.0-pro-exp-02-05": {
 		maxTokens: 8192,
 		contextWindow: 2_097_152,
@@ -745,15 +756,6 @@ export const openAiModelInfoSaneDefaults: ModelInfo = {
 	outputPrice: 0,
 }
 
-export const requestyModelInfoSaneDefaults: ModelInfo = {
-	maxTokens: -1,
-	contextWindow: 128_000,
-	supportsImages: true,
-	supportsPromptCache: false,
-	inputPrice: 0,
-	outputPrice: 0,
-}
-
 // Gemini
 // https://ai.google.dev/gemini-api/docs/models/gemini
 export type GeminiModelId = keyof typeof geminiModels
@@ -766,6 +768,14 @@ export const geminiModels = {
 		supportsPromptCache: false,
 		inputPrice: 0,
 		outputPrice: 0,
+	},
+	"gemini-2.0-flash": {
+		maxTokens: 8192,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.15,
+		outputPrice: 0.6,
 	},
 	"gemini-2.0-flash-lite-preview-02-05": {
 		maxTokens: 8192,
@@ -1041,39 +1051,3 @@ export const unboundDefaultModelInfo: ModelInfo = {
 	cacheWritesPrice: 3.75,
 	cacheReadsPrice: 0.3,
 }
-// CHANGE AS NEEDED FOR TESTING
-// PROD:
-export const PEARAI_URL = "https://stingray-app-gb2an.ondigitalocean.app/pearai-server-api2/integrations/cline"
-// DEV:
-// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
-
-// PearAI
-export type PearAiModelId = keyof typeof pearAiModels
-export const pearAiDefaultModelId: PearAiModelId = "pearai-model"
-export const pearAiDefaultModelInfo: ModelInfo = {
-	maxTokens: 8192,
-	contextWindow: 200_000,
-	supportsImages: true,
-	supportsPromptCache: true,
-	inputPrice: 3.0,
-	outputPrice: 15.0,
-	cacheWritesPrice: 3.75,
-	cacheReadsPrice: 0.3,
-	description:
-		"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
-}
-
-export const pearAiModels = {
-	"pearai-model": {
-		maxTokens: 8192,
-		contextWindow: 200_000,
-		supportsImages: true,
-		supportsPromptCache: true,
-		inputPrice: 3.0,
-		outputPrice: 15.0,
-		cacheWritesPrice: 3.75,
-		cacheReadsPrice: 0.3,
-		description:
-			"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
-	},
-} as const satisfies Record<string, ModelInfo>

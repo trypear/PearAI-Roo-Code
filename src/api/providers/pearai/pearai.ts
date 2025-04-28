@@ -1,18 +1,20 @@
 import * as vscode from "vscode"
-import { ApiHandlerOptions, PEARAI_URL, ModelInfo } from "../../shared/api"
-import { AnthropicHandler } from "./anthropic"
-import { DeepSeekHandler } from "./deepseek"
+import { ApiHandlerOptions, ModelInfo } from "../../../shared/api"
+import { AnthropicHandler } from "../anthropic"
+import { DeepSeekHandler } from "../deepseek"
 import Anthropic from "@anthropic-ai/sdk"
-import { BaseProvider } from "./base-provider"
-import { SingleCompletionHandler } from "../"
-import { OpenRouterHandler } from "./openrouter"
-import { GeminiHandler } from "./gemini"
-import { OpenAiHandler } from "./openai"
+import { BaseProvider } from "../base-provider"
+import { SingleCompletionHandler } from "../.."
+import { OpenRouterHandler } from "../openrouter"
+import { GeminiHandler } from "../gemini"
+import { OpenAiHandler } from "../openai"
+import { PearAIGenericHandler } from "./pearaiGeneric"
+import { PEARAI_URL } from "../../../shared/pearaiApi"
 
-interface PearAiModelsResponse {
+export interface PearAIAgentModelsConfig {
 	models: {
 		[key: string]: {
-			underlyingModel?: string
+			underlyingModel?: { [key: string]: any }
 			[key: string]: any
 		}
 	}
@@ -20,7 +22,9 @@ interface PearAiModelsResponse {
 }
 
 export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
-	private handler!: AnthropicHandler | OpenAiHandler
+	private handler!: AnthropicHandler | PearAIGenericHandler
+	private pearAIAgentModels: PearAIAgentModelsConfig | null = null
+	private options: ApiHandlerOptions
 
 	constructor(options: ApiHandlerOptions) {
 		super()
@@ -40,8 +44,9 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 		} else {
 			vscode.commands.executeCommand("pearai.checkPearAITokens", undefined)
 		}
+		this.options = options
 
-		this.handler = new OpenAiHandler({
+		this.handler = new PearAIGenericHandler({
 			...options,
 			openAiBaseUrl: PEARAI_URL,
 			openAiApiKey: options.pearaiApiKey,
@@ -57,15 +62,17 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 	private async initializeHandler(options: ApiHandlerOptions): Promise<void> {
 		const modelId = options.apiModelId || "pearai-model"
 
-		if (modelId === "pearai-model") {
+		if (modelId.startsWith("pearai")) {
 			try {
-				const response = await fetch(`${PEARAI_URL}/getPearAIAgentModels`)
-				if (!response.ok) {
-					throw new Error(`Failed to fetch models: ${response.statusText}`)
+				if (!options.pearaiAgentModels) {
+					throw new Error("PearAI models not found")
 				}
-				const data = (await response.json()) as PearAiModelsResponse
-				const underlyingModel = data.models[modelId]?.underlyingModelUpdated || "claude-3-5-sonnet-20241022"
-				if (underlyingModel.startsWith("claude")) {
+				const pearaiAgentModels = options.pearaiAgentModels
+				const underlyingModel =
+					pearaiAgentModels.models[modelId]?.underlyingModelUpdated?.underlyingModel ||
+					pearaiAgentModels.models[modelId]?.underlyingModel ||
+					"claude-3-5-sonnet-20241022"
+				if (underlyingModel.startsWith("claude") || modelId.startsWith("anthropic/")) {
 					// Default to Claude
 					this.handler = new AnthropicHandler({
 						...options,
@@ -74,7 +81,8 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 						apiModelId: underlyingModel,
 					})
 				} else {
-					this.handler = new OpenAiHandler({
+					// Use OpenAI fields here as we are using the same handler structure as OpenAI Hander lin PearAIGenericHandler
+					this.handler = new PearAIGenericHandler({
 						...options,
 						openAiBaseUrl: PEARAI_URL,
 						openAiApiKey: options.pearaiApiKey,
@@ -91,14 +99,14 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 					apiModelId: "claude-3-5-sonnet-20241022",
 				})
 			}
-		} else if (modelId.startsWith("claude")) {
+		} else if (modelId.startsWith("claude") || modelId.startsWith("anthropic/")) {
 			this.handler = new AnthropicHandler({
 				...options,
 				apiKey: options.pearaiApiKey,
 				anthropicBaseUrl: PEARAI_URL,
 			})
 		} else {
-			this.handler = new OpenAiHandler({
+			this.handler = new PearAIGenericHandler({
 				...options,
 				openAiBaseUrl: PEARAI_URL,
 				openAiApiKey: options.pearaiApiKey,
@@ -107,23 +115,10 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 		}
 	}
 
-	getModel(): { id: string; info: ModelInfo } {
-		console.dir(this.handler)
+	public getModel(): { id: string; info: ModelInfo } {
+		// Fallback to using what's available on client side
 		const baseModel = this.handler.getModel()
-		return {
-			id: baseModel.id,
-			info: {
-				...baseModel.info,
-				// Inherit all capabilities from the underlying model
-				supportsImages: baseModel.info.supportsImages,
-				supportsComputerUse: baseModel.info.supportsComputerUse,
-				supportsPromptCache: baseModel.info.supportsPromptCache,
-				inputPrice: baseModel.info.inputPrice || 0,
-				outputPrice: baseModel.info.outputPrice || 0,
-				cacheWritesPrice: baseModel.info.cacheWritesPrice ? baseModel.info.cacheWritesPrice : undefined,
-				cacheReadsPrice: baseModel.info.cacheReadsPrice ? baseModel.info.cacheReadsPrice : undefined,
-			},
-		}
+		return baseModel
 	}
 
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {
