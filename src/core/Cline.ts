@@ -82,6 +82,7 @@ import { validateToolUse, isToolAllowedForMode, ToolName } from "./mode-validato
 import { parseXml } from "../utils/xml"
 import { readLines } from "../integrations/misc/read-lines"
 import { getWorkspacePath } from "../utils/path"
+import { readMemories } from "../utils/memory"
 import { isBinaryFile } from "isbinaryfile"
 
 type ToolResponse = string | Array<Anthropic.TextBlockParam | Anthropic.ImageBlockParam>
@@ -606,11 +607,23 @@ export class Cline extends EventEmitter<ClineEvents> {
 
 		console.log(`[subtasks] task ${this.taskId}.${this.instanceId} starting`)
 
+		// PearAI memories
+		const memories = readMemories()
+		let memoryBlocks: Anthropic.TextBlockParam[] = []
+		if (memories.length > 0) {
+			const memoryContext = memories.map((m) => m.memory).join("\n\n")
+			memoryBlocks.push({
+				type: "text",
+				text: `<memories>\n<relevant user context from past, refer these if required/>\n${memoryContext}\n</memories>`,
+			})
+		}
+
 		await this.initiateTaskLoop([
 			{
 				type: "text",
 				text: `<task>\n${task}\n</task>`,
 			},
+			...memoryBlocks,
 			...imageBlocks,
 		])
 	}
