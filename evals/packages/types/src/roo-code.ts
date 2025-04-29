@@ -18,6 +18,7 @@ export const providerNames = [
 	"lmstudio",
 	"gemini",
 	"openai-native",
+	"xai",
 	"mistral",
 	"deepseek",
 	"unbound",
@@ -70,6 +71,7 @@ export const languages = [
 	"ko",
 	"pl",
 	"pt-BR",
+	"ru",
 	"tr",
 	"vi",
 	"zh-CN",
@@ -271,7 +273,7 @@ export type CustomSupportPrompts = z.infer<typeof customSupportPromptsSchema>
  * ExperimentId
  */
 
-export const experimentIds = ["search_and_replace", "insert_content", "powerSteering"] as const
+export const experimentIds = ["powerSteering"] as const
 
 export const experimentIdsSchema = z.enum(experimentIds)
 
@@ -282,8 +284,6 @@ export type ExperimentId = z.infer<typeof experimentIdsSchema>
  */
 
 const experimentsSchema = z.object({
-	search_and_replace: z.boolean(),
-	insert_content: z.boolean(),
 	powerSteering: z.boolean(),
 })
 
@@ -305,12 +305,10 @@ export const providerSettingsSchema = z.object({
 	anthropicUseAuthToken: z.boolean().optional(),
 	// Glama
 	glamaModelId: z.string().optional(),
-	glamaModelInfo: modelInfoSchema.optional(),
 	glamaApiKey: z.string().optional(),
 	// OpenRouter
 	openRouterApiKey: z.string().optional(),
 	openRouterModelId: z.string().optional(),
-	openRouterModelInfo: modelInfoSchema.optional(),
 	openRouterBaseUrl: z.string().optional(),
 	openRouterSpecificProvider: z.string().optional(),
 	openRouterUseMiddleOutTransform: z.boolean().optional(),
@@ -361,6 +359,8 @@ export const providerSettingsSchema = z.object({
 	googleGeminiBaseUrl: z.string().optional(),
 	// OpenAI Native
 	openAiNativeApiKey: z.string().optional(),
+	// XAI
+	xaiApiKey: z.string().optional(),
 	// Mistral
 	mistralApiKey: z.string().optional(),
 	mistralCodestralUrl: z.string().optional(),
@@ -370,11 +370,9 @@ export const providerSettingsSchema = z.object({
 	// Unbound
 	unboundApiKey: z.string().optional(),
 	unboundModelId: z.string().optional(),
-	unboundModelInfo: modelInfoSchema.optional(),
 	// Requesty
 	requestyApiKey: z.string().optional(),
 	requestyModelId: z.string().optional(),
-	requestyModelInfo: modelInfoSchema.optional(),
 	// Claude 3.7 Sonnet Thinking
 	modelMaxTokens: z.number().optional(), // Currently only used by Anthropic hybrid thinking models.
 	modelMaxThinkingTokens: z.number().optional(), // Currently only used by Anthropic hybrid thinking models.
@@ -408,12 +406,10 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	anthropicUseAuthToken: undefined,
 	// Glama
 	glamaModelId: undefined,
-	glamaModelInfo: undefined,
 	glamaApiKey: undefined,
 	// OpenRouter
 	openRouterApiKey: undefined,
 	openRouterModelId: undefined,
-	openRouterModelInfo: undefined,
 	openRouterBaseUrl: undefined,
 	openRouterSpecificProvider: undefined,
 	openRouterUseMiddleOutTransform: undefined,
@@ -442,6 +438,8 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	openAiUseAzure: undefined,
 	azureApiVersion: undefined,
 	openAiStreamingEnabled: undefined,
+	// xAI
+	xaiApiKey: undefined,
 	// Ollama
 	ollamaModelId: undefined,
 	ollamaBaseUrl: undefined,
@@ -465,11 +463,9 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	// Unbound
 	unboundApiKey: undefined,
 	unboundModelId: undefined,
-	unboundModelInfo: undefined,
 	// Requesty
 	requestyApiKey: undefined,
 	requestyModelId: undefined,
-	requestyModelInfo: undefined,
 	// Claude 3.7 Sonnet Thinking
 	modelMaxTokens: undefined,
 	modelMaxThinkingTokens: undefined,
@@ -812,6 +808,49 @@ export const tokenUsageSchema = z.object({
 export type TokenUsage = z.infer<typeof tokenUsageSchema>
 
 /**
+ * ToolName
+ */
+
+export const toolNames = [
+	"execute_command",
+	"read_file",
+	"write_to_file",
+	"append_to_file",
+	"apply_diff",
+	"insert_content",
+	"search_and_replace",
+	"search_files",
+	"list_files",
+	"list_code_definition_names",
+	"browser_action",
+	"use_mcp_tool",
+	"access_mcp_resource",
+	"ask_followup_question",
+	"attempt_completion",
+	"switch_mode",
+	"new_task",
+	"fetch_instructions",
+] as const
+
+export const toolNamesSchema = z.enum(toolNames)
+
+export type ToolName = z.infer<typeof toolNamesSchema>
+
+/**
+ * ToolUsage
+ */
+
+export const toolUsageSchema = z.record(
+	toolNamesSchema,
+	z.object({
+		attempts: z.number(),
+		failures: z.number(),
+	}),
+)
+
+export type ToolUsage = z.infer<typeof toolUsageSchema>
+
+/**
  * RooCodeEvent
  */
 
@@ -828,6 +867,7 @@ export enum RooCodeEventName {
 	TaskSpawned = "taskSpawned",
 	TaskCompleted = "taskCompleted",
 	TaskTokenUsageUpdated = "taskTokenUsageUpdated",
+	TaskToolFailed = "taskToolFailed",
 }
 
 export const rooCodeEventsSchema = z.object({
@@ -846,8 +886,9 @@ export const rooCodeEventsSchema = z.object({
 	[RooCodeEventName.TaskAskResponded]: z.tuple([z.string()]),
 	[RooCodeEventName.TaskAborted]: z.tuple([z.string()]),
 	[RooCodeEventName.TaskSpawned]: z.tuple([z.string(), z.string()]),
-	[RooCodeEventName.TaskCompleted]: z.tuple([z.string(), tokenUsageSchema]),
+	[RooCodeEventName.TaskCompleted]: z.tuple([z.string(), tokenUsageSchema, toolUsageSchema]),
 	[RooCodeEventName.TaskTokenUsageUpdated]: z.tuple([z.string(), tokenUsageSchema]),
+	[RooCodeEventName.TaskToolFailed]: z.tuple([z.string(), toolNamesSchema, z.string()]),
 })
 
 export type RooCodeEvents = z.infer<typeof rooCodeEventsSchema>

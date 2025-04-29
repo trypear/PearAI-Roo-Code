@@ -128,6 +128,8 @@
 		"getMistralApiKey": "Mistral / Codestral API-Schlüssel erhalten",
 		"codestralBaseUrl": "Codestral Basis-URL (Optional)",
 		"codestralBaseUrlDesc": "Legen Sie eine alternative URL für das Codestral-Modell fest.",
+		"xaiApiKey": "xAI API-Schlüssel",
+		"getXaiApiKey": "xAI API-Schlüssel erhalten",
 		"awsCredentials": "AWS Anmeldedaten",
 		"awsProfile": "AWS Profil",
 		"awsProfileName": "AWS Profilname",
@@ -225,6 +227,12 @@
 		"rateLimitSeconds": {
 			"label": "Ratenbegrenzung",
 			"description": "Minimale Zeit zwischen API-Anfragen."
+		},
+		"reasoningEffort": {
+			"label": "Modell-Denkaufwand",
+			"high": "Hoch",
+			"medium": "Mittel",
+			"low": "Niedrig"
 		}
 	},
 	"browser": {
@@ -303,6 +311,10 @@
 			"label": "Terminal-Shell-Integrationszeit-Limit",
 			"description": "Maximale Wartezeit für die Shell-Integration, bevor Befehle ausgeführt werden. Für Benutzer mit langen Shell-Startzeiten musst du diesen Wert möglicherweise erhöhen, wenn du Fehler vom Typ \"Shell Integration Unavailable\" im Terminal siehst."
 		},
+		"compressProgressBar": {
+			"label": "Fortschrittsbalken-Ausgabe komprimieren",
+			"description": "Wenn aktiviert, verarbeitet diese Option Terminal-Ausgaben mit Wagenrücklaufzeichen (\\r), um zu simulieren, wie ein echtes Terminal Inhalte anzeigen würde. Dies entfernt Zwischenzustände von Fortschrittsbalken und behält nur den Endzustand bei, wodurch Kontextraum für relevantere Informationen gespart wird."
+		},
 		"zdotdir": {
 			"label": "ZDOTDIR-Behandlung aktivieren",
 			"description": "Erstellt bei Aktivierung ein temporäres Verzeichnis für ZDOTDIR, um die zsh-Shell-Integration korrekt zu handhaben. Dies stellt sicher, dass die VSCode-Shell-Integration mit zsh funktioniert und dabei deine zsh-Konfiguration erhalten bleibt. (experimentell)"
@@ -373,6 +385,10 @@
 			"name": "Experimentelles Multi-Block-Diff-Werkzeug verwenden",
 			"description": "Wenn aktiviert, verwendet Roo das Multi-Block-Diff-Werkzeug. Dies versucht, mehrere Codeblöcke in der Datei in einer Anfrage zu aktualisieren."
 		}
+	},
+	"promptCaching": {
+		"label": "Prompt-Caching aktivieren",
+		"description": "Wenn aktiviert, wird Roo dieses Modell mit aktiviertem Prompt-Caching verwenden, um Kosten zu reduzieren."
 	},
 	"temperature": {
 		"useCustom": "Benutzerdefinierte Temperatur verwenden",
@@ -471,11 +487,5 @@
 	"labels": {
 		"customArn": "Benutzerdefinierte ARN",
 		"useCustomArn": "Benutzerdefinierte ARN verwenden..."
-	},
-	"interface": {
-		"showgreeting": {
-			"label": "Begrüßungsnachricht anzeigen",
-			"description": "Wenn aktiviert, zeigt Roo eine Willkommensnachricht und Einführung an."
-		}
 	}
 }

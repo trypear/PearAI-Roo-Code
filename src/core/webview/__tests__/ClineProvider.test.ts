@@ -9,6 +9,7 @@ import { setSoundEnabled } from "../../../utils/sound"
 import { setTtsEnabled } from "../../../utils/tts"
 import { defaultModeSlug } from "../../../shared/modes"
 import { experimentDefault } from "../../../shared/experiments"
+import { ContextProxy } from "../../config/ContextProxy"
 
 // Mock setup must come before imports
 jest.mock("../../prompts/sections/custom-instructions")
@@ -113,13 +114,6 @@ jest.mock(
 	}),
 	{ virtual: true },
 )
-
-// Mock DiffStrategy
-jest.mock("../../diff/DiffStrategy", () => ({
-	getDiffStrategy: jest.fn().mockImplementation(() => ({
-		getToolDescription: jest.fn().mockReturnValue("apply_diff tool description"),
-	})),
-}))
 
 // Mock dependencies
 jest.mock("vscode", () => ({
@@ -314,6 +308,7 @@ describe("ClineProvider", () => {
 
 		// Mock webview
 		mockPostMessage = jest.fn()
+
 		mockWebviewView = {
 			webview: {
 				postMessage: mockPostMessage,
@@ -332,7 +327,7 @@ describe("ClineProvider", () => {
 			}),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel)
+		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		// @ts-ignore - Access private property for testing
 		updateGlobalStateSpy = jest.spyOn(provider.contextProxy, "setValue")
@@ -364,6 +359,8 @@ describe("ClineProvider", () => {
 		provider = new ClineProvider(
 			{ ...mockContext, extensionMode: vscode.ExtensionMode.Development },
 			mockOutputChannel,
+			"sidebar",
+			new ContextProxy(mockContext),
 		)
 		;(axios.get as jest.Mock).mockRejectedValueOnce(new Error("Network error"))
 
@@ -407,7 +404,6 @@ describe("ClineProvider", () => {
 			ttsEnabled: false,
 			diffEnabled: false,
 			enableCheckpoints: false,
-			checkpointStorage: "task",
 			writeDelayMs: 1000,
 			browserViewportSize: "900x600",
 			fuzzyMatchThreshold: 1.0,
@@ -818,7 +814,6 @@ describe("ClineProvider", () => {
 		const modeCustomInstructions = "Code mode instructions"
 		const mockApiConfig = {
 			apiProvider: "openrouter",
-			openRouterModelInfo: { supportsComputerUse: true },
 		}
 
 		jest.spyOn(provider, "getState").mockResolvedValue({
@@ -829,7 +824,6 @@ describe("ClineProvider", () => {
 			mode: "code",
 			diffEnabled: true,
 			enableCheckpoints: false,
-			checkpointStorage: "task",
 			fuzzyMatchThreshold: 1.0,
 			experiments: experimentDefault,
 		} as any)
@@ -848,7 +842,6 @@ describe("ClineProvider", () => {
 			customInstructions: modeCustomInstructions,
 			enableDiff: true,
 			enableCheckpoints: false,
-			checkpointStorage: "task",
 			fuzzyMatchThreshold: 1.0,
 			task: "Test task",
 			experiments: experimentDefault,
@@ -916,7 +909,7 @@ describe("ClineProvider", () => {
 		} as unknown as vscode.ExtensionContext
 
 		// Create new provider with updated mock context
-		provider = new ClineProvider(mockContext, mockOutputChannel)
+		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 		await provider.resolveWebviewView(mockWebviewView)
 		const messageHandler = (mockWebviewView.webview.onDidReceiveMessage as jest.Mock).mock.calls[0][0]
 
@@ -1079,16 +1072,6 @@ describe("ClineProvider", () => {
 			jest.spyOn(provider, "getState").mockResolvedValue({
 				apiConfiguration: {
 					apiProvider: "openrouter" as const,
-					openRouterModelInfo: {
-						supportsComputerUse: true,
-						supportsPromptCache: false,
-						maxTokens: 4096,
-						contextWindow: 8192,
-						supportsImages: false,
-						inputPrice: 0.0,
-						outputPrice: 0.0,
-						description: undefined,
-					},
 				},
 				mcpEnabled: true,
 				enableMcpServerCreation: false,
@@ -1112,16 +1095,6 @@ describe("ClineProvider", () => {
 			jest.spyOn(provider, "getState").mockResolvedValue({
 				apiConfiguration: {
 					apiProvider: "openrouter" as const,
-					openRouterModelInfo: {
-						supportsComputerUse: true,
-						supportsPromptCache: false,
-						maxTokens: 4096,
-						contextWindow: 8192,
-						supportsImages: false,
-						inputPrice: 0.0,
-						outputPrice: 0.0,
-						description: undefined,
-					},
 				},
 				mcpEnabled: false,
 				enableMcpServerCreation: false,
@@ -1194,7 +1167,6 @@ describe("ClineProvider", () => {
 				apiConfiguration: {
 					apiProvider: "openrouter",
 					apiModelId: "test-model",
-					openRouterModelInfo: { supportsComputerUse: true },
 				},
 				customModePrompts: {},
 				mode: "code",
@@ -1251,7 +1223,6 @@ describe("ClineProvider", () => {
 				apiConfiguration: {
 					apiProvider: "openrouter",
 					apiModelId: "test-model",
-					openRouterModelInfo: { supportsComputerUse: true },
 				},
 				customModePrompts: {},
 				mode: "code",
@@ -1292,7 +1263,6 @@ describe("ClineProvider", () => {
 			jest.spyOn(provider, "getState").mockResolvedValue({
 				apiConfiguration: {
 					apiProvider: "openrouter",
-					openRouterModelInfo: { supportsComputerUse: true },
 				},
 				customModePrompts: {
 					architect: { customInstructions: "Architect mode instructions" },
@@ -1983,7 +1953,7 @@ describe("Project MCP Settings", () => {
 			onDidChangeVisibility: jest.fn(),
 		} as unknown as vscode.WebviewView
 
-		provider = new ClineProvider(mockContext, mockOutputChannel)
+		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 	})
 
 	test("handles openProjectMcpSettings message", async () => {
@@ -2078,10 +2048,8 @@ describe.skip("ContextProxy integration", () => {
 		} as unknown as vscode.ExtensionContext
 
 		mockOutputChannel = { appendLine: jest.fn() } as unknown as vscode.OutputChannel
-		provider = new ClineProvider(mockContext, mockOutputChannel)
-
-		// @ts-ignore - accessing private property for testing
-		mockContextProxy = provider.contextProxy
+		mockContextProxy = new ContextProxy(mockContext)
+		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", mockContextProxy)
 
 		mockGlobalStateUpdate = mockContext.globalState.update as jest.Mock
 	})
@@ -2141,7 +2109,7 @@ describe("getTelemetryProperties", () => {
 		} as unknown as vscode.ExtensionContext
 
 		mockOutputChannel = { appendLine: jest.fn() } as unknown as vscode.OutputChannel
-		provider = new ClineProvider(mockContext, mockOutputChannel)
+		provider = new ClineProvider(mockContext, mockOutputChannel, "sidebar", new ContextProxy(mockContext))
 
 		// Setup Cline instance with mocked getModel method
 		const { Cline } = require("../../Cline")
