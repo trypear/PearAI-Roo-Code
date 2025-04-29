@@ -94,6 +94,7 @@ export async function activate(context: vscode.ExtensionContext) {
 	 *
 	 * https://code.visualstudio.com/api/extension-guides/virtual-documents
 	 */
+
 	context.subscriptions.push(
 		vscode.commands.registerCommand("pearai-roo-cline.pearaiLogin", async (data) => {
 			console.dir("Logged in to PearAI:")
@@ -108,10 +109,12 @@ export async function activate(context: vscode.ExtensionContext) {
 				})
 				await provider.postStateToWebview()
 				// Update MCP server with new token
-				const mcpHub = provider.getMcpHub()
-				if (mcpHub) {
-					await mcpHub.updatePearAiApiKey(data.accessToken)
-				}
+				// TODO: REDO THIS I GUESS?!
+
+				// const mcpHub = provider.getMcpHub()
+				// if (mcpHub) {
+				// 	await mcpHub.updatePearAiApiKey(data.accessToken)
+				// }
 			}
 			vscode.commands.executeCommand("roo-cline.plusButtonClicked")
 		}),
@@ -131,10 +134,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				})
 				await provider.postStateToWebview()
 				// Update MCP server with new token
-				const mcpHub = provider.getMcpHub()
-				if (mcpHub) {
-					await mcpHub.updatePearAiApiKey(data.accessToken)
-				}
+				// const mcpHub = provider.getMcpHub()
+				// if (mcpHub) {
+				// 	await mcpHub.updatePearAiApiKey(data.accessToken)
+				// }
 			}
 		}),
 	)
@@ -154,74 +157,13 @@ export async function activate(context: vscode.ExtensionContext) {
 				})
 				await provider.postStateToWebview()
 				// Clear MCP server token
-				const mcpHub = provider.getMcpHub()
-				if (mcpHub) {
-					await mcpHub.clearPearAiApiKey()
-				}
+				// const mcpHub = provider.getMcpHub()
+				// if (mcpHub) {
+				// 	await mcpHub.clearPearAiApiKey()
+				// }
 			}
 		}),
 	)
-
-	// context.subscriptions.push(
-	// 	vscode.commands.registerCommand("roo-cline.mcpButtonClicked", () => {
-	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "mcpButtonClicked" })
-	// 	}),
-	// )
-
-	// context.subscriptions.push(
-	// 	vscode.commands.registerCommand("roo-cline.promptsButtonClicked", () => {
-	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "promptsButtonClicked" })
-	// 	}),
-	// )
-
-	const openClineInNewTab = async () => {
-		outputChannel.appendLine("Opening Agent in new tab")
-		// (this example uses webviewProvider activation event which is necessary to deserialize cached webview, but since we use retainContextWhenHidden, we don't need to use that event)
-		// https://github.com/microsoft/vscode-extension-samples/blob/main/webview-sample/src/extension.ts
-		const tabProvider = new ClineProvider(context, outputChannel)
-		//const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined
-		const lastCol = Math.max(...vscode.window.visibleTextEditors.map((editor) => editor.viewColumn || 0))
-
-		// Check if there are any visible text editors, otherwise open a new group to the right
-		const hasVisibleEditors = vscode.window.visibleTextEditors.length > 0
-		if (!hasVisibleEditors) {
-			await vscode.commands.executeCommand("workbench.action.newGroupRight")
-		}
-		const targetCol = hasVisibleEditors ? Math.max(lastCol + 1, 1) : vscode.ViewColumn.Two
-
-		const panel = vscode.window.createWebviewPanel(ClineProvider.tabPanelId, "Agent", targetCol, {
-			enableScripts: true,
-			retainContextWhenHidden: true,
-			localResourceRoots: [context.extensionUri],
-		})
-		// TODO: use better svg icon with light and dark variants (see https://stackoverflow.com/questions/58365687/vscode-extension-iconpath)
-
-		panel.iconPath = {
-			light: vscode.Uri.joinPath(context.extensionUri, "assets", "icons", "rocket.png"),
-			dark: vscode.Uri.joinPath(context.extensionUri, "assets", "icons", "rocket.png"),
-		}
-		tabProvider.resolveWebviewView(panel)
-
-		// Lock the editor group so clicking on files doesn't open them over the panel
-		await delay(100)
-		await vscode.commands.executeCommand("workbench.action.lockEditorGroup")
-	}
-
-	// context.subscriptions.push(vscode.commands.registerCommand("roo-cline.popoutButtonClicked", openClineInNewTab))
-	// context.subscriptions.push(vscode.commands.registerCommand("roo-cline.openInNewTab", openClineInNewTab))
-
-	// context.subscriptions.push(
-	// 	vscode.commands.registerCommand("roo-cline.settingsButtonClicked", () => {
-	// 		//vscode.window.showInformationMessage(message)
-	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "settingsButtonClicked" })
-	// 	}),
-	// )
-
-	// context.subscriptions.push(
-	// 	vscode.commands.registerCommand("roo-cline.historyButtonClicked", () => {
-	// 		sidebarProvider.postMessageToWebview({ type: "action", action: "historyButtonClicked" })
-	// 	}),
-	// )
 
 	/*
 	We use the text document content provider API to show the left side for diff view by creating a virtual document for the original content. This makes it readonly so users know to edit the right side if they want to keep their changes.
@@ -257,8 +199,13 @@ export async function activate(context: vscode.ExtensionContext) {
 			await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
 		}),
 	)
+	// Allows other extensions to activate once Roo is ready.
+	vscode.commands.executeCommand("roo-cline.activationCompleted")
+
 	// Implements the `RooCodeAPI` interface.
-	return new API(outputChannel, provider)
+	const socketPath = process.env.ROO_CODE_IPC_SOCKET_PATH
+	const enableLogging = typeof socketPath === "string"
+	return new API(outputChannel, provider, socketPath, enableLogging)
 }
 
 // This method is called when your extension is deactivated

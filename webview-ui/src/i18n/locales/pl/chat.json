@@ -12,6 +12,8 @@
 		"export": "Eksportuj historię zadań",
 		"delete": "Usuń zadanie (Shift + Kliknięcie, aby pominąć potwierdzenie)"
 	},
+	"unpin": "Odepnij",
+	"pin": "Przypnij",
 	"tokenProgress": {
 		"availableSpace": "Dostępne miejsce: {{amount}} tokenów",
 		"tokensUsed": "Wykorzystane tokeny: {{used}} z {{total}}",
@@ -81,6 +83,9 @@
 	"edit": "Edytuj...",
 	"forNextMode": "dla następnego trybu",
 	"error": "Błąd",
+	"diffError": {
+		"title": "Edycja nieudana"
+	},
 	"troubleMessage": "Roo ma problemy...",
 	"apiRequest": {
 		"title": "Zapytanie API",
@@ -92,6 +97,7 @@
 	"checkpoint": {
 		"initial": "Początkowy punkt kontrolny",
 		"regular": "Punkt kontrolny",
+		"initializingWarning": "Trwa inicjalizacja punktu kontrolnego... Jeśli to trwa zbyt długo, możesz wyłączyć punkty kontrolne w <settingsLink>ustawieniach</settingsLink> i uruchomić zadanie ponownie.",
 		"menu": {
 			"viewDiff": "Zobacz różnice",
 			"restore": "Przywróć punkt kontrolny",
@@ -141,7 +147,12 @@
 	},
 	"subtasks": {
 		"wantsToCreate": "Roo chce utworzyć nowe podzadanie w trybie <code>{{mode}}</code>:",
-		"wantsToFinish": "Roo chce zakończyć to podzadanie"
+		"wantsToFinish": "Roo chce zakończyć to podzadanie",
+		"newTaskContent": "Instrukcje podzadania",
+		"completionContent": "Podzadanie zakończone",
+		"resultContent": "Wyniki podzadania",
+		"defaultResult": "Proszę kontynuować następne zadanie.",
+		"completionInstructions": "Podzadanie zakończone! Możesz przejrzeć wyniki i zasugerować poprawki lub następne kroki. Jeśli wszystko wygląda dobrze, potwierdź, aby zwrócić wynik do zadania nadrzędnego."
 	},
 	"questions": {
 		"hasQuestion": "Roo ma pytanie:"
@@ -149,7 +160,10 @@
 	"taskCompleted": "Zadanie zakończone",
 	"shellIntegration": {
 		"unavailable": "Integracja powłoki niedostępna",
-		"troubleshooting": "Nadal masz problemy?"
+		"troubleshooting": "Nadal masz problemy? Kliknij tutaj, aby zobaczyć dokumentację integracji powłoki.",
+		"checkSettings": "Sprawdź obejścia terminala na stronie ustawień",
+		"updateVSCode": "Zaktualizuj VSCode",
+		"supportedShell": "Upewnij się, że używasz obsługiwanej powłoki: zsh, bash, fish lub PowerShell"
 	},
 	"powershell": {
 		"issues": "Wygląda na to, że masz problemy z Windows PowerShell, proszę zapoznaj się z tym"
@@ -157,46 +171,38 @@
 	"autoApprove": {
 		"title": "Automatyczne zatwierdzanie:",
 		"none": "Brak",
-		"description": "Automatyczne zatwierdzanie pozwala Roo Code wykonywać działania bez pytania o pozwolenie. Włącz tylko dla działań, którym w pełni ufasz.",
+		"description": "Automatyczne zatwierdzanie pozwala Roo Code wykonywać działania bez pytania o pozwolenie. Włącz tylko dla działań, którym w pełni ufasz. Bardziej szczegółowa konfiguracja dostępna w <settingsLink>Ustawieniach</settingsLink>.",
 		"actions": {
 			"readFiles": {
-				"label": "Czytaj pliki i katalogi",
-				"shortName": "Czytanie",
+				"label": "Odczyt",
 				"description": "Pozwala na dostęp do odczytu dowolnego pliku na Twoim komputerze."
 			},
 			"editFiles": {
-				"label": "Edytuj pliki",
-				"shortName": "Edycja",
+				"label": "Edycja",
 				"description": "Pozwala na modyfikację dowolnych plików na Twoim komputerze."
 			},
 			"executeCommands": {
-				"label": "Wykonuj zatwierdzone polecenia",
-				"shortName": "Polecenia",
+				"label": "Polecenia",
 				"description": "Pozwala na wykonywanie zatwierdzonych poleceń terminala. Możesz to skonfigurować w panelu ustawień."
 			},
 			"useBrowser": {
-				"label": "Używaj przeglądarki",
-				"shortName": "Przeglądarka",
+				"label": "Przeglądarka",
 				"description": "Pozwala na uruchamianie i interakcję z dowolną stroną internetową w przeglądarce bezinterfejsowej."
 			},
 			"useMcp": {
-				"label": "Używaj serwerów MCP",
-				"shortName": "MCP",
+				"label": "MCP",
 				"description": "Pozwala na korzystanie ze skonfigurowanych serwerów MCP, które mogą modyfikować system plików lub wchodzić w interakcje z API."
 			},
 			"switchModes": {
-				"label": "Przełączaj tryby",
-				"shortName": "Tryby",
+				"label": "Tryby",
 				"description": "Pozwala na automatyczne przełączanie między różnymi trybami bez wymagania zatwierdzenia."
 			},
 			"subtasks": {
-				"label": "Twórz i kończ podzadania",
-				"shortName": "Podzadania",
+				"label": "Podzadania",
 				"description": "Pozwala na tworzenie i kończenie podzadań bez wymagania zatwierdzenia."
 			},
 			"retryRequests": {
-				"label": "Ponów nieudane zapytania",
-				"shortName": "Ponowienia",
+				"label": "Ponowienia",
 				"description": "Automatycznie ponawia nieudane zapytania API, gdy dostawca zwraca odpowiedź z błędem."
 			}
 		}
@@ -205,17 +211,14 @@
 		"thinking": "Myślenie",
 		"seconds": "{{count}} s"
 	},
+	"followUpSuggest": {
+		"copyToInput": "Kopiuj do pola wprowadzania (lub Shift + kliknięcie)"
+	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.10 wydany",
-		"description": "Roo Code 3.10 przynosi potężne usprawnienia produktywności!",
-		"whatsNew": "Co nowego",
-		"feature1": "Sugerowane odpowiedzi na pytania",
-		"feature2": "Ulepszenia obsługi dużych plików",
-		"feature3": "Przebudowane wyszukiwanie plików przez @-wzmianki",
-		"feature4": "",
-		"feature5": "",
-		"hideButton": "Ukryj ogłoszenie",
-		"detailsDiscussLinks": "Uzyskaj więcej szczegółów i dołącz do dyskusji na <discordLink>Discord</discordLink> i <redditLink>Reddit</redditLink> 🚀"
+		"title": "Zrób więcej z Zadaniami Bumerang 🪃",
+		"description": "Podziel pracę na podzadania, każde działające w wyspecjalizowanym trybie, takim jak code, architect, debug lub trybie niestandardowym.",
+		"learnMore": "Dowiedz się więcej →",
+		"hideButton": "Ukryj ogłoszenie"
 	},
 	"browser": {
 		"rooWantsToUse": "Roo chce użyć przeglądarki:",

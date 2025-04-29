@@ -12,6 +12,8 @@
 		"export": "Esporta cronologia attività",
 		"delete": "Elimina attività (Shift + Clic per saltare la conferma)"
 	},
+	"unpin": "Rilascia",
+	"pin": "Fissa",
 	"tokenProgress": {
 		"availableSpace": "Spazio disponibile: {{amount}} tokens",
 		"tokensUsed": "Tokens utilizzati: {{used}} di {{total}}",
@@ -84,6 +86,9 @@
 		"wantsToFetch": "Roo vuole recuperare istruzioni dettagliate per aiutare con l'attività corrente"
 	},
 	"error": "Errore",
+	"diffError": {
+		"title": "Modifica non riuscita"
+	},
 	"troubleMessage": "Roo sta avendo problemi...",
 	"apiRequest": {
 		"title": "Richiesta API",
@@ -95,6 +100,7 @@
 	"checkpoint": {
 		"initial": "Checkpoint iniziale",
 		"regular": "Checkpoint",
+		"initializingWarning": "Inizializzazione del checkpoint in corso... Se questa operazione richiede troppo tempo, puoi disattivare i checkpoint nelle <settingsLink>impostazioni</settingsLink> e riavviare l'attività.",
 		"menu": {
 			"viewDiff": "Visualizza differenze",
 			"restore": "Ripristina checkpoint",
@@ -141,7 +147,12 @@
 	},
 	"subtasks": {
 		"wantsToCreate": "Roo vuole creare una nuova sottoattività in modalità <code>{{mode}}</code>:",
-		"wantsToFinish": "Roo vuole completare questa sottoattività"
+		"wantsToFinish": "Roo vuole completare questa sottoattività",
+		"newTaskContent": "Istruzioni sottoattività",
+		"completionContent": "Sottoattività completata",
+		"resultContent": "Risultati sottoattività",
+		"defaultResult": "Per favore continua con la prossima attività.",
+		"completionInstructions": "Sottoattività completata! Puoi rivedere i risultati e suggerire correzioni o prossimi passi. Se tutto sembra a posto, conferma per restituire il risultato all'attività principale."
 	},
 	"questions": {
 		"hasQuestion": "Roo ha una domanda:"
@@ -149,7 +160,10 @@
 	"taskCompleted": "Attività completata",
 	"shellIntegration": {
 		"unavailable": "Integrazione shell non disponibile",
-		"troubleshooting": "Ancora problemi?"
+		"troubleshooting": "Ancora problemi? Clicca qui per la documentazione sull'integrazione della shell.",
+		"checkSettings": "Controlla le soluzioni alternative del terminale nella pagina delle impostazioni",
+		"updateVSCode": "Aggiorna VSCode",
+		"supportedShell": "Assicurati di utilizzare una shell supportata: zsh, bash, fish o PowerShell"
 	},
 	"powershell": {
 		"issues": "Sembra che tu stia avendo problemi con Windows PowerShell, consulta questa"
@@ -157,46 +171,38 @@
 	"autoApprove": {
 		"title": "Auto-approvazione:",
 		"none": "Nessuna",
-		"description": "L'auto-approvazione permette a Roo Code di eseguire azioni senza chiedere permesso. Abilita solo per azioni di cui ti fidi completamente.",
+		"description": "L'auto-approvazione permette a Roo Code di eseguire azioni senza chiedere permesso. Abilita solo per azioni di cui ti fidi completamente. Configurazione più dettagliata disponibile nelle <settingsLink>Impostazioni</settingsLink>.",
 		"actions": {
 			"readFiles": {
-				"label": "Leggi file e directory",
-				"shortName": "Lettura",
+				"label": "Lettura",
 				"description": "Consente l'accesso per leggere qualsiasi file sul tuo computer."
 			},
 			"editFiles": {
-				"label": "Modifica file",
-				"shortName": "Modifica",
+				"label": "Modifica",
 				"description": "Consente la modifica di qualsiasi file sul tuo computer."
 			},
 			"executeCommands": {
-				"label": "Esegui comandi approvati",
-				"shortName": "Comandi",
+				"label": "Comandi",
 				"description": "Consente l'esecuzione di comandi da terminale approvati. Puoi configurare questo nel pannello delle impostazioni."
 			},
 			"useBrowser": {
-				"label": "Usa il browser",
-				"shortName": "Browser",
+				"label": "Browser",
 				"description": "Consente la capacità di avviare e interagire con qualsiasi sito web in un browser headless."
 			},
 			"useMcp": {
-				"label": "Usa server MCP",
-				"shortName": "MCP",
+				"label": "MCP",
 				"description": "Consente l'uso di server MCP configurati che possono modificare il filesystem o interagire con API."
 			},
 			"switchModes": {
-				"label": "Cambia modalità",
-				"shortName": "Modalità",
+				"label": "Modalità",
 				"description": "Consente il passaggio automatico tra diverse modalità senza richiedere approvazione."
 			},
 			"subtasks": {
-				"label": "Crea e completa sottoattività",
-				"shortName": "Sottoattività",
+				"label": "Sottoattività",
 				"description": "Consente la creazione e il completamento di sottoattività senza richiedere approvazione."
 			},
 			"retryRequests": {
-				"label": "Riprova richieste fallite",
-				"shortName": "Ripetizioni",
+				"label": "Ritentativi",
 				"description": "Riprova automaticamente le richieste API fallite quando il provider restituisce una risposta di errore."
 			}
 		}
@@ -205,17 +211,14 @@
 		"thinking": "Sto pensando",
 		"seconds": "{{count}}s"
 	},
+	"followUpSuggest": {
+		"copyToInput": "Copia nell'input (o Shift + clic)"
+	},
 	"announcement": {
-		"title": "🎉 Rilasciato Roo Code 3.10",
-		"description": "Roo Code 3.10 porta potenti miglioramenti di produttività!",
-		"whatsNew": "Novità",
-		"feature1": "Risposte suggerite alle domande",
-		"feature2": "Gestione migliorata dei file di grandi dimensioni",
-		"feature3": "Ricerca file tramite @-menzione ricostruita",
-		"feature4": "",
-		"feature5": "",
-		"hideButton": "Nascondi annuncio",
-		"detailsDiscussLinks": "Ottieni maggiori dettagli e partecipa alle discussioni su <discordLink>Discord</discordLink> e <redditLink>Reddit</redditLink> 🚀"
+		"title": "Fai di più con le Attività Boomerang 🪃",
+		"description": "Dividi il lavoro in sottoattività, ognuna eseguita in una modalità specializzata, come code, architect, debug o una modalità personalizzata.",
+		"learnMore": "Scopri di più →",
+		"hideButton": "Nascondi annuncio"
 	},
 	"browser": {
 		"rooWantsToUse": "Roo vuole utilizzare il browser:",

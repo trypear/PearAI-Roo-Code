@@ -25,6 +25,7 @@ export interface DropdownOption {
 	label: string
 	disabled?: boolean
 	type?: DropdownOptionType
+	pinned?: boolean
 }
 
 export interface SelectDropdownProps {
@@ -35,10 +36,12 @@ export interface SelectDropdownProps {
 	title?: string
 	triggerClassName?: string
 	contentClassName?: string
+	itemClassName?: string
 	sideOffset?: number
 	align?: "start" | "center" | "end"
 	placeholder?: string
 	shortcutText?: string
+	renderItem?: (option: DropdownOption) => React.ReactNode
 }
 
 export const SelectDropdown = React.forwardRef<React.ElementRef<typeof DropdownMenuTrigger>, SelectDropdownProps>(
@@ -51,18 +54,22 @@ export const SelectDropdown = React.forwardRef<React.ElementRef<typeof DropdownM
 			title = "",
 			triggerClassName = "",
 			contentClassName = "",
+			itemClassName = "",
 			sideOffset = 4,
 			align = "start",
 			placeholder = "",
 			shortcutText = "",
+			renderItem,
 		},
 		ref,
 	) => {
 		const [open, setOpen] = React.useState(false)
 		const portalContainer = useRooPortal("roo-portal")
 
+		// If the selected option isn't in the list yet, but we have a placeholder, prioritize showing the placeholder
 		const selectedOption = options.find((option) => option.value === value)
-		const displayText = selectedOption?.label || placeholder || ""
+		const displayText =
+			value && !selectedOption && placeholder ? placeholder : selectedOption?.label || placeholder || ""
 
 		const handleSelect = (option: DropdownOption) => {
 			if (option.type === DropdownOptionType.ACTION) {
@@ -76,7 +83,7 @@ export const SelectDropdown = React.forwardRef<React.ElementRef<typeof DropdownM
 		}
 
 		return (
-			<DropdownMenu open={open} onOpenChange={setOpen}>
+			<DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
 				<DropdownMenuTrigger
 					ref={ref}
 					disabled={disabled}
@@ -99,7 +106,7 @@ export const SelectDropdown = React.forwardRef<React.ElementRef<typeof DropdownM
 					onEscapeKeyDown={() => setOpen(false)}
 					onInteractOutside={() => setOpen(false)}
 					container={portalContainer}
-					className={contentClassName}>
+					className={cn("overflow-y-auto max-h-[80vh]", contentClassName)}>
 					{options.map((option, index) => {
 						if (option.type === DropdownOptionType.SEPARATOR) {
 							return <DropdownMenuSeparator key={`sep-${index}`} />
@@ -120,12 +127,19 @@ export const SelectDropdown = React.forwardRef<React.ElementRef<typeof DropdownM
 							<DropdownMenuItem
 								key={`item-${option.value}`}
 								disabled={option.disabled}
-								onClick={() => handleSelect(option)}>
-								{option.label}
-								{option.value === value && (
-									<DropdownMenuShortcut>
-										<Check className="size-4 p-0.5" />
-									</DropdownMenuShortcut>
+								onClick={() => handleSelect(option)}
+								className={itemClassName}>
+								{renderItem ? (
+									renderItem(option)
+								) : (
+									<>
+										{option.label}
+										{option.value === value && (
+											<DropdownMenuShortcut>
+												<Check className="size-4 p-0.5" />
+											</DropdownMenuShortcut>
+										)}
+									</>
 								)}
 							</DropdownMenuItem>
 						)

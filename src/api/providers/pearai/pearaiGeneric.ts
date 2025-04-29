@@ -226,7 +226,7 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 		if (modelId && this.options.pearaiAgentModels) {
 			let modelInfo = null
 			if (modelId.startsWith("pearai")) {
-				modelInfo = this.options.pearaiAgentModels.models[modelId].underlyingModelUpdated
+				modelInfo = this.options.pearaiAgentModels.models[modelId]
 			} else {
 				modelInfo = this.options.pearaiAgentModels.models[modelId || "pearai-model"]
 			}

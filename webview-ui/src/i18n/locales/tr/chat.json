@@ -12,6 +12,8 @@
 		"export": "Görev geçmişini dışa aktar",
 		"delete": "Görevi sil (Onayı atlamak için Shift + Tıkla)"
 	},
+	"unpin": "Sabitlemeyi iptal et",
+	"pin": "Sabitle",
 	"tokenProgress": {
 		"availableSpace": "Kullanılabilir alan: {{amount}} token",
 		"tokensUsed": "Kullanılan tokenlar: {{used}} / {{total}}",
@@ -81,6 +83,9 @@
 	"edit": "Düzenle...",
 	"forNextMode": "sonraki mod için",
 	"error": "Hata",
+	"diffError": {
+		"title": "Düzenleme Başarısız"
+	},
 	"troubleMessage": "Roo sorun yaşıyor...",
 	"apiRequest": {
 		"title": "API İsteği",
@@ -92,6 +97,7 @@
 	"checkpoint": {
 		"initial": "İlk Kontrol Noktası",
 		"regular": "Kontrol Noktası",
+		"initializingWarning": "Kontrol noktası hala başlatılıyor... Bu çok uzun sürerse, <settingsLink>ayarlar</settingsLink> bölümünden kontrol noktalarını devre dışı bırakabilir ve görevinizi yeniden başlatabilirsiniz.",
 		"menu": {
 			"viewDiff": "Farkları Görüntüle",
 			"restore": "Kontrol Noktasını Geri Yükle",
@@ -141,7 +147,12 @@
 	},
 	"subtasks": {
 		"wantsToCreate": "Roo <code>{{mode}}</code> modunda yeni bir alt görev oluşturmak istiyor:",
-		"wantsToFinish": "Roo bu alt görevi bitirmek istiyor"
+		"wantsToFinish": "Roo bu alt görevi bitirmek istiyor",
+		"newTaskContent": "Alt Görev Talimatları",
+		"completionContent": "Alt Görev Tamamlandı",
+		"resultContent": "Alt Görev Sonuçları",
+		"defaultResult": "Lütfen sonraki göreve devam edin.",
+		"completionInstructions": "Alt görev tamamlandı! Sonuçları inceleyebilir ve düzeltmeler veya sonraki adımlar önerebilirsiniz. Her şey iyi görünüyorsa, sonucu üst göreve döndürmek için onaylayın."
 	},
 	"questions": {
 		"hasQuestion": "Roo'nun bir sorusu var:"
@@ -149,7 +160,10 @@
 	"taskCompleted": "Görev Tamamlandı",
 	"shellIntegration": {
 		"unavailable": "Kabuk Entegrasyonu Kullanılamıyor",
-		"troubleshooting": "Hala sorun mu yaşıyorsunuz?"
+		"troubleshooting": "Hala sorun mu yaşıyorsunuz? Kabuk entegrasyonu belgelerine göz atmak için buraya tıklayın.",
+		"checkSettings": "Ayarlar sayfasındaki terminal geçici çözümlerini kontrol et",
+		"updateVSCode": "VSCode'u güncelle",
+		"supportedShell": "Desteklenen bir kabuk kullandığından emin ol: zsh, bash, fish veya PowerShell"
 	},
 	"powershell": {
 		"issues": "Windows PowerShell ile ilgili sorunlar yaşıyor gibi görünüyorsunuz, lütfen şu konuya bakın"
@@ -157,46 +171,38 @@
 	"autoApprove": {
 		"title": "Otomatik-onay:",
 		"none": "Hiçbiri",
-		"description": "Otomatik onay, Roo Code'un izin istemeden işlemler gerçekleştirmesine olanak tanır. Yalnızca tamamen güvendiğiniz eylemler için etkinleştirin.",
+		"description": "Otomatik onay, Roo Code'un izin istemeden işlemler gerçekleştirmesine olanak tanır. Yalnızca tamamen güvendiğiniz eylemler için etkinleştirin. Daha detaylı yapılandırma <settingsLink>Ayarlar</settingsLink>'da mevcuttur.",
 		"actions": {
 			"readFiles": {
-				"label": "Dosyaları ve dizinleri oku",
-				"shortName": "Okuma",
+				"label": "Okuma",
 				"description": "Bilgisayarınızdaki herhangi bir dosyayı okuma erişimine izin verir."
 			},
 			"editFiles": {
-				"label": "Dosyaları düzenle",
-				"shortName": "Düzenleme",
+				"label": "Yazma",
 				"description": "Bilgisayarınızdaki herhangi bir dosyanın değiştirilmesine izin verir."
 			},
 			"executeCommands": {
-				"label": "Onaylanmış komutları çalıştır",
-				"shortName": "Komutlar",
+				"label": "Komutlar",
 				"description": "Onaylanmış terminal komutlarının çalıştırılmasına izin verir. Bunu ayarlar panelinde yapılandırabilirsiniz."
 			},
 			"useBrowser": {
-				"label": "Tarayıcıyı kullan",
-				"shortName": "Tarayıcı",
+				"label": "Tarayıcı",
 				"description": "Grafiksel arayüz olmayan bir tarayıcıda herhangi bir web sitesini başlatma ve etkileşim kurma yeteneğine izin verir."
 			},
 			"useMcp": {
-				"label": "MCP sunucularını kullan",
-				"shortName": "MCP",
+				"label": "MCP",
 				"description": "Dosya sistemini değiştirebilen veya API'lerle etkileşime girebilen yapılandırılmış MCP sunucularının kullanımına izin verir."
 			},
 			"switchModes": {
-				"label": "Modları değiştir",
-				"shortName": "Modlar",
+				"label": "Modlar",
 				"description": "Onay gerektirmeden farklı modlar arasında otomatik geçişe izin verir."
 			},
 			"subtasks": {
-				"label": "Alt görevler oluştur ve tamamla",
-				"shortName": "Alt görevler",
+				"label": "Alt Görevler",
 				"description": "Onay gerektirmeden alt görevlerin oluşturulmasına ve tamamlanmasına izin verir."
 			},
 			"retryRequests": {
-				"label": "Başarısız istekleri yeniden dene",
-				"shortName": "Yeniden Denemeler",
+				"label": "Yeniden Denemeler",
 				"description": "Sağlayıcı bir hata yanıtı döndürdüğünde başarısız API isteklerini otomatik olarak yeniden dener."
 			}
 		}
@@ -205,17 +211,14 @@
 		"thinking": "Düşünüyor",
 		"seconds": "{{count}}sn"
 	},
+	"followUpSuggest": {
+		"copyToInput": "Giriş alanına kopyala (veya Shift + tıklama)"
+	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.10 Yayınlandı",
-		"description": "Roo Code 3.10 güçlü üretkenlik iyileştirmeleri getiriyor!",
-		"whatsNew": "Yenilikler",
-		"feature1": "Sorulara önerilen yanıtlar",
-		"feature2": "Geliştirilmiş büyük dosya işleme",
-		"feature3": "Yeniden yapılandırılmış @-mention dosya aramaları",
-		"feature4": "",
-		"feature5": "",
-		"hideButton": "Duyuruyu gizle",
-		"detailsDiscussLinks": "<discordLink>Discord</discordLink> ve <redditLink>Reddit</redditLink> üzerinde daha fazla ayrıntı edinin ve tartışmalara katılın 🚀"
+		"title": "Bumerang Görevleriyle Daha Fazlasını Yapın 🪃",
+		"description": "İşi alt görevlere bölerek, her birini code, architect, debug veya özel mod gibi özelleştirilmiş bir modda çalıştırın.",
+		"learnMore": "Daha fazla bilgi →",
+		"hideButton": "Duyuruyu gizle"
 	},
 	"browser": {
 		"rooWantsToUse": "Roo tarayıcıyı kullanmak istiyor:",

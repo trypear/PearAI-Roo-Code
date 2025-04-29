@@ -12,6 +12,8 @@
 		"export": "Xuất lịch sử nhiệm vụ",
 		"delete": "Xóa nhiệm vụ (Shift + Click để bỏ qua xác nhận)"
 	},
+	"unpin": "Bỏ ghim khỏi đầu",
+	"pin": "Ghim lên đầu",
 	"tokenProgress": {
 		"availableSpace": "Không gian khả dụng: {{amount}} tokens",
 		"tokensUsed": "Tokens đã sử dụng: {{used}} trong {{total}}",
@@ -81,6 +83,9 @@
 	"edit": "Chỉnh sửa...",
 	"forNextMode": "cho chế độ tiếp theo",
 	"error": "Lỗi",
+	"diffError": {
+		"title": "Chỉnh sửa không thành công"
+	},
 	"troubleMessage": "Roo đang gặp sự cố...",
 	"apiRequest": {
 		"title": "Yêu cầu API",
@@ -92,6 +97,7 @@
 	"checkpoint": {
 		"initial": "Điểm kiểm tra ban đầu",
 		"regular": "Điểm kiểm tra",
+		"initializingWarning": "Đang khởi tạo điểm kiểm tra... Nếu quá trình này mất quá nhiều thời gian, bạn có thể vô hiệu hóa điểm kiểm tra trong <settingsLink>cài đặt</settingsLink> và khởi động lại tác vụ của bạn.",
 		"menu": {
 			"viewDiff": "Xem khác biệt",
 			"restore": "Khôi phục điểm kiểm tra",
@@ -141,7 +147,12 @@
 	},
 	"subtasks": {
 		"wantsToCreate": "Roo muốn tạo một nhiệm vụ phụ mới trong chế độ <code>{{mode}}</code>:",
-		"wantsToFinish": "Roo muốn hoàn thành nhiệm vụ phụ này"
+		"wantsToFinish": "Roo muốn hoàn thành nhiệm vụ phụ này",
+		"newTaskContent": "Hướng dẫn nhiệm vụ phụ",
+		"completionContent": "Nhiệm vụ phụ đã hoàn thành",
+		"resultContent": "Kết quả nhiệm vụ phụ",
+		"defaultResult": "Vui lòng tiếp tục với nhiệm vụ tiếp theo.",
+		"completionInstructions": "Nhiệm vụ phụ đã hoàn thành! Bạn có thể xem lại kết quả và đề xuất các sửa đổi hoặc bước tiếp theo. Nếu mọi thứ có vẻ tốt, hãy xác nhận để trả kết quả về nhiệm vụ chính."
 	},
 	"questions": {
 		"hasQuestion": "Roo có một câu hỏi:"
@@ -149,7 +160,10 @@
 	"taskCompleted": "Nhiệm vụ hoàn thành",
 	"shellIntegration": {
 		"unavailable": "Tích hợp shell không khả dụng",
-		"troubleshooting": "Vẫn gặp vấn đề?"
+		"troubleshooting": "Vẫn gặp vấn đề? Nhấp vào đây để xem tài liệu tích hợp shell.",
+		"checkSettings": "Kiểm tra các giải pháp thay thế cho terminal trong trang cài đặt",
+		"updateVSCode": "Cập nhật VSCode",
+		"supportedShell": "Đảm bảo bạn đang sử dụng shell được hỗ trợ: zsh, bash, fish hoặc PowerShell"
 	},
 	"powershell": {
 		"issues": "Có vẻ như bạn đang gặp vấn đề với Windows PowerShell, vui lòng xem"
@@ -157,46 +171,38 @@
 	"autoApprove": {
 		"title": "Tự động phê duyệt:",
 		"none": "Không",
-		"description": "Tự động phê duyệt cho phép Roo Code thực hiện hành động mà không cần xin phép. Chỉ bật cho các hành động bạn hoàn toàn tin tưởng.",
+		"description": "Tự động phê duyệt cho phép Roo Code thực hiện hành động mà không cần xin phép. Chỉ bật cho các hành động bạn hoàn toàn tin tưởng. Cấu hình chi tiết hơn có sẵn trong <settingsLink>Cài đặt</settingsLink>.",
 		"actions": {
 			"readFiles": {
-				"label": "Đọc tệp và thư mục",
-				"shortName": "Đọc",
+				"label": "Đọc",
 				"description": "Cho phép truy cập để đọc bất kỳ tệp nào trên máy tính của bạn."
 			},
 			"editFiles": {
-				"label": "Chỉnh sửa tệp",
-				"shortName": "Chỉnh sửa",
+				"label": "Chỉnh sửa",
 				"description": "Cho phép chỉnh sửa bất kỳ tệp nào trên máy tính của bạn."
 			},
 			"executeCommands": {
-				"label": "Thực thi lệnh đã phê duyệt",
-				"shortName": "Lệnh",
+				"label": "Lệnh",
 				"description": "Cho phép thực thi lệnh terminal đã được phê duyệt. Bạn có thể cấu hình điều này trong bảng cài đặt."
 			},
 			"useBrowser": {
-				"label": "Sử dụng trình duyệt",
-				"shortName": "Trình duyệt",
+				"label": "Trình duyệt",
 				"description": "Cho phép khả năng khởi chạy và tương tác với bất kỳ trang web nào trong trình duyệt không giao diện."
 			},
 			"useMcp": {
-				"label": "Sử dụng máy chủ MCP",
-				"shortName": "MCP",
+				"label": "MCP",
 				"description": "Cho phép sử dụng máy chủ MCP đã cấu hình có thể sửa đổi hệ thống tệp hoặc tương tác với API."
 			},
 			"switchModes": {
-				"label": "Chuyển đổi chế độ",
-				"shortName": "Chế độ",
+				"label": "Chế độ",
 				"description": "Cho phép tự động chuyển đổi giữa các chế độ khác nhau mà không cần phê duyệt."
 			},
 			"subtasks": {
-				"label": "Tạo & hoàn thành nhiệm vụ phụ",
-				"shortName": "Nhiệm vụ phụ",
+				"label": "Nhiệm vụ phụ",
 				"description": "Cho phép tạo và hoàn thành các nhiệm vụ phụ mà không cần phê duyệt."
 			},
 			"retryRequests": {
-				"label": "Thử lại yêu cầu thất bại",
-				"shortName": "Thử lại",
+				"label": "Thử lại",
 				"description": "Tự động thử lại các yêu cầu API thất bại khi nhà cung cấp trả về phản hồi lỗi."
 			}
 		}
@@ -205,17 +211,14 @@
 		"thinking": "Đang suy nghĩ",
 		"seconds": "{{count}} giây"
 	},
+	"followUpSuggest": {
+		"copyToInput": "Sao chép vào ô nhập liệu (hoặc Shift + nhấp chuột)"
+	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.10 Đã phát hành",
-		"description": "Roo Code 3.10 mang đến những cải tiến năng suất mạnh mẽ!",
-		"whatsNew": "Có gì mới",
-		"feature1": "Gợi ý phản hồi cho câu hỏi",
-		"feature2": "Cải thiện xử lý tệp tin lớn",
-		"feature3": "Xây dựng lại tìm kiếm tệp tin bằng @-mention",
-		"feature4": "",
-		"feature5": "",
-		"hideButton": "Ẩn thông báo",
-		"detailsDiscussLinks": "Nhận thêm chi tiết và thảo luận tại <discordLink>Discord</discordLink> và <redditLink>Reddit</redditLink> 🚀"
+		"title": "Làm được nhiều hơn với Nhiệm vụ Boomerang 🪃",
+		"description": "Chia công việc thành các nhiệm vụ con, mỗi nhiệm vụ chạy trong một chế độ chuyên biệt như code, architect, debug, hoặc chế độ tùy chỉnh.",
+		"learnMore": "Tìm hiểu thêm →",
+		"hideButton": "Ẩn thông báo"
 	},
 	"browser": {
 		"rooWantsToUse": "Roo muốn sử dụng trình duyệt:",

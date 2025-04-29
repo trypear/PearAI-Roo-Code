@@ -1,171 +1,11 @@
-import * as vscode from "vscode"
-import { PearAIAgentModelsConfig } from "../api/providers/pearai/pearai"
+import { ModelInfo, ProviderName, ProviderSettings } from "../schemas"
 
-export type ApiProvider =
-	| "anthropic"
-	| "glama"
-	| "openrouter"
-	| "bedrock"
-	| "vertex"
-	| "openai"
-	| "ollama"
-	| "lmstudio"
-	| "gemini"
-	| "openai-native"
-	| "deepseek"
-	| "vscode-lm"
-	| "mistral"
-	| "unbound"
-	| "requesty"
-	| "pearai"
-	| "human-relay"
-	| "fake-ai"
+export type { ModelInfo, ProviderName as ApiProvider }
 
-export interface ApiHandlerOptions {
-	apiModelId?: string
-	apiKey?: string // anthropic
-	anthropicBaseUrl?: string
-	vsCodeLmModelSelector?: vscode.LanguageModelChatSelector
-	glamaModelId?: string
-	glamaModelInfo?: ModelInfo
-	glamaApiKey?: string
-	openRouterApiKey?: string
-	openRouterModelId?: string
-	openRouterModelInfo?: ModelInfo
-	openRouterBaseUrl?: string
-	openRouterSpecificProvider?: string
-	awsAccessKey?: string
-	awsSecretKey?: string
-	awsSessionToken?: string
-	awsRegion?: string
-	awsUseCrossRegionInference?: boolean
-	awsUsePromptCache?: boolean
-	awspromptCacheId?: string
-	awsProfile?: string
-	awsUseProfile?: boolean
-	awsCustomArn?: string
-	vertexKeyFile?: string
-	vertexJsonCredentials?: string
-	vertexProjectId?: string
-	vertexRegion?: string
-	openAiBaseUrl?: string
-	openAiApiKey?: string
-	openAiR1FormatEnabled?: boolean
-	openAiModelId?: string
-	openAiCustomModelInfo?: ModelInfo
-	openAiUseAzure?: boolean
-	ollamaModelId?: string
-	ollamaBaseUrl?: string
-	lmStudioModelId?: string
-	lmStudioBaseUrl?: string
-	lmStudioDraftModelId?: string
-	lmStudioSpeculativeDecodingEnabled?: boolean
-	geminiApiKey?: string
-	googleGeminiBaseUrl?: string
-	openAiNativeApiKey?: string
-	mistralApiKey?: string
-	mistralCodestralUrl?: string // New option for Codestral URL
-	azureApiVersion?: string
-	openRouterUseMiddleOutTransform?: boolean
-	openAiStreamingEnabled?: boolean
-	deepSeekBaseUrl?: string
-	deepSeekApiKey?: string
-	includeMaxTokens?: boolean
-	unboundApiKey?: string
-	unboundModelId?: string
-	unboundModelInfo?: ModelInfo
-	requestyApiKey?: string
-	requestyModelId?: string
-	requestyModelInfo?: ModelInfo
-	modelTemperature?: number | null
-	modelMaxTokens?: number
-	pearaiApiKey?: string
-	pearaiBaseUrl?: string
-	pearaiModelId?: string
-	pearaiModelInfo?: ModelInfo
-	pearaiAgentModels?: PearAIAgentModelsConfig
-	modelMaxThinkingTokens?: number
-	fakeAi?: unknown
-}
+export type ApiHandlerOptions = Omit<ProviderSettings, "apiProvider" | "id">
 
-export type ApiConfiguration = ApiHandlerOptions & {
-	apiProvider?: ApiProvider
-	id?: string // stable unique identifier
-}
+export type ApiConfiguration = ProviderSettings
 
-// Import GlobalStateKey type from globalState.ts
-import { GlobalStateKey } from "./globalState"
-
-// Define API configuration keys for dynamic object building.
-// TODO: This needs actual type safety; a type error should be thrown if
-// this is not an exhaustive list of all `GlobalStateKey` values.
-export const API_CONFIG_KEYS: GlobalStateKey[] = [
-	"apiModelId",
-	"anthropicBaseUrl",
-	"vsCodeLmModelSelector",
-	"glamaModelId",
-	"glamaModelInfo",
-	"openRouterModelId",
-	"openRouterModelInfo",
-	"openRouterBaseUrl",
-	"openRouterSpecificProvider",
-	"awsRegion",
-	"awsUseCrossRegionInference",
-	// "awsUsePromptCache", // NOT exist on GlobalStateKey
-	// "awspromptCacheId", // NOT exist on GlobalStateKey
-	"awsProfile",
-	"awsUseProfile",
-	"awsCustomArn",
-	"vertexKeyFile",
-	"vertexJsonCredentials",
-	"vertexProjectId",
-	"vertexRegion",
-	"openAiBaseUrl",
-	"openAiModelId",
-	"openAiCustomModelInfo",
-	"openAiUseAzure",
-	"ollamaModelId",
-	"ollamaBaseUrl",
-	"lmStudioModelId",
-	"lmStudioBaseUrl",
-	"lmStudioDraftModelId",
-	"lmStudioSpeculativeDecodingEnabled",
-	"googleGeminiBaseUrl",
-	"mistralCodestralUrl",
-	"azureApiVersion",
-	"openRouterUseMiddleOutTransform",
-	"openAiStreamingEnabled",
-	"openAiR1FormatEnabled",
-	// "deepSeekBaseUrl", //  not exist on GlobalStateKey
-	// "includeMaxTokens", // not exist on GlobalStateKey
-	"unboundModelId",
-	"unboundModelInfo",
-	"requestyModelId",
-	"requestyModelInfo",
-	"modelTemperature",
-	"modelMaxTokens",
-	"modelMaxThinkingTokens",
-	"fakeAi",
-]
-
-// Models
-
-export interface ModelInfo {
-	maxTokens?: number
-	contextWindow: number
-	supportsImages?: boolean
-	supportsComputerUse?: boolean
-	supportsPromptCache: boolean // this value is hardcoded for now
-	inputPrice?: number
-	outputPrice?: number
-	cacheWritesPrice?: number
-	cacheReadsPrice?: number
-	description?: string
-	reasoningEffort?: "low" | "medium" | "high"
-	thinking?: boolean
-	underlyingModel?: string
-	underlyingModelUpdated?: Record<string, any>
-}
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-claude/models
 export type AnthropicModelId = keyof typeof anthropicModels
@@ -237,8 +77,7 @@ export const anthropicModels = {
 		cacheReadsPrice: 0.03,
 	},
 } as const satisfies Record<string, ModelInfo> // as const assertion makes the object deeply readonly
-
-// AWS Bedrock
+// Amazon Bedrock
 // https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html
 export interface MessageContent {
 	type: "text" | "image" | "video" | "tool_use" | "tool_result"
@@ -273,11 +112,14 @@ export const bedrockModels = {
 		contextWindow: 300_000,
 		supportsImages: true,
 		supportsComputerUse: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.8,
 		outputPrice: 3.2,
 		cacheWritesPrice: 0.8, // per million tokens
 		cacheReadsPrice: 0.2, // per million tokens
+		minTokensPerCachePoint: 1,
+		maxCachePoints: 1,
+		cachableFields: ["system"],
 	},
 	"amazon.nova-pro-latency-optimized-v1:0": {
 		maxTokens: 5000,
@@ -296,22 +138,28 @@ export const bedrockModels = {
 		contextWindow: 300_000,
 		supportsImages: true,
 		supportsComputerUse: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.06,
 		outputPrice: 0.24,
 		cacheWritesPrice: 0.06, // per million tokens
 		cacheReadsPrice: 0.015, // per million tokens
+		minTokensPerCachePoint: 1,
+		maxCachePoints: 1,
+		cachableFields: ["system"],
 	},
 	"amazon.nova-micro-v1:0": {
 		maxTokens: 5000,
 		contextWindow: 128_000,
 		supportsImages: false,
 		supportsComputerUse: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.035,
 		outputPrice: 0.14,
 		cacheWritesPrice: 0.035, // per million tokens
 		cacheReadsPrice: 0.00875, // per million tokens
+		minTokensPerCachePoint: 1,
+		maxCachePoints: 1,
+		cachableFields: ["system"],
 	},
 	"anthropic.claude-3-7-sonnet-20250219-v1:0": {
 		maxTokens: 8192,
@@ -323,27 +171,36 @@ export const bedrockModels = {
 		outputPrice: 15.0,
 		cacheWritesPrice: 3.75,
 		cacheReadsPrice: 0.3,
+		minTokensPerCachePoint: 1024,
+		maxCachePoints: 4,
+		cachableFields: ["system", "messages", "tools"],
 	},
 	"anthropic.claude-3-5-sonnet-20241022-v2:0": {
 		maxTokens: 8192,
 		contextWindow: 200_000,
 		supportsImages: true,
 		supportsComputerUse: true,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 3.0,
 		outputPrice: 15.0,
 		cacheWritesPrice: 3.75,
 		cacheReadsPrice: 0.3,
+		minTokensPerCachePoint: 1024,
+		maxCachePoints: 4,
+		cachableFields: ["system", "messages", "tools"],
 	},
 	"anthropic.claude-3-5-haiku-20241022-v1:0": {
 		maxTokens: 8192,
 		contextWindow: 200_000,
 		supportsImages: false,
-		supportsPromptCache: false,
+		supportsPromptCache: true,
 		inputPrice: 0.8,
 		outputPrice: 4.0,
 		cacheWritesPrice: 1.0,
 		cacheReadsPrice: 0.08,
+		minTokensPerCachePoint: 2048,
+		maxCachePoints: 4,
+		cachableFields: ["system", "messages", "tools"],
 	},
 	"anthropic.claude-3-5-sonnet-20240620-v1:0": {
 		maxTokens: 8192,
@@ -624,13 +481,21 @@ export const vertexModels = {
 		inputPrice: 0.15,
 		outputPrice: 0.6,
 	},
-	"gemini-2.0-flash": {
-		maxTokens: 8192,
+	"gemini-2.5-pro-preview-03-25": {
+		maxTokens: 65_535,
 		contextWindow: 1_048_576,
 		supportsImages: true,
 		supportsPromptCache: false,
-		inputPrice: 0.15,
-		outputPrice: 0.6,
+		inputPrice: 2.5,
+		outputPrice: 15,
+	},
+	"gemini-2.5-pro-exp-03-25": {
+		maxTokens: 65_535,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0,
+		outputPrice: 0,
 	},
 	"gemini-2.0-pro-exp-02-05": {
 		maxTokens: 8192,
@@ -771,6 +636,14 @@ export const geminiModels = {
 		inputPrice: 0,
 		outputPrice: 0,
 	},
+	"gemini-2.5-pro-preview-03-25": {
+		maxTokens: 65_535,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 2.5,
+		outputPrice: 15,
+	},
 	"gemini-2.0-flash-001": {
 		maxTokens: 8192,
 		contextWindow: 1_048_576,
@@ -880,9 +753,35 @@ export const geminiModels = {
 // OpenAI Native
 // https://openai.com/api/pricing/
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels
-export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-4o"
+export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-4.1"
 export const openAiNativeModels = {
-	// don't support tool use yet
+	"gpt-4.1": {
+		maxTokens: 32_768,
+		contextWindow: 1_047_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 2,
+		outputPrice: 8,
+		cacheReadsPrice: 0.5,
+	},
+	"gpt-4.1-mini": {
+		maxTokens: 32_768,
+		contextWindow: 1_047_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 0.4,
+		outputPrice: 1.6,
+		cacheReadsPrice: 0.1,
+	},
+	"gpt-4.1-nano": {
+		maxTokens: 32_768,
+		contextWindow: 1_047_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 0.1,
+		outputPrice: 0.4,
+		cacheReadsPrice: 0.025,
+	},
 	"o3-mini": {
 		maxTokens: 100_000,
 		contextWindow: 200_000,
@@ -890,6 +789,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 1.1,
 		outputPrice: 4.4,
+		cacheReadsPrice: 0.55,
 		reasoningEffort: "medium",
 	},
 	"o3-mini-high": {
@@ -899,6 +799,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 1.1,
 		outputPrice: 4.4,
+		cacheReadsPrice: 0.55,
 		reasoningEffort: "high",
 	},
 	"o3-mini-low": {
@@ -908,6 +809,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 1.1,
 		outputPrice: 4.4,
+		cacheReadsPrice: 0.55,
 		reasoningEffort: "low",
 	},
 	o1: {
@@ -917,6 +819,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 15,
 		outputPrice: 60,
+		cacheReadsPrice: 7.5,
 	},
 	"o1-preview": {
 		maxTokens: 32_768,
@@ -925,6 +828,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 15,
 		outputPrice: 60,
+		cacheReadsPrice: 7.5,
 	},
 	"o1-mini": {
 		maxTokens: 65_536,
@@ -933,6 +837,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 1.1,
 		outputPrice: 4.4,
+		cacheReadsPrice: 0.55,
 	},
 	"gpt-4.5-preview": {
 		maxTokens: 16_384,
@@ -941,6 +846,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 75,
 		outputPrice: 150,
+		cacheReadsPrice: 37.5,
 	},
 	"gpt-4o": {
 		maxTokens: 16_384,
@@ -949,6 +855,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 2.5,
 		outputPrice: 10,
+		cacheReadsPrice: 1.25,
 	},
 	"gpt-4o-mini": {
 		maxTokens: 16_384,
@@ -957,6 +864,7 @@ export const openAiNativeModels = {
 		supportsPromptCache: true,
 		inputPrice: 0.15,
 		outputPrice: 0.6,
+		cacheReadsPrice: 0.075,
 	},
 } as const satisfies Record<string, ModelInfo>
 

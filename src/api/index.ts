@@ -75,12 +75,12 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
 			return new UnboundHandler(options)
 		case "requesty":
 			return new RequestyHandler(options)
-		case "pearai":
-			return new PearAiHandler(options)
 		case "human-relay":
 			return new HumanRelayHandler(options)
 		case "fake-ai":
 			return new FakeAIHandler(options)
+		case "pearai":
+			return new PearAiHandler(options)
 		default:
 			return new AnthropicHandler(options)
 	}

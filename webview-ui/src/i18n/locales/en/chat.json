@@ -1,5 +1,5 @@
 {
-	"greeting": "What can Agent do for you?",
+	"greeting": "What can Roo do for you?",
 	"task": {
 		"title": "Task",
 		"seeMore": "See more",
@@ -12,6 +12,8 @@
 		"export": "Export task history",
 		"delete": "Delete Task (Shift + Click to skip confirmation)"
 	},
+	"unpin": "Unpin",
+	"pin": "Pin",
 	"retry": {
 		"title": "Retry",
 		"tooltip": "Try the operation again"
@@ -90,6 +92,7 @@
 	"checkpoint": {
 		"initial": "Initial Checkpoint",
 		"regular": "Checkpoint",
+		"initializingWarning": "Still initializing checkpoint... If this takes too long, you can disable checkpoints in <settingsLink>settings</settingsLink> and restart your task.",
 		"menu": {
 			"viewDiff": "View Diff",
 			"restore": "Restore Checkpoint",
@@ -104,51 +107,63 @@
 		"current": "Current"
 	},
 	"instructions": {
-		"wantsToFetch": "Agent wants to fetch detailed instructions to assist with the current task"
+		"wantsToFetch": "Roo wants to fetch detailed instructions to assist with the current task"
 	},
 	"fileOperations": {
-		"wantsToRead": "Agent wants to read this file:",
-		"didRead": "Agent read this file:",
-		"wantsToEdit": "Agent wants to edit this file:",
-		"wantsToEditOutsideWorkspace": "Agent wants to edit this file outside of the workspace:",
-		"wantsToCreate": "Agent wants to create a new file:"
+		"wantsToRead": "Roo wants to read this file:",
+		"wantsToReadOutsideWorkspace": "Roo wants to read this file outside of the workspace:",
+		"didRead": "Roo read this file:",
+		"wantsToEdit": "Roo wants to edit this file:",
+		"wantsToEditOutsideWorkspace": "Roo wants to edit this file outside of the workspace:",
+		"wantsToCreate": "Roo wants to create a new file:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Agent wants to view the top level files in this directory:",
-		"didViewTopLevel": "Agent viewed the top level files in this directory:",
-		"wantsToViewRecursive": "Agent wants to recursively view all files in this directory:",
-		"didViewRecursive": "Agent recursively viewed all files in this directory:",
-		"wantsToViewDefinitions": "Agent wants to view source code definition names used in this directory:",
-		"didViewDefinitions": "Agent viewed source code definition names used in this directory:",
-		"wantsToSearch": "Agent wants to search this directory for <code>{{regex}}</code>:",
-		"didSearch": "Agent searched this directory for <code>{{regex}}</code>:"
+		"wantsToViewTopLevel": "Roo wants to view the top level files in this directory:",
+		"didViewTopLevel": "Roo viewed the top level files in this directory:",
+		"wantsToViewRecursive": "Roo wants to recursively view all files in this directory:",
+		"didViewRecursive": "Roo recursively viewed all files in this directory:",
+		"wantsToViewDefinitions": "Roo wants to view source code definition names used in this directory:",
+		"didViewDefinitions": "Roo viewed source code definition names used in this directory:",
+		"wantsToSearch": "Roo wants to search this directory for <code>{{regex}}</code>:",
+		"didSearch": "Roo searched this directory for <code>{{regex}}</code>:"
 	},
 	"commandOutput": "Command Output",
 	"response": "Response",
 	"arguments": "Arguments",
 	"mcp": {
-		"wantsToUseTool": "Agent wants to use a tool on the {{serverName}} MCP server:",
-		"wantsToAccessResource": "Agent wants to access a resource on the {{serverName}} MCP server:"
+		"wantsToUseTool": "Roo wants to use a tool on the {{serverName}} MCP server:",
+		"wantsToAccessResource": "Roo wants to access a resource on the {{serverName}} MCP server:"
 	},
 	"modes": {
-		"wantsToSwitch": "Agent wants to switch to {{mode}} mode",
-		"wantsToSwitchWithReason": "Agent wants to switch to {{mode}} mode because: {{reason}}",
-		"didSwitch": "Agent switched to {{mode}} mode",
-		"didSwitchWithReason": "Agent switched to {{mode}} mode because: {{reason}}"
+		"wantsToSwitch": "Roo wants to switch to {{mode}} mode",
+		"wantsToSwitchWithReason": "Roo wants to switch to {{mode}} mode because: {{reason}}",
+		"didSwitch": "Roo switched to {{mode}} mode",
+		"didSwitchWithReason": "Roo switched to {{mode}} mode because: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Agent wants to create a new subtask in {{mode}} mode:",
-		"wantsToFinish": "Agent wants to finish this subtask"
+		"wantsToCreate": "Roo wants to create a new subtask in {{mode}} mode:",
+		"wantsToFinish": "Roo wants to finish this subtask",
+		"newTaskContent": "Subtask Instructions",
+		"completionContent": "Subtask Completed",
+		"resultContent": "Subtask Results",
+		"defaultResult": "Please continue to the next task.",
+		"completionInstructions": "Subtask completed! You can review the results and suggest any corrections or next steps. If everything looks good, confirm to return the result to the parent task."
 	},
 	"questions": {
-		"hasQuestion": "Agent has a question:"
+		"hasQuestion": "Roo has a question:"
 	},
 	"taskCompleted": "Task Completed",
 	"error": "Error",
-	"troubleMessage": "Agent is having trouble...",
+	"diffError": {
+		"title": "Edit Unsuccessful"
+	},
+	"troubleMessage": "Roo is having trouble...",
 	"shellIntegration": {
 		"unavailable": "Shell Integration Unavailable",
-		"troubleshooting": "Still having trouble?"
+		"troubleshooting": "Still having trouble? Click here for shell integration documentation.",
+		"checkSettings": "Check terminal workarounds in the settings page",
+		"updateVSCode": "Update VSCode",
+		"supportedShell": "Make sure you're using a supported shell: zsh, bash, fish, or PowerShell"
 	},
 	"powershell": {
 		"issues": "It seems like you're having Windows PowerShell issues, please see this"
@@ -156,68 +171,57 @@
 	"autoApprove": {
 		"title": "Auto-approve:",
 		"none": "None",
-		"description": "Auto-approve allows Agent to perform actions without asking for permission. Only enable for actions you fully trust.",
+		"description": "Auto-approve allows Roo Code to perform actions without asking for permission. Only enable for actions you fully trust. More detailed configuration available in <settingsLink>Settings</settingsLink>.",
 		"actions": {
 			"readFiles": {
-				"label": "Read files and directories",
-				"shortName": "Read",
+				"label": "Read",
 				"description": "Allows access to read any file on your computer."
 			},
 			"editFiles": {
-				"label": "Edit files",
-				"shortName": "Edit",
+				"label": "Edit",
 				"description": "Allows modification of any files on your computer."
 			},
 			"executeCommands": {
-				"label": "Execute approved commands",
-				"shortName": "Commands",
+				"label": "Commands",
 				"description": "Allows execution of approved terminal commands. You can configure this in the settings panel."
 			},
 			"useBrowser": {
-				"label": "Use the browser",
-				"shortName": "Browser",
+				"label": "Browser",
 				"description": "Allows ability to launch and interact with any website in a headless browser."
 			},
 			"useMcp": {
-				"label": "Use MCP servers",
-				"shortName": "MCP",
+				"label": "MCP",
 				"description": "Allows use of configured MCP servers which may modify filesystem or interact with APIs."
 			},
 			"switchModes": {
-				"label": "Switch modes",
-				"shortName": "Modes",
+				"label": "Modes",
 				"description": "Allows automatic switching between different modes without requiring approval."
 			},
 			"subtasks": {
-				"label": "Create & complete subtasks",
-				"shortName": "Subtasks",
+				"label": "Subtasks",
 				"description": "Allow creation and completion of subtasks without requiring approval."
 			},
 			"retryRequests": {
-				"label": "Retry failed requests",
-				"shortName": "Retries",
+				"label": "Retries",
 				"description": "Automatically retry failed API requests when the provider returns an error response."
 			}
 		}
 	},
 	"announcement": {
-		"title": "🎉 Agent Code 3.10 Released",
-		"description": "Agent Code 3.10 brings powerful productivity enhancements!",
-		"whatsNew": "What's New",
-		"feature1": "Suggested responses to questions",
-		"feature2": "Improved large file handling",
-		"feature3": "Rebuilt @-mention file lookups",
-		"feature4": "",
-		"feature5": "",
-		"hideButton": "Hide announcement",
-		"detailsDiscussLinks": "Get more details and discuss in <discordLink>Discord</discordLink> and <redditLink>Reddit</redditLink> 🚀"
+		"title": "Do more with Boomerang Tasks 🪃",
+		"description": "Split work into subtasks with each running in a specialized mode such as code, architect, debug, or a custom mode.",
+		"learnMore": "Learn more →",
+		"hideButton": "Hide announcement"
 	},
 	"reasoning": {
 		"thinking": "Thinking",
 		"seconds": "{{count}}s"
 	},
+	"followUpSuggest": {
+		"copyToInput": "Copy to input (same as shift + click)"
+	},
 	"browser": {
-		"rooWantsToUse": "Agent wants to use the browser:",
+		"rooWantsToUse": "Roo wants to use the browser:",
 		"consoleLogs": "Console Logs",
 		"noNewLogs": "(No new logs)",
 		"screenshot": "Browser screenshot",

@@ -12,13 +12,8 @@ import { PearAIGenericHandler } from "./pearaiGeneric"
 import { PEARAI_URL } from "../../../shared/pearaiApi"
 
 export interface PearAIAgentModelsConfig {
-	models: {
-		[key: string]: {
-			underlyingModel?: { [key: string]: any }
-			[key: string]: any
-		}
-	}
-	defaultModelId: string
+	models: Record<string, ModelInfo>
+	defaultModelId?: string
 }
 
 export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
@@ -69,9 +64,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				}
 				const pearaiAgentModels = options.pearaiAgentModels
 				const underlyingModel =
-					pearaiAgentModels.models[modelId]?.underlyingModelUpdated?.underlyingModel ||
-					pearaiAgentModels.models[modelId]?.underlyingModel ||
-					"claude-3-5-sonnet-20241022"
+					pearaiAgentModels.models[modelId]?.underlyingModel || "claude-3-5-sonnet-20241022"
 				if (underlyingModel.startsWith("claude") || modelId.startsWith("anthropic/")) {
 					// Default to Claude
 					this.handler = new AnthropicHandler({

@@ -9,8 +9,6 @@ import { VSCodeLink, VSCodeRadio, VSCodeRadioGroup, VSCodeTextField } from "@vsc
 import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
 import { ExternalLinkIcon } from "@radix-ui/react-icons"
 
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator, Button } from "@/components/ui"
-
 import {
 	ApiConfiguration,
 	ModelInfo,
@@ -43,22 +41,26 @@ import {
 import { ExtensionMessage } from "../../../../src/shared/ExtensionMessage"
 
 import { vscode } from "@/utils/vscode"
+import { validateApiConfiguration, validateModelId, validateBedrockArn } from "@/utils/validate"
 import {
 	useOpenRouterModelProviders,
 	OPENROUTER_DEFAULT_PROVIDER_NAME,
 } from "@/components/ui/hooks/useOpenRouterModelProviders"
-
-import { MODELS_BY_PROVIDER, PROVIDERS, AWS_REGIONS, VERTEX_REGIONS } from "./constants"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectSeparator, Button } from "@/components/ui"
+import { MODELS_BY_PROVIDER, PROVIDERS, VERTEX_REGIONS } from "./constants"
+import { AWS_REGIONS } from "../../../../src/shared/aws_regions"
 import { VSCodeButtonLink } from "../common/VSCodeButtonLink"
 import { ModelInfoView } from "./ModelInfoView"
 import { ModelPicker } from "./ModelPicker"
 import { TemperatureControl } from "./TemperatureControl"
-import { validateApiConfiguration, validateModelId, validateBedrockArn } from "@/utils/validate"
+import { RateLimitSecondsControl } from "./RateLimitSecondsControl"
 import { ApiErrorMessage } from "./ApiErrorMessage"
 import { ThinkingBudget } from "./ThinkingBudget"
 import { R1FormatSetting } from "./R1FormatSetting"
 import { usePearAiModels } from "../../hooks/usePearAiModels"
 import { allModels, pearAiDefaultModelId, pearAiDefaultModelInfo } from "../../../../src/shared/pearaiApi"
+import { OpenRouterBalanceDisplay } from "./OpenRouterBalanceDisplay"
+import { RequestyBalanceDisplay } from "./RequestyBalanceDisplay"
 
 interface ApiOptionsProps {
 	uriScheme: string | undefined
@@ -105,6 +107,8 @@ const ApiOptions = ({
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
 	const [openRouterBaseUrlSelected, setOpenRouterBaseUrlSelected] = useState(!!apiConfiguration?.openRouterBaseUrl)
+	const [openAiHostHeaderSelected, setOpenAiHostHeaderSelected] = useState(!!apiConfiguration?.openAiHostHeader)
+	const [openAiLegacyFormatSelected, setOpenAiLegacyFormatSelected] = useState(!!apiConfiguration?.openAiLegacyFormat)
 	const [googleGeminiBaseUrlSelected, setGoogleGeminiBaseUrlSelected] = useState(
 		!!apiConfiguration?.googleGeminiBaseUrl,
 	)
@@ -128,6 +132,13 @@ const ApiOptions = ({
 		return normalizeApiConfiguration(apiConfiguration, pearAiModels)
 	}, [apiConfiguration, pearAiModels])
 
+	// Update apiConfiguration.aiModelId whenever selectedModelId changes.
+	useEffect(() => {
+		if (selectedModelId) {
+			setApiConfigurationField("apiModelId", selectedModelId)
+		}
+	}, [selectedModelId, setApiConfigurationField])
+
 	// Debounced refresh model updates, only executed 250ms after the user
 	// stops typing.
 	useDebounce(
@@ -146,7 +157,11 @@ const ApiOptions = ({
 			} else if (selectedProvider === "openai") {
 				vscode.postMessage({
 					type: "refreshOpenAiModels",
-					values: { baseUrl: apiConfiguration?.openAiBaseUrl, apiKey: apiConfiguration?.openAiApiKey },
+					values: {
+						baseUrl: apiConfiguration?.openAiBaseUrl,
+						apiKey: apiConfiguration?.openAiApiKey,
+						hostHeader: apiConfiguration?.openAiHostHeader,
+					},
 				})
 			} else if (selectedProvider === "ollama") {
 				vscode.postMessage({ type: "requestOllamaModels", text: apiConfiguration?.ollamaBaseUrl })
@@ -249,10 +264,55 @@ const ApiOptions = ({
 			: []
 	}, [selectedProvider, pearAiModels])
 
+	// Base URL for provider documentation
+	const DOC_BASE_URL = "https://docs.roocode.com/providers"
+
+	// Custom URL path mappings for providers with different slugs
+	const providerUrlSlugs: Record<string, string> = {
+		"openai-native": "openai",
+		openai: "openai-compatible",
+	}
+
+	// Helper function to get provider display name from PROVIDERS constant
+	const getProviderDisplayName = (providerKey: string): string | undefined => {
+		const provider = PROVIDERS.find((p) => p.value === providerKey)
+		return provider?.label
+	}
+
+	// Helper function to get the documentation URL and name for the currently selected provider
+	const getSelectedProviderDocUrl = (): { url: string; name: string } | undefined => {
+		const displayName = getProviderDisplayName(selectedProvider)
+		if (!displayName) {
+			return undefined
+		}
+
+		// Get the URL slug - use custom mapping if available, otherwise use the provider key
+		const urlSlug = providerUrlSlugs[selectedProvider] || selectedProvider
+
+		return {
+			url: `${DOC_BASE_URL}/${urlSlug}`,
+			name: displayName,
+		}
+	}
+
 	return (
 		<div className="flex flex-col gap-3">
-			<div>
-				<label className="block font-medium mb-1">{t("settings:providers.apiProvider")}</label>
+			<div className="flex flex-col gap-1 relative">
+				<div className="flex justify-between items-center">
+					<label className="block font-medium mb-1">{t("settings:providers.apiProvider")}</label>
+					{getSelectedProviderDocUrl() && (
+						<div className="text-xs text-vscode-descriptionForeground">
+							<VSCodeLink
+								href={getSelectedProviderDocUrl()!.url}
+								className="hover:text-vscode-foreground"
+								target="_blank">
+								{t("settings:providers.providerDocumentation", {
+									provider: getSelectedProviderDocUrl()!.name,
+								})}
+							</VSCodeLink>
+						</div>
+					)}
+				</div>
 				<Select
 					value={selectedProvider}
 					onValueChange={(value) => setApiConfigurationField("apiProvider", value as ApiProvider)}>
@@ -262,7 +322,7 @@ const ApiOptions = ({
 					<SelectContent>
 						<SelectItem value="pearai">PearAI</SelectItem>
 						<SelectSeparator />
-						{PROVIDERS.map(({ value, label }) => (
+						{PROVIDERS.filter((p) => p.value !== "openrouter").map(({ value, label }) => (
 							<SelectItem key={value} value={value}>
 								{label}
 							</SelectItem>
@@ -314,7 +374,15 @@ const ApiOptions = ({
 						onInput={handleInputChange("openRouterApiKey")}
 						placeholder={t("settings:placeholders.apiKey")}
 						className="w-full">
-						<label className="block font-medium mb-1">{t("settings:providers.openRouterApiKey")}</label>
+						<div className="flex justify-between items-center mb-1">
+							<label className="block font-medium">{t("settings:providers.openRouterApiKey")}</label>
+							{apiConfiguration?.openRouterApiKey && (
+								<OpenRouterBalanceDisplay
+									apiKey={apiConfiguration.openRouterApiKey}
+									baseUrl={apiConfiguration.openRouterBaseUrl}
+								/>
+							)}
+						</div>
 					</VSCodeTextField>
 					<div className="text-sm text-vscode-descriptionForeground -mt-2">
 						{t("settings:providers.apiKeyStorageNotice")}
@@ -393,18 +461,29 @@ const ApiOptions = ({
 
 								if (!checked) {
 									setApiConfigurationField("anthropicBaseUrl", "")
+									setApiConfigurationField("anthropicUseAuthToken", false) // added
 								}
 							}}>
 							{t("settings:providers.useCustomBaseUrl")}
 						</Checkbox>
 						{anthropicBaseUrlSelected && (
-							<VSCodeTextField
-								value={apiConfiguration?.anthropicBaseUrl || ""}
-								type="url"
-								onInput={handleInputChange("anthropicBaseUrl")}
-								placeholder="https://api.anthropic.com"
-								className="w-full mt-1"
-							/>
+							<>
+								<VSCodeTextField
+									value={apiConfiguration?.anthropicBaseUrl || ""}
+									type="url"
+									onInput={handleInputChange("anthropicBaseUrl")}
+									placeholder="https://api.anthropic.com"
+									className="w-full mt-1"
+								/>
+
+								{/* added */}
+								<Checkbox
+									checked={apiConfiguration?.anthropicUseAuthToken ?? false}
+									onChange={handleInputChange("anthropicUseAuthToken", noTransform)}
+									className="w-full mt-1">
+									{t("settings:providers.anthropicUseAuthToken")}
+								</Checkbox>
+							</>
 						)}
 					</div>
 				</>
@@ -442,7 +521,12 @@ const ApiOptions = ({
 						onInput={handleInputChange("requestyApiKey")}
 						placeholder={t("settings:providers.getRequestyApiKey")}
 						className="w-full">
-						<label className="block font-medium mb-1">{t("settings:providers.requestyApiKey")}</label>
+						<div className="flex justify-between items-center mb-1">
+							<label className="block font-medium">{t("settings:providers.requestyApiKey")}</label>
+							{apiConfiguration?.requestyApiKey && (
+								<RequestyBalanceDisplay apiKey={apiConfiguration.requestyApiKey} />
+							)}
+						</div>
 					</VSCodeTextField>
 					<div className="text-sm text-vscode-descriptionForeground -mt-2">
 						{t("settings:providers.apiKeyStorageNotice")}
@@ -592,6 +676,25 @@ const ApiOptions = ({
 						onChange={handleInputChange("awsUseCrossRegionInference", noTransform)}>
 						{t("settings:providers.awsCrossRegion")}
 					</Checkbox>
+					{selectedModelInfo?.supportsPromptCache && (
+						<Checkbox
+							checked={apiConfiguration?.awsUsePromptCache || false}
+							onChange={handleInputChange("awsUsePromptCache", noTransform)}>
+							<div className="flex items-center gap-1">
+								<span>{t("settings:providers.enablePromptCaching")}</span>
+								<i
+									className="codicon codicon-info text-vscode-descriptionForeground"
+									title={t("settings:providers.enablePromptCachingTitle")}
+									style={{ fontSize: "12px" }}
+								/>
+							</div>
+						</Checkbox>
+					)}
+					<div>
+						<div className="text-sm text-vscode-descriptionForeground ml-6 mt-1">
+							{t("settings:providers.cacheUsageNote")}
+						</div>
+					</div>
 				</>
 			)}
 
@@ -740,6 +843,16 @@ const ApiOptions = ({
 						onChange={handleInputChange("openAiR1FormatEnabled", noTransform)}
 						openAiR1FormatEnabled={apiConfiguration?.openAiR1FormatEnabled ?? false}
 					/>
+					<div>
+						<Checkbox
+							checked={openAiLegacyFormatSelected}
+							onChange={(checked: boolean) => {
+								setOpenAiLegacyFormatSelected(checked)
+								setApiConfigurationField("openAiLegacyFormat", checked)
+							}}>
+							{t("settings:providers.useLegacyFormat")}
+						</Checkbox>
+					</div>
 					<Checkbox
 						checked={apiConfiguration?.openAiStreamingEnabled ?? true}
 						onChange={handleInputChange("openAiStreamingEnabled", noTransform)}>
@@ -772,8 +885,30 @@ const ApiOptions = ({
 						)}
 					</div>
 
+					<div>
+						<Checkbox
+							checked={openAiHostHeaderSelected}
+							onChange={(checked: boolean) => {
+								setOpenAiHostHeaderSelected(checked)
+
+								if (!checked) {
+									setApiConfigurationField("openAiHostHeader", "")
+								}
+							}}>
+							{t("settings:providers.useHostHeader")}
+						</Checkbox>
+						{openAiHostHeaderSelected && (
+							<VSCodeTextField
+								value={apiConfiguration?.openAiHostHeader || ""}
+								onInput={handleInputChange("openAiHostHeader")}
+								placeholder="custom-api-hostname.example.com"
+								className="w-full mt-1"
+							/>
+						)}
+					</div>
+
 					<div className="flex flex-col gap-3">
-						<div className="text-sm text-vscode-descriptionForeground">
+						<div className="text-sm text-vscode-descriptionForeground whitespace-pre-line">
 							{t("settings:providers.customModel.capabilities")}
 						</div>
 
@@ -1531,7 +1666,7 @@ const ApiOptions = ({
 								{t("settings:providers.awsCustomArnUse")}
 								<ul className="list-disc pl-5 mt-1">
 									<li>
-										arn:aws:bedrock:us-east-1:123456789012:foundation-model/anthropic.claude-3-sonnet-20240229-v1:0
+										arn:aws:bedrock:eu-west-1:123456789012:inference-profile/eu.anthropic.claude-3-7-sonnet-20250219-v1:0
 									</li>
 									<li>
 										arn:aws:bedrock:us-west-2:123456789012:provisioned-model/my-provisioned-model
@@ -1585,11 +1720,17 @@ const ApiOptions = ({
 			)}
 
 			{!fromWelcomeView && (
-				<TemperatureControl
-					value={apiConfiguration?.modelTemperature}
-					onChange={handleInputChange("modelTemperature", noTransform)}
-					maxValue={2}
-				/>
+				<>
+					<TemperatureControl
+						value={apiConfiguration?.modelTemperature}
+						onChange={handleInputChange("modelTemperature", noTransform)}
+						maxValue={2}
+					/>
+					<RateLimitSecondsControl
+						value={apiConfiguration.rateLimitSeconds || 0}
+						onChange={(value) => setApiConfigurationField("rateLimitSeconds", value)}
+					/>
+				</>
 			)}
 		</div>
 	)
@@ -1606,18 +1747,11 @@ export function normalizeApiConfiguration(
 		let selectedModelId: string
 		let selectedModelInfo: ModelInfo
 
+		// TODO: MAYBE PROCESS PEARAI UNDERLYING MODEL HERE
+
 		if (modelId && modelId in models) {
 			selectedModelId = modelId
-			if (modelId === "pearai-model" && models[modelId].underlyingModelUpdated) {
-				let modelInfo = models[modelId].underlyingModelUpdated
-				selectedModelInfo = {
-					contextWindow: modelInfo.contextWindow || 4096, // provide default or actual value
-					supportsPromptCache: modelInfo.supportsPromptCaching || false, // provide default or actual value
-					...modelInfo,
-				}
-			} else {
-				selectedModelInfo = models[modelId]
-			}
+			selectedModelInfo = models[modelId]
 		} else {
 			selectedModelId = defaultId
 			selectedModelInfo = models[defaultId]
@@ -1710,7 +1844,7 @@ export function normalizeApiConfiguration(
 		case "pearai": {
 			// Always use the models from the hook which are fetched when provider is selected
 			let query = pearAiModelsQuery
-			return getProviderData(pearAiModelsQuery || {}, pearAiDefaultModelId)
+			return getProviderData(query || {}, pearAiDefaultModelId)
 		}
 		default:
 			return getProviderData(anthropicModels, anthropicDefaultModelId)

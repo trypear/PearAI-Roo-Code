@@ -1,6 +1,5 @@
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import { useAppTranslation } from "@/i18n/TranslationContext"
-import { Button as VSCodeButton } from "vscrui"
 import {
 	CheckCheck,
 	SquareMousePointer,
@@ -15,6 +14,7 @@ import {
 	Globe,
 	Info,
 	LucideIcon,
+	Monitor,
 } from "lucide-react"
 import { CaretSortIcon } from "@radix-ui/react-icons"
 
@@ -48,6 +48,7 @@ import ApiOptions from "./ApiOptions"
 import { AutoApproveSettings } from "./AutoApproveSettings"
 import { BrowserSettings } from "./BrowserSettings"
 import { CheckpointSettings } from "./CheckpointSettings"
+import { InterfaceSettings } from "./InterfaceSettings"
 import { NotificationSettings } from "./NotificationSettings"
 import { ContextManagementSettings } from "./ContextManagementSettings"
 import { TerminalSettings } from "./TerminalSettings"
@@ -66,6 +67,7 @@ const sectionNames = [
 	"autoApprove",
 	"browser",
 	"checkpoints",
+	"interface",
 	"notifications",
 	"contextManagement",
 	"terminal",
@@ -79,13 +81,14 @@ type SectionName = (typeof sectionNames)[number]
 
 type SettingsViewProps = {
 	onDone: () => void
+	targetSection?: string
 }
 
-const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone }, ref) => {
+const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, targetSection }, ref) => {
 	const { t } = useAppTranslation()
 
 	const extensionState = useExtensionState()
-	const { currentApiConfigName, listApiConfigMeta, uriScheme, version } = extensionState
+	const { currentApiConfigName, listApiConfigMeta, uriScheme, version, settingsImportedAt } = extensionState
 
 	const [isDiscardDialogShow, setDiscardDialogShow] = useState(false)
 	const [isChangeDetected, setChangeDetected] = useState(false)
@@ -119,7 +122,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 		maxOpenTabsContext,
 		maxWorkspaceFiles,
 		mcpEnabled,
-		rateLimitSeconds,
 		requestDelaySeconds,
 		remoteBrowserHost,
 		screenshotQuality,
@@ -130,10 +132,17 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 		telemetrySetting,
 		terminalOutputLineLimit,
 		terminalShellIntegrationTimeout,
+		terminalCommandDelay,
+		terminalPowershellCounter,
+		terminalZshClearEolMark,
+		terminalZshOhMy,
+		terminalZshP10k,
+		terminalZdotdir,
 		writeDelayMs,
 		showRooIgnoredFiles,
 		remoteBrowserEnabled,
 		maxReadFileLine,
+		showGreeting,
 	} = cachedState
 
 	// Make sure apiConfiguration is initialized and managed by SettingsView.
@@ -149,6 +158,14 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 		prevApiConfigName.current = currentApiConfigName
 		setChangeDetected(false)
 	}, [currentApiConfigName, extensionState, isChangeDetected])
+
+	// Bust the cache when settings are imported.
+	useEffect(() => {
+		if (settingsImportedAt) {
+			setCachedState((prevCachedState) => ({ ...prevCachedState, ...extensionState }))
+			setChangeDetected(false)
+		}
+	}, [settingsImportedAt, extensionState])
 
 	const setCachedStateField: SetCachedStateField<keyof ExtensionStateContextType> = useCallback((field, value) => {
 		setCachedState((prevState) => {
@@ -182,11 +199,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			}
 
 			setChangeDetected(true)
-
-			return {
-				...prevState,
-				experiments: { ...prevState.experiments, [id]: enabled },
-			}
+			return { ...prevState, experiments: { ...prevState.experiments, [id]: enabled } }
 		})
 	}, [])
 
@@ -195,11 +208,9 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			if (prevState.telemetrySetting === setting) {
 				return prevState
 			}
+
 			setChangeDetected(true)
-			return {
-				...prevState,
-				telemetrySetting: setting,
-			}
+			return { ...prevState, telemetrySetting: setting }
 		})
 	}, [])
 
@@ -235,10 +246,15 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			vscode.postMessage({ type: "screenshotQuality", value: screenshotQuality ?? 75 })
 			vscode.postMessage({ type: "terminalOutputLineLimit", value: terminalOutputLineLimit ?? 500 })
 			vscode.postMessage({ type: "terminalShellIntegrationTimeout", value: terminalShellIntegrationTimeout })
+			vscode.postMessage({ type: "terminalCommandDelay", value: terminalCommandDelay })
+			vscode.postMessage({ type: "terminalPowershellCounter", bool: terminalPowershellCounter })
+			vscode.postMessage({ type: "terminalZshClearEolMark", bool: terminalZshClearEolMark })
+			vscode.postMessage({ type: "terminalZshOhMy", bool: terminalZshOhMy })
+			vscode.postMessage({ type: "terminalZshP10k", bool: terminalZshP10k })
+			vscode.postMessage({ type: "terminalZdotdir", bool: terminalZdotdir })
 			vscode.postMessage({ type: "mcpEnabled", bool: mcpEnabled })
 			vscode.postMessage({ type: "alwaysApproveResubmit", bool: alwaysApproveResubmit })
 			vscode.postMessage({ type: "requestDelaySeconds", value: requestDelaySeconds })
-			vscode.postMessage({ type: "rateLimitSeconds", value: rateLimitSeconds })
 			vscode.postMessage({ type: "maxOpenTabsContext", value: maxOpenTabsContext })
 			vscode.postMessage({ type: "maxWorkspaceFiles", value: maxWorkspaceFiles ?? 200 })
 			vscode.postMessage({ type: "showRooIgnoredFiles", bool: showRooIgnoredFiles })
@@ -249,6 +265,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			vscode.postMessage({ type: "alwaysAllowSubtasks", bool: alwaysAllowSubtasks })
 			vscode.postMessage({ type: "upsertApiConfiguration", text: currentApiConfigName, apiConfiguration })
 			vscode.postMessage({ type: "telemetrySetting", text: telemetrySetting })
+			vscode.postMessage({ type: "showGreeting", bool: showGreeting })
 			setChangeDetected(false)
 		}
 	}
@@ -277,6 +294,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 	const autoApproveRef = useRef<HTMLDivElement>(null)
 	const browserRef = useRef<HTMLDivElement>(null)
 	const checkpointsRef = useRef<HTMLDivElement>(null)
+	const interfaceRef = useRef<HTMLDivElement>(null)
 	const notificationsRef = useRef<HTMLDivElement>(null)
 	const contextManagementRef = useRef<HTMLDivElement>(null)
 	const terminalRef = useRef<HTMLDivElement>(null)
@@ -291,6 +309,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			{ id: "autoApprove", icon: CheckCheck, ref: autoApproveRef },
 			{ id: "browser", icon: SquareMousePointer, ref: browserRef },
 			{ id: "checkpoints", icon: GitBranch, ref: checkpointsRef },
+			{ id: "interface", icon: Monitor, ref: interfaceRef },
 			{ id: "notifications", icon: Bell, ref: notificationsRef },
 			{ id: "contextManagement", icon: Database, ref: contextManagementRef },
 			{ id: "terminal", icon: SquareTerminal, ref: terminalRef },
@@ -304,6 +323,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			autoApproveRef,
 			browserRef,
 			checkpointsRef,
+			interfaceRef,
 			notificationsRef,
 			contextManagementRef,
 			terminalRef,
@@ -313,6 +333,17 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 	)
 
 	const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => ref.current?.scrollIntoView()
+
+	// Scroll to target section when specified
+	useEffect(() => {
+		if (targetSection) {
+			const sectionObj = sections.find((section) => section.id === targetSection)
+			if (sectionObj && sectionObj.ref.current) {
+				// Use setTimeout to ensure the scroll happens after render
+				setTimeout(() => scrollToSection(sectionObj.ref), 500)
+			}
+		}
+	}, [targetSection, sections])
 
 	return (
 		<Tab>
@@ -336,8 +367,8 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 					</DropdownMenu>
 				</div>
 				<div className="flex gap-2">
-					<VSCodeButton
-						appearance={isSettingValid ? "primary" : "secondary"}
+					<Button
+						variant={isSettingValid ? "default" : "secondary"}
 						className={!isSettingValid ? "!border-vscode-errorForeground" : ""}
 						title={
 							!isSettingValid
@@ -350,13 +381,13 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 						disabled={!isChangeDetected || !isSettingValid}
 						data-testid="save-button">
 						{t("settings:common.save")}
-					</VSCodeButton>
-					<VSCodeButton
-						appearance="secondary"
+					</Button>
+					<Button
+						variant="secondary"
 						title={t("settings:header.doneButtonTooltip")}
 						onClick={() => checkUnsaveChanges(onDone)}>
 						{t("settings:common.done")}
-					</VSCodeButton>
+					</Button>
 				</div>
 			</TabHeader>
 
@@ -445,6 +476,10 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 					/>
 				</div>
 
+				<div ref={interfaceRef}>
+					<InterfaceSettings showGreeting={showGreeting} setCachedStateField={setCachedStateField} />
+				</div>
+
 				<div ref={notificationsRef}>
 					<NotificationSettings
 						ttsEnabled={ttsEnabled}
@@ -460,8 +495,8 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 						maxOpenTabsContext={maxOpenTabsContext}
 						maxWorkspaceFiles={maxWorkspaceFiles ?? 200}
 						showRooIgnoredFiles={showRooIgnoredFiles}
-						setCachedStateField={setCachedStateField}
 						maxReadFileLine={maxReadFileLine}
+						setCachedStateField={setCachedStateField}
 					/>
 				</div>
 
@@ -469,18 +504,21 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 					<TerminalSettings
 						terminalOutputLineLimit={terminalOutputLineLimit}
 						terminalShellIntegrationTimeout={terminalShellIntegrationTimeout}
+						terminalCommandDelay={terminalCommandDelay}
+						terminalPowershellCounter={terminalPowershellCounter}
+						terminalZshClearEolMark={terminalZshClearEolMark}
+						terminalZshOhMy={terminalZshOhMy}
+						terminalZshP10k={terminalZshP10k}
+						terminalZdotdir={terminalZdotdir}
 						setCachedStateField={setCachedStateField}
 					/>
 				</div>
 
 				<div ref={advancedRef}>
 					<AdvancedSettings
-						rateLimitSeconds={rateLimitSeconds}
 						diffEnabled={diffEnabled}
 						fuzzyMatchThreshold={fuzzyMatchThreshold}
 						setCachedStateField={setCachedStateField}
-						setExperimentEnabled={setExperimentEnabled}
-						experiments={experiments}
 					/>
 				</div>
 

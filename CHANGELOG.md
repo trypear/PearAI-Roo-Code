@@ -1,5 +1,177 @@
 # Roo Code Changelog
 
+## [3.11.17] - 2025-04-14
+
+- Improvements to OpenAI cache reporting and cost estimates (thanks @monotykamary and Cline!)
+- Visual improvements to the auto-approve toggles (thanks @sachasayan!)
+- Bugfix to diff apply logic (thanks @avtc for the test case!) and telemetry to track errors going forward
+- Fix race condition in capturing short-running terminal commands (thanks @KJ7LNW!)
+- Fix eslint error (thanks @nobu007!)
+
+## [3.11.16] - 2025-04-14
+
+- Add gpt-4.1, gpt-4.1-mini, and gpt-4.1-nano to the OpenAI provider
+- Include model ID in environment details and when exporting tasks (thanks @feifei325!)
+
+## [3.11.15] - 2025-04-13
+
+- Add ability to filter task history by workspace (thanks @samhvw8!)
+- Fix Node.js version in the .tool-versions file (thanks @bogdan0083!)
+- Fix duplicate suggested mentions for open tabs (thanks @samhvw8!)
+- Fix Bedrock ARN validation and token expiry issue when using profiles (thanks @vagadiya!)
+- Add Anthropic option to pass API token as Authorization header instead of X-Api-Key (thanks @mecab!)
+- Better documentation for adding new settings (thanks @KJ7LNW!)
+- Localize package.json (thanks @samhvw8!)
+- Add option to hide the welcome message and fix the background color for the new profile dialog (thanks @zhangtony239!)
+- Restore the focus ring for the VSCodeButton component (thanks @pokutuna!)
+
+## [3.11.14] - 2025-04-11
+
+- Support symbolic links in rules folders to directories and other symbolic links (thanks @taisukeoe!)
+- Stronger enforcement of the setting to always read full files instead of doing partial reads
+
+## [3.11.13] - 2025-04-11
+
+- Loads of terminal improvements: command delay, PowerShell counter, and ZSH EOL mark (thanks @KJ7LNW!)
+- Add file context tracking system (thanks @samhvw8 and @canvrno!)
+- Improved display of diff errors + easy copying for investigation
+- Fixes to .vscodeignore (thanks @franekp!)
+- Fix a zh-CN translation for model capabilities (thanks @zhangtony239!)
+- Rename AWS Bedrock to Amazon Bedrock (thanks @ronyblum!)
+- Update extension title and description (thanks @StevenTCramer!)
+
+## [3.11.12] - 2025-04-09
+
+- Make Grok3 streaming work with OpenAI Compatible (thanks @amittell!)
+- Tweak diff editing logic to make it more tolerant of model errors
+
+## [3.11.11] - 2025-04-09
+
+- Fix highlighting interaction with mode/profile dropdowns (thanks @atlasgong!)
+- Add the ability to set Host header and legacy OpenAI API in the OpenAI-compatible provider for better proxy support
+- Improvements to TypeScript, C++, Go, Java, Python tree-sitter parsers (thanks @KJ7LNW!)
+- Fixes to terminal working directory logic (thanks @KJ7LNW!)
+- Improve readFileTool XML output format (thanks @KJ7LNW!)
+- Add o1-pro support (thanks @arthurauffray!)
+- Follow symlinked rules files/directories to allow for more flexible rule setups
+- Focus Roo Code in the sidebar when running tasks in the sidebar via the API
+- Improve subtasks UI
+
+## [3.11.10] - 2025-04-08
+
+- Fix bug where nested .roo/rules directories are not respected properly (thanks @taisukeoe!)
+- Handle long command output more efficiently in the chat row (thanks @samhvw8!)
+- Fix cache usage tracking for OpenAI-compatible providers
+- Add custom translation instructions for zh-CN (thanks @System233!)
+- Code cleanup after making rate-limits per-profile (thanks @ross!)
+
+## [3.11.9] - 2025-04-07
+
+- Rate-limit setting updated to be per-profile (thanks @ross and @olweraltuve!)
+- You can now place multiple rules files in the .roo/rules/ and .roo/rules-{mode}/ folders (thanks @upamune!)
+- Prevent unnecessary autoscroll when buttons appear (thanks @shtse8!)
+- Add Gemini 2.5 Pro Preview to Vertex AI (thanks @nbihan-mediware!)
+- Tidy up following ClineProvider refactor (thanks @diarmidmackenzie!)
+- Clamp negative line numbers when reading files (thanks @KJ7LNW!)
+- Enhance Rust tree-sitter parser with advanced language structures (thanks @KJ7LNW!)
+- Persist settings on api.setConfiguration (thanks @gtaylor!)
+- Add deep links to settings sections
+- Add command to focus Roo Code input field (thanks @axkirillov!)
+- Add resize and hover actions to the browser (thanks @SplittyDev!)
+- Add resumeTask and isTaskInHistory to the API (thanks @franekp!)
+- Fix bug displaying boolean/numeric suggested answers
+- Dynamic Vite port detection for webview development (thanks @KJ7LNW!)
+
+## [3.11.8] - 2025-04-05
+
+- Improve combineApiRequests performance to reduce gray screens of death (thanks @kyle-apex!)
+- Add searchable dropdown to API config profiles on the settings screen (thanks @samhvw8!)
+- Add workspace tracking to history items in preparation for future filtering (thanks @samhvw8!)
+- Fix search highlighting UI in history search (thanks @samhvw8!)
+- Add support for .roorules and give deprecation warning for .clinerules (thanks @upamune!)
+- Fix nodejs version format in .tool-versions file (thanks @upamune!)
+
+## [3.11.7] - 2025-04-04
+
+- Improve file tool context formatting and diff error guidance
+- Improve zh-TW localization (thanks @PeterDaveHello!)
+- Implement reference counting for McpHub disposal
+- Update buttons to be more consistent (thanks @kyle-apex!)
+- Improve zh-CN localization (thanks @System233!)
+
+## [3.11.6] - 2025-04-04
+
+- Add the gemini 2.5 pro preview model with upper bound pricing
+
+## [3.11.5] - 2025-04-03
+
+- Add prompt caching for Amazon Bedrock (thanks @Smartsheet-JB-Brown!)
+- Add support for configuring the current working directory of MCP servers (thanks @shoopapa!)
+- Add profile management functions to API (thanks @gtaylor!)
+- Improvements to diff editing functionality, tests, and error messages (thanks @p12tic!)
+- Fix for follow-up questions grabbing the focus (thanks @diarmidmackenzie!)
+- Show menu buttons when popping the extension out into a new tab (thanks @benny123tw!)
+
+## [3.11.4] - 2025-04-02
+
+- Correctly post state to webview when the current task is cleared (thanks @wkordalski!)
+- Fix unit tests to run properly on Windows (thanks @StevenTCramer!)
+- Tree-sitter enhancements: TSX, TypeScript, JSON, and Markdown support (thanks @KJ7LNW!)
+- Fix issue with line number stripping for deletions in apply_diff
+- Update history selection mode button spacing (thanks @kyle-apex!)
+- Limit dropdown menu height to 80% of the viewport (thanks @axmo!)
+- Update dependencies via `npm audit fix` (thanks @PeterDaveHello!)
+- Enable model select when api fails (thanks @kyle-apex!)
+- Fix issue where prompts and settings tabs were not scrollable when accessed from dropdown menus
+- Update AWS region dropdown menu to the most recent data (thanks @Smartsheet-JB-Brown!)
+- Fix prompt enhancement for Bedrock (thanks @Smartsheet-JB-Brown!)
+- Allow processes to access the Roo Code API via a unix socket
+- Improve zh-TW Traditional Chinese translations (thanks @PeterDaveHello!)
+- Add support for Azure AI Inference Service with DeepSeek-V3 model (thanks @thomasjeung!)
+- Fix off-by-one error in tree-sitter line numbers
+- Remove the experimental unified diff
+- Make extension icon more visible in different themes
+
+## [3.11.3] - 2025-03-31
+
+- Revert mention changes in case they're causing performance issues/crashes
+
+## [3.11.2] - 2025-03-31
+
+- Fix bug in loading Requesty key balance
+- Fix bug with Bedrock inference profiles
+- Update the webview when changing settings via the API
+- Refactor webview messages code (thanks @diarmidmackenzie!)
+
+## [3.11.1] - 2025-03-30
+
+- Relax provider profiles schema and add telemetry
+
+## [3.11.0] - 2025-03-30
+
+- Replace single-block-diff with multi-block-diff fast editing strategy
+- Support project-level MCP config in .roo/mcp.json (thanks @aheizi!)
+- Show OpenRouter and Requesty key balance on the settings screen
+- Support import/export of settings
+- Add pinning and sorting for API configuration dropdown (thanks @jwcraig!)
+- Add Gemini 2.5 Pro to GCP Vertex AI provider (thanks @nbihan-mediware!)
+- Smarter retry logic for Gemini
+- Fix Gemini command escaping
+- Support @-mentions of files with spaces in the name (thanks @samhvw8!)
+- Improvements to partial file reads (thanks @KJ7LNW!)
+- Fix list_code_definition_names to support files (thanks @KJ7LNW!)
+- Refactor tool-calling logic to make the code a lot easier to work with (thanks @diarmidmackenzie, @bramburn, @KJ7LNW, and everyone else who helped!)
+- Prioritize “Add to Context” in the code actions and include line numbers (thanks @samhvw8!)
+- Add an activation command that other extensions can use to interface with Roo Code (thanks @gtaylor!)
+- Preserve language characters in file @-mentions (thanks @aheizi!)
+- Browser tool improvements (thanks @afshawnlotfi!)
+- Display info about partial reads in the chat row
+- Link to the settings page from the auto-approve toolbar
+- Link to provider docs from the API options
+- Fix switching profiles to ensure only the selected profile is switched (thanks @feifei325!)
+- Allow custom o3-mini-<reasoning> model from OpenAI-compatible providers (thanks @snoyiatk!)
+- Edit suggested answers before accepting them (thanks @samhvw8!)
+
 ## [3.10.5] - 2025-03-25
 
 - Updated value of max tokens for gemini-2.5-pro-03-25 to 65,536 (thanks @linegel!)
