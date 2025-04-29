@@ -24,86 +24,9 @@ import { SelectDropdown, DropdownOptionType, Button } from "@/components/ui"
 import Thumbnails from "../common/Thumbnails"
 import { MAX_IMAGES_PER_MESSAGE } from "./ChatView"
 import ContextMenu from "./ContextMenu"
-import { VolumeX, ChevronDown, ImageIcon } from "lucide-react"
-import { ArrowTurnDownLeftIcon } from "@heroicons/react/16/solid"
-import styled from "styled-components"
-import { Listbox } from "@headlessui/react"
-
-const StyledListboxButton = styled(Listbox.Button)`
-	border: none;
-	background-color: var(--vscode-editor-background);
-	border-radius: 12px;
-	padding: 8px;
-	display: flex;
-	align-items: center;
-	gap: 2px;
-	user-select: none;
-	cursor: pointer;
-	font-size: var(--vscode-editor-font-size);
-	color: var(--vscode-foreground);
-	&:focus {
-		outline: none;
-	}
-`
-
-const StyledListboxOptions = styled(Listbox.Options)<{ newSession: boolean }>`
-	position: absolute;
-	bottom: 100%;
-	left: 0;
-	margin-bottom: 4px;
-	list-style: none;
-	padding: 6px;
-	white-space: nowrap;
-	cursor: default;
-	z-index: 50;
-	border: 1px solid var(--vscode-input-border);
-	border-radius: 10px;
-	background-color: var(--vscode-editor-background);
-	max-height: 300px;
-	min-width: 100px;
-	overflow-y: auto;
-	font-size: var(--vscode-editor-font-size);
-	user-select: none;
-	outline: none;
-	&::-webkit-scrollbar {
-		display: none;
-	}
-	scrollbar-width: none;
-	-ms-overflow-style: none;
-	& > * {
-		margin: 4px 0;
-	}
-`
-
-interface ListboxOptionProps {
-	isCurrentModel?: boolean
-}
-
-const StyledListboxOption = styled(Listbox.Option)<ListboxOptionProps>`
-	cursor: pointer;
-	border-radius: 6px;
-	padding: 5px 4px;
-	&:hover {
-		background: ${(props) =>
-			props.isCurrentModel
-				? `var(--vscode-list-activeSelectionBackground)`
-				: `var(--vscode-list-hoverBackground)`};
-	}
-	background: ${(props) => (props.isCurrentModel ? `var(--vscode-list-activeSelectionBackground)` : "transparent")};
-`
-
-const Divider = styled.div`
-	height: 2px;
-	background-color: var(--vscode-input-border);
-	margin: 0px 4px;
-`
-
-const ListboxWrapper = styled.div`
-	position: relative;
-	display: inline-block;
-`
-
-const CaretIcon = () => <ChevronDown className="size-4 opacity-50" />
+import { VolumeX } from "lucide-react"
+import { IconButton } from "./IconButton"
+import { cn } from "@/lib/utils"
 
 interface ChatTextAreaProps {
 	inputValue: string
@@ -192,7 +115,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			return () => window.removeEventListener("message", messageHandler)
 		}, [setInputValue, searchRequestId])
 
-		const [thumbnailsHeight, setThumbnailsHeight] = useState(0)
+		const [isDraggingOver, setIsDraggingOver] = useState(false)
 		const [textAreaBaseHeight, setTextAreaBaseHeight] = useState<number | undefined>(undefined)
 		const [showContextMenu, setShowContextMenu] = useState(false)
 		const [cursorPosition, setCursorPosition] = useState(0)
@@ -626,14 +549,6 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			[shouldDisableImages, setSelectedImages, cursorPosition, setInputValue, inputValue, t],
 		)
 
-		const handleThumbnailsHeightChange = useCallback((height: number) => setThumbnailsHeight(height), [])
-
-		useEffect(() => {
-			if (selectedImages.length === 0) {
-				setThumbnailsHeight(0)
-			}
-		}, [selectedImages])
-
 		const handleMenuMouseDown = useCallback(() => {
 			setIsMouseDownOnMenu(true)
 		}, [])
@@ -671,75 +586,51 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 			[updateCursorPosition],
 		)
 
-		const [isTtsPlaying, setIsTtsPlaying] = useState(false)
+		const handleDrop = useCallback(
+			async (e: React.DragEvent<HTMLDivElement>) => {
+				e.preventDefault()
+				setIsDraggingOver(false)
 
-		useEvent("message", (event: MessageEvent) => {
-			const message: ExtensionMessage = event.data
+				const text = e.dataTransfer.getData("text")
+				if (text) {
+					// Split text on newlines to handle multiple files
+					const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "")
 
-			if (message.type === "ttsStart") {
-				setIsTtsPlaying(true)
-			} else if (message.type === "ttsStop") {
-				setIsTtsPlaying(false)
-			}
-		})
+					if (lines.length > 0) {
+						// Process each line as a separate file path
+						let newValue = inputValue.slice(0, cursorPosition)
+						let totalLength = 0
 
-		return (
-			<div
-				className="chat-text-area"
-				style={{
-					opacity: textAreaDisabled ? 0.5 : 1,
-					position: "relative",
-					display: "flex",
-					flexDirection: "column",
-					gap: "8px",
-					backgroundColor: "var(--vscode-editor-background)",
-					// margin: "10px 15px",
-					padding: "8px",
-					outline: "none",
-					// border: "1px solid",
-					borderColor: "transparent",
-					borderRadius: "12px",
-				}}
-				onDrop={async (e) => {
-					e.preventDefault()
-					const files = Array.from(e.dataTransfer.files)
-					const text = e.dataTransfer.getData("text")
+						// Using a standard for loop instead of forEach for potential performance gains.
+						for (let i = 0; i < lines.length; i++) {
+							const line = lines[i]
+							// Convert each path to a mention-friendly format
+							const mentionText = convertToMentionPath(line, cwd)
+							newValue += mentionText
+							totalLength += mentionText.length
 
-					if (text) {
-						// Split text on newlines to handle multiple files
-						const lines = text.split(/\r?\n/).filter((line) => line.trim() !== "")
-
-						if (lines.length > 0) {
-							// Process each line as a separate file path
-							let newValue = inputValue.slice(0, cursorPosition)
-							let totalLength = 0
-
-							lines.forEach((line, index) => {
-								// Convert each path to a mention-friendly format
-								const mentionText = convertToMentionPath(line, cwd)
-								newValue += mentionText
-								totalLength += mentionText.length
-
-								// Add space after each mention except the last one
-								if (index < lines.length - 1) {
-									newValue += " "
-									totalLength += 1
-								}
-							})
-
-							// Add space after the last mention and append the rest of the input
-							newValue += " " + inputValue.slice(cursorPosition)
-							totalLength += 1
-
-							setInputValue(newValue)
-							const newCursorPosition = cursorPosition + totalLength
-							setCursorPosition(newCursorPosition)
-							setIntendedCursorPosition(newCursorPosition)
+							// Add space after each mention except the last one
+							if (i < lines.length - 1) {
+								newValue += " "
+								totalLength += 1
+							}
 						}
 
-						return
+						// Add space after the last mention and append the rest of the input
+						newValue += " " + inputValue.slice(cursorPosition)
+						totalLength += 1
+
+						setInputValue(newValue)
+						const newCursorPosition = cursorPosition + totalLength
+						setCursorPosition(newCursorPosition)
+						setIntendedCursorPosition(newCursorPosition)
 					}
 
+					return
+				}
+
+				const files = Array.from(e.dataTransfer.files)
+				if (!textAreaDisabled && files.length > 0) {
 					const acceptedTypes = ["png", "jpeg", "webp"]
 					const imageFiles = files.filter((file) => {
 						const [type, subtype] = file.type.split("/")
@@ -778,281 +669,340 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 							console.warn(t("chat:noValidImages"))
 						}
 					}
-				}}
-				onDragOver={(e) => {
-					e.preventDefault()
-				}}>
-				<div
-					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "center",
-						marginTop: "auto",
-						paddingTop: "2px",
-					}}>
+				}
+			},
+			[
+				cursorPosition,
+				cwd,
+				inputValue,
+				setInputValue,
+				setCursorPosition,
+				setIntendedCursorPosition,
+				textAreaDisabled,
+				shouldDisableImages,
+				setSelectedImages,
+				t,
+			],
+		)
+
+		const [isTtsPlaying, setIsTtsPlaying] = useState(false)
+
+		useEvent("message", (event: MessageEvent) => {
+			const message: ExtensionMessage = event.data
+
+			if (message.type === "ttsStart") {
+				setIsTtsPlaying(true)
+			} else if (message.type === "ttsStop") {
+				setIsTtsPlaying(false)
+			}
+		})
+
+		const placeholderBottomText = `\n(${t("chat:addContext")}${shouldDisableImages ? `, ${t("chat:dragFiles")}` : `, ${t("chat:dragFilesImages")}`})`
+
+		return (
+			<div
+				className={cn(
+					"relative",
+					"flex",
+					"flex-col",
+					"gap-2",
+					"bg-editor-background",
+					"m-2 mt-1",
+					"p-1.5",
+					"outline-none",
+					"border",
+					"border-none",
+					"w-[calc(100%-16px)]",
+					"ml-auto",
+					"mr-auto",
+					"box-border",
+				)}>
+				<div className="relative">
 					<div
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: "8px",
+						className={cn("chat-text-area", "relative", "flex", "flex-col", "outline-none")}
+						onDrop={handleDrop}
+						onDragOver={(e) => {
+							//Only allowed to drop images/files on shift key pressed
+							if (!e.shiftKey) {
+								setIsDraggingOver(false)
+								return
+							}
+							e.preventDefault()
+							setIsDraggingOver(true)
+							e.dataTransfer.dropEffect = "copy"
+						}}
+						onDragLeave={(e) => {
+							e.preventDefault()
+							const rect = e.currentTarget.getBoundingClientRect()
+							if (
+								e.clientX <= rect.left ||
+								e.clientX >= rect.right ||
+								e.clientY <= rect.top ||
+								e.clientY >= rect.bottom
+							) {
+								setIsDraggingOver(false)
+							}
 						}}>
-						<Button
-							className="gap-1 text-xs bg-input text-input-foreground h-6 px-2 hover:bg-sidebar-background rounded-xl"
-							variant="secondary"
-							disabled={textAreaDisabled}
-							onClick={() => {
-								if (!textAreaDisabled && textAreaRef.current) {
-									setShowContextMenu(true)
-									setSearchQuery("")
-									const newValue =
-										inputValue.slice(0, cursorPosition) + "@" + inputValue.slice(cursorPosition)
-									setInputValue(newValue)
-									const newCursorPosition = cursorPosition + 1
-									setCursorPosition(newCursorPosition)
-									setIntendedCursorPosition(newCursorPosition)
-									textAreaRef.current.focus()
-								}
-							}}>
-							@ Context
-						</Button>
-						<ImageIcon
-							className={`size-4 ${shouldDisableImages ? "opacity-50" : "cursor-pointer"}`}
-							onClick={() => !shouldDisableImages && onSelectImages()}
-						/>
+						{showContextMenu && (
+							<div
+								ref={contextMenuContainerRef}
+								className={cn(
+									"absolute",
+									"bottom-full",
+									"left-0",
+									"right-0",
+									"z-[1000]",
+									"mb-2",
+									"filter",
+									"drop-shadow-md",
+								)}>
+								<ContextMenu
+									onSelect={handleMentionSelect}
+									searchQuery={searchQuery}
+									onMouseDown={handleMenuMouseDown}
+									selectedIndex={selectedMenuIndex}
+									setSelectedIndex={setSelectedMenuIndex}
+									selectedType={selectedType}
+									queryItems={queryItems}
+									modes={getAllModes(customModes)}
+									loading={searchLoading}
+									dynamicSearchResults={fileSearchResults}
+								/>
+							</div>
+						)}
+						<div
+							className={cn(
+								"relative",
+								"flex-1",
+								"flex",
+								"flex-col-reverse",
+								"min-h-0",
+								"overflow-hidden",
+								"rounded",
+							)}>
+							<div
+								ref={highlightLayerRef}
+								className={cn(
+									"absolute",
+									"inset-0",
+									"pointer-events-none",
+									"whitespace-pre-wrap",
+									"break-words",
+									"text-transparent",
+									"overflow-hidden",
+									"font-vscode-font-family",
+									"text-vscode-editor-font-size",
+									"leading-vscode-editor-line-height",
+									"py-2",
+									"px-[9px]",
+									"z-[1000]",
+								)}
+								style={{
+									color: "transparent",
+								}}
+							/>
+							<DynamicTextArea
+								ref={(el) => {
+									if (typeof ref === "function") {
+										ref(el)
+									} else if (ref) {
+										ref.current = el
+									}
+									textAreaRef.current = el
+								}}
+								value={inputValue}
+								disabled={textAreaDisabled}
+								onChange={(e) => {
+									handleInputChange(e)
+									updateHighlights()
+								}}
+								onFocus={() => setIsFocused(true)}
+								onKeyDown={handleKeyDown}
+								onKeyUp={handleKeyUp}
+								onBlur={handleBlur}
+								onPaste={handlePaste}
+								onSelect={updateCursorPosition}
+								onMouseUp={updateCursorPosition}
+								onHeightChange={(height) => {
+									if (textAreaBaseHeight === undefined || height < textAreaBaseHeight) {
+										setTextAreaBaseHeight(height)
+									}
+									onHeightChange?.(height)
+								}}
+								placeholder={placeholderText}
+								minRows={3}
+								maxRows={15}
+								autoFocus={true}
+								className={cn(
+									"w-full",
+									"text-vscode-input-foreground",
+									"font-vscode-font-family",
+									"text-vscode-editor-font-size",
+									"leading-vscode-editor-line-height",
+									textAreaDisabled ? "cursor-not-allowed" : "cursor-text",
+									"py-1.5 px-2",
+									isFocused
+										? "border border-vscode-focusBorder outline outline-vscode-focusBorder"
+										: isDraggingOver
+											? "border-2 border-dashed border-vscode-focusBorder"
+											: "border border-transparent",
+									textAreaDisabled ? "opacity-50" : "opacity-100",
+									isDraggingOver
+										? "bg-[color-mix(in_srgb,var(--vscode-input-background)_95%,var(--vscode-focusBorder))]"
+										: "bg-vscode-input-background",
+									"transition-background-color duration-150 ease-in-out",
+									"will-change-background-color",
+									"h-[100px]",
+									"[@media(min-width:150px)]:min-h-[80px]",
+									"[@media(min-width:425px)]:min-h-[60px]",
+									"box-border",
+									"rounded",
+									"resize-none",
+									"overflow-x-hidden",
+									"overflow-y-auto",
+									"pr-2",
+									"flex-none flex-grow",
+									"z-[2]",
+									"scrollbar-none",
+								)}
+								onScroll={() => updateHighlights()}
+							/>
+							{isTtsPlaying && (
+								<Button
+									variant="ghost"
+									size="icon"
+									className="absolute top-0 right-0 opacity-25 hover:opacity-100 z-10"
+									onClick={() => vscode.postMessage({ type: "stopTts" })}>
+									<VolumeX className="size-4" />
+								</Button>
+							)}
+							{!inputValue && (
+								<div
+									className={cn(
+										"absolute",
+										"left-2",
+										"flex",
+										"gap-2",
+										"text-xs",
+										"text-descriptionForeground",
+										"pointer-events-none",
+										"z-25",
+										"bottom-1.5",
+										"pr-2",
+										"transition-opacity",
+										"duration-200",
+										"ease-in-out",
+										textAreaDisabled ? "opacity-35" : "opacity-70",
+									)}>
+									{placeholderBottomText}
+								</div>
+							)}
+						</div>
 					</div>
-				</div>
-
-				{showContextMenu && (
-					<div ref={contextMenuContainerRef}>
-						<ContextMenu
-							onSelect={handleMentionSelect}
-							searchQuery={searchQuery}
-							onMouseDown={handleMenuMouseDown}
-							selectedIndex={selectedMenuIndex}
-							setSelectedIndex={setSelectedMenuIndex}
-							selectedType={selectedType}
-							queryItems={queryItems}
-							modes={getAllModes(customModes)}
-							loading={searchLoading}
-							dynamicSearchResults={fileSearchResults}
-						/>
-					</div>
-				)}
-
-				<div
-					style={{
-						position: "relative",
-						flex: "1 1 auto",
-						display: "flex",
-						flexDirection: "column-reverse",
-						minHeight: 0,
-						overflow: "hidden",
-					}}>
-					<div
-						ref={highlightLayerRef}
-						style={{
-							position: "absolute",
-							inset: 0,
-							pointerEvents: "none",
-							whiteSpace: "pre-wrap",
-							wordWrap: "break-word",
-							color: "transparent",
-							overflow: "hidden",
-							fontFamily: "var(--vscode-font-family)",
-							fontSize: "var(--vscode-editor-font-size)",
-							lineHeight: "var(--vscode-editor-line-height)",
-							padding: "2px",
-							paddingRight: "8px",
-							marginBottom: thumbnailsHeight > 0 ? `${thumbnailsHeight + 16}px` : 0,
-							zIndex: 1,
-						}}
-					/>
-					<DynamicTextArea
-						ref={(el) => {
-							if (typeof ref === "function") {
-								ref(el)
-							} else if (ref) {
-								ref.current = el
-							}
-							textAreaRef.current = el
-						}}
-						value={inputValue}
-						disabled={textAreaDisabled}
-						onChange={(e) => {
-							handleInputChange(e)
-							updateHighlights()
-						}}
-						onFocus={() => setIsFocused(true)}
-						onKeyDown={handleKeyDown}
-						onKeyUp={handleKeyUp}
-						onBlur={handleBlur}
-						onPaste={handlePaste}
-						onSelect={updateCursorPosition}
-						onMouseUp={updateCursorPosition}
-						onHeightChange={(height) => {
-							if (textAreaBaseHeight === undefined || height < textAreaBaseHeight) {
-								setTextAreaBaseHeight(height)
-							}
-							onHeightChange?.(height)
-						}}
-						placeholder={placeholderText}
-						minRows={3}
-						maxRows={15}
-						autoFocus={true}
-						style={{
-							width: "100%",
-							outline: "none",
-							boxSizing: "border-box",
-							backgroundColor: "transparent",
-							color: "var(--vscode-input-foreground)",
-							borderRadius: 2,
-							fontFamily: "var(--vscode-font-family)",
-							fontSize: "var(--vscode-editor-font-size)",
-							lineHeight: "var(--vscode-editor-line-height)",
-							resize: "none",
-							overflowX: "hidden",
-							overflowY: "auto",
-							border: "none",
-							padding: "2px",
-							paddingRight: "8px",
-							marginBottom: thumbnailsHeight > 0 ? `${thumbnailsHeight + 16}px` : 0,
-							cursor: textAreaDisabled ? "not-allowed" : undefined,
-							flex: "0 1 auto",
-							zIndex: 2,
-							scrollbarWidth: "none",
-						}}
-						onScroll={() => updateHighlights()}
-					/>
-					{isTtsPlaying && (
-						<Button
-							variant="ghost"
-							size="icon"
-							className="absolute top-0 right-0 opacity-25 hover:opacity-100 z-10"
-							onClick={() => vscode.postMessage({ type: "stopTts" })}>
-							<VolumeX className="size-4" />
-						</Button>
-					)}
 				</div>
 
 				{selectedImages.length > 0 && (
 					<Thumbnails
 						images={selectedImages}
 						setImages={setSelectedImages}
-						onHeightChange={handleThumbnailsHeightChange}
 						style={{
-							position: "absolute",
-							bottom: "36px",
 							left: "16px",
 							zIndex: 2,
-							marginBottom: "4px",
+							marginBottom: 0,
 						}}
 					/>
 				)}
 
-				<div className="flex justify-between items-center mt-2">
-					<div className="flex items-center gap-2">
-						<ListboxWrapper>
-							<Listbox
+				<div className={cn("flex", "justify-between", "items-center", "mt-auto", "pt-0.5")}>
+					<div className={cn("flex", "items-center", "gap-1", "min-w-0")}>
+						{/* Mode selector - fixed width */}
+						<div className="shrink-0">
+							<SelectDropdown
 								value={mode}
+								title={t("chat:selectMode")}
+								options={[
+									{
+										value: "shortcut",
+										label: modeShortcutText,
+										disabled: true,
+										type: DropdownOptionType.SHORTCUT,
+									},
+									...getAllModes(customModes).map((mode) => ({
+										value: mode.slug,
+										label: mode.name,
+										type: DropdownOptionType.ITEM,
+									})),
+									{
+										value: "sep-1",
+										label: t("chat:separator"),
+										type: DropdownOptionType.SEPARATOR,
+									},
+									{
+										value: "promptsButtonClicked",
+										label: t("chat:edit"),
+										type: DropdownOptionType.ACTION,
+									},
+								]}
 								onChange={(value) => {
-									if (value === "prompts-action") {
-										window.postMessage({ type: "action", action: "promptsButtonClicked" })
-										return
-									}
 									setMode(value as Mode)
-									vscode.postMessage({
-										type: "mode",
-										text: value,
-									})
+									vscode.postMessage({ type: "mode", text: value })
 								}}
-								disabled={textAreaDisabled}>
-								<StyledListboxButton>
-									{getAllModes(customModes).find((m) => m.slug === mode)?.name}
-									<CaretIcon />
-								</StyledListboxButton>
-								<StyledListboxOptions newSession={false}>
-									{getAllModes(customModes).map((mode) => (
-										<StyledListboxOption key={mode.slug} value={mode.slug} isCurrentModel={false}>
-											{mode.name}
-										</StyledListboxOption>
-									))}
-									<Divider />
-									<StyledListboxOption value="prompts-action" isCurrentModel={false}>
-										Edit...
-									</StyledListboxOption>
-								</StyledListboxOptions>
-							</Listbox>
-						</ListboxWrapper>
-
-						<ListboxWrapper>
-							<Listbox
-								value={currentApiConfigName || ""}
-								onChange={(value) => {
-									if (value === "settings-action") {
-										window.postMessage({ type: "action", action: "settingsButtonClicked" })
-										return
-									}
-									vscode.postMessage({
-										type: "loadApiConfiguration",
-										text: value,
-									})
-								}}
-								disabled={textAreaDisabled}>
-								<StyledListboxButton>
-									{currentApiConfigName}
-									<CaretIcon />
-								</StyledListboxButton>
-								<StyledListboxOptions newSession={false}>
-									{(listApiConfigMeta || []).map((config) => (
-										<StyledListboxOption
-											key={config.name}
-											value={config.name}
-											isCurrentModel={config.name === currentApiConfigName}>
-											{config.name}
-										</StyledListboxOption>
-									))}
-									<Divider />
-									<StyledListboxOption value="settings-action" isCurrentModel={false}>
-										Edit...
-									</StyledListboxOption>
-								</StyledListboxOptions>
-							</Listbox>
-						</ListboxWrapper>
-					</div>
-					<div className="flex-1"></div>
-					<div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-						<div style={{ display: "flex", alignItems: "center" }}>
-							{/* {isEnhancingPrompt ? (
-								<span
-									className="codicon codicon-loading codicon-modifier-spin"
-									style={{
-										color: "var(--vscode-input-foreground)",
-										opacity: 0.5,
-										fontSize: 16.5,
-										marginRight: 10,
-									}}
-								/>
-							) : (
-								<span
-									role="button"
-									aria-label="enhance prompt"
-									data-testid="enhance-prompt-button"
-									className={`input-icon-button ${
-										textAreaDisabled ? "disabled" : ""
-									} codicon codicon-sparkle`}
-									onClick={() => !textAreaDisabled && handleEnhancePrompt()}
-									style={{ fontSize: 16.5 }}
-								/>
-							)} */}
+								shortcutText={modeShortcutText}
+								triggerClassName="w-full"
+							/>
 						</div>
 
-						<Button
-							className="gap-1 h-6 bg-[#E64C9E] text-white text-xs px-2 rounded-lg"
+						{/* API configuration selector - flexible width */}
+						<div className={cn("flex-1", "min-w-0", "overflow-hidden")}>
+							<SelectDropdown
+								value={currentApiConfigName || ""}
+								disabled={textAreaDisabled}
+								title={t("chat:selectApiConfig")}
+								options={[
+									...(listApiConfigMeta || []).map((config) => ({
+										value: config.name,
+										label: config.name,
+										type: DropdownOptionType.ITEM,
+									})),
+									{
+										value: "sep-2",
+										label: t("chat:separator"),
+										type: DropdownOptionType.SEPARATOR,
+									},
+									{
+										value: "settingsButtonClicked",
+										label: t("chat:edit"),
+										type: DropdownOptionType.ACTION,
+									},
+								]}
+								onChange={(value) => vscode.postMessage({ type: "loadApiConfiguration", text: value })}
+								contentClassName="max-h-[300px] overflow-y-auto"
+								triggerClassName="w-full text-ellipsis overflow-hidden"
+							/>
+						</div>
+					</div>
+
+					{/* Right side - action buttons */}
+					<div className={cn("flex", "items-center", "gap-0.5", "shrink-0")}>
+						<IconButton
+							iconClass={isEnhancingPrompt ? "codicon-loading" : "codicon-sparkle"}
+							title={t("chat:enhancePrompt")}
 							disabled={textAreaDisabled}
-							onClick={() => !textAreaDisabled && onSend()}>
-							<ArrowTurnDownLeftIcon width="12px" height="12px" />
-							Send
-						</Button>
+							isLoading={isEnhancingPrompt}
+							onClick={handleEnhancePrompt}
+						/>
+						<IconButton
+							iconClass="codicon-device-camera"
+							title={t("chat:addImages")}
+							disabled={shouldDisableImages}
+							onClick={onSelectImages}
+						/>
+						<IconButton
+							iconClass="codicon-send"
+							title={t("chat:sendMessage")}
+							disabled={textAreaDisabled}
+							onClick={onSend}
+						/>
 					</div>
 				</div>
 			</div>

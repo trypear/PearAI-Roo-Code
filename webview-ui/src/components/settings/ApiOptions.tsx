@@ -56,6 +56,7 @@ import { TemperatureControl } from "./TemperatureControl"
 import { validateApiConfiguration, validateModelId, validateBedrockArn } from "@/utils/validate"
 import { ApiErrorMessage } from "./ApiErrorMessage"
 import { ThinkingBudget } from "./ThinkingBudget"
+import { R1FormatSetting } from "./R1FormatSetting"
 import { usePearAiModels } from "../../hooks/usePearAiModels"
 import { allModels, pearAiDefaultModelId, pearAiDefaultModelInfo } from "../../../../src/shared/pearaiApi"
 
@@ -108,7 +109,6 @@ const ApiOptions = ({
 		!!apiConfiguration?.googleGeminiBaseUrl,
 	)
 	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
-
 	const noTransform = <T,>(value: T) => value
 
 	const inputEventTransform = <E,>(event: E) => (event as { target: HTMLInputElement })?.target?.value as any
@@ -735,6 +735,10 @@ const ApiOptions = ({
 						modelInfoKey="openAiCustomModelInfo"
 						serviceName="OpenAI"
 						serviceUrl="https://platform.openai.com"
+					/>
+					<R1FormatSetting
+						onChange={handleInputChange("openAiR1FormatEnabled", noTransform)}
+						openAiR1FormatEnabled={apiConfiguration?.openAiR1FormatEnabled ?? false}
 					/>
 					<Checkbox
 						checked={apiConfiguration?.openAiStreamingEnabled ?? true}

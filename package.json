@@ -4,7 +4,7 @@
 	"description": "PearAI's integration of Roo Code / Cline, a coding agent.",
 	"publisher": "PearAI",
 	"icon": "assets/icons/pear.png",
-	"version": "3.10.3",
+	"version": "3.10.5",
 	"galleryBanner": {
 		"color": "#617A91",
 		"theme": "dark"
@@ -141,6 +141,11 @@
 				"category": "Roo Code"
 			},
 			{
+				"command": "roo-cline.newTask",
+				"title": "New Task",
+				"category": "Roo Code"
+			},
+			{
 				"command": "roo-cline.terminalAddToContext",
 				"title": "Add Terminal Content to Context",
 				"category": "Terminal"
@@ -176,6 +181,11 @@
 				"command": "roo-cline.addToContext",
 				"mac": "cmd+l",
 				"key": "ctrl+l"
+			},
+			{
+				"command": "roo-cline.setCustomStoragePath",
+				"title": "Set Custom Storage Path",
+				"category": "Roo Code"
 			}
 		],
 		"menus": {
@@ -300,6 +310,11 @@
 						}
 					},
 					"description": "Settings for VSCode Language Model API"
+				},
+				"roo-cline.customStoragePath": {
+					"type": "string",
+					"default": "",
+					"description": "Custom storage path. Leave empty to use the default location. Supports absolute paths (e.g. 'D:\\RooCodeStorage')"
 				}
 			}
 		}

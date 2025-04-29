@@ -11,6 +11,7 @@ import pWaitFor from "p-wait-for"
 import getFolderSize from "get-folder-size"
 import { serializeError } from "serialize-error"
 import * as vscode from "vscode"
+import { isPathOutsideWorkspace } from "../utils/pathUtils"
 
 import { TokenUsage } from "../exports/roo-code"
 import { ApiHandler, buildApiHandler } from "../api"
@@ -29,6 +30,7 @@ import {
 	everyLineHasLineNumbers,
 } from "../integrations/misc/extract-text"
 import { countFileLines } from "../integrations/misc/line-counter"
+import { fetchInstructions } from "./prompts/instructions/instructions"
 import { ExitCodeDetails } from "../integrations/terminal/TerminalProcess"
 import { Terminal } from "../integrations/terminal/Terminal"
 import { TerminalRegistry } from "../integrations/terminal/TerminalRegistry"
@@ -116,6 +118,7 @@ export type ClineOptions = {
 	rootTask?: Cline
 	parentTask?: Cline
 	taskNumber?: number
+	onCreated?: (cline: Cline) => void
 }
 
 export class Cline extends EventEmitter<ClineEvents> {
@@ -193,6 +196,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		rootTask,
 		parentTask,
 		taskNumber,
+		onCreated,
 	}: ClineOptions) {
 		super()
 
@@ -235,6 +239,8 @@ export class Cline extends EventEmitter<ClineEvents> {
 			Experiments.isEnabled(experiments ?? {}, EXPERIMENT_IDS.DIFF_STRATEGY),
 			Experiments.isEnabled(experiments ?? {}, EXPERIMENT_IDS.MULTI_SEARCH_AND_REPLACE),
 		)
+
+		onCreated?.(this)
 
 		if (startTask) {
 			if (task || images) {
@@ -291,9 +297,10 @@ export class Cline extends EventEmitter<ClineEvents> {
 		if (!globalStoragePath) {
 			throw new Error("Global storage uri is invalid")
 		}
-		const taskDir = path.join(globalStoragePath, "tasks", this.taskId)
-		await fs.mkdir(taskDir, { recursive: true })
-		return taskDir
+
+		// Use storagePathManager to retrieve the task storage directory
+		const { getTaskDirectoryPath } = await import("../shared/storagePathManager")
+		return getTaskDirectoryPath(globalStoragePath, this.taskId)
 	}
 
 	private async getSavedApiConversationHistory(): Promise<Anthropic.MessageParam[]> {
@@ -1240,7 +1247,16 @@ export class Cline extends EventEmitter<ClineEvents> {
 		} catch (error) {
 			// note that this api_req_failed ask is unique in that we only present this option if the api hasn't streamed any content yet (ie it fails on the first chunk due), as it would allow them to hit a retry button. However if the api failed mid-stream, it could be in any arbitrary state where some tools may have executed, so that error is handled differently and requires cancelling the task entirely.
 			if (alwaysApproveResubmit) {
-				const errorMsg = error.error?.metadata?.raw ?? error.message ?? "Unknown error"
+				let errorMsg
+
+				if (error.error?.metadata?.raw) {
+					errorMsg = JSON.stringify(error.error.metadata.raw, null, 2)
+				} else if (error.message) {
+					errorMsg = error.message
+				} else {
+					errorMsg = "Unknown error"
+				}
+
 				const baseDelay = requestDelaySeconds || 5
 				const exponentialDelay = Math.ceil(baseDelay * Math.pow(2, retryAttempt))
 				// Wait for the greater of the exponential delay or the rate limit delay
@@ -1369,6 +1385,8 @@ export class Cline extends EventEmitter<ClineEvents> {
 							return `[${block.name} for '${block.params.command}']`
 						case "read_file":
 							return `[${block.name} for '${block.params.path}']`
+						case "fetch_instructions":
+							return `[${block.name} for '${block.params.task}']`
 						case "write_to_file":
 							return `[${block.name} for '${block.params.path}']`
 						case "apply_diff":
@@ -1605,9 +1623,14 @@ export class Cline extends EventEmitter<ClineEvents> {
 							}
 						}
 
+						// Determine if the path is outside the workspace
+						const fullPath = relPath ? path.resolve(this.cwd, removeClosingTag("path", relPath)) : ""
+						const isOutsideWorkspace = isPathOutsideWorkspace(fullPath)
+
 						const sharedMessageProps: ClineSayTool = {
 							tool: fileExists ? "editedExistingFile" : "newFileCreated",
 							path: getReadablePath(this.cwd, removeClosingTag("path", relPath)),
+							isOutsideWorkspace,
 						}
 						try {
 							if (block.partial) {
@@ -2244,9 +2267,15 @@ export class Cline extends EventEmitter<ClineEvents> {
 						const relPath: string | undefined = block.params.path
 						const startLineStr: string | undefined = block.params.start_line
 						const endLineStr: string | undefined = block.params.end_line
+
+						// Get the full path and determine if it's outside the workspace
+						const fullPath = relPath ? path.resolve(this.cwd, removeClosingTag("path", relPath)) : ""
+						const isOutsideWorkspace = isPathOutsideWorkspace(fullPath)
+
 						const sharedMessageProps: ClineSayTool = {
 							tool: "readFile",
 							path: getReadablePath(this.cwd, removeClosingTag("path", relPath)),
+							isOutsideWorkspace,
 						}
 						try {
 							if (block.partial) {
@@ -2379,6 +2408,62 @@ export class Cline extends EventEmitter<ClineEvents> {
 							}
 						} catch (error) {
 							await handleError("reading file", error)
+							break
+						}
+					}
+
+					case "fetch_instructions": {
+						const task: string | undefined = block.params.task
+						const sharedMessageProps: ClineSayTool = {
+							tool: "fetchInstructions",
+							content: task,
+						}
+						try {
+							if (block.partial) {
+								const partialMessage = JSON.stringify({
+									...sharedMessageProps,
+									content: undefined,
+								} satisfies ClineSayTool)
+								await this.ask("tool", partialMessage, block.partial).catch(() => {})
+								break
+							} else {
+								if (!task) {
+									this.consecutiveMistakeCount++
+									pushToolResult(
+										await this.sayAndCreateMissingParamError("fetch_instructions", "task"),
+									)
+									break
+								}
+
+								this.consecutiveMistakeCount = 0
+								const completeMessage = JSON.stringify({
+									...sharedMessageProps,
+									content: task,
+								} satisfies ClineSayTool)
+
+								const didApprove = await askApproval("tool", completeMessage)
+								if (!didApprove) {
+									break
+								}
+
+								// now fetch the content and provide it to the agent.
+								const provider = this.providerRef.deref()
+								const mcpHub = provider?.getMcpHub()
+								if (!mcpHub) {
+									throw new Error("MCP hub not available")
+								}
+								const diffStrategy = this.diffStrategy
+								const context = provider?.context
+								const content = await fetchInstructions(task, { mcpHub, diffStrategy, context })
+								if (!content) {
+									pushToolResult(formatResponse.toolError(`Invalid instructions request: ${task}`))
+									break
+								}
+								pushToolResult(content)
+								break
+							}
+						} catch (error) {
+							await handleError("fetch instructions", error)
 							break
 						}
 					}
@@ -2873,8 +2958,16 @@ export class Cline extends EventEmitter<ClineEvents> {
 										})
 										.filter(Boolean)
 										.join("\n\n") || "(Empty response)"
-								await this.say("mcp_server_response", resourceResultPretty)
-								pushToolResult(formatResponse.toolResult(resourceResultPretty))
+
+								// handle images (image must contain mimetype and blob)
+								let images: string[] = []
+								resourceResult?.contents.forEach((item) => {
+									if (item.mimeType?.startsWith("image") && item.blob) {
+										images.push(item.blob)
+									}
+								})
+								await this.say("mcp_server_response", resourceResultPretty, images)
+								pushToolResult(formatResponse.toolResult(resourceResultPretty, images))
 								break
 							}
 						} catch (error) {
@@ -3122,6 +3215,9 @@ export class Cline extends EventEmitter<ClineEvents> {
 											false,
 										)
 
+										telemetryService.captureTaskCompleted(this.taskId)
+										this.emit("taskCompleted", this.taskId, this.getTokenUsage())
+
 										await this.ask(
 											"command",
 											removeClosingTag("command", command),
@@ -3153,9 +3249,10 @@ export class Cline extends EventEmitter<ClineEvents> {
 
 								if (command) {
 									if (lastMessage && lastMessage.ask !== "command") {
-										// Haven't sent a command message yet so
-										// first send completion_result then command.
+										// Haven't sent a command message yet so first send completion_result then command.
 										await this.say("completion_result", result, undefined, false)
+										telemetryService.captureTaskCompleted(this.taskId)
+										this.emit("taskCompleted", this.taskId, this.getTokenUsage())
 									}
 
 									// Complete command message.
@@ -3177,10 +3274,9 @@ export class Cline extends EventEmitter<ClineEvents> {
 									commandResult = execCommandResult
 								} else {
 									await this.say("completion_result", result, undefined, false)
+									telemetryService.captureTaskCompleted(this.taskId)
+									this.emit("taskCompleted", this.taskId, this.getTokenUsage())
 								}
-
-								telemetryService.captureTaskCompleted(this.taskId)
-								this.emit("taskCompleted", this.taskId, this.getTokenUsage())
 
 								if (this.parentTask) {
 									const didApprove = await askFinishSubTaskApproval()

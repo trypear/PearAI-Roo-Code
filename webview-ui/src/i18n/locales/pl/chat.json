@@ -105,10 +105,15 @@
 		},
 		"current": "Bieżący"
 	},
+	"instructions": {
+		"wantsToFetch": "Roo chce pobrać szczegółowe instrukcje, aby pomóc w bieżącym zadaniu"
+	},
 	"fileOperations": {
 		"wantsToRead": "Roo chce przeczytać ten plik:",
+		"wantsToReadOutsideWorkspace": "Roo chce przeczytać ten plik poza obszarem roboczym:",
 		"didRead": "Roo przeczytał ten plik:",
 		"wantsToEdit": "Roo chce edytować ten plik:",
+		"wantsToEditOutsideWorkspace": "Roo chce edytować ten plik poza obszarem roboczym:",
 		"wantsToCreate": "Roo chce utworzyć nowy plik:"
 	},
 	"directoryOperations": {

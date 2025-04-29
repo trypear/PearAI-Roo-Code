@@ -105,10 +105,15 @@
 		},
 		"current": "Actual"
 	},
+	"instructions": {
+		"wantsToFetch": "Roo quiere obtener instrucciones detalladas para ayudar con la tarea actual"
+	},
 	"fileOperations": {
 		"wantsToRead": "Roo quiere leer este archivo:",
+		"wantsToReadOutsideWorkspace": "Roo quiere leer este archivo fuera del espacio de trabajo:",
 		"didRead": "Roo leyó este archivo:",
 		"wantsToEdit": "Roo quiere editar este archivo:",
+		"wantsToEditOutsideWorkspace": "Roo quiere editar este archivo fuera del espacio de trabajo:",
 		"wantsToCreate": "Roo quiere crear un nuevo archivo:"
 	},
 	"directoryOperations": {

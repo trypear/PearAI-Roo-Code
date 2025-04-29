@@ -6,4 +6,5 @@ export const GlobalFileNames = {
 	requestyModels: "requesty_models.json",
 	mcpSettings: "pearai_agent_mcp_settings.json",
 	unboundModels: "unbound_models.json",
+	customModes: "custom_modes.json",
 }
