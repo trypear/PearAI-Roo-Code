@@ -104,7 +104,7 @@
 	"diffError": {
 		"title": "Edición fallida"
 	},
-	"troubleMessage": "Roo está teniendo problemas...",
+	"troubleMessage": "Agent está teniendo problemas...",
 	"apiRequest": {
 		"title": "Solicitud API",
 		"failed": "Solicitud API falló",
@@ -130,47 +130,47 @@
 		"current": "Actual"
 	},
 	"instructions": {
-		"wantsToFetch": "Roo quiere obtener instrucciones detalladas para ayudar con la tarea actual"
+		"wantsToFetch": "Agent quiere obtener instrucciones detalladas para ayudar con la tarea actual"
 	},
 	"fileOperations": {
-		"wantsToRead": "Roo quiere leer este archivo:",
-		"wantsToReadOutsideWorkspace": "Roo quiere leer este archivo fuera del espacio de trabajo:",
-		"didRead": "Roo leyó este archivo:",
-		"wantsToEdit": "Roo quiere editar este archivo:",
-		"wantsToEditOutsideWorkspace": "Roo quiere editar este archivo fuera del espacio de trabajo:",
-		"wantsToCreate": "Roo quiere crear un nuevo archivo:",
-		"wantsToSearchReplace": "Roo quiere realizar búsqueda y reemplazo en este archivo:",
-		"didSearchReplace": "Roo realizó búsqueda y reemplazo en este archivo:",
-		"wantsToInsert": "Roo quiere insertar contenido en este archivo:",
-		"wantsToInsertWithLineNumber": "Roo quiere insertar contenido en este archivo en la línea {{lineNumber}}:",
-		"wantsToInsertAtEnd": "Roo quiere añadir contenido al final de este archivo:"
+		"wantsToRead": "Agent quiere leer este archivo:",
+		"wantsToReadOutsideWorkspace": "Agent quiere leer este archivo fuera del espacio de trabajo:",
+		"didRead": "Agent leyó este archivo:",
+		"wantsToEdit": "Agent quiere editar este archivo:",
+		"wantsToEditOutsideWorkspace": "Agent quiere editar este archivo fuera del espacio de trabajo:",
+		"wantsToCreate": "Agent quiere crear un nuevo archivo:",
+		"wantsToSearchReplace": "Agent quiere realizar búsqueda y reemplazo en este archivo:",
+		"didSearchReplace": "Agent realizó búsqueda y reemplazo en este archivo:",
+		"wantsToInsert": "Agent quiere insertar contenido en este archivo:",
+		"wantsToInsertWithLineNumber": "Agent quiere insertar contenido en este archivo en la línea {{lineNumber}}:",
+		"wantsToInsertAtEnd": "Agent quiere añadir contenido al final de este archivo:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Roo quiere ver los archivos de nivel superior en este directorio:",
-		"didViewTopLevel": "Roo vio los archivos de nivel superior en este directorio:",
-		"wantsToViewRecursive": "Roo quiere ver recursivamente todos los archivos en este directorio:",
-		"didViewRecursive": "Roo vio recursivamente todos los archivos en este directorio:",
-		"wantsToViewDefinitions": "Roo quiere ver nombres de definiciones de código fuente utilizados en este directorio:",
-		"didViewDefinitions": "Roo vio nombres de definiciones de código fuente utilizados en este directorio:",
-		"wantsToSearch": "Roo quiere buscar en este directorio <code>{{regex}}</code>:",
-		"didSearch": "Roo buscó en este directorio <code>{{regex}}</code>:"
+		"wantsToViewTopLevel": "Agent quiere ver los archivos de nivel superior en este directorio:",
+		"didViewTopLevel": "Agent vio los archivos de nivel superior en este directorio:",
+		"wantsToViewRecursive": "Agent quiere ver recursivamente todos los archivos en este directorio:",
+		"didViewRecursive": "Agent vio recursivamente todos los archivos en este directorio:",
+		"wantsToViewDefinitions": "Agent quiere ver nombres de definiciones de código fuente utilizados en este directorio:",
+		"didViewDefinitions": "Agent vio nombres de definiciones de código fuente utilizados en este directorio:",
+		"wantsToSearch": "Agent quiere buscar en este directorio <code>{{regex}}</code>:",
+		"didSearch": "Agent buscó en este directorio <code>{{regex}}</code>:"
 	},
 	"commandOutput": "Salida del comando",
 	"response": "Respuesta",
 	"arguments": "Argumentos",
 	"mcp": {
-		"wantsToUseTool": "Roo quiere usar una herramienta en el servidor MCP {{serverName}}:",
-		"wantsToAccessResource": "Roo quiere acceder a un recurso en el servidor MCP {{serverName}}:"
+		"wantsToUseTool": "Agent quiere usar una herramienta en el servidor MCP {{serverName}}:",
+		"wantsToAccessResource": "Agent quiere acceder a un recurso en el servidor MCP {{serverName}}:"
 	},
 	"modes": {
-		"wantsToSwitch": "Roo quiere cambiar a modo <code>{{mode}}</code>",
-		"wantsToSwitchWithReason": "Roo quiere cambiar a modo <code>{{mode}}</code> porque: {{reason}}",
-		"didSwitch": "Roo cambió a modo <code>{{mode}}</code>",
-		"didSwitchWithReason": "Roo cambió a modo <code>{{mode}}</code> porque: {{reason}}"
+		"wantsToSwitch": "Agent quiere cambiar a modo <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "Agent quiere cambiar a modo <code>{{mode}}</code> porque: {{reason}}",
+		"didSwitch": "Agent cambió a modo <code>{{mode}}</code>",
+		"didSwitchWithReason": "Agent cambió a modo <code>{{mode}}</code> porque: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Roo quiere crear una nueva subtarea en modo <code>{{mode}}</code>:",
-		"wantsToFinish": "Roo quiere finalizar esta subtarea",
+		"wantsToCreate": "Agent quiere crear una nueva subtarea en modo <code>{{mode}}</code>:",
+		"wantsToFinish": "Agent quiere finalizar esta subtarea",
 		"newTaskContent": "Instrucciones de la subtarea",
 		"completionContent": "Subtarea completada",
 		"resultContent": "Resultados de la subtarea",
@@ -178,7 +178,7 @@
 		"completionInstructions": "¡Subtarea completada! Puedes revisar los resultados y sugerir correcciones o próximos pasos. Si todo se ve bien, confirma para devolver el resultado a la tarea principal."
 	},
 	"questions": {
-		"hasQuestion": "Roo tiene una pregunta:"
+		"hasQuestion": "Agent tiene una pregunta:"
 	},
 	"taskCompleted": "Tarea completada",
 	"shellIntegration": {
@@ -205,7 +205,7 @@
 	},
 	"announcement": {
 		"title": "🎉 Roo Code 3.14 publicado",
-		"description": "Roo Code 3.14 trae nuevas funcionalidades y mejoras basadas en tus comentarios.",
+		"description": "Agent 3.14 trae nuevas funcionalidades y mejoras basadas en tus comentarios.",
 		"whatsNew": "Novedades",
 		"feature1": "<bold>Herramientas de edición mejoradas</bold>: Las herramientas <code>search_and_replace</code> y <code>insert_content</code> han sido mejoradas y ya no son experimentales",
 		"feature2": "<bold>Mejoras en apply_diff</bold>: Continuamos trabajando en mejorar la herramienta <code>apply_diff</code>",
@@ -214,7 +214,7 @@
 		"detailsDiscussLinks": "Obtén más detalles y participa en <discordLink>Discord</discordLink> y <redditLink>Reddit</redditLink> 🚀"
 	},
 	"browser": {
-		"rooWantsToUse": "Roo quiere usar el navegador:",
+		"rooWantsToUse": "Agent quiere usar el navegador:",
 		"consoleLogs": "Registros de la consola",
 		"noNewLogs": "(No hay nuevos registros)",
 		"screenshot": "Captura de pantalla del navegador",

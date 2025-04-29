@@ -1,5 +1,5 @@
 {
-	"greeting": "Roo Code에 오신 것을 환영합니다",
+	"greeting": "Agent에 오신 것을 환영합니다",
 	"task": {
 		"title": "작업",
 		"seeMore": "더 보기",
@@ -205,7 +205,7 @@
 	},
 	"announcement": {
 		"title": "🎉 Roo Code 3.14 출시",
-		"description": "Roo Code 3.14는 사용자 피드백을 기반으로 새로운 기능과 개선사항을 제공합니다.",
+		"description": "Agent 3.14는 사용자 피드백을 기반으로 새로운 기능과 개선사항을 제공합니다.",
 		"whatsNew": "새로운 기능",
 		"feature1": "<bold>개선된 편집 도구</bold>: <code>search_and_replace</code>와 <code>insert_content</code> 도구가 개선되어 실험 상태에서 정식 기능으로 전환되었습니다",
 		"feature2": "<bold>apply_diff 수정</bold>: <code>apply_diff</code> 도구를 지속적으로 개선하고 있습니다",

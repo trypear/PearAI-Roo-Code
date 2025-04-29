@@ -172,8 +172,8 @@
 			},
 			{
 				"command": "roo-cline.focus",
-				"title": "Roo Code: Bring To Focus",
-				"category": "Roo Code"
+				"title": "Agent: Bring To Focus",
+				"category": "Agent"
 			}
 		],
 		"keybindings": [

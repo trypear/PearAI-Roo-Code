@@ -16,7 +16,7 @@
 	"startRouter": "Yönlendirici Üzerinden Hızlı Kurulum",
 	"startCustom": "Kendi API Anahtarını Kullan",
 	"telemetry": {
-		"title": "Roo Code'u Geliştirmeye Yardım Et",
+		"title": "Agent'u Geliştirmeye Yardım Et",
 		"anonymousTelemetry": "Hataları düzeltmemize ve eklentiyi geliştirmemize yardımcı olmak için anonim hata ve kullanım verileri gönder. Hiçbir zaman kod, metin veya kişisel bilgi gönderilmez.",
 		"changeSettings": "Bunu her zaman <settingsLink>ayarlar</settingsLink>ın altından değiştirebilirsin",
 		"settings": "ayarlar",

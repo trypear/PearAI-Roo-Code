@@ -130,7 +130,7 @@
 		"current": "当前"
 	},
 	"instructions": {
-		"wantsToFetch": "Roo 想要获取详细指示以协助当前任务"
+		"wantsToFetch": "Agent 想要获取详细指示以协助当前任务"
 	},
 	"fileOperations": {
 		"wantsToRead": "需要读取文件:",
@@ -205,7 +205,7 @@
 	},
 	"announcement": {
 		"title": "🎉 Roo Code 3.14 已发布",
-		"description": "Roo Code 3.14 带来基于您反馈的新功能和改进。",
+		"description": "Agent 3.14 带来基于您反馈的新功能和改进。",
 		"whatsNew": "新特性",
 		"feature1": "<bold>编辑工具增强</bold>: <code>search_and_replace</code> 和 <code>insert_content</code> 工具已得到改进，并从实验性状态毕业",
 		"feature2": "<bold>差异更新修复</bold>: 我们持续改进 <code>apply_diff</code> 工具",
