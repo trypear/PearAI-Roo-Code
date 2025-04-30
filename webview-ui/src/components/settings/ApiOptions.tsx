@@ -108,6 +108,9 @@ const ApiOptions = ({
 		info: selectedModelInfo,
 	} = useSelectedModel(apiConfiguration)
 
+	console.dir("IM HERE IN THIS BIHHHH")
+	console.dir(selectedModelId)
+
 	const { data: routerModels } = useRouterModels()
 
 	// Update apiConfiguration.aiModelId whenever selectedModelId changes.

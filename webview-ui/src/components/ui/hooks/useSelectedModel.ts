@@ -28,7 +28,7 @@ import {
 } from "@roo/shared/api"
 
 import { useRouterModels } from "./useRouterModels"
-import { pearAiDefaultModelId } from "@roo/shared/pearaiApi"
+import { pearAiDefaultModelId, pearAiDefaultModelInfo } from "@roo/shared/pearaiApi"
 
 export const useSelectedModel = (apiConfiguration?: ApiConfiguration) => {
 	const { data: routerModels, isLoading, isError } = useRouterModels()
@@ -76,6 +76,9 @@ function getSelectedModelInfo({
 	apiConfiguration?: ApiConfiguration
 	routerModels: RouterModels
 }): ModelInfo {
+	console.dir("IM HERE AAAA")
+	console.dir(provider)
+	console.dir(id)
 	switch (provider) {
 		case "openrouter":
 			return routerModels.openrouter[id] ?? routerModels.openrouter[openRouterDefaultModelId]
@@ -121,6 +124,8 @@ function getSelectedModelInfo({
 				...vscodeLlmModels[modelFamily as keyof typeof vscodeLlmModels],
 				supportsImages: false, // VSCode LM API currently doesn't support images.
 			}
+		case "pearai":
+			return apiConfiguration?.pearaiAgentModels?.models[id] ?? pearAiDefaultModelInfo
 		default:
 			return anthropicModels[id as keyof typeof anthropicModels] ?? anthropicModels[anthropicDefaultModelId]
 	}

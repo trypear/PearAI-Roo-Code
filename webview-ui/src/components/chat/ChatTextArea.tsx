@@ -24,9 +24,89 @@ import { SelectDropdown, DropdownOptionType, Button } from "@/components/ui"
 import Thumbnails from "../common/Thumbnails"
 import { MAX_IMAGES_PER_MESSAGE } from "./ChatView"
 import ContextMenu from "./ContextMenu"
-import { VolumeX, Pin, Check } from "lucide-react"
 import { IconButton } from "./IconButton"
 import { cn } from "@/lib/utils"
+
+import { VolumeX, Pin, Check, ChevronDown, ImageIcon } from "lucide-react"
+import { ArrowTurnDownLeftIcon } from "@heroicons/react/16/solid"
+import styled from "styled-components"
+import { Listbox } from "@headlessui/react"
+
+const StyledListboxButton = styled(Listbox.Button)`
+	border: none;
+	background-color: var(--vscode-editor-background);
+	border-radius: 12px;
+	padding: 8px;
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	user-select: none;
+	cursor: pointer;
+	font-size: var(--vscode-editor-font-size);
+	color: var(--vscode-foreground);
+	&:focus {
+		outline: none;
+	}
+`
+
+const StyledListboxOptions = styled(Listbox.Options)<{ newSession: boolean }>`
+	position: absolute;
+	bottom: 100%;
+	left: 0;
+	margin-bottom: 4px;
+	list-style: none;
+	padding: 6px;
+	white-space: nowrap;
+	cursor: default;
+	z-index: 50;
+	border: 1px solid var(--vscode-input-border);
+	border-radius: 10px;
+	background-color: var(--vscode-editor-background);
+	max-height: 300px;
+	min-width: 100px;
+	overflow-y: auto;
+	font-size: var(--vscode-editor-font-size);
+	user-select: none;
+	outline: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	& > * {
+		margin: 4px 0;
+	}
+`
+
+interface ListboxOptionProps {
+	isCurrentModel?: boolean
+}
+
+const StyledListboxOption = styled(Listbox.Option)<ListboxOptionProps>`
+	cursor: pointer;
+	border-radius: 6px;
+	padding: 5px 4px;
+	&:hover {
+		background: ${(props) =>
+			props.isCurrentModel
+				? `var(--vscode-list-activeSelectionBackground)`
+				: `var(--vscode-list-hoverBackground)`};
+	}
+	background: ${(props) => (props.isCurrentModel ? `var(--vscode-list-activeSelectionBackground)` : "transparent")};
+`
+
+const Divider = styled.div`
+	height: 2px;
+	background-color: var(--vscode-input-border);
+	margin: 0px 4px;
+`
+
+const ListboxWrapper = styled.div`
+	position: relative;
+	display: inline-block;
+`
+
+const CaretIcon = () => <ChevronDown className="size-4 opacity-50" />
 
 interface ChatTextAreaProps {
 	inputValue: string
@@ -732,17 +812,20 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					"flex",
 					"flex-col",
 					"gap-2",
-					"bg-editor-background",
-					"m-2 mt-1",
-					"p-1.5",
+					"m-[10px_15px]",
+					"p-2",
 					"outline-none",
-					"border",
 					"border-none",
-					"w-[calc(100%-16px)]",
+					"w-[calc(100%-30px)]",
+					"rounded-xl",
 					"ml-auto",
 					"mr-auto",
 					"box-border",
-				)}>
+					textAreaDisabled ? "opacity-50" : "opacity-100",
+				)}
+				style={{
+					backgroundColor: "var(--vscode-editor-background)",
+				}}>
 				<div className="relative">
 					<div
 						className={cn("chat-text-area", "relative", "flex", "flex-col", "outline-none")}
@@ -817,15 +900,15 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									"break-words",
 									"text-transparent",
 									"overflow-hidden",
-									"font-vscode-font-family",
-									"text-vscode-editor-font-size",
-									"leading-vscode-editor-line-height",
 									"py-2",
 									"px-[9px]",
 									"z-[1000]",
 								)}
 								style={{
 									color: "transparent",
+									fontFamily: "var(--vscode-font-family)",
+									fontSize: "var(--vscode-editor-font-size)",
+									lineHeight: "var(--vscode-editor-line-height)",
 								}}
 							/>
 							<DynamicTextArea
@@ -863,20 +946,13 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 								className={cn(
 									"w-full",
 									"text-vscode-input-foreground",
-									"font-vscode-font-family",
-									"text-vscode-editor-font-size",
-									"leading-vscode-editor-line-height",
 									textAreaDisabled ? "cursor-not-allowed" : "cursor-text",
 									"py-1.5 px-2",
-									isFocused
-										? "border border-vscode-focusBorder outline outline-vscode-focusBorder"
-										: isDraggingOver
-											? "border-2 border-dashed border-vscode-focusBorder"
-											: "border border-transparent",
-									textAreaDisabled ? "opacity-50" : "opacity-100",
 									isDraggingOver
-										? "bg-[color-mix(in_srgb,var(--vscode-input-background)_95%,var(--vscode-focusBorder))]"
-										: "bg-vscode-input-background",
+										? "border-2 border-dashed border-vscode-focusBorder"
+										: "border-none outline-none focus:outline-none focus:ring-0",
+									textAreaDisabled ? "opacity-50" : "opacity-100",
+									"bg-transparent",
 									"transition-background-color duration-150 ease-in-out",
 									"will-change-background-color",
 									"h-[100px]",
@@ -892,6 +968,12 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 									"z-[2]",
 									"scrollbar-none",
 								)}
+								style={{
+									fontFamily: "var(--vscode-font-family)",
+									fontSize: "var(--vscode-editor-font-size)",
+									lineHeight: "var(--vscode-editor-line-height)",
+									outline: "none",
+								}}
 								onScroll={() => updateHighlights()}
 							/>
 							{isTtsPlaying && (
@@ -911,7 +993,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 										"flex",
 										"gap-2",
 										"text-xs",
-										"text-descriptionForeground",
+										"text-vscode-input-foreground",
 										"pointer-events-none",
 										"z-25",
 										"bottom-1.5",
@@ -1090,24 +1172,18 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					{/* Right side - action buttons */}
 					<div className={cn("flex", "items-center", "gap-0.5", "shrink-0")}>
 						<IconButton
-							iconClass={isEnhancingPrompt ? "codicon-loading" : "codicon-sparkle"}
-							title={t("chat:enhancePrompt")}
-							disabled={textAreaDisabled}
-							isLoading={isEnhancingPrompt}
-							onClick={handleEnhancePrompt}
-						/>
-						<IconButton
 							iconClass="codicon-device-camera"
 							title={t("chat:addImages")}
 							disabled={shouldDisableImages}
 							onClick={onSelectImages}
 						/>
-						<IconButton
-							iconClass="codicon-send"
-							title={t("chat:sendMessage")}
+						<Button
+							className="gap-1 h-6 bg-[#E64C9E] text-white text-xs px-2 rounded-lg"
 							disabled={textAreaDisabled}
-							onClick={onSend}
-						/>
+							onClick={() => !textAreaDisabled && onSend()}>
+							<ArrowTurnDownLeftIcon width="12px" height="12px" />
+							Send
+						</Button>
 					</div>
 				</div>
 			</div>
