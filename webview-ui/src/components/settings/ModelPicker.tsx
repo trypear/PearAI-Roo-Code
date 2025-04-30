@@ -23,7 +23,6 @@ import {
 
 import { ThinkingBudget } from "./ThinkingBudget"
 import { ModelInfoView } from "./ModelInfoView"
-import { usePearAiModels } from "../../hooks/usePearAiModels"
 
 type ModelIdKey = keyof Pick<
 	ProviderSettings,
@@ -57,12 +56,6 @@ export const ModelPicker = ({
 	const searchInputRef = useRef<HTMLInputElement>(null)
 	const modelIds = useMemo(() => Object.keys(models ?? {}).sort((a, b) => a.localeCompare(b)), [models])
 
-	const pearAiModels = usePearAiModels(apiConfiguration)
-
-	// const { selectedModelId, selectedModelInfo } = useMemo(
-	// 	() => normalizeApiConfiguration(apiConfiguration, pearAiModels),
-	// 	[apiConfiguration, pearAiModels],
-	// )
 	const { id: selectedModelId, info: selectedModelInfo } = useSelectedModel(apiConfiguration)
 
 	const [searchValue, setSearchValue] = useState(selectedModelId || "")

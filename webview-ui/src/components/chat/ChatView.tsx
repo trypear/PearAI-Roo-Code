@@ -31,7 +31,6 @@ import TelemetryBanner from "../common/TelemetryBanner"
 import HistoryPreview from "../history/HistoryPreview"
 import RooHero from "@src/components/welcome/RooHero"
 import RooTips from "@src/components/welcome/RooTips"
-import { usePearAiModels } from "../../hooks/usePearAiModels"
 import Announcement from "./Announcement"
 import BrowserSessionRow from "./BrowserSessionRow"
 import ChatRow from "./ChatRow"
@@ -52,6 +51,7 @@ import {
 
 import SystemPromptWarning from "./SystemPromptWarning"
 import { useTaskSearch } from "../history/useTaskSearch"
+import { usePearAIModels } from "@/hooks/usePearAIModels"
 
 export interface ChatViewProps {
 	isHidden: boolean
@@ -516,13 +516,14 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		startNewTask()
 	}, [startNewTask])
 
-	// TODO: FIGURE THIS OUT
-	// const pearAiModels = usePearAiModels(apiConfiguration)
+	const pearaiModels = usePearAIModels(apiConfiguration)
 
-	// const { selectedModelInfo } = useMemo(() => {
-	// 	return normalizeApiConfiguration(apiConfiguration, pearAiModels)
-	// }, [apiConfiguration, pearAiModels])
-	const { info: model } = useSelectedModel(apiConfiguration)
+	let apiConfigurationNew = {
+		...apiConfiguration,
+		pearaiAgentModels: pearaiModels,
+	}
+
+	const { info: model } = useSelectedModel(apiConfigurationNew)
 
 	const selectImages = useCallback(() => {
 		vscode.postMessage({ type: "selectImages" })

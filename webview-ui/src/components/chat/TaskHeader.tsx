@@ -14,13 +14,10 @@ import { useExtensionState } from "@src/context/ExtensionStateContext"
 import { useSelectedModel } from "@/components/ui/hooks/useSelectedModel"
 
 import Thumbnails from "../common/Thumbnails"
-import { DeleteTaskDialog } from "../history/DeleteTaskDialog"
-import { vscBadgeBackground, vscEditorBackground, vscInputBackground } from "../ui"
-import { usePearAiModels } from "@/hooks/usePearAiModels"
-
 import { TaskActions } from "./TaskActions"
 import { ContextWindowProgress } from "./ContextWindowProgress"
 import { Mention } from "./Mention"
+import { usePearAIModels } from "@/hooks/usePearAIModels"
 
 export interface TaskHeaderProps {
 	task: ClineMessage
@@ -46,15 +43,18 @@ const TaskHeader = ({
 	onClose,
 }: TaskHeaderProps) => {
 	const { t } = useTranslation()
-	const { apiConfiguration, currentTaskItem } = useExtensionState()
+	let { apiConfiguration, currentTaskItem } = useExtensionState()
+	const pearaiModels = usePearAIModels(apiConfiguration)
+	apiConfiguration = {
+		...apiConfiguration,
+		pearaiAgentModels: pearaiModels,
+	}
 	const { info: model } = useSelectedModel(apiConfiguration)
 	const [isTaskExpanded, setIsTaskExpanded] = useState(false)
 
 	const textContainerRef = useRef<HTMLDivElement>(null)
 	const textRef = useRef<HTMLDivElement>(null)
 	const contextWindow = model?.contextWindow || 1
-
-	const pearAiModels = usePearAiModels(apiConfiguration)
 
 	const { width: windowWidth } = useWindowSize()
 

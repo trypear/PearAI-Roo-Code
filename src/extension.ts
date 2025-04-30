@@ -115,7 +115,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 				// const mcpHub = provider.getMcpHub()
 				// if (mcpHub) {
-				// 	await mcpHub.updatePearAiApiKey(data.accessToken)
+				// 	await mcpHub.updatePearAIApiKey(data.accessToken)
 				// }
 			}
 			vscode.commands.executeCommand("roo-cline.plusButtonClicked")
@@ -138,7 +138,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				// Update MCP server with new token
 				// const mcpHub = provider.getMcpHub()
 				// if (mcpHub) {
-				// 	await mcpHub.updatePearAiApiKey(data.accessToken)
+				// 	await mcpHub.updatePearAIApiKey(data.accessToken)
 				// }
 			}
 		}),
@@ -161,7 +161,7 @@ export async function activate(context: vscode.ExtensionContext) {
 				// Clear MCP server token
 				// const mcpHub = provider.getMcpHub()
 				// if (mcpHub) {
-				// 	await mcpHub.clearPearAiApiKey()
+				// 	await mcpHub.clearPearAIApiKey()
 				// }
 			}
 		}),

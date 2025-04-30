@@ -19,7 +19,7 @@ import { VsCodeLmHandler } from "./providers/vscode-lm"
 import { ApiStream } from "./transform/stream"
 import { UnboundHandler } from "./providers/unbound"
 import { RequestyHandler } from "./providers/requesty"
-import { PearAiHandler } from "./providers/pearai/pearai"
+import { PearAIHandler } from "./providers/pearai/pearai"
 import { HumanRelayHandler } from "./providers/human-relay"
 import { FakeAIHandler } from "./providers/fake-ai"
 import { XAIHandler } from "./providers/xai"
@@ -82,7 +82,7 @@ export function buildApiHandler(configuration: ApiConfiguration): ApiHandler {
 		case "fake-ai":
 			return new FakeAIHandler(options)
 		case "pearai":
-			return new PearAiHandler(options)
+			return new PearAIHandler(options)
 		case "xai":
 			return new XAIHandler(options)
 		default:

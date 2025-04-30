@@ -16,9 +16,9 @@ export interface PearAIAgentModelsConfig {
 	defaultModelId?: string
 }
 
-export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
+export class PearAIHandler extends BaseProvider implements SingleCompletionHandler {
 	private handler!: AnthropicHandler | PearAIGenericHandler
-	private pearAIAgentModels: PearAIAgentModelsConfig | null = null
+	private pearaiAgentModels: PearAIAgentModelsConfig | null = null
 	private options: ApiHandlerOptions
 
 	constructor(options: ApiHandlerOptions) {

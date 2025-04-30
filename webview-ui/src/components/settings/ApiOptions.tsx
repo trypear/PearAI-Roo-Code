@@ -42,8 +42,8 @@ import { ModelPicker } from "./ModelPicker"
 import { ApiErrorMessage } from "./ApiErrorMessage"
 import { ThinkingBudget } from "./ThinkingBudget"
 import { R1FormatSetting } from "./R1FormatSetting"
-import { usePearAiModels } from "../../hooks/usePearAiModels"
-import { allModels, pearAiDefaultModelId, pearAiDefaultModelInfo } from "../../../../src/shared/pearaiApi"
+import { usePearAIModels } from "../../hooks/usePearAIModels"
+import { allModels, pearaiDefaultModelId, pearaiDefaultModelInfo } from "../../../../src/shared/pearaiApi"
 import { OpenRouterBalanceDisplay } from "./OpenRouterBalanceDisplay"
 import { RequestyBalanceDisplay } from "./RequestyBalanceDisplay"
 import { ReasoningEffort } from "./ReasoningEffort"
@@ -76,7 +76,7 @@ const ApiOptions = ({
 	const [vsCodeLmModels, setVsCodeLmModels] = useState<LanguageModelChatSelector[]>([])
 
 	const [openAiModels, setOpenAiModels] = useState<Record<string, ModelInfo> | null>(null)
-	const pearAiModels = usePearAiModels(apiConfiguration)
+	const pearaiModels = usePearAIModels(apiConfiguration).models
 
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
@@ -107,9 +107,6 @@ const ApiOptions = ({
 		id: selectedModelId,
 		info: selectedModelInfo,
 	} = useSelectedModel(apiConfiguration)
-
-	console.dir("IM HERE IN THIS BIHHHH")
-	console.dir(selectedModelId)
 
 	const { data: routerModels } = useRouterModels()
 
@@ -201,7 +198,7 @@ const ApiOptions = ({
 
 	const selectedProviderModelOptions = useMemo(() => {
 		if (selectedProvider === "pearai") {
-			return Object.keys(pearAiModels).map((modelId) => ({
+			return Object.keys(pearaiModels).map((modelId) => ({
 				value: modelId,
 				label: modelId,
 			}))
@@ -212,7 +209,7 @@ const ApiOptions = ({
 					label: modelId,
 				}))
 			: []
-	}, [selectedProvider, pearAiModels])
+	}, [selectedProvider, pearaiModels])
 
 	// Base URL for provider documentation
 	const DOC_BASE_URL = "https://docs.roocode.com/providers"
@@ -312,7 +309,6 @@ const ApiOptions = ({
 						<SelectValue placeholder={t("settings:common.select")} />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="pearai">PearAI</SelectItem>
 						{PROVIDERS.map(({ value, label }) => (
 							<SelectItem key={value} value={value}>
 								{label}
