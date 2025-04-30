@@ -111,12 +111,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				})
 				await provider.postStateToWebview()
 				// Update MCP server with new token
-				// TODO: REDO THIS I GUESS?!
-
-				// const mcpHub = provider.getMcpHub()
-				// if (mcpHub) {
-				// 	await mcpHub.updatePearAIApiKey(data.accessToken)
-				// }
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.updatePearAIApiKey(data.accessToken)
+				}
 			}
 			vscode.commands.executeCommand("roo-cline.plusButtonClicked")
 		}),
@@ -136,10 +134,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				})
 				await provider.postStateToWebview()
 				// Update MCP server with new token
-				// const mcpHub = provider.getMcpHub()
-				// if (mcpHub) {
-				// 	await mcpHub.updatePearAIApiKey(data.accessToken)
-				// }
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.updatePearAIApiKey(data.accessToken)
+				}
 			}
 		}),
 	)
@@ -159,10 +157,10 @@ export async function activate(context: vscode.ExtensionContext) {
 				})
 				await provider.postStateToWebview()
 				// Clear MCP server token
-				// const mcpHub = provider.getMcpHub()
-				// if (mcpHub) {
-				// 	await mcpHub.clearPearAIApiKey()
-				// }
+				const mcpHub = provider.getMcpHub()
+				if (mcpHub) {
+					await mcpHub.clearPearAIApiKey()
+				}
 			}
 		}),
 	)
