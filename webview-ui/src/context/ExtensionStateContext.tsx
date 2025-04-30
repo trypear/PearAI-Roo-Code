@@ -1,42 +1,34 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { useEvent } from "react-use"
-import { ApiConfigMeta, ExtensionMessage, ExtensionState } from "../../../src/shared/ExtensionMessage"
-import {
-	ApiConfiguration,
-	ModelInfo,
-	glamaDefaultModelId,
-	glamaDefaultModelInfo,
-	openRouterDefaultModelId,
-	openRouterDefaultModelInfo,
-	unboundDefaultModelId,
-	unboundDefaultModelInfo,
-	requestyDefaultModelId,
-	requestyDefaultModelInfo,
-} from "../../../src/shared/api"
-
-import { vscode } from "../utils/vscode"
-import { convertTextMateToHljs } from "../utils/textMateToHljs"
-import { findLastIndex } from "../../../src/shared/array"
-import { McpServer } from "../../../src/shared/mcp"
-import { checkExistKey } from "../../../src/shared/checkExistApiConfig"
-import { Mode, CustomModePrompts, defaultModeSlug, defaultPrompts, ModeConfig } from "../../../src/shared/modes"
-import { CustomSupportPrompts } from "../../../src/shared/support-prompt"
-import { experimentDefault, ExperimentId } from "../../../src/shared/experiments"
-import { TelemetrySetting } from "../../../src/shared/TelemetrySetting"
-import { PEARAI_URL, pearAiModels } from "../../../src/shared/pearaiApi"
+import { ApiConfigMeta, ExtensionMessage, ExtensionState } from "@roo/shared/ExtensionMessage"
+import { ApiConfiguration } from "@roo/shared/api"
+import { vscode } from "@src/utils/vscode"
+import { convertTextMateToHljs } from "@src/utils/textMateToHljs"
+import { findLastIndex } from "@roo/shared/array"
+import { McpServer } from "@roo/shared/mcp"
+import { checkExistKey } from "@roo/shared/checkExistApiConfig"
+import { Mode, CustomModePrompts, defaultModeSlug, defaultPrompts, ModeConfig } from "@roo/shared/modes"
+import { CustomSupportPrompts } from "@roo/shared/support-prompt"
+import { experimentDefault, ExperimentId } from "@roo/shared/experiments"
+import { TelemetrySetting } from "@roo/shared/TelemetrySetting"
+import { PEARAI_URL, pearaiModels } from "../../../src/shared/pearaiApi"
 
 export interface ExtensionStateContextType extends ExtensionState {
+	historyPreviewCollapsed?: boolean // Add the new state property
 	didHydrateState: boolean
 	showWelcome: boolean
 	theme: any
 	mcpServers: McpServer[]
+	hasSystemPromptOverride?: boolean
 	currentCheckpoint?: string
 	filePaths: string[]
 	openedTabs: Array<{ label: string; isActive: boolean; path?: string }>
 	setApiConfiguration: (config: ApiConfiguration) => void
 	setCustomInstructions: (value?: string) => void
 	setAlwaysAllowReadOnly: (value: boolean) => void
+	setAlwaysAllowReadOnlyOutsideWorkspace: (value: boolean) => void
 	setAlwaysAllowWrite: (value: boolean) => void
+	setAlwaysAllowWriteOutsideWorkspace: (value: boolean) => void
 	setAlwaysAllowExecute: (value: boolean) => void
 	setAlwaysAllowBrowser: (value: boolean) => void
 	setAlwaysAllowMcp: (value: boolean) => void
@@ -50,6 +42,8 @@ export interface ExtensionStateContextType extends ExtensionState {
 	setSoundVolume: (value: number) => void
 	terminalShellIntegrationTimeout?: number
 	setTerminalShellIntegrationTimeout: (value: number) => void
+	terminalZdotdir?: boolean
+	setTerminalZdotdir: (value: boolean) => void
 	setTtsEnabled: (value: boolean) => void
 	setTtsSpeed: (value: number) => void
 	setDiffEnabled: (value: boolean) => void
@@ -65,14 +59,10 @@ export interface ExtensionStateContextType extends ExtensionState {
 	setMcpEnabled: (value: boolean) => void
 	enableMcpServerCreation: boolean
 	setEnableMcpServerCreation: (value: boolean) => void
-	enableCustomModeCreation?: boolean
-	setEnableCustomModeCreation: (value: boolean) => void
 	alwaysApproveResubmit?: boolean
 	setAlwaysApproveResubmit: (value: boolean) => void
 	requestDelaySeconds: number
 	setRequestDelaySeconds: (value: number) => void
-	rateLimitSeconds: number
-	setRateLimitSeconds: (value: number) => void
 	setCurrentApiConfigName: (value: string) => void
 	setListApiConfigMeta: (value: ApiConfigMeta[]) => void
 	mode: Mode
@@ -91,9 +81,17 @@ export interface ExtensionStateContextType extends ExtensionState {
 	setTelemetrySetting: (value: TelemetrySetting) => void
 	remoteBrowserEnabled?: boolean
 	setRemoteBrowserEnabled: (value: boolean) => void
+	awsUsePromptCache?: boolean
+	setAwsUsePromptCache: (value: boolean) => void
 	maxReadFileLine: number
 	setMaxReadFileLine: (value: number) => void
 	machineId?: string
+	pinnedApiConfigs?: Record<string, boolean>
+	setPinnedApiConfigs: (value: Record<string, boolean>) => void
+	togglePinnedApiConfig: (configName: string) => void
+	terminalCompressProgressBar?: boolean
+	setTerminalCompressProgressBar: (value: boolean) => void
+	setHistoryPreviewCollapsed: (value: boolean) => void
 }
 
 export const ExtensionStateContext = createContext<ExtensionStateContextType | undefined>(undefined)
@@ -144,10 +142,8 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		ttsSpeed: 1.0,
 		diffEnabled: false,
 		enableCheckpoints: true,
-		checkpointStorage: "task",
 		fuzzyMatchThreshold: 1.0,
 		language: "en", // Default language code
-		enableCustomModeCreation: true,
 		writeDelayMs: 1000,
 		browserViewportSize: "900x600",
 		screenshotQuality: 75,
@@ -157,7 +153,6 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		enableMcpServerCreation: true,
 		alwaysApproveResubmit: true,
 		requestDelaySeconds: 5,
-		rateLimitSeconds: 0, // Minimum time between successive requests (0 = disabled)
 		currentApiConfigName: "default",
 		listApiConfigMeta: [],
 		mode: defaultModeSlug,
@@ -175,6 +170,12 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		showRooIgnoredFiles: true, // Default to showing .rooignore'd files with lock symbol (current behavior).
 		renderContext: "sidebar",
 		maxReadFileLine: 500, // Default max read file line limit
+		pinnedApiConfigs: {}, // Empty object for pinned API configs
+		terminalZshOhMy: false, // Default Oh My Zsh integration setting
+		terminalZshP10k: false, // Default Powerlevel10k integration setting
+		terminalZdotdir: false, // Default ZDOTDIR handling setting
+		terminalCompressProgressBar: true, // Default to compress progress bar output
+		historyPreviewCollapsed: false, // Initialize the new state (default to expanded)
 	})
 
 	const [didHydrateState, setDidHydrateState] = useState(false)
@@ -182,7 +183,6 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 	const [theme, setTheme] = useState<any>(undefined)
 	const [filePaths, setFilePaths] = useState<string[]>([])
 	const [openedTabs, setOpenedTabs] = useState<Array<{ label: string; isActive: boolean; path?: string }>>([])
-
 	const [mcpServers, setMcpServers] = useState<McpServer[]>([])
 	const [currentCheckpoint, setCurrentCheckpoint] = useState<string>()
 
@@ -190,6 +190,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		(value: ApiConfigMeta[]) => setState((prevState) => ({ ...prevState, listApiConfigMeta: value })),
 		[],
 	)
+
 	const handleMessage = useCallback(
 		(event: MessageEvent) => {
 			const message: ExtensionMessage = event.data
@@ -209,7 +210,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 								apiProvider: "pearai",
 								pearaiBaseUrl: PEARAI_URL,
 								pearaiModelId: "pearai-model",
-								pearaiModelInfo: pearAiModels["pearai-model"],
+								pearaiModelInfo: pearaiModels["pearai-model"],
 							},
 						})
 					}
@@ -295,7 +296,11 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 			})),
 		setCustomInstructions: (value) => setState((prevState) => ({ ...prevState, customInstructions: value })),
 		setAlwaysAllowReadOnly: (value) => setState((prevState) => ({ ...prevState, alwaysAllowReadOnly: value })),
+		setAlwaysAllowReadOnlyOutsideWorkspace: (value) =>
+			setState((prevState) => ({ ...prevState, alwaysAllowReadOnlyOutsideWorkspace: value })),
 		setAlwaysAllowWrite: (value) => setState((prevState) => ({ ...prevState, alwaysAllowWrite: value })),
+		setAlwaysAllowWriteOutsideWorkspace: (value) =>
+			setState((prevState) => ({ ...prevState, alwaysAllowWriteOutsideWorkspace: value })),
 		setAlwaysAllowExecute: (value) => setState((prevState) => ({ ...prevState, alwaysAllowExecute: value })),
 		setAlwaysAllowBrowser: (value) => setState((prevState) => ({ ...prevState, alwaysAllowBrowser: value })),
 		setAlwaysAllowMcp: (value) => setState((prevState) => ({ ...prevState, alwaysAllowMcp: value })),
@@ -318,12 +323,12 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 			setState((prevState) => ({ ...prevState, terminalOutputLineLimit: value })),
 		setTerminalShellIntegrationTimeout: (value) =>
 			setState((prevState) => ({ ...prevState, terminalShellIntegrationTimeout: value })),
+		setTerminalZdotdir: (value) => setState((prevState) => ({ ...prevState, terminalZdotdir: value })),
 		setMcpEnabled: (value) => setState((prevState) => ({ ...prevState, mcpEnabled: value })),
 		setEnableMcpServerCreation: (value) =>
 			setState((prevState) => ({ ...prevState, enableMcpServerCreation: value })),
 		setAlwaysApproveResubmit: (value) => setState((prevState) => ({ ...prevState, alwaysApproveResubmit: value })),
 		setRequestDelaySeconds: (value) => setState((prevState) => ({ ...prevState, requestDelaySeconds: value })),
-		setRateLimitSeconds: (value) => setState((prevState) => ({ ...prevState, rateLimitSeconds: value })),
 		setCurrentApiConfigName: (value) => setState((prevState) => ({ ...prevState, currentApiConfigName: value })),
 		setListApiConfigMeta,
 		setMode: (value: Mode) => setState((prevState) => ({ ...prevState, mode: value })),
@@ -331,8 +336,6 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		setCustomSupportPrompts: (value) => setState((prevState) => ({ ...prevState, customSupportPrompts: value })),
 		setEnhancementApiConfigId: (value) =>
 			setState((prevState) => ({ ...prevState, enhancementApiConfigId: value })),
-		setEnableCustomModeCreation: (value) =>
-			setState((prevState) => ({ ...prevState, enableCustomModeCreation: value })),
 		setAutoApprovalEnabled: (value) => setState((prevState) => ({ ...prevState, autoApprovalEnabled: value })),
 		setCustomModes: (value) => setState((prevState) => ({ ...prevState, customModes: value })),
 		setMaxOpenTabsContext: (value) => setState((prevState) => ({ ...prevState, maxOpenTabsContext: value })),
@@ -341,7 +344,28 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		setTelemetrySetting: (value) => setState((prevState) => ({ ...prevState, telemetrySetting: value })),
 		setShowRooIgnoredFiles: (value) => setState((prevState) => ({ ...prevState, showRooIgnoredFiles: value })),
 		setRemoteBrowserEnabled: (value) => setState((prevState) => ({ ...prevState, remoteBrowserEnabled: value })),
+		setAwsUsePromptCache: (value) => setState((prevState) => ({ ...prevState, awsUsePromptCache: value })),
 		setMaxReadFileLine: (value) => setState((prevState) => ({ ...prevState, maxReadFileLine: value })),
+		setPinnedApiConfigs: (value) => setState((prevState) => ({ ...prevState, pinnedApiConfigs: value })),
+		setTerminalCompressProgressBar: (value) =>
+			setState((prevState) => ({ ...prevState, terminalCompressProgressBar: value })),
+		togglePinnedApiConfig: (configId) =>
+			setState((prevState) => {
+				const currentPinned = prevState.pinnedApiConfigs || {}
+				const newPinned = {
+					...currentPinned,
+					[configId]: !currentPinned[configId],
+				}
+
+				// If the config is now unpinned, remove it from the object
+				if (!newPinned[configId]) {
+					delete newPinned[configId]
+				}
+
+				return { ...prevState, pinnedApiConfigs: newPinned }
+			}),
+		setHistoryPreviewCollapsed: (value) =>
+			setState((prevState) => ({ ...prevState, historyPreviewCollapsed: value })), // Implement the setter
 	}
 
 	return <ExtensionStateContext.Provider value={contextValue}>{children}</ExtensionStateContext.Provider>

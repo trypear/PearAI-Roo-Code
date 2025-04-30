@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react"
+import { Button } from "@/components/ui/button"
 import {
-	VSCodeButton,
 	VSCodeTextArea,
 	VSCodeDropdown,
 	VSCodeOption,
@@ -9,7 +9,8 @@ import {
 	VSCodeRadioGroup,
 	VSCodeRadio,
 } from "@vscode/webview-ui-toolkit/react"
-import { useExtensionState } from "../../context/ExtensionStateContext"
+
+import { useExtensionState } from "@src/context/ExtensionStateContext"
 import {
 	Mode,
 	PromptComponent,
@@ -18,15 +19,15 @@ import {
 	getAllModes,
 	ModeConfig,
 	GroupEntry,
-} from "../../../../src/shared/modes"
-import { CustomModeSchema } from "../../../../src/core/config/CustomModesSchema"
-import { supportPrompt, SupportPromptType } from "../../../../src/shared/support-prompt"
+} from "@roo/shared/modes"
+import { modeConfigSchema } from "@roo/schemas"
+import { supportPrompt, SupportPromptType } from "@roo/shared/support-prompt"
 
-import { TOOL_GROUPS, ToolGroup } from "../../../../src/shared/tool-groups"
-import { vscode } from "../../utils/vscode"
+import { TOOL_GROUPS, ToolGroup } from "@roo/shared/tools"
+import { vscode } from "@src/utils/vscode"
 import { Tab, TabContent, TabHeader } from "../common/Tab"
 import i18next from "i18next"
-import { useAppTranslation } from "../../i18n/TranslationContext"
+import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { Trans } from "react-i18next"
 
 // Get all available groups that should show in prompts view
@@ -57,8 +58,6 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 		customInstructions,
 		setCustomInstructions,
 		customModes,
-		enableCustomModeCreation,
-		setEnableCustomModeCreation,
 	} = useExtensionState()
 
 	// Memoize modes to preserve array order
@@ -225,7 +224,8 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 		}
 
 		// Validate the mode against the schema
-		const result = CustomModeSchema.safeParse(newMode)
+		const result = modeConfigSchema.safeParse(newMode)
+
 		if (!result.success) {
 			// Map Zod errors to specific fields
 			result.error.errors.forEach((error) => {
@@ -326,17 +326,6 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 		return () => document.removeEventListener("click", handleClickOutside)
 	}, [showConfigMenu])
 
-	// Add effect to sync enableCustomModeCreation with backend
-	useEffect(() => {
-		if (enableCustomModeCreation !== undefined) {
-			// Send the value to the extension's global state
-			vscode.postMessage({
-				type: "enableCustomModeCreation", // Using dedicated message type
-				bool: enableCustomModeCreation,
-			})
-		}
-	}, [enableCustomModeCreation])
-
 	useEffect(() => {
 		const handler = (event: MessageEvent) => {
 			const message = event.data
@@ -405,7 +394,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 		<Tab>
 			<TabHeader className="flex justify-between items-center">
 				<h3 className="text-vscode-foreground m-0">{t("prompts:title")}</h3>
-				<VSCodeButton onClick={onDone}>{t("prompts:done")}</VSCodeButton>
+				<Button onClick={onDone}>{t("prompts:done")}</Button>
 			</TabHeader>
 
 			<TabContent>
@@ -413,15 +402,17 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 					<div onClick={(e) => e.stopPropagation()} className="flex justify-between items-center mb-3">
 						<h3 className="text-vscode-foreground m-0">{t("prompts:modes.title")}</h3>
 						<div className="flex gap-2">
-							<VSCodeButton
-								appearance="icon"
+							<Button
+								variant="ghost"
+								size="icon"
 								onClick={openCreateModeDialog}
 								title={t("prompts:modes.createNewMode")}>
 								<span className="codicon codicon-add"></span>
-							</VSCodeButton>
+							</Button>
 							<div className="relative inline-block">
-								<VSCodeButton
-									appearance="icon"
+								<Button
+									variant="ghost"
+									size="icon"
 									title={t("prompts:modes.editModesConfig")}
 									className="flex"
 									onClick={(e: React.MouseEvent) => {
@@ -434,7 +425,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 										setTimeout(() => setShowConfigMenu(false), 200)
 									}}>
 									<span className="codicon codicon-json"></span>
-								</VSCodeButton>
+								</Button>
 								{showConfigMenu && (
 									<div
 										onClick={(e) => e.stopPropagation()}
@@ -524,8 +515,9 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 										}}
 										className="w-full"
 									/>
-									<VSCodeButton
-										appearance="icon"
+									<Button
+										variant="ghost"
+										size="icon"
 										title={t("prompts:createModeDialog.deleteMode")}
 										onClick={() => {
 											vscode.postMessage({
@@ -534,7 +526,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 											})
 										}}>
 										<span className="codicon codicon-trash"></span>
-									</VSCodeButton>
+									</Button>
 								</div>
 							</div>
 						</div>
@@ -543,8 +535,9 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 						<div className="flex justify-between items-center mb-1">
 							<div className="font-bold">{t("prompts:roleDefinition.title")}</div>
 							{!findModeBySlug(mode, customModes) && (
-								<VSCodeButton
-									appearance="icon"
+								<Button
+									variant="ghost"
+									size="icon"
 									onClick={() => {
 										const currentMode = getCurrentMode()
 										if (currentMode?.slug) {
@@ -554,7 +547,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 									title={t("prompts:roleDefinition.resetToDefault")}
 									data-testid="role-definition-reset">
 									<span className="codicon codicon-discard"></span>
-								</VSCodeButton>
+								</Button>
 							)}
 						</div>
 						<div className="text-sm text-vscode-descriptionForeground mb-2">
@@ -625,8 +618,9 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							<div className="flex justify-between items-center mb-1">
 								<div className="font-bold">{t("prompts:tools.title")}</div>
 								{findModeBySlug(mode, customModes) && (
-									<VSCodeButton
-										appearance="icon"
+									<Button
+										variant="ghost"
+										size="icon"
 										onClick={() => setIsToolsEditMode(!isToolsEditMode)}
 										title={
 											isToolsEditMode
@@ -635,7 +629,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 										}>
 										<span
 											className={`codicon codicon-${isToolsEditMode ? "check" : "edit"}`}></span>
-									</VSCodeButton>
+									</Button>
 								)}
 							</div>
 							{!findModeBySlug(mode, customModes) && (
@@ -717,8 +711,9 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							}}>
 							<div style={{ fontWeight: "bold" }}>{t("prompts:customInstructions.title")}</div>
 							{!findModeBySlug(mode, customModes) && (
-								<VSCodeButton
-									appearance="icon"
+								<Button
+									variant="ghost"
+									size="icon"
 									onClick={() => {
 										const currentMode = getCurrentMode()
 										if (currentMode?.slug) {
@@ -728,7 +723,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 									title={t("prompts:customInstructions.resetToDefault")}
 									data-testid="custom-instructions-reset">
 									<span className="codicon codicon-discard"></span>
-								</VSCodeButton>
+								</Button>
 							)}
 						</div>
 						<div
@@ -804,7 +799,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 												// Open or create an empty file
 												vscode.postMessage({
 													type: "openFile",
-													text: `./.clinerules-${currentMode.slug}`,
+													text: `./.roo/rules-${currentMode.slug}/rules.md`,
 													values: {
 														create: true,
 														content: "",
@@ -826,8 +821,8 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 						borderBottom: "1px solid var(--vscode-input-border)",
 					}}>
 					<div style={{ display: "flex", gap: "8px" }}>
-						<VSCodeButton
-							appearance="primary"
+						<Button
+							variant="default"
 							onClick={() => {
 								const currentMode = getCurrentMode()
 								if (currentMode) {
@@ -839,9 +834,10 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							}}
 							data-testid="preview-prompt-button">
 							{t("prompts:systemPrompt.preview")}
-						</VSCodeButton>
-						<VSCodeButton
-							appearance="icon"
+						</Button>
+						<Button
+							variant="ghost"
+							size="icon"
 							title={t("prompts:systemPrompt.copy")}
 							onClick={() => {
 								const currentMode = getCurrentMode()
@@ -854,33 +850,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 							}}
 							data-testid="copy-prompt-button">
 							<span className="codicon codicon-copy"></span>
-						</VSCodeButton>
-					</div>
-
-					{/*
-						NOTE: This setting is placed in PromptsView rather than SettingsView since it
-						directly affects the functionality related to modes and custom mode creation,
-						which are managed in this component. This is an intentional deviation from
-						the standard pattern described in cline_docs/settings.md.
-					*/}
-					<div className="mt-12">
-						<VSCodeCheckbox
-							checked={enableCustomModeCreation ?? true}
-							onChange={(e: any) => {
-								// Just update the local state through React context
-								// The React context will update the global state
-								setEnableCustomModeCreation(e.target.checked)
-							}}>
-							<span style={{ fontWeight: "500" }}>{t("prompts:customModeCreation.enableTitle")}</span>
-						</VSCodeCheckbox>
-						<p
-							style={{
-								fontSize: "12px",
-								marginTop: "5px",
-								color: "var(--vscode-descriptionForeground)",
-							}}>
-							{t("prompts:customModeCreation.description")}
-						</p>
+						</Button>
 					</div>
 
 					{/* Custom System Prompt Disclosure */}
@@ -966,7 +936,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 										onClick={() =>
 											vscode.postMessage({
 												type: "openFile",
-												text: "./.clinerules",
+												text: "./.roo/rules/rules.md",
 												values: {
 													create: true,
 													content: "",
@@ -1042,12 +1012,13 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								marginBottom: "4px",
 							}}>
 							<div style={{ fontWeight: "bold" }}>{t("prompts:supportPrompts.prompt")}</div>
-							<VSCodeButton
-								appearance="icon"
+							<Button
+								variant="ghost"
+								size="icon"
 								onClick={() => handleSupportReset(activeSupportTab)}
 								title={t("prompts:supportPrompts.resetPrompt", { promptType: activeSupportTab })}>
 								<span className="codicon codicon-discard"></span>
-							</VSCodeButton>
+							</Button>
 						</div>
 
 						<VSCodeTextArea
@@ -1129,12 +1100,12 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 											alignItems: "center",
 											gap: 8,
 										}}>
-										<VSCodeButton
+										<Button
+											variant="default"
 											onClick={handleTestEnhancement}
-											disabled={isEnhancing}
-											appearance="primary">
+											disabled={isEnhancing}>
 											{t("prompts:supportPrompts.enhance.previewButton")}
-										</VSCodeButton>
+										</Button>
 									</div>
 								</div>
 							</>
@@ -1170,8 +1141,9 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								overflowY: "auto",
 								minHeight: 0,
 							}}>
-							<VSCodeButton
-								appearance="icon"
+							<Button
+								variant="ghost"
+								size="icon"
 								onClick={() => setIsCreateModeDialogOpen(false)}
 								style={{
 									position: "absolute",
@@ -1179,7 +1151,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 									right: "20px",
 								}}>
 								<span className="codicon codicon-close"></span>
-							</VSCodeButton>
+							</Button>
 							<h2 style={{ margin: "0 0 16px" }}>{t("prompts:createModeDialog.title")}</h2>
 							<div style={{ marginBottom: "16px" }}>
 								<div style={{ fontWeight: "bold", marginBottom: "4px" }}>
@@ -1366,12 +1338,12 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								borderTop: "1px solid var(--vscode-editor-lineHighlightBorder)",
 								backgroundColor: "var(--vscode-editor-background)",
 							}}>
-							<VSCodeButton onClick={() => setIsCreateModeDialogOpen(false)}>
+							<Button variant="secondary" onClick={() => setIsCreateModeDialogOpen(false)}>
 								{t("prompts:createModeDialog.buttons.cancel")}
-							</VSCodeButton>
-							<VSCodeButton appearance="primary" onClick={handleCreateMode}>
+							</Button>
+							<Button variant="default" onClick={handleCreateMode}>
 								{t("prompts:createModeDialog.buttons.create")}
-							</VSCodeButton>
+							</Button>
 						</div>
 					</div>
 				</div>
@@ -1404,8 +1376,9 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								overflowY: "auto",
 								minHeight: 0,
 							}}>
-							<VSCodeButton
-								appearance="icon"
+							<Button
+								variant="ghost"
+								size="icon"
 								onClick={() => setIsDialogOpen(false)}
 								style={{
 									position: "absolute",
@@ -1413,7 +1386,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 									right: "20px",
 								}}>
 								<span className="codicon codicon-close"></span>
-							</VSCodeButton>
+							</Button>
 							<h2 style={{ margin: "0 0 16px" }}>
 								{selectedPromptTitle ||
 									t("prompts:systemPrompt.title", { modeName: getCurrentMode()?.name || "Code" })}
@@ -1442,9 +1415,9 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 								borderTop: "1px solid var(--vscode-editor-lineHighlightBorder)",
 								backgroundColor: "var(--vscode-editor-background)",
 							}}>
-							<VSCodeButton onClick={() => setIsDialogOpen(false)}>
+							<Button variant="secondary" onClick={() => setIsDialogOpen(false)}>
 								{t("prompts:createModeDialog.close")}
-							</VSCodeButton>
+							</Button>
 						</div>
 					</div>
 				</div>

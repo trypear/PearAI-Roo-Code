@@ -12,23 +12,19 @@ import { PearAIGenericHandler } from "./pearaiGeneric"
 import { PEARAI_URL } from "../../../shared/pearaiApi"
 
 export interface PearAIAgentModelsConfig {
-	models: {
-		[key: string]: {
-			underlyingModel?: { [key: string]: any }
-			[key: string]: any
-		}
-	}
-	defaultModelId: string
+	models: Record<string, ModelInfo>
+	defaultModelId?: string
 }
 
-export class PearAiHandler extends BaseProvider implements SingleCompletionHandler {
+export class PearAIHandler extends BaseProvider implements SingleCompletionHandler {
 	private handler!: AnthropicHandler | PearAIGenericHandler
-	private pearAIAgentModels: PearAIAgentModelsConfig | null = null
+	private pearaiAgentModels: PearAIAgentModelsConfig | null = null
 	private options: ApiHandlerOptions
 
 	constructor(options: ApiHandlerOptions) {
 		super()
 		if (!options.pearaiApiKey) {
+			vscode.commands.executeCommand("pearai-roo-cline.PearAIKeysNotFound", undefined)
 			vscode.window.showErrorMessage("PearAI API key not found.", "Login to PearAI").then(async (selection) => {
 				if (selection === "Login to PearAI") {
 					const extensionUrl = `${vscode.env.uriScheme}://pearai.pearai/auth`
@@ -69,9 +65,7 @@ export class PearAiHandler extends BaseProvider implements SingleCompletionHandl
 				}
 				const pearaiAgentModels = options.pearaiAgentModels
 				const underlyingModel =
-					pearaiAgentModels.models[modelId]?.underlyingModelUpdated?.underlyingModel ||
-					pearaiAgentModels.models[modelId]?.underlyingModel ||
-					"claude-3-5-sonnet-20241022"
+					pearaiAgentModels.models[modelId]?.underlyingModel || "claude-3-5-sonnet-20241022"
 				if (underlyingModel.startsWith("claude") || modelId.startsWith("anthropic/")) {
 					// Default to Claude
 					this.handler = new AnthropicHandler({

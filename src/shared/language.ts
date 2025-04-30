@@ -1,7 +1,12 @@
+import { type Language, isLanguage } from "../schemas"
+
+export { type Language, isLanguage }
+
 /**
  * Language name mapping from ISO codes to full language names
  */
-export const LANGUAGES: Record<string, string> = {
+
+export const LANGUAGES: Record<Language, string> = {
 	ca: "Català",
 	de: "Deutsch",
 	en: "English",
@@ -13,6 +18,7 @@ export const LANGUAGES: Record<string, string> = {
 	ko: "한국어",
 	pl: "Polski",
 	"pt-BR": "Português",
+	ru: "Русский",
 	tr: "Türkçe",
 	vi: "Tiếng Việt",
 	"zh-CN": "简体中文",
@@ -26,10 +32,12 @@ export const LANGUAGES: Record<string, string> = {
  * @param vscodeLocale - The VSCode locale string to format (e.g., "en-us", "fr-ca")
  * @returns The formatted locale string with uppercase region code
  */
-export function formatLanguage(vscodeLocale: string): string {
+
+export function formatLanguage(vscodeLocale: string): Language {
 	if (!vscodeLocale) {
-		return "en" // Default to English if no locale is provided
+		return "en"
 	}
 
-	return vscodeLocale.replace(/-(\w+)$/, (_, region) => `-${region.toUpperCase()}`)
+	const formattedLocale = vscodeLocale.replace(/-(\w+)$/, (_, region) => `-${region.toUpperCase()}`)
+	return isLanguage(formattedLocale) ? formattedLocale : "en"
 }

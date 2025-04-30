@@ -36,12 +36,12 @@
 		"title": "モード固有のカスタム指示（オプション）",
 		"resetToDefault": "デフォルトにリセット",
 		"description": "{{modeName}}モードに特化した行動ガイドラインを追加します。",
-		"loadFromFile": "{{mode}}モード固有のカスタム指示は、ワークスペースの<span>.clinerules-{{slug}}</span>からも読み込めます。"
+		"loadFromFile": "{{mode}}モード固有のカスタム指示は、ワークスペースの<span>.roo/rules-{{slug}}/</span>フォルダからも読み込めます（.roorules-{{slug}}と.clinerules-{{slug}}は非推奨であり、まもなく機能しなくなります）。"
 	},
 	"globalCustomInstructions": {
 		"title": "すべてのモードのカスタム指示",
 		"description": "これらの指示はすべてのモードに適用されます。モード固有の指示で強化できる基本的な動作セットを提供します。\nRooにエディタの表示言語({{language}})とは異なる言語で考えたり話したりさせたい場合は、ここで指定できます。",
-		"loadFromFile": "指示はワークスペースの<span>.clinerules</span>からも読み込めます。"
+		"loadFromFile": "指示はワークスペースの<span>.roo/rules/</span>フォルダからも読み込めます（.roorules と .clinerules は非推奨であり、まもなく機能しなくなります）。"
 	},
 	"systemPrompt": {
 		"preview": "システムプロンプトのプレビュー",
@@ -91,12 +91,12 @@
 			"TERMINAL_EXPLAIN": {
 				"label": "ターミナルコマンドを説明",
 				"description": "ターミナルコマンドとその出力の詳細な説明を得ることができます。ターミナルのコンテキストメニュー（選択したターミナルの内容で右クリック）から利用できます。"
+			},
+			"NEW_TASK": {
+				"label": "新しいタスクを開始",
+				"description": "入力内容で新しいタスクを開始できます。コマンドパレットから利用できます。"
 			}
 		}
-	},
-	"customModeCreation": {
-		"enableTitle": "プロンプトを通じたカスタムモード作成を有効にする",
-		"description": "有効にすると、Rooは「～するカスタムモードを作成して」のようなプロンプトを使用してカスタムモードを作成できます。無効にすると、この機能が不要な場合、システムプロンプトが約700トークン削減されます。無効にしても、上記の+ボタンを使用するか、関連する設定JSONを編集して手動でカスタムモードを作成できます。"
 	},
 	"advancedSystemPrompt": {
 		"title": "詳細設定：システムプロンプトの上書き",

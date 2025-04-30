@@ -1,7 +1,10 @@
 {
 	"number_format": {
-		"thousand_suffix": "B",
-		"million_suffix": "Mn",
-		"billion_suffix": "Mr"
+		"thousand_suffix": "k",
+		"million_suffix": "m",
+		"billion_suffix": "b"
+	},
+	"ui": {
+		"search_placeholder": "Ara..."
 	}
 }

@@ -1,3 +1,4 @@
+.pnpm-store
 dist
 out
 out-*
@@ -31,7 +32,6 @@ docs/_site/
 
 #Logging
 logs
-.aider*
-.env
-# aider
-.aider*
+
+# Vite development
+.vite-port

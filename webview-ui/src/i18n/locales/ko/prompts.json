@@ -36,12 +36,12 @@
 		"title": "모드별 사용자 지정 지침 (선택 사항)",
 		"resetToDefault": "기본값으로 재설정",
 		"description": "{{modeName}} 모드에 대한 특정 행동 지침을 추가하세요.",
-		"loadFromFile": "{{mode}} 모드에 대한 사용자 지정 지침은 작업 공간의 <span>.clinerules-{{slug}}</span>에서도 로드할 수 있습니다."
+		"loadFromFile": "{{mode}} 모드에 대한 사용자 지정 지침은 작업 공간의 <span>.roo/rules-{{slug}}/</span> 폴더에서도 로드할 수 있습니다(.roorules-{{slug}}와 .clinerules-{{slug}}는 더 이상 사용되지 않으며 곧 작동을 중단합니다)."
 	},
 	"globalCustomInstructions": {
 		"title": "모든 모드에 대한 사용자 지정 지침",
 		"description": "이 지침은 모든 모드에 적용됩니다. 아래의 모드별 지침으로 향상될 수 있는 기본 동작 세트를 제공합니다.\nRoo가 에디터 표시 언어({{language}})와 다른 언어로 생각하고 말하기를 원하시면, 여기에 지정할 수 있습니다.",
-		"loadFromFile": "지침은 작업 공간의 <span>.clinerules</span>에서도 로드할 수 있습니다."
+		"loadFromFile": "지침은 작업 공간의 <span>.roo/rules/</span> 폴더에서도 로드할 수 있습니다(.roorules와 .clinerules는 더 이상 사용되지 않으며 곧 작동을 중단합니다)."
 	},
 	"systemPrompt": {
 		"preview": "시스템 프롬프트 미리보기",
@@ -91,12 +91,12 @@
 			"TERMINAL_EXPLAIN": {
 				"label": "터미널 명령 설명",
 				"description": "터미널 명령과 그 출력에 대한 상세한 설명을 얻을 수 있습니다. 터미널 컨텍스트 메뉴(선택한 터미널 콘텐츠에서 우클릭)에서 이용 가능합니다."
+			},
+			"NEW_TASK": {
+				"label": "새 작업 시작",
+				"description": "입력한 내용으로 새 작업을 시작할 수 있습니다. 명령 팔레트에서 이용 가능합니다."
 			}
 		}
-	},
-	"customModeCreation": {
-		"enableTitle": "프롬프트를 통한 커스텀 모드 생성 활성화",
-		"description": "활성화하면 Roo를 통해 '...하는 커스텀 모드를 만들어줘'와 같은 프롬프트를 사용하여 커스텀 모드를 생성할 수 있습니다. 이 기능이 필요하지 않을 때 비활성화하면 시스템 프롬프트가 약 700 token 감소합니다. 비활성화해도 위의 + 버튼을 사용하거나 관련 구성 JSON을 편집하여 수동으로 커스텀 모드를 생성할 수 있습니다."
 	},
 	"advancedSystemPrompt": {
 		"title": "고급: 시스템 프롬프트 재정의",

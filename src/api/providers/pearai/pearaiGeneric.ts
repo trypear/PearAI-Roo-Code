@@ -19,7 +19,7 @@ import { convertToSimpleMessages } from "../../transform/simple-format"
 import { ApiStream, ApiStreamUsageChunk } from "../../transform/stream"
 import { BaseProvider } from "../base-provider"
 import { XmlMatcher } from "../../../utils/xml-matcher"
-import { allModels, pearAiDefaultModelId, pearAiDefaultModelInfo } from "../../../shared/pearaiApi"
+import { allModels, pearaiDefaultModelId, pearaiDefaultModelInfo } from "../../../shared/pearaiApi"
 import { calculateApiCostOpenAI } from "../../../utils/cost"
 
 const DEEP_SEEK_DEFAULT_TEMPERATURE = 0.6
@@ -226,7 +226,7 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 		if (modelId && this.options.pearaiAgentModels) {
 			let modelInfo = null
 			if (modelId.startsWith("pearai")) {
-				modelInfo = this.options.pearaiAgentModels.models[modelId].underlyingModelUpdated
+				modelInfo = this.options.pearaiAgentModels.models[modelId]
 			} else {
 				modelInfo = this.options.pearaiAgentModels.models[modelId || "pearai-model"]
 			}
@@ -240,8 +240,8 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 		}
 
 		const result = {
-			id: modelId ?? pearAiDefaultModelId,
-			info: allModels[modelId ?? pearAiDefaultModelId],
+			id: modelId ?? pearaiDefaultModelId,
+			info: allModels[modelId ?? pearaiDefaultModelId],
 		}
 		return result
 	}

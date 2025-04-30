@@ -1,7 +1,10 @@
 {
 	"number_format": {
-		"thousand_suffix": "천",
-		"million_suffix": "백만",
-		"billion_suffix": "십억"
+		"thousand_suffix": "k",
+		"million_suffix": "m",
+		"billion_suffix": "b"
+	},
+	"ui": {
+		"search_placeholder": "검색..."
 	}
 }
