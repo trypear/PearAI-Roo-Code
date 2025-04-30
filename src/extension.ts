@@ -165,6 +165,15 @@ export async function activate(context: vscode.ExtensionContext) {
 		}),
 	)
 
+	context.subscriptions.push(
+		vscode.commands.registerCommand("pearai-roo-cline.PearAIKeysNotFound", async () => {
+			const provider = await ClineProvider.getInstance()
+			if (provider) {
+				provider.postMessageToWebview({ type: "action", action: "PearAIKeysNotFound" })
+			}
+		}),
+	)
+
 	/*
 	We use the text document content provider API to show the left side for diff view by creating a virtual document for the original content. This makes it readonly so users know to edit the right side if they want to keep their changes.
 

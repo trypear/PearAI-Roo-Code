@@ -119,9 +119,11 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	const apiMetrics = useMemo(() => getApiMetrics(modifiedMessages), [modifiedMessages])
 
 	const [inputValue, setInputValue] = useState("")
+	const [lastInputValue, setLastInputValue] = useState("")
 	const textAreaRef = useRef<HTMLTextAreaElement>(null)
 	const [textAreaDisabled, setTextAreaDisabled] = useState(false)
 	const [selectedImages, setSelectedImages] = useState<string[]>([])
+	const [lastInputImages, setLastInputImages] = useState<string[]>([])
 
 	// we need to hold on to the ask because useEffect > lastMessage will always let us know when an ask comes in and handle it, but by the time handleMessage is called, the last message might not be the ask anymore (it could be a say that followed)
 	const [clineAsk, setClineAsk] = useState<ClineAsk | undefined>(undefined)
@@ -362,6 +364,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 	const handleChatReset = useCallback(() => {
 		// Only reset message-specific state, preserving mode.
+		setLastInputValue(inputValue)
+		setLastInputImages(selectedImages)
 		setInputValue("")
 		setTextAreaDisabled(true)
 		setSelectedImages([])
@@ -371,7 +375,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		// setPrimaryButtonText(undefined)
 		// setSecondaryButtonText(undefined)
 		disableAutoScrollRef.current = false
-	}, [])
+	}, [inputValue, selectedImages])
 
 	const handleSendMessage = useCallback(
 		(text: string, images: string[]) => {
@@ -546,6 +550,13 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 						case "focusInput":
 							textAreaRef.current?.focus()
 							break
+						case "PearAIKeysNotFound":
+							setInputValue(lastInputValue)
+							setTextAreaDisabled(false)
+							setSelectedImages(lastInputImages)
+							setEnableButtons(true)
+							disableAutoScrollRef.current = true
+							break
 					}
 					break
 				case "selectedImages":
@@ -586,6 +597,12 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 			handleSetChatBoxMessage,
 			handlePrimaryButtonClick,
 			handleSecondaryButtonClick,
+			lastInputValue,
+			lastInputImages,
+			setInputValue,
+			setTextAreaDisabled,
+			setSelectedImages,
+			setEnableButtons,
 		],
 	)
 

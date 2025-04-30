@@ -76,6 +76,7 @@ export interface ExtensionMessage {
 		| "promptsButtonClicked"
 		| "didBecomeVisible"
 		| "focusInput"
+		| "PearAIKeysNotFound"
 	invoke?: "newChat" | "sendMessage" | "primaryButtonClick" | "secondaryButtonClick" | "setChatBoxMessage"
 	state?: ExtensionState
 	images?: string[]
