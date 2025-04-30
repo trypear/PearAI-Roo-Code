@@ -1,8 +1,6 @@
 # Roo Code Changelog
 
-## 3.15.1
-
-### Patch Changes
+## [3.15.1]
 
 - Capture stderr in execa-spawned processes
 
