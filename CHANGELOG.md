@@ -1,5 +1,11 @@
 # Roo Code Changelog
 
+## 3.15.1
+
+### Patch Changes
+
+- Capture stderr in execa-spawned processes
+
 ## 3.15.0 - 2025-04-30
 
 - Add prompt caching to the Google Vertex provider (thanks @ashktn)
