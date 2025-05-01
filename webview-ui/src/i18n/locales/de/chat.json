@@ -52,6 +52,10 @@
 		"title": "Während Ausführung fortfahren",
 		"tooltip": "Trotz Warnungen fortfahren"
 	},
+	"killCommand": {
+		"title": "Befehl abbrechen",
+		"tooltip": "Aktuellen Befehl abbrechen"
+	},
 	"resumeTask": {
 		"title": "Aufgabe fortsetzen",
 		"tooltip": "Aktuelle Aufgabe fortsetzen"
@@ -104,7 +108,7 @@
 	"diffError": {
 		"title": "Bearbeitung fehlgeschlagen"
 	},
-	"troubleMessage": "Agent hat Probleme...",
+	"troubleMessage": "Roo hat Probleme...",
 	"apiRequest": {
 		"title": "API-Anfrage",
 		"failed": "API-Anfrage fehlgeschlagen",
@@ -130,47 +134,47 @@
 		"current": "Aktuell"
 	},
 	"instructions": {
-		"wantsToFetch": "Agent möchte detaillierte Anweisungen abrufen, um bei der aktuellen Aufgabe zu helfen"
+		"wantsToFetch": "Roo möchte detaillierte Anweisungen abrufen, um bei der aktuellen Aufgabe zu helfen"
 	},
 	"fileOperations": {
-		"wantsToRead": "Agent möchte diese Datei lesen:",
-		"wantsToReadOutsideWorkspace": "Agent möchte diese Datei außerhalb des Arbeitsbereichs lesen:",
-		"didRead": "Agent hat diese Datei gelesen:",
-		"wantsToEdit": "Agent möchte diese Datei bearbeiten:",
-		"wantsToEditOutsideWorkspace": "Agent möchte diese Datei außerhalb des Arbeitsbereichs bearbeiten:",
-		"wantsToCreate": "Agent möchte eine neue Datei erstellen:",
-		"wantsToSearchReplace": "Agent möchte in dieser Datei suchen und ersetzen:",
-		"didSearchReplace": "Agent hat Suchen und Ersetzen in dieser Datei durchgeführt:",
-		"wantsToInsert": "Agent möchte Inhalte in diese Datei einfügen:",
-		"wantsToInsertWithLineNumber": "Agent möchte Inhalte in diese Datei in Zeile {{lineNumber}} einfügen:",
-		"wantsToInsertAtEnd": "Agent möchte Inhalte am Ende dieser Datei anhängen:"
+		"wantsToRead": "Roo möchte diese Datei lesen:",
+		"wantsToReadOutsideWorkspace": "Roo möchte diese Datei außerhalb des Arbeitsbereichs lesen:",
+		"didRead": "Roo hat diese Datei gelesen:",
+		"wantsToEdit": "Roo möchte diese Datei bearbeiten:",
+		"wantsToEditOutsideWorkspace": "Roo möchte diese Datei außerhalb des Arbeitsbereichs bearbeiten:",
+		"wantsToCreate": "Roo möchte eine neue Datei erstellen:",
+		"wantsToSearchReplace": "Roo möchte in dieser Datei suchen und ersetzen:",
+		"didSearchReplace": "Roo hat Suchen und Ersetzen in dieser Datei durchgeführt:",
+		"wantsToInsert": "Roo möchte Inhalte in diese Datei einfügen:",
+		"wantsToInsertWithLineNumber": "Roo möchte Inhalte in diese Datei in Zeile {{lineNumber}} einfügen:",
+		"wantsToInsertAtEnd": "Roo möchte Inhalte am Ende dieser Datei anhängen:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Agent möchte die Dateien auf oberster Ebene in diesem Verzeichnis anzeigen:",
-		"didViewTopLevel": "Agent hat die Dateien auf oberster Ebene in diesem Verzeichnis angezeigt:",
-		"wantsToViewRecursive": "Agent möchte rekursiv alle Dateien in diesem Verzeichnis anzeigen:",
-		"didViewRecursive": "Agent hat rekursiv alle Dateien in diesem Verzeichnis angezeigt:",
-		"wantsToViewDefinitions": "Agent möchte Quellcode-Definitionsnamen in diesem Verzeichnis anzeigen:",
-		"didViewDefinitions": "Agent hat Quellcode-Definitionsnamen in diesem Verzeichnis angezeigt:",
-		"wantsToSearch": "Agent möchte dieses Verzeichnis nach <code>{{regex}}</code> durchsuchen:",
-		"didSearch": "Agent hat dieses Verzeichnis nach <code>{{regex}}</code> durchsucht:"
+		"wantsToViewTopLevel": "Roo möchte die Dateien auf oberster Ebene in diesem Verzeichnis anzeigen:",
+		"didViewTopLevel": "Roo hat die Dateien auf oberster Ebene in diesem Verzeichnis angezeigt:",
+		"wantsToViewRecursive": "Roo möchte rekursiv alle Dateien in diesem Verzeichnis anzeigen:",
+		"didViewRecursive": "Roo hat rekursiv alle Dateien in diesem Verzeichnis angezeigt:",
+		"wantsToViewDefinitions": "Roo möchte Quellcode-Definitionsnamen in diesem Verzeichnis anzeigen:",
+		"didViewDefinitions": "Roo hat Quellcode-Definitionsnamen in diesem Verzeichnis angezeigt:",
+		"wantsToSearch": "Roo möchte dieses Verzeichnis nach <code>{{regex}}</code> durchsuchen:",
+		"didSearch": "Roo hat dieses Verzeichnis nach <code>{{regex}}</code> durchsucht:"
 	},
 	"commandOutput": "Befehlsausgabe",
 	"response": "Antwort",
 	"arguments": "Argumente",
 	"mcp": {
-		"wantsToUseTool": "Agent möchte ein Tool auf dem {{serverName}} MCP-Server verwenden:",
-		"wantsToAccessResource": "Agent möchte auf eine Ressource auf dem {{serverName}} MCP-Server zugreifen:"
+		"wantsToUseTool": "Roo möchte ein Tool auf dem {{serverName}} MCP-Server verwenden:",
+		"wantsToAccessResource": "Roo möchte auf eine Ressource auf dem {{serverName}} MCP-Server zugreifen:"
 	},
 	"modes": {
-		"wantsToSwitch": "Agent möchte zum <code>{{mode}}</code>-Modus wechseln",
-		"wantsToSwitchWithReason": "Agent möchte zum <code>{{mode}}</code>-Modus wechseln, weil: {{reason}}",
-		"didSwitch": "Agent hat zum <code>{{mode}}</code>-Modus gewechselt",
-		"didSwitchWithReason": "Agent hat zum <code>{{mode}}</code>-Modus gewechselt, weil: {{reason}}"
+		"wantsToSwitch": "Roo möchte zum <code>{{mode}}</code>-Modus wechseln",
+		"wantsToSwitchWithReason": "Roo möchte zum <code>{{mode}}</code>-Modus wechseln, weil: {{reason}}",
+		"didSwitch": "Roo hat zum <code>{{mode}}</code>-Modus gewechselt",
+		"didSwitchWithReason": "Roo hat zum <code>{{mode}}</code>-Modus gewechselt, weil: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Agent möchte eine neue Teilaufgabe im <code>{{mode}}</code>-Modus erstellen:",
-		"wantsToFinish": "Agent möchte diese Teilaufgabe abschließen",
+		"wantsToCreate": "Roo möchte eine neue Teilaufgabe im <code>{{mode}}</code>-Modus erstellen:",
+		"wantsToFinish": "Roo möchte diese Teilaufgabe abschließen",
 		"newTaskContent": "Teilaufgabenanweisungen",
 		"completionContent": "Teilaufgabe abgeschlossen",
 		"resultContent": "Teilaufgabenergebnisse",
@@ -178,16 +182,9 @@
 		"completionInstructions": "Teilaufgabe abgeschlossen! Du kannst die Ergebnisse überprüfen und Korrekturen oder nächste Schritte vorschlagen. Wenn alles gut aussieht, bestätige, um das Ergebnis an die übergeordnete Aufgabe zurückzugeben."
 	},
 	"questions": {
-		"hasQuestion": "Agent hat eine Frage:"
+		"hasQuestion": "Roo hat eine Frage:"
 	},
 	"taskCompleted": "Aufgabe abgeschlossen",
-	"shellIntegration": {
-		"unavailable": "Shell-Integration nicht verfügbar",
-		"troubleshooting": "Immer noch Probleme? Klicke hier für die Shell-Integrationsdokumentation.",
-		"checkSettings": "Überprüfe die Terminal-Workarounds in den Einstellungen",
-		"updateVSCode": "VSCode aktualisieren",
-		"supportedShell": "Stelle sicher, dass du eine unterstützte Shell verwendest: zsh, bash, fish oder PowerShell"
-	},
 	"powershell": {
 		"issues": "Es scheint, dass du Probleme mit Windows PowerShell hast, bitte sieh dir dies an"
 	},
@@ -204,17 +201,17 @@
 		"copyToInput": "In Eingabefeld kopieren (oder Shift + Klick)"
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.14 veröffentlicht",
-		"description": "Agent 3.14 bringt neue Funktionen und Verbesserungen basierend auf deinem Feedback.",
+		"title": "🎉 Roo Code 3.15 veröffentlicht",
+		"description": "Roo Code 3.15 bringt neue Funktionen und Verbesserungen basierend auf deinem Feedback.",
 		"whatsNew": "Was ist neu",
-		"feature1": "<bold>Verbesserte Bearbeitungswerkzeuge</bold>: Die <code>search_and_replace</code> und <code>insert_content</code> Tools wurden verbessert und sind nicht mehr experimentell",
-		"feature2": "<bold>Diff Apply Fixes</bold>: Wir arbeiten weiterhin an der Verbesserung des <code>apply_diff</code> Tools",
-		"feature3": "<bold>Zahlreiche andere Verbesserungen</bold>: Viele Fehlerbehebungen und Optimierungen in der gesamten Erweiterung",
+		"feature1": "<bold>Prompt-Caching für Vertex</bold>: Prompt-Caching-Unterstützung für Vertex AI hinzugefügt, verbessert Antwortzeiten und reduziert API-Kosten",
+		"feature2": "<bold>Terminal-Fallback</bold>: Implementierung eines Fallback-Mechanismus, wenn die VSCode-Terminal-Shell-Integration fehlschlägt",
+		"feature3": "<bold>Verbesserte Code-Snippets</bold>: Verbesserte Darstellung und Interaktion mit Code-Snippets in der Chat-Oberfläche",
 		"hideButton": "Ankündigung ausblenden",
 		"detailsDiscussLinks": "Erhalte mehr Details und diskutiere auf <discordLink>Discord</discordLink> und <redditLink>Reddit</redditLink> 🚀"
 	},
 	"browser": {
-		"rooWantsToUse": "Agent möchte den Browser verwenden:",
+		"rooWantsToUse": "Roo möchte den Browser verwenden:",
 		"consoleLogs": "Konsolenprotokolle",
 		"noNewLogs": "(Keine neuen Protokolle)",
 		"screenshot": "Browser-Screenshot",
@@ -236,5 +233,10 @@
 		}
 	},
 	"systemPromptWarning": "WARNUNG: Benutzerdefinierte Systemaufforderung aktiv. Dies kann die Funktionalität erheblich beeinträchtigen und zu unvorhersehbarem Verhalten führen.",
-	"selectApiConfig": "API-Konfiguration auswählen"
+	"selectApiConfig": "API-Konfiguration auswählen",
+	"shellIntegration": {
+		"title": "Shell-Integration nicht verfügbar",
+		"description": "Dein Befehl wird ohne VSCode-Shell-Integration ausgeführt. Du kannst die Shell-Integration im Bereich <strong>Terminal</strong> in den <settingsLink>Roo Code Einstellungen</settingsLink> wieder aktivieren.",
+		"troubleshooting": "Klicke hier für die Shell-Integrations-Dokumentation."
+	}
 }

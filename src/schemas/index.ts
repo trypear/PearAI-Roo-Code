@@ -289,6 +289,29 @@ export const customSupportPromptsSchema = z.record(z.string(), z.string().option
 export type CustomSupportPrompts = z.infer<typeof customSupportPromptsSchema>
 
 /**
+ * CommandExecutionStatus
+ */
+
+export const commandExecutionStatusSchema = z.discriminatedUnion("status", [
+	z.object({
+		executionId: z.string(),
+		status: z.literal("running"),
+		pid: z.number().optional(),
+	}),
+	z.object({
+		executionId: z.string(),
+		status: z.literal("exited"),
+		exitCode: z.number().optional(),
+	}),
+	z.object({
+		executionId: z.string(),
+		status: z.literal("fallback"),
+	}),
+])
+
+export type CommandExecutionStatus = z.infer<typeof commandExecutionStatusSchema>
+
+/**
  * ExperimentId
  */
 
@@ -357,6 +380,7 @@ export const providerSettingsSchema = z.object({
 	openAiUseAzure: z.boolean().optional(),
 	azureApiVersion: z.string().optional(),
 	openAiStreamingEnabled: z.boolean().optional(),
+	enableReasoningEffort: z.boolean().optional(),
 	// Ollama
 	ollamaModelId: z.string().optional(),
 	ollamaBaseUrl: z.string().optional(),
@@ -466,6 +490,7 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	openAiUseAzure: undefined,
 	azureApiVersion: undefined,
 	openAiStreamingEnabled: undefined,
+	enableReasoningEffort: undefined,
 	// Ollama
 	ollamaModelId: undefined,
 	ollamaBaseUrl: undefined,
@@ -566,6 +591,7 @@ export const globalSettingsSchema = z.object({
 
 	terminalOutputLineLimit: z.number().optional(),
 	terminalShellIntegrationTimeout: z.number().optional(),
+	terminalShellIntegrationDisabled: z.boolean().optional(),
 	terminalCommandDelay: z.number().optional(),
 	terminalPowershellCounter: z.boolean().optional(),
 	terminalZshClearEolMark: z.boolean().optional(),
@@ -643,6 +669,7 @@ const globalSettingsRecord: GlobalSettingsRecord = {
 
 	terminalOutputLineLimit: undefined,
 	terminalShellIntegrationTimeout: undefined,
+	terminalShellIntegrationDisabled: undefined,
 	terminalCommandDelay: undefined,
 	terminalPowershellCounter: undefined,
 	terminalZshClearEolMark: undefined,
@@ -760,7 +787,6 @@ export const clineAsks = [
 	"mistake_limit_reached",
 	"browser_action_launch",
 	"use_mcp_server",
-	"finishTask",
 ] as const
 
 export const clineAskSchema = z.enum(clineAsks)
@@ -770,7 +796,6 @@ export type ClineAsk = z.infer<typeof clineAskSchema>
 // ClineSay
 
 export const clineSays = [
-	"task",
 	"error",
 	"api_req_started",
 	"api_req_finished",
@@ -783,15 +808,11 @@ export const clineSays = [
 	"user_feedback",
 	"user_feedback_diff",
 	"command_output",
-	"tool",
 	"shell_integration_warning",
 	"browser_action",
 	"browser_action_result",
-	"command",
 	"mcp_server_request_started",
 	"mcp_server_response",
-	"new_task_started",
-	"new_task",
 	"subtask_result",
 	"checkpoint_saved",
 	"rooignore_error",
@@ -807,6 +828,7 @@ export type ClineSay = z.infer<typeof clineSaySchema>
  */
 
 export const toolProgressStatusSchema = z.object({
+	id: z.string().optional(),
 	icon: z.string().optional(),
 	text: z.string().optional(),
 })

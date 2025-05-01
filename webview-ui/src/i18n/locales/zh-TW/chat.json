@@ -52,6 +52,10 @@
 		"title": "執行時繼續",
 		"tooltip": "儘管有警告仍繼續執行"
 	},
+	"killCommand": {
+		"title": "終止指令",
+		"tooltip": "終止目前的指令"
+	},
 	"resumeTask": {
 		"title": "繼續工作",
 		"tooltip": "繼續目前的工作"
@@ -104,7 +108,7 @@
 	"diffError": {
 		"title": "編輯失敗"
 	},
-	"troubleMessage": "Agent 遇到問題...",
+	"troubleMessage": "Roo 遇到問題...",
 	"apiRequest": {
 		"title": "API 請求",
 		"failed": "API 請求失敗",
@@ -130,47 +134,47 @@
 		"current": "目前"
 	},
 	"instructions": {
-		"wantsToFetch": "Agent 想要取得詳細指示以協助目前任務"
+		"wantsToFetch": "Roo 想要取得詳細指示以協助目前任務"
 	},
 	"fileOperations": {
-		"wantsToRead": "Agent 想要讀取此檔案：",
-		"wantsToReadOutsideWorkspace": "Agent 想要讀取此工作區外的檔案：",
-		"didRead": "Agent 已讀取此檔案：",
-		"wantsToEdit": "Agent 想要編輯此檔案：",
-		"wantsToEditOutsideWorkspace": "Agent 想要編輯此工作區外的檔案：",
-		"wantsToCreate": "Agent 想要建立新檔案：",
-		"wantsToSearchReplace": "Agent 想要在此檔案中搜尋和取代：",
-		"didSearchReplace": "Agent 已在此檔案執行搜尋和取代：",
-		"wantsToInsert": "Agent 想要在此檔案中插入內容：",
-		"wantsToInsertWithLineNumber": "Agent 想要在此檔案第 {{lineNumber}} 行插入內容：",
-		"wantsToInsertAtEnd": "Agent 想要在此檔案末尾新增內容："
+		"wantsToRead": "Roo 想要讀取此檔案：",
+		"wantsToReadOutsideWorkspace": "Roo 想要讀取此工作區外的檔案：",
+		"didRead": "Roo 已讀取此檔案：",
+		"wantsToEdit": "Roo 想要編輯此檔案：",
+		"wantsToEditOutsideWorkspace": "Roo 想要編輯此工作區外的檔案：",
+		"wantsToCreate": "Roo 想要建立新檔案：",
+		"wantsToSearchReplace": "Roo 想要在此檔案中搜尋和取代：",
+		"didSearchReplace": "Roo 已在此檔案執行搜尋和取代：",
+		"wantsToInsert": "Roo 想要在此檔案中插入內容：",
+		"wantsToInsertWithLineNumber": "Roo 想要在此檔案第 {{lineNumber}} 行插入內容：",
+		"wantsToInsertAtEnd": "Roo 想要在此檔案末尾新增內容："
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Agent 想要檢視此目錄中最上層的檔案：",
-		"didViewTopLevel": "Agent 已檢視此目錄中最上層的檔案：",
-		"wantsToViewRecursive": "Agent 想要遞迴檢視此目錄中的所有檔案：",
-		"didViewRecursive": "Agent 已遞迴檢視此目錄中的所有檔案：",
-		"wantsToViewDefinitions": "Agent 想要檢視此目錄中使用的原始碼定義名稱：",
-		"didViewDefinitions": "Agent 已檢視此目錄中使用的原始碼定義名稱：",
-		"wantsToSearch": "Agent 想要在此目錄中搜尋 <code>{{regex}}</code>：",
-		"didSearch": "Agent 已在此目錄中搜尋 <code>{{regex}}</code>："
+		"wantsToViewTopLevel": "Roo 想要檢視此目錄中最上層的檔案：",
+		"didViewTopLevel": "Roo 已檢視此目錄中最上層的檔案：",
+		"wantsToViewRecursive": "Roo 想要遞迴檢視此目錄中的所有檔案：",
+		"didViewRecursive": "Roo 已遞迴檢視此目錄中的所有檔案：",
+		"wantsToViewDefinitions": "Roo 想要檢視此目錄中使用的原始碼定義名稱：",
+		"didViewDefinitions": "Roo 已檢視此目錄中使用的原始碼定義名稱：",
+		"wantsToSearch": "Roo 想要在此目錄中搜尋 <code>{{regex}}</code>：",
+		"didSearch": "Roo 已在此目錄中搜尋 <code>{{regex}}</code>："
 	},
 	"commandOutput": "命令輸出",
 	"response": "回應",
 	"arguments": "參數",
 	"mcp": {
-		"wantsToUseTool": "Agent 想要在 {{serverName}} MCP 伺服器上使用工具：",
-		"wantsToAccessResource": "Agent 想要存取 {{serverName}} MCP 伺服器上的資源："
+		"wantsToUseTool": "Roo 想要在 {{serverName}} MCP 伺服器上使用工具：",
+		"wantsToAccessResource": "Roo 想要存取 {{serverName}} MCP 伺服器上的資源："
 	},
 	"modes": {
-		"wantsToSwitch": "Agent 想要切換至 <code>{{mode}}</code> 模式",
-		"wantsToSwitchWithReason": "Agent 想要切換至 <code>{{mode}}</code> 模式，原因：{{reason}}",
-		"didSwitch": "Agent 已切換至 <code>{{mode}}</code> 模式",
-		"didSwitchWithReason": "Agent 已切換至 <code>{{mode}}</code> 模式，原因：{{reason}}"
+		"wantsToSwitch": "Roo 想要切換至 <code>{{mode}}</code> 模式",
+		"wantsToSwitchWithReason": "Roo 想要切換至 <code>{{mode}}</code> 模式，原因：{{reason}}",
+		"didSwitch": "Roo 已切換至 <code>{{mode}}</code> 模式",
+		"didSwitchWithReason": "Roo 已切換至 <code>{{mode}}</code> 模式，原因：{{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Agent 想要在 <code>{{mode}}</code> 模式下建立新的子工作：",
-		"wantsToFinish": "Agent 想要完成此子工作",
+		"wantsToCreate": "Roo 想要在 <code>{{mode}}</code> 模式下建立新的子工作：",
+		"wantsToFinish": "Roo 想要完成此子工作",
 		"newTaskContent": "子工作指示",
 		"completionContent": "子工作已完成",
 		"resultContent": "子工作結果",
@@ -178,16 +182,9 @@
 		"completionInstructions": "子工作已完成！您可以檢閱結果並提出修正或下一步建議。如果一切看起來良好，請確認以將結果傳回主工作。"
 	},
 	"questions": {
-		"hasQuestion": "Agent 有一個問題："
+		"hasQuestion": "Roo 有一個問題："
 	},
 	"taskCompleted": "工作完成",
-	"shellIntegration": {
-		"unavailable": "Shell 整合功能無法使用",
-		"troubleshooting": "仍有問題嗎？點擊此處查看 Shell 整合文件。",
-		"checkSettings": "檢查設定頁面中的終端解決方案",
-		"updateVSCode": "更新 VSCode",
-		"supportedShell": "確保使用支援的 shell：zsh、bash、fish 或 PowerShell"
-	},
 	"powershell": {
 		"issues": "看起來您遇到了 Windows PowerShell 的問題，請參考此處"
 	},
@@ -204,17 +201,17 @@
 		"copyToInput": "複製到輸入框（或按住 Shift 並點選）"
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.14 已發布",
-		"description": "Agent 3.14 帶來基於您意見回饋的新功能與改進。",
+		"title": "🎉 Roo Code 3.15 已發布",
+		"description": "Roo Code 3.15 帶來基於您意見回饋的新功能與改進。",
 		"whatsNew": "新功能",
-		"feature1": "<bold>編輯工具增強</bold>: <code>search_and_replace</code> 和 <code>insert_content</code> 工具已獲改進，並從實驗階段升級為正式功能",
-		"feature2": "<bold>差異更新修復</bold>: 我們持續改進 <code>apply_diff</code> 工具",
-		"feature3": "<bold>大量其他改進</bold>: 擴充套件中眾多的修復和增強功能",
+		"feature1": "<bold>Vertex 提示詞快取</bold>: 為 Vertex AI 新增提示詞快取支援，改善回應時間並降低 API 費用",
+		"feature2": "<bold>終端機備援機制</bold>: 實作 VSCode 終端機 shell 整合失敗時的備援機制",
+		"feature3": "<bold>程式碼片段強化</bold>: 增強聊天介面中程式碼片段的渲染與互動體驗",
 		"hideButton": "隱藏公告",
 		"detailsDiscussLinks": "在 <discordLink>Discord</discordLink> 和 <redditLink>Reddit</redditLink> 取得更多詳細資訊並參與討論 🚀"
 	},
 	"browser": {
-		"rooWantsToUse": "Agent 想要使用瀏覽器：",
+		"rooWantsToUse": "Roo 想要使用瀏覽器：",
 		"consoleLogs": "主控台記錄",
 		"noNewLogs": "（沒有新記錄）",
 		"screenshot": "瀏覽器螢幕擷圖",
@@ -236,5 +233,10 @@
 		}
 	},
 	"systemPromptWarning": "警告：自訂系統提示詞覆蓋已啟用。這可能嚴重破壞功能並導致不可預測的行為。",
-	"selectApiConfig": "選取 API 設定"
+	"selectApiConfig": "選取 API 設定",
+	"shellIntegration": {
+		"title": "Shell 整合不可用",
+		"description": "您的命令正在沒有 VSCode shell 整合的情況下執行。您可以在 <settingsLink>Roo Code 設定</settingsLink> 的 <strong>終端機</strong> 部分重新啟用 shell 整合。",
+		"troubleshooting": "點擊此處查看 shell 整合文件。"
+	}
 }
