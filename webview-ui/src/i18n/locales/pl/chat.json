@@ -52,6 +52,10 @@
 		"title": "Kontynuuj podczas wykonywania",
 		"tooltip": "Kontynuuj pomimo ostrzeżeń"
 	},
+	"killCommand": {
+		"title": "Zatrzymaj polecenie",
+		"tooltip": "Zatrzymaj bieżące polecenie"
+	},
 	"resumeTask": {
 		"title": "Wznów zadanie",
 		"tooltip": "Kontynuuj bieżące zadanie"
@@ -104,7 +108,7 @@
 	"diffError": {
 		"title": "Edycja nieudana"
 	},
-	"troubleMessage": "Agent ma problemy...",
+	"troubleMessage": "Roo ma problemy...",
 	"apiRequest": {
 		"title": "Zapytanie API",
 		"failed": "Zapytanie API nie powiodło się",
@@ -130,47 +134,47 @@
 		"current": "Bieżący"
 	},
 	"instructions": {
-		"wantsToFetch": "Agent chce pobrać szczegółowe instrukcje, aby pomóc w bieżącym zadaniu"
+		"wantsToFetch": "Roo chce pobrać szczegółowe instrukcje, aby pomóc w bieżącym zadaniu"
 	},
 	"fileOperations": {
-		"wantsToRead": "Agent chce przeczytać ten plik:",
-		"wantsToReadOutsideWorkspace": "Agent chce przeczytać ten plik poza obszarem roboczym:",
-		"didRead": "Agent przeczytał ten plik:",
-		"wantsToEdit": "Agent chce edytować ten plik:",
-		"wantsToEditOutsideWorkspace": "Agent chce edytować ten plik poza obszarem roboczym:",
-		"wantsToCreate": "Agent chce utworzyć nowy plik:",
-		"wantsToSearchReplace": "Agent chce wykonać wyszukiwanie i zamianę w tym pliku:",
-		"didSearchReplace": "Agent wykonał wyszukiwanie i zamianę w tym pliku:",
-		"wantsToInsert": "Agent chce wstawić zawartość do tego pliku:",
-		"wantsToInsertWithLineNumber": "Agent chce wstawić zawartość do tego pliku w linii {{lineNumber}}:",
-		"wantsToInsertAtEnd": "Agent chce dodać zawartość na końcu tego pliku:"
+		"wantsToRead": "Roo chce przeczytać ten plik:",
+		"wantsToReadOutsideWorkspace": "Roo chce przeczytać ten plik poza obszarem roboczym:",
+		"didRead": "Roo przeczytał ten plik:",
+		"wantsToEdit": "Roo chce edytować ten plik:",
+		"wantsToEditOutsideWorkspace": "Roo chce edytować ten plik poza obszarem roboczym:",
+		"wantsToCreate": "Roo chce utworzyć nowy plik:",
+		"wantsToSearchReplace": "Roo chce wykonać wyszukiwanie i zamianę w tym pliku:",
+		"didSearchReplace": "Roo wykonał wyszukiwanie i zamianę w tym pliku:",
+		"wantsToInsert": "Roo chce wstawić zawartość do tego pliku:",
+		"wantsToInsertWithLineNumber": "Roo chce wstawić zawartość do tego pliku w linii {{lineNumber}}:",
+		"wantsToInsertAtEnd": "Roo chce dodać zawartość na końcu tego pliku:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Agent chce zobaczyć pliki najwyższego poziomu w tym katalogu:",
-		"didViewTopLevel": "Agent zobaczył pliki najwyższego poziomu w tym katalogu:",
-		"wantsToViewRecursive": "Agent chce rekurencyjnie zobaczyć wszystkie pliki w tym katalogu:",
-		"didViewRecursive": "Agent rekurencyjnie zobaczył wszystkie pliki w tym katalogu:",
-		"wantsToViewDefinitions": "Agent chce zobaczyć nazwy definicji kodu źródłowego używane w tym katalogu:",
-		"didViewDefinitions": "Agent zobaczył nazwy definicji kodu źródłowego używane w tym katalogu:",
-		"wantsToSearch": "Agent chce przeszukać ten katalog w poszukiwaniu <code>{{regex}}</code>:",
-		"didSearch": "Agent przeszukał ten katalog w poszukiwaniu <code>{{regex}}</code>:"
+		"wantsToViewTopLevel": "Roo chce zobaczyć pliki najwyższego poziomu w tym katalogu:",
+		"didViewTopLevel": "Roo zobaczył pliki najwyższego poziomu w tym katalogu:",
+		"wantsToViewRecursive": "Roo chce rekurencyjnie zobaczyć wszystkie pliki w tym katalogu:",
+		"didViewRecursive": "Roo rekurencyjnie zobaczył wszystkie pliki w tym katalogu:",
+		"wantsToViewDefinitions": "Roo chce zobaczyć nazwy definicji kodu źródłowego używane w tym katalogu:",
+		"didViewDefinitions": "Roo zobaczył nazwy definicji kodu źródłowego używane w tym katalogu:",
+		"wantsToSearch": "Roo chce przeszukać ten katalog w poszukiwaniu <code>{{regex}}</code>:",
+		"didSearch": "Roo przeszukał ten katalog w poszukiwaniu <code>{{regex}}</code>:"
 	},
 	"commandOutput": "Wyjście polecenia",
 	"response": "Odpowiedź",
 	"arguments": "Argumenty",
 	"mcp": {
-		"wantsToUseTool": "Agent chce użyć narzędzia na serwerze MCP {{serverName}}:",
-		"wantsToAccessResource": "Agent chce uzyskać dostęp do zasobu na serwerze MCP {{serverName}}:"
+		"wantsToUseTool": "Roo chce użyć narzędzia na serwerze MCP {{serverName}}:",
+		"wantsToAccessResource": "Roo chce uzyskać dostęp do zasobu na serwerze MCP {{serverName}}:"
 	},
 	"modes": {
-		"wantsToSwitch": "Agent chce przełączyć się na tryb <code>{{mode}}</code>",
-		"wantsToSwitchWithReason": "Agent chce przełączyć się na tryb <code>{{mode}}</code> ponieważ: {{reason}}",
-		"didSwitch": "Agent przełączył się na tryb <code>{{mode}}</code>",
-		"didSwitchWithReason": "Agent przełączył się na tryb <code>{{mode}}</code> ponieważ: {{reason}}"
+		"wantsToSwitch": "Roo chce przełączyć się na tryb <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "Roo chce przełączyć się na tryb <code>{{mode}}</code> ponieważ: {{reason}}",
+		"didSwitch": "Roo przełączył się na tryb <code>{{mode}}</code>",
+		"didSwitchWithReason": "Roo przełączył się na tryb <code>{{mode}}</code> ponieważ: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Agent chce utworzyć nowe podzadanie w trybie <code>{{mode}}</code>:",
-		"wantsToFinish": "Agent chce zakończyć to podzadanie",
+		"wantsToCreate": "Roo chce utworzyć nowe podzadanie w trybie <code>{{mode}}</code>:",
+		"wantsToFinish": "Roo chce zakończyć to podzadanie",
 		"newTaskContent": "Instrukcje podzadania",
 		"completionContent": "Podzadanie zakończone",
 		"resultContent": "Wyniki podzadania",
@@ -178,16 +182,9 @@
 		"completionInstructions": "Podzadanie zakończone! Możesz przejrzeć wyniki i zasugerować poprawki lub następne kroki. Jeśli wszystko wygląda dobrze, potwierdź, aby zwrócić wynik do zadania nadrzędnego."
 	},
 	"questions": {
-		"hasQuestion": "Agent ma pytanie:"
+		"hasQuestion": "Roo ma pytanie:"
 	},
 	"taskCompleted": "Zadanie zakończone",
-	"shellIntegration": {
-		"unavailable": "Integracja powłoki niedostępna",
-		"troubleshooting": "Nadal masz problemy? Kliknij tutaj, aby zobaczyć dokumentację integracji powłoki.",
-		"checkSettings": "Sprawdź obejścia terminala na stronie ustawień",
-		"updateVSCode": "Zaktualizuj VSCode",
-		"supportedShell": "Upewnij się, że używasz obsługiwanej powłoki: zsh, bash, fish lub PowerShell"
-	},
 	"powershell": {
 		"issues": "Wygląda na to, że masz problemy z Windows PowerShell, proszę zapoznaj się z tym"
 	},
@@ -204,17 +201,17 @@
 		"copyToInput": "Kopiuj do pola wprowadzania (lub Shift + kliknięcie)"
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.14 wydany",
-		"description": "Agent 3.14 przynosi nowe funkcje i ulepszenia na podstawie Twoich opinii.",
+		"title": "🎉 Roo Code 3.15 wydany",
+		"description": "Roo Code 3.15 przynosi nowe funkcje i ulepszenia na podstawie Twoich opinii.",
 		"whatsNew": "Co nowego",
-		"feature1": "<bold>Ulepszone narzędzia edycji</bold>: Narzędzia <code>search_and_replace</code> i <code>insert_content</code> zostały ulepszone i nie są już eksperymentalne",
-		"feature2": "<bold>Poprawki apply_diff</bold>: Kontynuujemy pracę nad ulepszaniem narzędzia <code>apply_diff</code>",
-		"feature3": "<bold>Mnóstwo innych ulepszeń</bold>: Liczne poprawki i usprawnienia w całym rozszerzeniu",
+		"feature1": "<bold>Buforowanie podpowiedzi dla Vertex</bold>: Dodano obsługę buforowania podpowiedzi dla Vertex AI, poprawiając czasy odpowiedzi i zmniejszając koszty API",
+		"feature2": "<bold>Mechanizm awaryjny dla Terminala</bold>: Zaimplementowano mechanizm awaryjny w przypadku awarii integracji powłoki terminala VSCode",
+		"feature3": "<bold>Ulepszone fragmenty kodu</bold>: Ulepszono renderowanie i interakcję z fragmentami kodu w interfejsie czatu",
 		"hideButton": "Ukryj ogłoszenie",
 		"detailsDiscussLinks": "Uzyskaj więcej szczegółów i dołącz do dyskusji na <discordLink>Discord</discordLink> i <redditLink>Reddit</redditLink> 🚀"
 	},
 	"browser": {
-		"rooWantsToUse": "Agent chce użyć przeglądarki:",
+		"rooWantsToUse": "Roo chce użyć przeglądarki:",
 		"consoleLogs": "Logi konsoli",
 		"noNewLogs": "(Brak nowych logów)",
 		"screenshot": "Zrzut ekranu przeglądarki",
@@ -236,5 +233,10 @@
 		}
 	},
 	"systemPromptWarning": "OSTRZEŻENIE: Aktywne niestandardowe zastąpienie instrukcji systemowych. Może to poważnie zakłócić funkcjonalność i powodować nieprzewidywalne zachowanie.",
-	"selectApiConfig": "Wybierz konfigurację API"
+	"selectApiConfig": "Wybierz konfigurację API",
+	"shellIntegration": {
+		"title": "Integracja powłoki niedostępna",
+		"description": "Twoje polecenie jest wykonywane bez integracji powłoki VSCode. Możesz ponownie włączyć integrację powłoki w sekcji <strong>Terminal</strong> w <settingsLink>ustawieniach Roo Code</settingsLink>.",
+		"troubleshooting": "Kliknij tutaj, aby zobaczyć dokumentację integracji powłoki."
+	}
 }

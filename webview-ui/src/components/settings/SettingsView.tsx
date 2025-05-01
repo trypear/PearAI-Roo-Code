@@ -125,6 +125,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 		telemetrySetting,
 		terminalOutputLineLimit,
 		terminalShellIntegrationTimeout,
+		terminalShellIntegrationDisabled,
 		terminalCommandDelay,
 		terminalPowershellCounter,
 		terminalZshClearEolMark,
@@ -238,6 +239,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 			vscode.postMessage({ type: "screenshotQuality", value: screenshotQuality ?? 75 })
 			vscode.postMessage({ type: "terminalOutputLineLimit", value: terminalOutputLineLimit ?? 500 })
 			vscode.postMessage({ type: "terminalShellIntegrationTimeout", value: terminalShellIntegrationTimeout })
+			vscode.postMessage({ type: "terminalShellIntegrationDisabled", bool: terminalShellIntegrationDisabled })
 			vscode.postMessage({ type: "terminalCommandDelay", value: terminalCommandDelay })
 			vscode.postMessage({ type: "terminalPowershellCounter", bool: terminalPowershellCounter })
 			vscode.postMessage({ type: "terminalZshClearEolMark", bool: terminalZshClearEolMark })
@@ -485,6 +487,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, t
 					<TerminalSettings
 						terminalOutputLineLimit={terminalOutputLineLimit}
 						terminalShellIntegrationTimeout={terminalShellIntegrationTimeout}
+						terminalShellIntegrationDisabled={terminalShellIntegrationDisabled}
 						terminalCommandDelay={terminalCommandDelay}
 						terminalPowershellCounter={terminalPowershellCounter}
 						terminalZshClearEolMark={terminalZshClearEolMark}
