@@ -1,12 +1,11 @@
 # Roo Code Changelog
 
-## 3.15.3
+## [3.15.3] - 2025-05-02
 
-### Patch Changes
-
-- Fix empty command bug
-- v3.15.3
-- More robust process killing
+- Terminal: Fix empty command bug
+- Terminal: More robust process killing
+- Optimize Gemini prompt caching for OpenRouter
+- Chat view performance improvements
 
 ## [3.15.2] - 2025-05-02
 
