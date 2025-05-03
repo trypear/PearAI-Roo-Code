@@ -1,5 +1,13 @@
 # Roo Code Changelog
 
+## 3.15.3
+
+### Patch Changes
+
+- Fix empty command bug
+- v3.15.3
+- More robust process killing
+
 ## [3.15.2] - 2025-05-02
 
 - Fix terminal performance issues
