@@ -78,14 +78,92 @@ const ApiOptions = ({
 	const [openAiModels, setOpenAiModels] = useState<Record<string, ModelInfo> | null>(null)
 	const pearaiModels = usePearAIModels(apiConfiguration).models
 
+	const [customHeaders, setCustomHeaders] = useState<[string, string][]>(() => {
+		const headers = apiConfiguration?.openAiHeaders || {}
+		return Object.entries(headers)
+	})
+
+	// Effect to synchronize internal customHeaders state with prop changes
+	useEffect(() => {
+		const propHeaders = apiConfiguration?.openAiHeaders || {}
+		if (JSON.stringify(customHeaders) !== JSON.stringify(Object.entries(propHeaders))) setCustomHeaders(Object.entries(propHeaders))
+	}, [apiConfiguration?.openAiHeaders])
+
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
+	const [openAiNativeBaseUrlSelected, setOpenAiNativeBaseUrlSelected] = useState(
+		!!apiConfiguration?.openAiNativeBaseUrl,
+	)
 	const [azureApiVersionSelected, setAzureApiVersionSelected] = useState(!!apiConfiguration?.azureApiVersion)
 	const [openRouterBaseUrlSelected, setOpenRouterBaseUrlSelected] = useState(!!apiConfiguration?.openRouterBaseUrl)
-	const [openAiHostHeaderSelected, setOpenAiHostHeaderSelected] = useState(!!apiConfiguration?.openAiHostHeader)
 	const [openAiLegacyFormatSelected, setOpenAiLegacyFormatSelected] = useState(!!apiConfiguration?.openAiLegacyFormat)
 	const [googleGeminiBaseUrlSelected, setGoogleGeminiBaseUrlSelected] = useState(
 		!!apiConfiguration?.googleGeminiBaseUrl,
 	)
+
+	const handleAddCustomHeader = useCallback(() => {
+		// Only update the local state to show the new row in the UI
+		setCustomHeaders((prev) => [...prev, ["", ""]])
+		// Do not update the main configuration yet, wait for user input
+	}, [])
+
+	const handleUpdateHeaderKey = useCallback((index: number, newKey: string) => {
+		setCustomHeaders((prev) => {
+			const updated = [...prev]
+			if (updated[index]) {
+				updated[index] = [newKey, updated[index][1]]
+			}
+			return updated
+		})
+	}, [])
+
+	const handleUpdateHeaderValue = useCallback((index: number, newValue: string) => {
+		setCustomHeaders((prev) => {
+			const updated = [...prev]
+			if (updated[index]) {
+				updated[index] = [updated[index][0], newValue]
+			}
+			return updated
+		})
+	}, [])
+
+	const handleRemoveCustomHeader = useCallback((index: number) => {
+		setCustomHeaders((prev) => prev.filter((_, i) => i !== index))
+	}, [])
+
+	// Helper to convert array of tuples to object (filtering out empty keys)
+	const convertHeadersToObject = (headers: [string, string][]): Record<string, string> => {
+		const result: Record<string, string> = {}
+
+		// Process each header tuple
+		for (const [key, value] of headers) {
+			const trimmedKey = key.trim()
+
+			// Skip empty keys
+			if (!trimmedKey) continue
+
+			// For duplicates, the last one in the array wins
+			// This matches how HTTP headers work in general
+			result[trimmedKey] = value.trim()
+		}
+
+		return result
+	}
+
+	// Debounced effect to update the main configuration when local customHeaders state stabilizes
+	useDebounce(
+		() => {
+			const currentConfigHeaders = apiConfiguration?.openAiHeaders || {}
+			const newHeadersObject = convertHeadersToObject(customHeaders)
+
+			// Only update if the processed object is different from the current config
+			if (JSON.stringify(currentConfigHeaders) !== JSON.stringify(newHeadersObject)) {
+				setApiConfigurationField("openAiHeaders", newHeadersObject)
+			}
+		},
+		300,
+		[customHeaders, apiConfiguration?.openAiHeaders, setApiConfigurationField],
+	)
+
 	const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false)
 	const noTransform = <T,>(value: T) => value
 
@@ -122,12 +200,15 @@ const ApiOptions = ({
 	useDebounce(
 		() => {
 			if (selectedProvider === "openai") {
+				// Use our custom headers state to build the headers object
+				const headerObject = convertHeadersToObject(customHeaders)
 				vscode.postMessage({
 					type: "requestOpenAiModels",
 					values: {
 						baseUrl: apiConfiguration?.openAiBaseUrl,
 						apiKey: apiConfiguration?.openAiApiKey,
-						hostHeader: apiConfiguration?.openAiHostHeader,
+						customHeaders: {}, // Reserved for any additional headers
+						openAiHeaders: headerObject,
 					},
 				})
 			} else if (selectedProvider === "ollama") {
@@ -146,6 +227,7 @@ const ApiOptions = ({
 			apiConfiguration?.openAiApiKey,
 			apiConfiguration?.ollamaBaseUrl,
 			apiConfiguration?.lmStudioBaseUrl,
+			customHeaders,
 		],
 	)
 
@@ -531,6 +613,28 @@ const ApiOptions = ({
 
 			{selectedProvider === "openai-native" && (
 				<>
+					<Checkbox
+						checked={openAiNativeBaseUrlSelected}
+						onChange={(checked: boolean) => {
+							setOpenAiNativeBaseUrlSelected(checked)
+
+							if (!checked) {
+								setApiConfigurationField("openAiNativeBaseUrl", "")
+							}
+						}}>
+						{t("settings:providers.useCustomBaseUrl")}
+					</Checkbox>
+					{openAiNativeBaseUrlSelected && (
+						<>
+							<VSCodeTextField
+								value={apiConfiguration?.openAiNativeBaseUrl || ""}
+								type="url"
+								onInput={handleInputChange("openAiNativeBaseUrl")}
+								placeholder="https://api.openai.com/v1"
+								className="w-full mt-1"
+							/>
+						</>
+					)}
 					<VSCodeTextField
 						value={apiConfiguration?.openAiNativeApiKey || ""}
 						type="password"
@@ -870,25 +974,44 @@ const ApiOptions = ({
 						)}
 					</div>
 
-					<div>
-						<Checkbox
-							checked={openAiHostHeaderSelected}
-							onChange={(checked: boolean) => {
-								setOpenAiHostHeaderSelected(checked)
-
-								if (!checked) {
-									setApiConfigurationField("openAiHostHeader", "")
-								}
-							}}>
-							{t("settings:providers.useHostHeader")}
-						</Checkbox>
-						{openAiHostHeaderSelected && (
-							<VSCodeTextField
-								value={apiConfiguration?.openAiHostHeader || ""}
-								onInput={handleInputChange("openAiHostHeader")}
-								placeholder="custom-api-hostname.example.com"
-								className="w-full mt-1"
-							/>
+					{/* Custom Headers UI */}
+					<div className="mb-4">
+						<div className="flex justify-between items-center mb-2">
+							<label className="block font-medium">{t("settings:providers.customHeaders")}</label>
+							<VSCodeButton
+								appearance="icon"
+								title={t("settings:common.add")}
+								onClick={handleAddCustomHeader}>
+								<span className="codicon codicon-add"></span>
+							</VSCodeButton>
+						</div>
+						{!customHeaders.length ? (
+							<div className="text-sm text-vscode-descriptionForeground">
+								{t("settings:providers.noCustomHeaders")}
+							</div>
+						) : (
+							customHeaders.map(([key, value], index) => (
+								<div key={index} className="flex items-center mb-2">
+									<VSCodeTextField
+										value={key}
+										className="flex-1 mr-2"
+										placeholder={t("settings:providers.headerName")}
+										onInput={(e: any) => handleUpdateHeaderKey(index, e.target.value)}
+									/>
+									<VSCodeTextField
+										value={value}
+										className="flex-1 mr-2"
+										placeholder={t("settings:providers.headerValue")}
+										onInput={(e: any) => handleUpdateHeaderValue(index, e.target.value)}
+									/>
+									<VSCodeButton
+										appearance="icon"
+										title={t("settings:common.remove")}
+										onClick={() => handleRemoveCustomHeader(index)}>
+										<span className="codicon codicon-trash"></span>
+									</VSCodeButton>
+								</div>
+							))
 						)}
 					</div>
 

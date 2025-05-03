@@ -295,8 +295,14 @@ export type CustomSupportPrompts = z.infer<typeof customSupportPromptsSchema>
 export const commandExecutionStatusSchema = z.discriminatedUnion("status", [
 	z.object({
 		executionId: z.string(),
-		status: z.literal("running"),
+		status: z.literal("started"),
 		pid: z.number().optional(),
+		command: z.string(),
+	}),
+	z.object({
+		executionId: z.string(),
+		status: z.literal("output"),
+		output: z.string(),
 	}),
 	z.object({
 		executionId: z.string(),
@@ -372,7 +378,6 @@ export const providerSettingsSchema = z.object({
 	// OpenAI
 	openAiBaseUrl: z.string().optional(),
 	openAiApiKey: z.string().optional(),
-	openAiHostHeader: z.string().optional(),
 	openAiLegacyFormat: z.boolean().optional(),
 	openAiR1FormatEnabled: z.boolean().optional(),
 	openAiModelId: z.string().optional(),
@@ -381,6 +386,8 @@ export const providerSettingsSchema = z.object({
 	azureApiVersion: z.string().optional(),
 	openAiStreamingEnabled: z.boolean().optional(),
 	enableReasoningEffort: z.boolean().optional(),
+	openAiHostHeader: z.string().optional(), // Keep temporarily for backward compatibility during migration
+	openAiHeaders: z.record(z.string(), z.string()).optional(),
 	// Ollama
 	ollamaModelId: z.string().optional(),
 	ollamaBaseUrl: z.string().optional(),
@@ -403,6 +410,7 @@ export const providerSettingsSchema = z.object({
 	googleGeminiBaseUrl: z.string().optional(),
 	// OpenAI Native
 	openAiNativeApiKey: z.string().optional(),
+	openAiNativeBaseUrl: z.string().optional(),
 	// Mistral
 	mistralApiKey: z.string().optional(),
 	mistralCodestralUrl: z.string().optional(),
@@ -482,7 +490,6 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	// OpenAI
 	openAiBaseUrl: undefined,
 	openAiApiKey: undefined,
-	openAiHostHeader: undefined,
 	openAiLegacyFormat: undefined,
 	openAiR1FormatEnabled: undefined,
 	openAiModelId: undefined,
@@ -491,6 +498,8 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	azureApiVersion: undefined,
 	openAiStreamingEnabled: undefined,
 	enableReasoningEffort: undefined,
+	openAiHostHeader: undefined, // Keep temporarily for backward compatibility during migration
+	openAiHeaders: undefined,
 	// Ollama
 	ollamaModelId: undefined,
 	ollamaBaseUrl: undefined,
@@ -505,6 +514,7 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	googleGeminiBaseUrl: undefined,
 	// OpenAI Native
 	openAiNativeApiKey: undefined,
+	openAiNativeBaseUrl: undefined,
 	// Mistral
 	mistralApiKey: undefined,
 	mistralCodestralUrl: undefined,
@@ -869,6 +879,10 @@ export const tokenUsageSchema = z.object({
 })
 
 export type TokenUsage = z.infer<typeof tokenUsageSchema>
+
+/**
+ * ToolName
+ */
 
 export const toolNames = [
 	"execute_command",

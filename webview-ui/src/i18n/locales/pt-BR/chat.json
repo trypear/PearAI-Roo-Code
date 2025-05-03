@@ -108,7 +108,7 @@
 	"diffError": {
 		"title": "Edição mal-sucedida"
 	},
-	"troubleMessage": "Roo está tendo problemas...",
+	"troubleMessage": "Agent está tendo problemas...",
 	"apiRequest": {
 		"title": "Requisição API",
 		"failed": "Requisição API falhou",
@@ -134,47 +134,47 @@
 		"current": "Atual"
 	},
 	"instructions": {
-		"wantsToFetch": "Roo quer buscar instruções detalhadas para ajudar com a tarefa atual"
+		"wantsToFetch": "Agent quer buscar instruções detalhadas para ajudar com a tarefa atual"
 	},
 	"fileOperations": {
-		"wantsToRead": "Roo quer ler este arquivo:",
-		"wantsToReadOutsideWorkspace": "Roo quer ler este arquivo fora do espaço de trabalho:",
-		"didRead": "Roo leu este arquivo:",
-		"wantsToEdit": "Roo quer editar este arquivo:",
-		"wantsToEditOutsideWorkspace": "Roo quer editar este arquivo fora do espaço de trabalho:",
-		"wantsToCreate": "Roo quer criar um novo arquivo:",
-		"wantsToSearchReplace": "Roo quer realizar busca e substituição neste arquivo:",
-		"didSearchReplace": "Roo realizou busca e substituição neste arquivo:",
-		"wantsToInsert": "Roo quer inserir conteúdo neste arquivo:",
-		"wantsToInsertWithLineNumber": "Roo quer inserir conteúdo neste arquivo na linha {{lineNumber}}:",
-		"wantsToInsertAtEnd": "Roo quer adicionar conteúdo ao final deste arquivo:"
+		"wantsToRead": "Agent quer ler este arquivo:",
+		"wantsToReadOutsideWorkspace": "Agent quer ler este arquivo fora do espaço de trabalho:",
+		"didRead": "Agent leu este arquivo:",
+		"wantsToEdit": "Agent quer editar este arquivo:",
+		"wantsToEditOutsideWorkspace": "Agent quer editar este arquivo fora do espaço de trabalho:",
+		"wantsToCreate": "Agent quer criar um novo arquivo:",
+		"wantsToSearchReplace": "Agent quer realizar busca e substituição neste arquivo:",
+		"didSearchReplace": "Agent realizou busca e substituição neste arquivo:",
+		"wantsToInsert": "Agent quer inserir conteúdo neste arquivo:",
+		"wantsToInsertWithLineNumber": "Agent quer inserir conteúdo neste arquivo na linha {{lineNumber}}:",
+		"wantsToInsertAtEnd": "Agent quer adicionar conteúdo ao final deste arquivo:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Roo quer visualizar os arquivos de nível superior neste diretório:",
-		"didViewTopLevel": "Roo visualizou os arquivos de nível superior neste diretório:",
-		"wantsToViewRecursive": "Roo quer visualizar recursivamente todos os arquivos neste diretório:",
-		"didViewRecursive": "Roo visualizou recursivamente todos os arquivos neste diretório:",
-		"wantsToViewDefinitions": "Roo quer visualizar nomes de definição de código-fonte usados neste diretório:",
-		"didViewDefinitions": "Roo visualizou nomes de definição de código-fonte usados neste diretório:",
-		"wantsToSearch": "Roo quer pesquisar neste diretório por <code>{{regex}}</code>:",
-		"didSearch": "Roo pesquisou neste diretório por <code>{{regex}}</code>:"
+		"wantsToViewTopLevel": "Agent quer visualizar os arquivos de nível superior neste diretório:",
+		"didViewTopLevel": "Agent visualizou os arquivos de nível superior neste diretório:",
+		"wantsToViewRecursive": "Agent quer visualizar recursivamente todos os arquivos neste diretório:",
+		"didViewRecursive": "Agent visualizou recursivamente todos os arquivos neste diretório:",
+		"wantsToViewDefinitions": "Agent quer visualizar nomes de definição de código-fonte usados neste diretório:",
+		"didViewDefinitions": "Agent visualizou nomes de definição de código-fonte usados neste diretório:",
+		"wantsToSearch": "Agent quer pesquisar neste diretório por <code>{{regex}}</code>:",
+		"didSearch": "Agent pesquisou neste diretório por <code>{{regex}}</code>:"
 	},
 	"commandOutput": "Saída do comando",
 	"response": "Resposta",
 	"arguments": "Argumentos",
 	"mcp": {
-		"wantsToUseTool": "Roo quer usar uma ferramenta no servidor MCP {{serverName}}:",
-		"wantsToAccessResource": "Roo quer acessar um recurso no servidor MCP {{serverName}}:"
+		"wantsToUseTool": "Agent quer usar uma ferramenta no servidor MCP {{serverName}}:",
+		"wantsToAccessResource": "Agent quer acessar um recurso no servidor MCP {{serverName}}:"
 	},
 	"modes": {
-		"wantsToSwitch": "Roo quer mudar para o modo <code>{{mode}}</code>",
-		"wantsToSwitchWithReason": "Roo quer mudar para o modo <code>{{mode}}</code> porque: {{reason}}",
-		"didSwitch": "Roo mudou para o modo <code>{{mode}}</code>",
-		"didSwitchWithReason": "Roo mudou para o modo <code>{{mode}}</code> porque: {{reason}}"
+		"wantsToSwitch": "Agent quer mudar para o modo <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "Agent quer mudar para o modo <code>{{mode}}</code> porque: {{reason}}",
+		"didSwitch": "Agent mudou para o modo <code>{{mode}}</code>",
+		"didSwitchWithReason": "Agent mudou para o modo <code>{{mode}}</code> porque: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Roo quer criar uma nova subtarefa no modo <code>{{mode}}</code>:",
-		"wantsToFinish": "Roo quer finalizar esta subtarefa",
+		"wantsToCreate": "Agent quer criar uma nova subtarefa no modo <code>{{mode}}</code>:",
+		"wantsToFinish": "Agent quer finalizar esta subtarefa",
 		"newTaskContent": "Instruções da subtarefa",
 		"completionContent": "Subtarefa concluída",
 		"resultContent": "Resultados da subtarefa",
@@ -182,7 +182,7 @@
 		"completionInstructions": "Subtarefa concluída! Você pode revisar os resultados e sugerir correções ou próximos passos. Se tudo parecer bom, confirme para retornar o resultado à tarefa principal."
 	},
 	"questions": {
-		"hasQuestion": "Roo tem uma pergunta:"
+		"hasQuestion": "Agent tem uma pergunta:"
 	},
 	"taskCompleted": "Tarefa concluída",
 	"powershell": {
@@ -202,7 +202,7 @@
 	},
 	"announcement": {
 		"title": "🎉 Roo Code 3.15 Lançado",
-		"description": "Roo Code 3.15 traz novos recursos e melhorias baseados no seu feedback.",
+		"description": "Agent Code 3.15 traz novos recursos e melhorias baseados no seu feedback.",
 		"whatsNew": "O que há de novo",
 		"feature1": "<bold>Cache de prompts para Vertex</bold>: Adicionado suporte de cache de prompts para Vertex AI, melhorando tempos de resposta e reduzindo custos de API",
 		"feature2": "<bold>Fallback de Terminal</bold>: Implementado um mecanismo de fallback quando a integração de shell do terminal VSCode falha",
@@ -211,7 +211,7 @@
 		"detailsDiscussLinks": "Obtenha mais detalhes e participe da discussão no <discordLink>Discord</discordLink> e <redditLink>Reddit</redditLink> 🚀"
 	},
 	"browser": {
-		"rooWantsToUse": "Roo quer usar o navegador:",
+		"rooWantsToUse": "Agent quer usar o navegador:",
 		"consoleLogs": "Logs do console",
 		"noNewLogs": "(Sem novos logs)",
 		"screenshot": "Captura de tela do navegador",

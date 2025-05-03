@@ -108,7 +108,7 @@
 	"diffError": {
 		"title": "Edició fallida"
 	},
-	"troubleMessage": "Roo està tenint problemes...",
+	"troubleMessage": "Agent està tenint problemes...",
 	"apiRequest": {
 		"title": "Sol·licitud API",
 		"failed": "Sol·licitud API ha fallat",
@@ -134,47 +134,47 @@
 		"current": "Actual"
 	},
 	"instructions": {
-		"wantsToFetch": "Roo vol obtenir instruccions detallades per ajudar amb la tasca actual."
+		"wantsToFetch": "Agent vol obtenir instruccions detallades per ajudar amb la tasca actual."
 	},
 	"fileOperations": {
-		"wantsToRead": "Roo vol llegir aquest fitxer:",
-		"wantsToReadOutsideWorkspace": "Roo vol llegir aquest fitxer fora de l'espai de treball:",
-		"didRead": "Roo ha llegit aquest fitxer:",
-		"wantsToEdit": "Roo vol editar aquest fitxer:",
-		"wantsToEditOutsideWorkspace": "Roo vol editar aquest fitxer fora de l'espai de treball:",
-		"wantsToCreate": "Roo vol crear un nou fitxer:",
-		"wantsToSearchReplace": "Roo vol realitzar cerca i substitució en aquest fitxer:",
-		"didSearchReplace": "Roo ha realitzat cerca i substitució en aquest fitxer:",
-		"wantsToInsert": "Roo vol inserir contingut en aquest fitxer:",
-		"wantsToInsertWithLineNumber": "Roo vol inserir contingut a la línia {{lineNumber}} d'aquest fitxer:",
-		"wantsToInsertAtEnd": "Roo vol afegir contingut al final d'aquest fitxer:"
+		"wantsToRead": "Agent vol llegir aquest fitxer:",
+		"wantsToReadOutsideWorkspace": "Agent vol llegir aquest fitxer fora de l'espai de treball:",
+		"didRead": "Agent ha llegit aquest fitxer:",
+		"wantsToEdit": "Agent vol editar aquest fitxer:",
+		"wantsToEditOutsideWorkspace": "Agent vol editar aquest fitxer fora de l'espai de treball:",
+		"wantsToCreate": "Agent vol crear un nou fitxer:",
+		"wantsToSearchReplace": "Agent vol realitzar cerca i substitució en aquest fitxer:",
+		"didSearchReplace": "Agent ha realitzat cerca i substitució en aquest fitxer:",
+		"wantsToInsert": "Agent vol inserir contingut en aquest fitxer:",
+		"wantsToInsertWithLineNumber": "Agent vol inserir contingut a la línia {{lineNumber}} d'aquest fitxer:",
+		"wantsToInsertAtEnd": "Agent vol afegir contingut al final d'aquest fitxer:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Roo vol veure els fitxers de nivell superior en aquest directori:",
-		"didViewTopLevel": "Roo ha vist els fitxers de nivell superior en aquest directori:",
-		"wantsToViewRecursive": "Roo vol veure recursivament tots els fitxers en aquest directori:",
-		"didViewRecursive": "Roo ha vist recursivament tots els fitxers en aquest directori:",
-		"wantsToViewDefinitions": "Roo vol veure noms de definicions de codi font utilitzats en aquest directori:",
-		"didViewDefinitions": "Roo ha vist noms de definicions de codi font utilitzats en aquest directori:",
-		"wantsToSearch": "Roo vol cercar en aquest directori <code>{{regex}}</code>:",
-		"didSearch": "Roo ha cercat en aquest directori <code>{{regex}}</code>:"
+		"wantsToViewTopLevel": "Agent vol veure els fitxers de nivell superior en aquest directori:",
+		"didViewTopLevel": "Agent ha vist els fitxers de nivell superior en aquest directori:",
+		"wantsToViewRecursive": "Agent vol veure recursivament tots els fitxers en aquest directori:",
+		"didViewRecursive": "Agent ha vist recursivament tots els fitxers en aquest directori:",
+		"wantsToViewDefinitions": "Agent vol veure noms de definicions de codi font utilitzats en aquest directori:",
+		"didViewDefinitions": "Agent ha vist noms de definicions de codi font utilitzats en aquest directori:",
+		"wantsToSearch": "Agent vol cercar en aquest directori <code>{{regex}}</code>:",
+		"didSearch": "Agent ha cercat en aquest directori <code>{{regex}}</code>:"
 	},
 	"commandOutput": "Sortida de l'ordre",
 	"response": "Resposta",
 	"arguments": "Arguments",
 	"mcp": {
-		"wantsToUseTool": "Roo vol utilitzar una eina al servidor MCP {{serverName}}:",
-		"wantsToAccessResource": "Roo vol accedir a un recurs al servidor MCP {{serverName}}:"
+		"wantsToUseTool": "Agent vol utilitzar una eina al servidor MCP {{serverName}}:",
+		"wantsToAccessResource": "Agent vol accedir a un recurs al servidor MCP {{serverName}}:"
 	},
 	"modes": {
-		"wantsToSwitch": "Roo vol canviar a mode <code>{{mode}}</code>",
-		"wantsToSwitchWithReason": "Roo vol canviar a mode <code>{{mode}}</code> perquè: {{reason}}",
-		"didSwitch": "Roo ha canviat a mode <code>{{mode}}</code>",
-		"didSwitchWithReason": "Roo ha canviat a mode <code>{{mode}}</code> perquè: {{reason}}"
+		"wantsToSwitch": "Agent vol canviar a mode <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "Agent vol canviar a mode <code>{{mode}}</code> perquè: {{reason}}",
+		"didSwitch": "Agent ha canviat a mode <code>{{mode}}</code>",
+		"didSwitchWithReason": "Agent ha canviat a mode <code>{{mode}}</code> perquè: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Roo vol crear una nova subtasca en mode <code>{{mode}}</code>:",
-		"wantsToFinish": "Roo vol finalitzar aquesta subtasca",
+		"wantsToCreate": "Agent vol crear una nova subtasca en mode <code>{{mode}}</code>:",
+		"wantsToFinish": "Agent vol finalitzar aquesta subtasca",
 		"newTaskContent": "Instruccions de la subtasca",
 		"completionContent": "Subtasca completada",
 		"resultContent": "Resultats de la subtasca",
@@ -182,7 +182,7 @@
 		"completionInstructions": "Subtasca completada! Pots revisar els resultats i suggerir correccions o següents passos. Si tot sembla correcte, confirma per tornar el resultat a la tasca principal."
 	},
 	"questions": {
-		"hasQuestion": "Roo té una pregunta:"
+		"hasQuestion": "Agent té una pregunta:"
 	},
 	"taskCompleted": "Tasca completada",
 	"powershell": {
@@ -202,7 +202,7 @@
 	},
 	"announcement": {
 		"title": "🎉 Roo Code 3.15 publicat",
-		"description": "Roo Code 3.15 porta noves funcionalitats i millores basades en els teus comentaris.",
+		"description": "Agent Code 3.15 porta noves funcionalitats i millores basades en els teus comentaris.",
 		"whatsNew": "Novetats",
 		"feature1": "<bold>Memòria cau de prompts per a Vertex</bold>: S'ha afegit suport de memòria cau de prompts per a Vertex AI, millorant els temps de resposta i reduint els costos d'API",
 		"feature2": "<bold>Mecanisme alternatiu per a Terminal</bold>: S'ha implementat un mecanisme alternatiu quan la integració de shell del terminal VSCode falla",
@@ -211,7 +211,7 @@
 		"detailsDiscussLinks": "Obtingues més detalls i participa a <discordLink>Discord</discordLink> i <redditLink>Reddit</redditLink> 🚀"
 	},
 	"browser": {
-		"rooWantsToUse": "Roo vol utilitzar el navegador:",
+		"rooWantsToUse": "Agent vol utilitzar el navegador:",
 		"consoleLogs": "Registres de consola",
 		"noNewLogs": "(Cap registre nou)",
 		"screenshot": "Captura de pantalla del navegador",

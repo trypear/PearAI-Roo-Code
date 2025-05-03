@@ -134,7 +134,7 @@
 		"current": "当前"
 	},
 	"instructions": {
-		"wantsToFetch": "Roo 想要获取详细指示以协助当前任务"
+		"wantsToFetch": "Agent 想要获取详细指示以协助当前任务"
 	},
 	"fileOperations": {
 		"wantsToRead": "需要读取文件:",
@@ -202,7 +202,7 @@
 	},
 	"announcement": {
 		"title": "🎉 Roo Code 3.15 已发布",
-		"description": "Roo Code 3.15 带来基于您反馈的新功能和改进。",
+		"description": "Agent Code 3.15 带来基于您反馈的新功能和改进。",
 		"whatsNew": "新特性",
 		"feature1": "<bold>Vertex 提示词缓存</bold>: 为 Vertex AI 添加提示词缓存支持，提高响应速度并降低 API 费用",
 		"feature2": "<bold>终端备选方案</bold>: 实现 VSCode 终端 shell 集成失败时的备选机制",

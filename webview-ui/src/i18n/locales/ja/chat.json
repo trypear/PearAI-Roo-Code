@@ -1,5 +1,5 @@
 {
-	"greeting": "Roo Code へようこそ",
+	"greeting": "Agent Code へようこそ",
 	"task": {
 		"title": "タスク",
 		"seeMore": "もっと見る",
@@ -202,7 +202,7 @@
 	},
 	"announcement": {
 		"title": "🎉 Roo Code 3.15 リリース",
-		"description": "Roo Code 3.15は新機能とあなたのフィードバックに基づく改善をもたらします。",
+		"description": "Agent Code 3.15は新機能とあなたのフィードバックに基づく改善をもたらします。",
 		"whatsNew": "新機能",
 		"feature1": "<bold>Vertex用プロンプトキャッシング</bold>: Vertex AI向けのプロンプトキャッシングサポートを追加し、応答時間を改善しAPIコストを削減",
 		"feature2": "<bold>ターミナルフォールバック</bold>: VSCodeターミナルシェル統合が失敗した場合のフォールバックメカニズムを実装",
