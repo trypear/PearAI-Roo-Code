@@ -4,7 +4,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"lint": "ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx",
+		"lint": "cross-env ESLINT_USE_FLAT_CONFIG=false eslint src --ext .ts,.tsx",
 		"check-types": "tsc",
 		"test": "jest -w=40%",
 		"dev": "vite",
@@ -85,6 +85,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.21.0",
 		"@typescript-eslint/parser": "^6.21.0",
 		"@vitejs/plugin-react": "^4.3.4",
+		"cross-env": "^7.0.3",
 		"eslint": "^8.57.0",
 		"eslint-config-react-app": "^7.0.1",
 		"eslint-plugin-react": "^7.33.2",
