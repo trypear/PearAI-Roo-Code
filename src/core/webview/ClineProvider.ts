@@ -850,10 +850,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const currentCline = this.getCurrentCline()
 
 		// Preserve creator mode when updating configuration
-		const updatedConfig = {
+		const updatedConfig: ProviderSettings = {
 			...providerSettings,
 			creatorModeConfig: currentCline?.creatorModeConfig,
 		}
+		
 
 		if (mode) {
 			const currentApiConfigName = this.getGlobalState("currentApiConfigName")
