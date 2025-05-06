@@ -51,7 +51,7 @@ export const registerPearListener = async () => {
 				}
 
 				// Initialize with task
-				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, creatorModeConifig)
+				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConifig)
 			}
 		})
 	} else {
@@ -70,7 +70,7 @@ async function ensureViewIsReady(provider: ClineProvider): Promise<void> {
 	// Otherwise, we need to wait for it to initialize
 	return new Promise((resolve) => {
 		// Set up a one-time listener for when the view is ready
-		const disposable = provider.on("clineAdded", () => {
+		const disposable = provider.on("clineCreated", () => {
 			// Clean up the listener
 			disposable.dispose()
 			resolve()

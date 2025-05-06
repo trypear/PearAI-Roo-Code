@@ -85,8 +85,8 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		readonly context: vscode.ExtensionContext,
 		private readonly outputChannel: vscode.OutputChannel,
 		private readonly renderContext: "sidebar" | "editor" = "sidebar",
-		private readonly isCreatorView: boolean = false,
 		public readonly contextProxy: ContextProxy,
+		private readonly isCreatorView: boolean = false,
 	) {
 		super()
 
@@ -474,7 +474,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		task?: string,
 		images?: string[],
 		parentTask?: Cline,
-		creatorModeConfig?: creatorModeConfig,
 		options: Partial<
 			Pick<
 				ClineOptions,
@@ -486,6 +485,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 				| "experiments"
 			>
 		> = {},
+		creatorModeConfig?: creatorModeConfig,
 	) {
 		const {
 			apiConfiguration,
@@ -853,10 +853,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const currentCline = this.getCurrentCline()
 
 		// Preserve creator mode when updating configuration
-		const updatedConfig = {
-			...apiConfiguration,
+		const updatedConfig: ProviderSettings = {
+			...providerSettings,
 			creatorModeConfig: currentCline?.creatorModeConfig,
 		}
+		
 
 		if (mode) {
 			const currentApiConfigName = this.getGlobalState("currentApiConfigName")
