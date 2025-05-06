@@ -25,7 +25,8 @@
 			"browser": "Usar navegador",
 			"command": "Ejecutar comandos",
 			"mcp": "Usar MCP"
-		}
+		},
+		"noTools": "Ninguna"
 	},
 	"roleDefinition": {
 		"title": "Definición de rol",
@@ -36,12 +37,12 @@
 		"title": "Instrucciones personalizadas para el modo (opcional)",
 		"resetToDefault": "Restablecer a valores predeterminados",
 		"description": "Agrega directrices de comportamiento específicas para el modo {{modeName}}.",
-		"loadFromFile": "Las instrucciones personalizadas para el modo {{mode}} también se pueden cargar desde <span>.clinerules-{{slug}}</span> en tu espacio de trabajo."
+		"loadFromFile": "Las instrucciones personalizadas para el modo {{mode}} también se pueden cargar desde la carpeta <span>.roo/rules-{{slug}}/</span> en tu espacio de trabajo (.roorules-{{slug}} y .clinerules-{{slug}} están obsoletos y dejarán de funcionar pronto)."
 	},
 	"globalCustomInstructions": {
 		"title": "Instrucciones personalizadas para todos los modos",
 		"description": "Estas instrucciones se aplican a todos los modos. Proporcionan un conjunto base de comportamientos que pueden ser mejorados por instrucciones específicas de cada modo.\nSi quieres que Roo piense y hable en un idioma diferente al idioma de visualización de tu editor ({{language}}), puedes especificarlo aquí.",
-		"loadFromFile": "Las instrucciones también se pueden cargar desde <span>.clinerules</span> en tu espacio de trabajo."
+		"loadFromFile": "Las instrucciones también se pueden cargar desde la carpeta <span>.roo/rules/</span> en tu espacio de trabajo (.roorules y .clinerules están obsoletos y dejarán de funcionar pronto)."
 	},
 	"systemPrompt": {
 		"preview": "Vista previa de la solicitud del sistema",
@@ -91,12 +92,12 @@
 			"TERMINAL_EXPLAIN": {
 				"label": "Explicar comando de terminal",
 				"description": "Obtén explicaciones detalladas de comandos de terminal y sus salidas. Disponible en el menú contextual de la terminal (clic derecho en el contenido seleccionado de la terminal)."
+			},
+			"NEW_TASK": {
+				"label": "Iniciar nueva tarea",
+				"description": "Inicia una nueva tarea con entrada del usuario. Disponible en la Paleta de comandos."
 			}
 		}
-	},
-	"customModeCreation": {
-		"enableTitle": "Habilitar la creación de modos personalizados a través de solicitudes",
-		"description": "Cuando está habilitado, Roo te permite crear modos personalizados usando solicitudes como 'Hazme un modo personalizado que...'. Deshabilitarlo reduce tu solicitud del sistema en aproximadamente 700 tokens cuando esta función no es necesaria. Cuando está deshabilitado, aún puedes crear modos personalizados manualmente usando el botón + de arriba o editando el JSON de configuración relacionado."
 	},
 	"advancedSystemPrompt": {
 		"title": "Avanzado: Anular solicitud del sistema",

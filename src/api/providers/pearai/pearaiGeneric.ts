@@ -19,7 +19,7 @@ import { convertToSimpleMessages } from "../../transform/simple-format"
 import { ApiStream, ApiStreamUsageChunk } from "../../transform/stream"
 import { BaseProvider } from "../base-provider"
 import { XmlMatcher } from "../../../utils/xml-matcher"
-import { allModels, pearAiDefaultModelId, pearAiDefaultModelInfo } from "../../../shared/pearaiApi"
+import { allModels, pearaiDefaultModelId, pearaiDefaultModelInfo } from "../../../shared/pearaiApi"
 import { calculateApiCostOpenAI } from "../../../utils/cost"
 
 const DEEP_SEEK_DEFAULT_TEMPERATURE = 0.6
@@ -221,28 +221,30 @@ export class PearAIGenericHandler extends BaseProvider implements SingleCompleti
 	}
 
 	override getModel(): { id: string; info: ModelInfo } {
-		const modelId = this.options.openAiModelId ?? "none"
+		const modelId = this.options.openAiModelId
 		// Prioritize serverside model info
-		if (this.options.apiModelId && this.options.pearaiAgentModels) {
+		if (modelId && this.options.pearaiAgentModels) {
 			let modelInfo = null
-			if (this.options.apiModelId.startsWith("pearai")) {
-				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId].underlyingModelUpdated
+			if (modelId.startsWith("pearai")) {
+				modelInfo = this.options.pearaiAgentModels.models[modelId]
 			} else {
-				modelInfo = this.options.pearaiAgentModels.models[this.options.apiModelId || "pearai-model"]
+				modelInfo = this.options.pearaiAgentModels.models[modelId || "pearai-model"]
 			}
 			if (modelInfo) {
-				return {
-					id: this.options.apiModelId,
+				const result = {
+					id: modelId,
 					info: modelInfo,
 				}
+				return result
 			}
 		}
-		return {
-			id: modelId,
-			info: allModels[modelId],
-		}
-	}
 
+		const result = {
+			id: modelId ?? pearaiDefaultModelId,
+			info: allModels[modelId ?? pearaiDefaultModelId],
+		}
+		return result
+	}
 	async completePrompt(prompt: string): Promise<string> {
 		try {
 			const requestOptions: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {

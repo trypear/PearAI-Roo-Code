@@ -1,7 +1,14 @@
 {
 	"number_format": {
 		"thousand_suffix": "k",
-		"million_suffix": "Mln",
-		"billion_suffix": "Mld"
+		"million_suffix": "m",
+		"billion_suffix": "b"
+	},
+	"ui": {
+		"search_placeholder": "Cerca..."
+	},
+	"mermaid": {
+		"loading": "Generazione del diagramma mermaid...",
+		"render_error": "Impossibile renderizzare il diagramma"
 	}
 }

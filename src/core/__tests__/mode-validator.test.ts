@@ -1,13 +1,15 @@
-import { Mode, isToolAllowedForMode, getModeConfig, modes } from "../../shared/modes"
+// npx jest src/core/__tests__/mode-validator.test.ts
+
+import { isToolAllowedForMode, modes, ModeConfig } from "../../shared/modes"
+import { TOOL_GROUPS } from "../../shared/tools"
 import { validateToolUse } from "../mode-validator"
-import { TOOL_GROUPS } from "../../shared/tool-groups"
+
 const [codeMode, architectMode, askMode] = modes.map((mode) => mode.slug)
 
 describe("mode-validator", () => {
 	describe("isToolAllowedForMode", () => {
 		describe("code mode", () => {
 			it("allows all code mode tools", () => {
-				const mode = getModeConfig(codeMode)
 				// Code mode has all groups
 				Object.entries(TOOL_GROUPS).forEach(([_, config]) => {
 					config.tools.forEach((tool: string) => {
@@ -23,7 +25,6 @@ describe("mode-validator", () => {
 
 		describe("architect mode", () => {
 			it("allows configured tools", () => {
-				const mode = getModeConfig(architectMode)
 				// Architect mode has read, browser, and mcp groups
 				const architectTools = [
 					...TOOL_GROUPS.read.tools,
@@ -38,7 +39,6 @@ describe("mode-validator", () => {
 
 		describe("ask mode", () => {
 			it("allows configured tools", () => {
-				const mode = getModeConfig(askMode)
 				// Ask mode has read, browser, and mcp groups
 				const askTools = [...TOOL_GROUPS.read.tools, ...TOOL_GROUPS.browser.tools, ...TOOL_GROUPS.mcp.tools]
 				askTools.forEach((tool) => {
@@ -49,7 +49,7 @@ describe("mode-validator", () => {
 
 		describe("custom modes", () => {
 			it("allows tools from custom mode configuration", () => {
-				const customModes = [
+				const customModes: ModeConfig[] = [
 					{
 						slug: "custom-mode",
 						name: "Custom Mode",
@@ -65,7 +65,7 @@ describe("mode-validator", () => {
 			})
 
 			it("allows custom mode to override built-in mode", () => {
-				const customModes = [
+				const customModes: ModeConfig[] = [
 					{
 						slug: codeMode,
 						name: "Custom Code Mode",
@@ -80,7 +80,7 @@ describe("mode-validator", () => {
 			})
 
 			it("respects tool requirements in custom modes", () => {
-				const customModes = [
+				const customModes: ModeConfig[] = [
 					{
 						slug: "custom-mode",
 						name: "Custom Mode",

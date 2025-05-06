@@ -1,8 +1,5 @@
-import { Mode, isToolAllowedForMode, getModeConfig, ModeConfig, FileRestrictionError } from "../shared/modes"
-import { ToolName } from "../shared/tool-groups"
-
-export { isToolAllowedForMode }
-export type { ToolName }
+import { ToolName } from "../schemas"
+import { Mode, isToolAllowedForMode, ModeConfig } from "../shared/modes"
 
 export function validateToolUse(
 	toolName: ToolName,

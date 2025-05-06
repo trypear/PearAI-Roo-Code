@@ -1,6 +1,5 @@
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from "react"
 import { useAppTranslation } from "@/i18n/TranslationContext"
-import { Button as VSCodeButton } from "vscrui"
 import {
 	CheckCheck,
 	SquareMousePointer,
@@ -9,7 +8,6 @@ import {
 	Bell,
 	Database,
 	SquareTerminal,
-	Cog,
 	FlaskConical,
 	AlertTriangle,
 	Globe,
@@ -18,9 +16,9 @@ import {
 } from "lucide-react"
 import { CaretSortIcon } from "@radix-ui/react-icons"
 
-import { ExperimentId } from "../../../../src/shared/experiments"
-import { TelemetrySetting } from "../../../../src/shared/TelemetrySetting"
-import { ApiConfiguration } from "../../../../src/shared/api"
+import { ExperimentId } from "@roo/shared/experiments"
+import { TelemetrySetting } from "@roo/shared/TelemetrySetting"
+import { ApiConfiguration } from "@roo/shared/api"
 
 import { vscode } from "@/utils/vscode"
 import { ExtensionStateContextType, useExtensionState } from "@/context/ExtensionStateContext"
@@ -51,7 +49,6 @@ import { CheckpointSettings } from "./CheckpointSettings"
 import { NotificationSettings } from "./NotificationSettings"
 import { ContextManagementSettings } from "./ContextManagementSettings"
 import { TerminalSettings } from "./TerminalSettings"
-import { AdvancedSettings } from "./AdvancedSettings"
 import { ExperimentalSettings } from "./ExperimentalSettings"
 import { LanguageSettings } from "./LanguageSettings"
 import { About } from "./About"
@@ -69,7 +66,6 @@ const sectionNames = [
 	"notifications",
 	"contextManagement",
 	"terminal",
-	"advanced",
 	"experimental",
 	"language",
 	"about",
@@ -79,13 +75,14 @@ type SectionName = (typeof sectionNames)[number]
 
 type SettingsViewProps = {
 	onDone: () => void
+	targetSection?: string
 }
 
-const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone }, ref) => {
+const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone, targetSection }, ref) => {
 	const { t } = useAppTranslation()
 
 	const extensionState = useExtensionState()
-	const { currentApiConfigName, listApiConfigMeta, uriScheme, version } = extensionState
+	const { currentApiConfigName, listApiConfigMeta, uriScheme, version, settingsImportedAt } = extensionState
 
 	const [isDiscardDialogShow, setDiscardDialogShow] = useState(false)
 	const [isChangeDetected, setChangeDetected] = useState(false)
@@ -98,6 +95,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 
 	const {
 		alwaysAllowReadOnly,
+		alwaysAllowReadOnlyOutsideWorkspace,
 		allowedCommands,
 		language,
 		alwaysAllowBrowser,
@@ -106,18 +104,17 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 		alwaysAllowModeSwitch,
 		alwaysAllowSubtasks,
 		alwaysAllowWrite,
+		alwaysAllowWriteOutsideWorkspace,
 		alwaysApproveResubmit,
 		browserToolEnabled,
 		browserViewportSize,
 		enableCheckpoints,
-		checkpointStorage,
 		diffEnabled,
 		experiments,
 		fuzzyMatchThreshold,
 		maxOpenTabsContext,
 		maxWorkspaceFiles,
 		mcpEnabled,
-		rateLimitSeconds,
 		requestDelaySeconds,
 		remoteBrowserHost,
 		screenshotQuality,
@@ -128,15 +125,22 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 		telemetrySetting,
 		terminalOutputLineLimit,
 		terminalShellIntegrationTimeout,
+		terminalShellIntegrationDisabled,
+		terminalCommandDelay,
+		terminalPowershellCounter,
+		terminalZshClearEolMark,
+		terminalZshOhMy,
+		terminalZshP10k,
+		terminalZdotdir,
 		writeDelayMs,
 		showRooIgnoredFiles,
 		remoteBrowserEnabled,
 		maxReadFileLine,
+		terminalCompressProgressBar,
 	} = cachedState
 
 	// Make sure apiConfiguration is initialized and managed by SettingsView.
 	const apiConfiguration = useMemo(() => cachedState.apiConfiguration ?? {}, [cachedState.apiConfiguration])
-
 	useEffect(() => {
 		// Update only when currentApiConfigName is changed.
 		// Expected to be triggered by loadApiConfiguration/upsertApiConfiguration.
@@ -148,6 +152,14 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 		prevApiConfigName.current = currentApiConfigName
 		setChangeDetected(false)
 	}, [currentApiConfigName, extensionState, isChangeDetected])
+
+	// Bust the cache when settings are imported.
+	useEffect(() => {
+		if (settingsImportedAt) {
+			setCachedState((prevCachedState) => ({ ...prevCachedState, ...extensionState }))
+			setChangeDetected(false)
+		}
+	}, [settingsImportedAt, extensionState])
 
 	const setCachedStateField: SetCachedStateField<keyof ExtensionStateContextType> = useCallback((field, value) => {
 		setCachedState((prevState) => {
@@ -168,7 +180,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 				}
 
 				setChangeDetected(true)
-
 				return { ...prevState, apiConfiguration: { ...prevState.apiConfiguration, [field]: value } }
 			})
 		},
@@ -182,11 +193,7 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			}
 
 			setChangeDetected(true)
-
-			return {
-				...prevState,
-				experiments: { ...prevState.experiments, [id]: enabled },
-			}
+			return { ...prevState, experiments: { ...prevState.experiments, [id]: enabled } }
 		})
 	}, [])
 
@@ -195,11 +202,9 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			if (prevState.telemetrySetting === setting) {
 				return prevState
 			}
+
 			setChangeDetected(true)
-			return {
-				...prevState,
-				telemetrySetting: setting,
-			}
+			return { ...prevState, telemetrySetting: setting }
 		})
 	}, [])
 
@@ -209,7 +214,12 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 		if (isSettingValid) {
 			vscode.postMessage({ type: "language", text: language })
 			vscode.postMessage({ type: "alwaysAllowReadOnly", bool: alwaysAllowReadOnly })
+			vscode.postMessage({
+				type: "alwaysAllowReadOnlyOutsideWorkspace",
+				bool: alwaysAllowReadOnlyOutsideWorkspace,
+			})
 			vscode.postMessage({ type: "alwaysAllowWrite", bool: alwaysAllowWrite })
+			vscode.postMessage({ type: "alwaysAllowWriteOutsideWorkspace", bool: alwaysAllowWriteOutsideWorkspace })
 			vscode.postMessage({ type: "alwaysAllowExecute", bool: alwaysAllowExecute })
 			vscode.postMessage({ type: "alwaysAllowBrowser", bool: alwaysAllowBrowser })
 			vscode.postMessage({ type: "alwaysAllowMcp", bool: alwaysAllowMcp })
@@ -221,7 +231,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			vscode.postMessage({ type: "soundVolume", value: soundVolume })
 			vscode.postMessage({ type: "diffEnabled", bool: diffEnabled })
 			vscode.postMessage({ type: "enableCheckpoints", bool: enableCheckpoints })
-			vscode.postMessage({ type: "checkpointStorage", text: checkpointStorage })
 			vscode.postMessage({ type: "browserViewportSize", text: browserViewportSize })
 			vscode.postMessage({ type: "remoteBrowserHost", text: remoteBrowserHost })
 			vscode.postMessage({ type: "remoteBrowserEnabled", bool: remoteBrowserEnabled })
@@ -230,10 +239,17 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			vscode.postMessage({ type: "screenshotQuality", value: screenshotQuality ?? 75 })
 			vscode.postMessage({ type: "terminalOutputLineLimit", value: terminalOutputLineLimit ?? 500 })
 			vscode.postMessage({ type: "terminalShellIntegrationTimeout", value: terminalShellIntegrationTimeout })
+			vscode.postMessage({ type: "terminalShellIntegrationDisabled", bool: terminalShellIntegrationDisabled })
+			vscode.postMessage({ type: "terminalCommandDelay", value: terminalCommandDelay })
+			vscode.postMessage({ type: "terminalPowershellCounter", bool: terminalPowershellCounter })
+			vscode.postMessage({ type: "terminalZshClearEolMark", bool: terminalZshClearEolMark })
+			vscode.postMessage({ type: "terminalZshOhMy", bool: terminalZshOhMy })
+			vscode.postMessage({ type: "terminalZshP10k", bool: terminalZshP10k })
+			vscode.postMessage({ type: "terminalZdotdir", bool: terminalZdotdir })
+			vscode.postMessage({ type: "terminalCompressProgressBar", bool: terminalCompressProgressBar })
 			vscode.postMessage({ type: "mcpEnabled", bool: mcpEnabled })
 			vscode.postMessage({ type: "alwaysApproveResubmit", bool: alwaysApproveResubmit })
 			vscode.postMessage({ type: "requestDelaySeconds", value: requestDelaySeconds })
-			vscode.postMessage({ type: "rateLimitSeconds", value: rateLimitSeconds })
 			vscode.postMessage({ type: "maxOpenTabsContext", value: maxOpenTabsContext })
 			vscode.postMessage({ type: "maxWorkspaceFiles", value: maxWorkspaceFiles ?? 200 })
 			vscode.postMessage({ type: "showRooIgnoredFiles", bool: showRooIgnoredFiles })
@@ -275,7 +291,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 	const notificationsRef = useRef<HTMLDivElement>(null)
 	const contextManagementRef = useRef<HTMLDivElement>(null)
 	const terminalRef = useRef<HTMLDivElement>(null)
-	const advancedRef = useRef<HTMLDivElement>(null)
 	const experimentalRef = useRef<HTMLDivElement>(null)
 	const languageRef = useRef<HTMLDivElement>(null)
 	const aboutRef = useRef<HTMLDivElement>(null)
@@ -289,7 +304,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			{ id: "notifications", icon: Bell, ref: notificationsRef },
 			{ id: "contextManagement", icon: Database, ref: contextManagementRef },
 			{ id: "terminal", icon: SquareTerminal, ref: terminalRef },
-			{ id: "advanced", icon: Cog, ref: advancedRef },
 			{ id: "experimental", icon: FlaskConical, ref: experimentalRef },
 			{ id: "language", icon: Globe, ref: languageRef },
 			{ id: "about", icon: Info, ref: aboutRef },
@@ -302,12 +316,22 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 			notificationsRef,
 			contextManagementRef,
 			terminalRef,
-			advancedRef,
 			experimentalRef,
 		],
 	)
 
 	const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => ref.current?.scrollIntoView()
+
+	// Scroll to target section when specified
+	useEffect(() => {
+		if (targetSection) {
+			const sectionObj = sections.find((section) => section.id === targetSection)
+			if (sectionObj && sectionObj.ref.current) {
+				// Use setTimeout to ensure the scroll happens after render
+				setTimeout(() => scrollToSection(sectionObj.ref), 500)
+			}
+		}
+	}, [targetSection, sections])
 
 	return (
 		<Tab>
@@ -331,8 +355,8 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 					</DropdownMenu>
 				</div>
 				<div className="flex gap-2">
-					<VSCodeButton
-						appearance={isSettingValid ? "primary" : "secondary"}
+					<Button
+						variant={isSettingValid ? "default" : "secondary"}
 						className={!isSettingValid ? "!border-vscode-errorForeground" : ""}
 						title={
 							!isSettingValid
@@ -345,13 +369,13 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 						disabled={!isChangeDetected || !isSettingValid}
 						data-testid="save-button">
 						{t("settings:common.save")}
-					</VSCodeButton>
-					<VSCodeButton
-						appearance="secondary"
+					</Button>
+					<Button
+						variant="secondary"
 						title={t("settings:header.doneButtonTooltip")}
 						onClick={() => checkUnsaveChanges(onDone)}>
 						{t("settings:common.done")}
-					</VSCodeButton>
+					</Button>
 				</div>
 			</TabHeader>
 
@@ -405,7 +429,9 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 				<div ref={autoApproveRef}>
 					<AutoApproveSettings
 						alwaysAllowReadOnly={alwaysAllowReadOnly}
+						alwaysAllowReadOnlyOutsideWorkspace={alwaysAllowReadOnlyOutsideWorkspace}
 						alwaysAllowWrite={alwaysAllowWrite}
+						alwaysAllowWriteOutsideWorkspace={alwaysAllowWriteOutsideWorkspace}
 						writeDelayMs={writeDelayMs}
 						alwaysAllowBrowser={alwaysAllowBrowser}
 						alwaysApproveResubmit={alwaysApproveResubmit}
@@ -433,7 +459,6 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 				<div ref={checkpointsRef}>
 					<CheckpointSettings
 						enableCheckpoints={enableCheckpoints}
-						checkpointStorage={checkpointStorage}
 						setCachedStateField={setCachedStateField}
 					/>
 				</div>
@@ -453,8 +478,8 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 						maxOpenTabsContext={maxOpenTabsContext}
 						maxWorkspaceFiles={maxWorkspaceFiles ?? 200}
 						showRooIgnoredFiles={showRooIgnoredFiles}
-						setCachedStateField={setCachedStateField}
 						maxReadFileLine={maxReadFileLine}
+						setCachedStateField={setCachedStateField}
 					/>
 				</div>
 
@@ -462,18 +487,15 @@ const SettingsView = forwardRef<SettingsViewRef, SettingsViewProps>(({ onDone },
 					<TerminalSettings
 						terminalOutputLineLimit={terminalOutputLineLimit}
 						terminalShellIntegrationTimeout={terminalShellIntegrationTimeout}
+						terminalShellIntegrationDisabled={terminalShellIntegrationDisabled}
+						terminalCommandDelay={terminalCommandDelay}
+						terminalPowershellCounter={terminalPowershellCounter}
+						terminalZshClearEolMark={terminalZshClearEolMark}
+						terminalZshOhMy={terminalZshOhMy}
+						terminalZshP10k={terminalZshP10k}
+						terminalZdotdir={terminalZdotdir}
+						terminalCompressProgressBar={terminalCompressProgressBar}
 						setCachedStateField={setCachedStateField}
-					/>
-				</div>
-
-				<div ref={advancedRef}>
-					<AdvancedSettings
-						rateLimitSeconds={rateLimitSeconds}
-						diffEnabled={diffEnabled}
-						fuzzyMatchThreshold={fuzzyMatchThreshold}
-						setCachedStateField={setCachedStateField}
-						setExperimentEnabled={setExperimentEnabled}
-						experiments={experiments}
 					/>
 				</div>
 

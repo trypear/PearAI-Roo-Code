@@ -1,7 +1,14 @@
 {
 	"number_format": {
-		"thousand_suffix": "mil",
-		"million_suffix": "mi",
-		"billion_suffix": "bi"
+		"thousand_suffix": "k",
+		"million_suffix": "m",
+		"billion_suffix": "b"
+	},
+	"ui": {
+		"search_placeholder": "Pesquisar..."
+	},
+	"mermaid": {
+		"loading": "Gerando diagrama mermaid...",
+		"render_error": "Não foi possível renderizar o diagrama"
 	}
 }

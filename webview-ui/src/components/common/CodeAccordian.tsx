@@ -1,7 +1,8 @@
 import { memo, useMemo } from "react"
-import { getLanguageFromPath } from "../../utils/getLanguageFromPath"
+import { getLanguageFromPath } from "@src/utils/getLanguageFromPath"
 import CodeBlock, { CODE_BLOCK_BG_COLOR } from "./CodeBlock"
-import { ToolProgressStatus } from "../../../../src/shared/ExtensionMessage"
+import { ToolProgressStatus } from "@roo/shared/ExtensionMessage"
+import { VSCodeProgressRing } from "@vscode/webview-ui-toolkit/react"
 
 interface CodeAccordianProps {
 	code?: string
@@ -17,12 +18,15 @@ interface CodeAccordianProps {
 }
 
 /*
-We need to remove leading non-alphanumeric characters from the path in order for our leading ellipses trick to work.
-^: Anchors the match to the start of the string.
-[^a-zA-Z0-9]+: Matches one or more characters that are not alphanumeric.
-The replace method removes these matched characters, effectively trimming the string up to the first alphanumeric character.
+We need to remove certain leading characters from the path in order for our leading ellipses trick to work.
+However, we want to preserve all language characters (including CJK, Cyrillic, etc.) and only remove specific
+punctuation that might interfere with the ellipsis display.
 */
-export const removeLeadingNonAlphanumeric = (path: string): string => path.replace(/^[^a-zA-Z0-9]+/, "")
+export const removeLeadingNonAlphanumeric = (path: string): string => {
+	// Only remove specific punctuation characters that might interfere with ellipsis display
+	// Keep all language characters (including CJK, Cyrillic, etc.) and numbers
+	return path.replace(/^[/\\:*?"<>|]+/, "")
+}
 
 const CodeAccordian = ({
 	code,
@@ -64,7 +68,9 @@ const CodeAccordian = ({
 						MozUserSelect: "none",
 						msUserSelect: "none",
 					}}
+					className={`${isLoading ? "animate-pulse" : ""}`}
 					onClick={isLoading ? undefined : onToggleExpand}>
+					{isLoading && <VSCodeProgressRing className="size-3 mr-2" />}
 					{isFeedback || isConsoleLogs ? (
 						<div style={{ display: "flex", alignItems: "center" }}>
 							<span
@@ -112,18 +118,14 @@ const CodeAccordian = ({
 			)}
 			{(!(path || isFeedback || isConsoleLogs) || isExpanded) && (
 				<div
-					//className="code-block-scrollable" this doesn't seem to be necessary anymore, on silicon macs it shows the native mac scrollbar instead of the vscode styled one
 					style={{
 						overflowX: "auto",
 						overflowY: "hidden",
 						maxWidth: "100%",
 					}}>
 					<CodeBlock
-						source={`${"```"}${diff !== undefined ? "diff" : inferredLanguage}\n${(
-							code ??
-							diff ??
-							""
-						).trim()}\n${"```"}`}
+						source={(code ?? diff ?? "").trim()}
+						language={diff !== undefined ? "diff" : inferredLanguage}
 					/>
 				</div>
 			)}

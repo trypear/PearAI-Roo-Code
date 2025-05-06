@@ -24,9 +24,9 @@ import {
 } from "./api"
 
 // PearAI
-export type PearAiModelId = keyof typeof pearAiModels
-export const pearAiDefaultModelId: PearAiModelId = "pearai-model"
-export const pearAiDefaultModelInfo: ModelInfo = {
+export type PearAIModelId = keyof typeof pearaiModels
+export const pearaiDefaultModelId: PearAIModelId = "pearai-model"
+export const pearaiDefaultModelInfo: ModelInfo = {
 	maxTokens: 8192,
 	contextWindow: 200_000,
 	supportsImages: true,
@@ -39,7 +39,7 @@ export const pearAiDefaultModelInfo: ModelInfo = {
 		"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
 }
 
-export const pearAiModels = {
+export const pearaiModels = {
 	"pearai-model": {
 		maxTokens: 8192,
 		contextWindow: 200_000,

@@ -9,41 +9,37 @@ const generateDiagnosticText = (diagnostics?: any[]) => {
 }
 
 export const createPrompt = (template: string, params: PromptParams): string => {
-	let result = template
-	for (const [key, value] of Object.entries(params)) {
-		if (key === "diagnostics") {
-			result = result.replaceAll("${diagnosticText}", generateDiagnosticText(value as any[]))
+	return template.replace(/\${(.*?)}/g, (_, key) => {
+		if (key === "diagnosticText") {
+			return generateDiagnosticText(params["diagnostics"] as any[])
+		} else if (params.hasOwnProperty(key)) {
+			// Ensure the value is treated as a string for replacement
+			const value = params[key]
+			if (typeof value === "string") {
+				return value
+			} else {
+				// Convert non-string values to string for replacement
+				return String(value)
+			}
 		} else {
-			result = result.replaceAll(`\${${key}}`, value as string)
+			// If the placeholder key is not in params, replace with empty string
+			return ""
 		}
-	}
-
-	// Replace any remaining placeholders with empty strings
-	result = result.replaceAll(/\${[^}]*}/g, "")
-
-	return result
+	})
 }
 
 interface SupportPromptConfig {
-	label: string
-	description: string
 	template: string
 }
 
 const supportPromptConfigs: Record<string, SupportPromptConfig> = {
 	ENHANCE: {
-		label: "Enhance Prompt",
-		description:
-			"Use prompt enhancement to get tailored suggestions or improvements for your inputs. This ensures Roo understands your intent and provides the best possible responses. Available via the ✨ icon in chat.",
 		template: `Generate an enhanced version of this prompt (reply with only the enhanced prompt - no conversation, explanations, lead-in, bullet points, placeholders, or surrounding quotes):
 
 \${userInput}`,
 	},
 	EXPLAIN: {
-		label: "Explain Code",
-		description:
-			"Get detailed explanations of code snippets, functions, or entire files. Useful for understanding complex code or learning new patterns. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code).",
-		template: `Explain the following code from file path @/\${filePath}:
+		template: `Explain the following code from file path \${filePath}:\${startLine}-\${endLine}
 \${userInput}
 
 \`\`\`
@@ -56,10 +52,7 @@ Please provide a clear and concise explanation of what this code does, including
 3. Important patterns or techniques used`,
 	},
 	FIX: {
-		label: "Fix Issues",
-		description:
-			"Get help identifying and resolving bugs, errors, or code quality issues. Provides step-by-step guidance for fixing problems. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code).",
-		template: `Fix any issues in the following code from file path @/\${filePath}
+		template: `Fix any issues in the following code from file path \${filePath}:\${startLine}-\${endLine}
 \${diagnosticText}
 \${userInput}
 
@@ -74,10 +67,7 @@ Please:
 4. Explain what was fixed and why`,
 	},
 	IMPROVE: {
-		label: "Improve Code",
-		description:
-			"Receive suggestions for code optimization, better practices, and architectural improvements while maintaining functionality. Available in code actions (lightbulb icon in the editor) and the editor context menu (right-click on selected code).",
-		template: `Improve the following code from file path @/\${filePath}:
+		template: `Improve the following code from file path \${filePath}:\${startLine}-\${endLine}
 \${userInput}
 
 \`\`\`
@@ -93,18 +83,12 @@ Please suggest improvements for:
 Provide the improved code along with explanations for each enhancement.`,
 	},
 	ADD_TO_CONTEXT: {
-		label: "Add to Context",
-		description:
-			"Add context to your current task or conversation. Useful for providing additional information or clarifications. Available in code actions (lightbulb icon in the editor). and the editor context menu (right-click on selected code).",
-		template: `\${filePath}:
+		template: `\${filePath}:\${startLine}-\${endLine}
 \`\`\`
 \${selectedText}
 \`\`\``,
 	},
 	TERMINAL_ADD_TO_CONTEXT: {
-		label: "Add Terminal Content to Context",
-		description:
-			"Add terminal output to your current task or conversation. Useful for providing command outputs or logs. Available in the terminal context menu (right-click on selected terminal content).",
 		template: `\${userInput}
 Terminal output:
 \`\`\`
@@ -112,9 +96,6 @@ Terminal output:
 \`\`\``,
 	},
 	TERMINAL_FIX: {
-		label: "Fix Terminal Command",
-		description:
-			"Get help fixing terminal commands that failed or need improvement. Available in the terminal context menu (right-click on selected terminal content).",
 		template: `\${userInput}
 Fix this terminal command:
 \`\`\`
@@ -127,9 +108,6 @@ Please:
 3. Explain what was fixed and why`,
 	},
 	TERMINAL_EXPLAIN: {
-		label: "Explain Terminal Command",
-		description:
-			"Get detailed explanations of terminal commands and their outputs. Available in the terminal context menu (right-click on selected terminal content).",
 		template: `\${userInput}
 Explain this terminal command:
 \`\`\`
@@ -140,6 +118,9 @@ Please provide:
 1. What the command does
 2. Explanation of each part/flag
 3. Expected output and behavior`,
+	},
+	NEW_TASK: {
+		template: `\${userInput}`,
 	},
 } as const
 
@@ -157,15 +138,6 @@ export const supportPrompt = {
 } as const
 
 export type { SupportPromptType }
-
-// Expose labels and descriptions for UI
-export const supportPromptLabels = Object.fromEntries(
-	Object.entries(supportPromptConfigs).map(([key, config]) => [key, config.label]),
-) as Record<SupportPromptType, string>
-
-export const supportPromptDescriptions = Object.fromEntries(
-	Object.entries(supportPromptConfigs).map(([key, config]) => [key, config.description]),
-) as Record<SupportPromptType, string>
 
 export type CustomSupportPrompts = {
 	[key: string]: string | undefined

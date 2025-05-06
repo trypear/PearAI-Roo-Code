@@ -1,38 +1,12 @@
 import * as vscode from "vscode"
-import { TOOL_GROUPS, ToolGroup, ALWAYS_AVAILABLE_TOOLS } from "./tool-groups"
-import { addCustomInstructions } from "../core/prompts/sections/custom-instructions"
 
-// Mode types
+import { GroupOptions, GroupEntry, ModeConfig, PromptComponent, CustomModePrompts, ExperimentId } from "../schemas"
+import { TOOL_GROUPS, ToolGroup, ALWAYS_AVAILABLE_TOOLS } from "./tools"
+import { addCustomInstructions } from "../core/prompts/sections/custom-instructions"
+import { EXPERIMENT_IDS } from "./experiments"
 export type Mode = string
 
-// Group options type
-export type GroupOptions = {
-	fileRegex?: string // Regular expression pattern
-	description?: string // Human-readable description of the pattern
-}
-
-// Group entry can be either a string or tuple with options
-export type GroupEntry = ToolGroup | readonly [ToolGroup, GroupOptions]
-
-// Mode configuration type
-export type ModeConfig = {
-	slug: string
-	name: string
-	roleDefinition: string
-	customInstructions?: string
-	groups: readonly GroupEntry[] // Now supports both simple strings and tuples with options
-	source?: "global" | "project" // Where this mode was loaded from
-}
-
-// Mode-specific prompts only
-export type PromptComponent = {
-	roleDefinition?: string
-	customInstructions?: string
-}
-
-export type CustomModePrompts = {
-	[key: string]: PromptComponent | undefined
-}
+export type { GroupOptions, GroupEntry, ModeConfig, PromptComponent, CustomModePrompts }
 
 // Helper to extract group name regardless of format
 export function getGroupName(group: GroupEntry): ToolGroup {
@@ -87,14 +61,14 @@ export const modes: readonly ModeConfig[] = [
 	},
 	{
 		slug: "code",
-		name: "Code",
+		name: "💻 Code",
 		roleDefinition:
 			"You are PearAI Agent (Powered by Roo Code / Cline), a highly skilled software engineer with extensive knowledge in many programming languages, frameworks, design patterns, and best practices.",
 		groups: ["read", "edit", "browser", "command", "mcp"],
 	},
 	{
 		slug: "architect",
-		name: "Architect",
+		name: "🏗️ Architect",
 		roleDefinition:
 			"You are PearAI Agent (Powered by Roo Code / Cline), an experienced technical leader who is inquisitive and an excellent planner. Your goal is to gather information and get context to create a detailed plan for accomplishing the user's task, which the user will review and approve before they switch into another mode to implement the solution.",
 		groups: ["read", ["edit", { fileRegex: "\\.md$", description: "Markdown files only" }], "browser", "mcp"],
@@ -103,7 +77,7 @@ export const modes: readonly ModeConfig[] = [
 	},
 	{
 		slug: "ask",
-		name: "Ask",
+		name: "❓ Ask",
 		roleDefinition:
 			"You are PearAI Agent (Powered by Roo Code / Cline), a knowledgeable technical assistant focused on answering questions and providing information about software development, technology, and related topics.",
 		groups: ["read", "browser", "mcp"],
@@ -112,12 +86,21 @@ export const modes: readonly ModeConfig[] = [
 	},
 	{
 		slug: "debug",
-		name: "Debug",
+		name: "🪲 Debug",
 		roleDefinition:
 			"You are PearAI Agent (Powered by Roo Code / Cline), an expert software debugger specializing in systematic problem diagnosis and resolution.",
 		groups: ["read", "edit", "browser", "command", "mcp"],
 		customInstructions:
 			"Reflect on 5-7 different possible sources of the problem, distill those down to 1-2 most likely sources, and then add logs to validate your assumptions. Explicitly ask the user to confirm the diagnosis before fixing the problem.",
+	},
+	{
+		slug: "orchestrator",
+		name: "🪃 Orchestrator",
+		roleDefinition:
+			"You are PearAI (Powered by Roo Code / Cline), a strategic workflow orchestrator who coordinates complex tasks by delegating them to appropriate specialized modes. You have a comprehensive understanding of each mode's capabilities and limitations, allowing you to effectively break down complex problems into discrete tasks that can be solved by different specialists.",
+		groups: [],
+		customInstructions:
+			"Your role is to coordinate complex workflows by delegating tasks to specialized modes. As an orchestrator, you should:\n\n1. When given a complex task, break it down into logical subtasks that can be delegated to appropriate specialized modes.\n\n2. For each subtask, use the `new_task` tool to delegate. Choose the most appropriate mode for the subtask's specific goal and provide comprehensive instructions in the `message` parameter. These instructions must include:\n    *   All necessary context from the parent task or previous subtasks required to complete the work.\n    *   A clearly defined scope, specifying exactly what the subtask should accomplish.\n    *   An explicit statement that the subtask should *only* perform the work outlined in these instructions and not deviate.\n    *   An instruction for the subtask to signal completion by using the `attempt_completion` tool, providing a concise yet thorough summary of the outcome in the `result` parameter, keeping in mind that this summary will be the source of truth used to keep track of what was completed on this project.\n    *   A statement that these specific instructions supersede any conflicting general instructions the subtask's mode might have.\n\n3. Track and manage the progress of all subtasks. When a subtask is completed, analyze its results and determine the next steps.\n\n4. Help the user understand how the different subtasks fit together in the overall workflow. Provide clear reasoning about why you're delegating specific tasks to specific modes.\n\n5. When all subtasks are completed, synthesize the results and provide a comprehensive overview of what was accomplished.\n\n6. Ask clarifying questions when necessary to better understand how to break down complex tasks effectively.\n\n7. Suggest improvements to the workflow based on the results of completed subtasks.\n\nUse subtasks to maintain clarity. If a request significantly shifts focus or requires a different expertise (mode), consider creating a subtask rather than overloading the current one.",
 	},
 ] as const
 
@@ -194,8 +177,7 @@ export function isToolAllowedForMode(
 	if (ALWAYS_AVAILABLE_TOOLS.includes(tool as any)) {
 		return true
 	}
-
-	if (experiments && tool in experiments) {
+	if (experiments && Object.values(EXPERIMENT_IDS).includes(tool as ExperimentId)) {
 		if (!experiments[tool]) {
 			return false
 		}

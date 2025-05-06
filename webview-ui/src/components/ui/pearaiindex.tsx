@@ -1,4 +1,3 @@
-import { Tooltip } from "react-tooltip"
 import styled, { keyframes } from "styled-components"
 
 const FONT_SIZE = 13

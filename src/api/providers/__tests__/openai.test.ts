@@ -1,3 +1,5 @@
+// npx jest src/api/providers/__tests__/openai.test.ts
+
 import { OpenAiHandler } from "../openai"
 import { ApiHandlerOptions } from "../../../shared/api"
 import { Anthropic } from "@anthropic-ai/sdk"
@@ -100,7 +102,7 @@ describe("OpenAiHandler", () => {
 				apiKey: expect.any(String),
 				defaultHeaders: {
 					"HTTP-Referer": "https://github.com/RooVetGit/Roo-Cline",
-					"X-Title": "Roo Code",
+					"X-Title": "Agent",
 				},
 			})
 		})
@@ -155,6 +157,39 @@ describe("OpenAiHandler", () => {
 			expect(textChunks).toHaveLength(1)
 			expect(textChunks[0].text).toBe("Test response")
 		})
+		it("should include reasoning_effort when reasoning effort is enabled", async () => {
+			const reasoningOptions: ApiHandlerOptions = {
+				...mockOptions,
+				enableReasoningEffort: true,
+				openAiCustomModelInfo: { contextWindow: 128_000, supportsPromptCache: false, reasoningEffort: "high" },
+			}
+			const reasoningHandler = new OpenAiHandler(reasoningOptions)
+			const stream = reasoningHandler.createMessage(systemPrompt, messages)
+			// Consume the stream to trigger the API call
+			for await (const _chunk of stream) {
+			}
+			// Assert the mockCreate was called with reasoning_effort
+			expect(mockCreate).toHaveBeenCalled()
+			const callArgs = mockCreate.mock.calls[0][0]
+			expect(callArgs.reasoning_effort).toBe("high")
+		})
+
+		it("should not include reasoning_effort when reasoning effort is disabled", async () => {
+			const noReasoningOptions: ApiHandlerOptions = {
+				...mockOptions,
+				enableReasoningEffort: false,
+				openAiCustomModelInfo: { contextWindow: 128_000, supportsPromptCache: false },
+			}
+			const noReasoningHandler = new OpenAiHandler(noReasoningOptions)
+			const stream = noReasoningHandler.createMessage(systemPrompt, messages)
+			// Consume the stream to trigger the API call
+			for await (const _chunk of stream) {
+			}
+			// Assert the mockCreate was called without reasoning_effort
+			expect(mockCreate).toHaveBeenCalled()
+			const callArgs = mockCreate.mock.calls[0][0]
+			expect(callArgs.reasoning_effort).toBeUndefined()
+		})
 	})
 
 	describe("error handling", () => {
@@ -176,7 +211,7 @@ describe("OpenAiHandler", () => {
 			const stream = handler.createMessage("system prompt", testMessages)
 
 			await expect(async () => {
-				for await (const chunk of stream) {
+				for await (const _chunk of stream) {
 					// Should not reach here
 				}
 			}).rejects.toThrow("API Error")
@@ -191,7 +226,7 @@ describe("OpenAiHandler", () => {
 			const stream = handler.createMessage("system prompt", testMessages)
 
 			await expect(async () => {
-				for await (const chunk of stream) {
+				for await (const _chunk of stream) {
 					// Should not reach here
 				}
 			}).rejects.toThrow("Rate limit exceeded")
@@ -202,10 +237,13 @@ describe("OpenAiHandler", () => {
 		it("should complete prompt successfully", async () => {
 			const result = await handler.completePrompt("Test prompt")
 			expect(result).toBe("Test response")
-			expect(mockCreate).toHaveBeenCalledWith({
-				model: mockOptions.openAiModelId,
-				messages: [{ role: "user", content: "Test prompt" }],
-			})
+			expect(mockCreate).toHaveBeenCalledWith(
+				{
+					model: mockOptions.openAiModelId,
+					messages: [{ role: "user", content: "Test prompt" }],
+				},
+				{},
+			)
 		})
 
 		it("should handle API errors", async () => {
@@ -239,6 +277,153 @@ describe("OpenAiHandler", () => {
 			const model = handlerWithoutModel.getModel()
 			expect(model.id).toBe("")
 			expect(model.info).toBeDefined()
+		})
+	})
+
+	describe("Azure AI Inference Service", () => {
+		const azureOptions = {
+			...mockOptions,
+			openAiBaseUrl: "https://test.services.ai.azure.com",
+			openAiModelId: "deepseek-v3",
+			azureApiVersion: "2024-05-01-preview",
+		}
+
+		it("should initialize with Azure AI Inference Service configuration", () => {
+			const azureHandler = new OpenAiHandler(azureOptions)
+			expect(azureHandler).toBeInstanceOf(OpenAiHandler)
+			expect(azureHandler.getModel().id).toBe(azureOptions.openAiModelId)
+		})
+
+		it("should handle streaming responses with Azure AI Inference Service", async () => {
+			const azureHandler = new OpenAiHandler(azureOptions)
+			const systemPrompt = "You are a helpful assistant."
+			const messages: Anthropic.Messages.MessageParam[] = [
+				{
+					role: "user",
+					content: "Hello!",
+				},
+			]
+
+			const stream = azureHandler.createMessage(systemPrompt, messages)
+			const chunks: any[] = []
+			for await (const chunk of stream) {
+				chunks.push(chunk)
+			}
+
+			expect(chunks.length).toBeGreaterThan(0)
+			const textChunks = chunks.filter((chunk) => chunk.type === "text")
+			expect(textChunks).toHaveLength(1)
+			expect(textChunks[0].text).toBe("Test response")
+
+			// Verify the API call was made with correct Azure AI Inference Service path
+			expect(mockCreate).toHaveBeenCalledWith(
+				{
+					model: azureOptions.openAiModelId,
+					messages: [
+						{ role: "system", content: systemPrompt },
+						{ role: "user", content: "Hello!" },
+					],
+					stream: true,
+					stream_options: { include_usage: true },
+					temperature: 0,
+				},
+				{ path: "/models/chat/completions" },
+			)
+		})
+
+		it("should handle non-streaming responses with Azure AI Inference Service", async () => {
+			const azureHandler = new OpenAiHandler({
+				...azureOptions,
+				openAiStreamingEnabled: false,
+			})
+			const systemPrompt = "You are a helpful assistant."
+			const messages: Anthropic.Messages.MessageParam[] = [
+				{
+					role: "user",
+					content: "Hello!",
+				},
+			]
+
+			const stream = azureHandler.createMessage(systemPrompt, messages)
+			const chunks: any[] = []
+			for await (const chunk of stream) {
+				chunks.push(chunk)
+			}
+
+			expect(chunks.length).toBeGreaterThan(0)
+			const textChunk = chunks.find((chunk) => chunk.type === "text")
+			const usageChunk = chunks.find((chunk) => chunk.type === "usage")
+
+			expect(textChunk).toBeDefined()
+			expect(textChunk?.text).toBe("Test response")
+			expect(usageChunk).toBeDefined()
+			expect(usageChunk?.inputTokens).toBe(10)
+			expect(usageChunk?.outputTokens).toBe(5)
+
+			// Verify the API call was made with correct Azure AI Inference Service path
+			expect(mockCreate).toHaveBeenCalledWith(
+				{
+					model: azureOptions.openAiModelId,
+					messages: [
+						{ role: "user", content: systemPrompt },
+						{ role: "user", content: "Hello!" },
+					],
+				},
+				{ path: "/models/chat/completions" },
+			)
+		})
+
+		it("should handle completePrompt with Azure AI Inference Service", async () => {
+			const azureHandler = new OpenAiHandler(azureOptions)
+			const result = await azureHandler.completePrompt("Test prompt")
+			expect(result).toBe("Test response")
+			expect(mockCreate).toHaveBeenCalledWith(
+				{
+					model: azureOptions.openAiModelId,
+					messages: [{ role: "user", content: "Test prompt" }],
+				},
+				{ path: "/models/chat/completions" },
+			)
+		})
+	})
+
+	describe("Grok xAI Provider", () => {
+		const grokOptions = {
+			...mockOptions,
+			openAiBaseUrl: "https://api.x.ai/v1",
+			openAiModelId: "grok-1",
+		}
+
+		it("should initialize with Grok xAI configuration", () => {
+			const grokHandler = new OpenAiHandler(grokOptions)
+			expect(grokHandler).toBeInstanceOf(OpenAiHandler)
+			expect(grokHandler.getModel().id).toBe(grokOptions.openAiModelId)
+		})
+
+		it("should exclude stream_options when streaming with Grok xAI", async () => {
+			const grokHandler = new OpenAiHandler(grokOptions)
+			const systemPrompt = "You are a helpful assistant."
+			const messages: Anthropic.Messages.MessageParam[] = [
+				{
+					role: "user",
+					content: "Hello!",
+				},
+			]
+
+			const stream = grokHandler.createMessage(systemPrompt, messages)
+			await stream.next()
+
+			expect(mockCreate).toHaveBeenCalledWith(
+				expect.objectContaining({
+					model: grokOptions.openAiModelId,
+					stream: true,
+				}),
+				{},
+			)
+
+			const mockCalls = mockCreate.mock.calls
+			const lastCall = mockCalls[mockCalls.length - 1]
+			expect(lastCall[0]).not.toHaveProperty("stream_options")
 		})
 	})
 })

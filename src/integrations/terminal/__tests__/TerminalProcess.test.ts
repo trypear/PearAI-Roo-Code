@@ -2,7 +2,8 @@
 
 import * as vscode from "vscode"
 
-import { TerminalProcess, mergePromise } from "../TerminalProcess"
+import { mergePromise } from "../mergePromise"
+import { TerminalProcess } from "../TerminalProcess"
 import { Terminal } from "../Terminal"
 import { TerminalRegistry } from "../TerminalRegistry"
 
@@ -26,6 +27,10 @@ jest.mock("vscode", () => ({
 	ThemeIcon: jest.fn(),
 }))
 
+jest.mock("execa", () => ({
+	execa: jest.fn(),
+}))
+
 describe("TerminalProcess", () => {
 	let terminalProcess: TerminalProcess
 	let mockTerminal: jest.Mocked<
@@ -45,7 +50,7 @@ describe("TerminalProcess", () => {
 			shellIntegration: {
 				executeCommand: jest.fn(),
 			},
-			name: "Roo Code",
+			name: "Agent",
 			processId: Promise.resolve(123),
 			creationOptions: {},
 			exitStatus: undefined,
@@ -108,6 +113,9 @@ describe("TerminalProcess", () => {
 		})
 
 		it("handles terminals without shell integration", async () => {
+			// Temporarily suppress the expected console.warn for this test
+			const consoleWarnSpy = jest.spyOn(console, "warn").mockImplementation(() => {})
+
 			// Create a terminal without shell integration
 			const noShellTerminal = {
 				sendText: jest.fn(),
@@ -143,6 +151,9 @@ describe("TerminalProcess", () => {
 
 			// Verify sendText was called with the command
 			expect(noShellTerminal.sendText).toHaveBeenCalledWith("test command", true)
+
+			// Restore the original console.warn
+			consoleWarnSpy.mockRestore()
 		})
 
 		it("sets hot state for compiling commands", async () => {

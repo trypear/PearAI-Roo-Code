@@ -10,7 +10,7 @@
 		"forceConsistentCasingInFileNames": true,
 		"noFallthroughCasesInSwitch": true,
 		"module": "esnext",
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"noEmit": true,
@@ -18,6 +18,8 @@
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],
+			"@src/*": ["./src/*"],
+			"@roo/*": ["../src/*"],
 			"js-tiktoken/ranks/o200k_base": ["../node_modules/js-tiktoken/dist/ranks/o200k_base"]
 		},
 		"useUnknownInCatchVariables": false,

@@ -1,10 +1,10 @@
 import * as vscode from "vscode"
 import * as path from "path"
+
 import { listFiles } from "../../services/glob/list-files"
 import { ClineProvider } from "../../core/webview/ClineProvider"
 import { toRelativePath } from "../../utils/path"
 import { getWorkspacePath } from "../../utils/path"
-import { logger } from "../../utils/logging"
 
 const MAX_INITIAL_FILES = 1_000
 
@@ -60,21 +60,35 @@ class WorkspaceTracker {
 
 		this.disposables.push(watcher)
 
-		this.disposables.push(vscode.window.tabGroups.onDidChangeTabs(() => this.workspaceDidReset()))
+		// Listen for tab changes and call workspaceDidUpdate directly
+		this.disposables.push(
+			vscode.window.tabGroups.onDidChangeTabs(() => {
+				// Reset if workspace path has changed
+				if (this.prevWorkSpacePath !== this.cwd) {
+					this.workspaceDidReset()
+				} else {
+					// Otherwise just update
+					this.workspaceDidUpdate()
+				}
+			}),
+		)
 	}
 
 	private getOpenedTabsInfo() {
-		return vscode.window.tabGroups.all.flatMap((group) =>
-			group.tabs
-				.filter((tab) => tab.input instanceof vscode.TabInputText)
-				.map((tab) => {
-					const path = (tab.input as vscode.TabInputText).uri.fsPath
-					return {
+		return vscode.window.tabGroups.all.reduce(
+			(acc, group) => {
+				const groupTabs = group.tabs
+					.filter((tab) => tab.input instanceof vscode.TabInputText)
+					.map((tab) => ({
 						label: tab.label,
 						isActive: tab.isActive,
-						path: toRelativePath(path, this.cwd || ""),
-					}
-				}),
+						path: toRelativePath((tab.input as vscode.TabInputText).uri.fsPath, this.cwd || ""),
+					}))
+
+				groupTabs.forEach((tab) => (tab.isActive ? acc.unshift(tab) : acc.push(tab)))
+				return acc
+			},
+			[] as Array<{ label: string; isActive: boolean; path: string }>,
 		)
 	}
 
