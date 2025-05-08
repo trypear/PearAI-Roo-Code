@@ -44,14 +44,14 @@ export const registerPearListener = async () => {
 				// Wait a brief moment for UI to update
 				await new Promise((resolve) => setTimeout(resolve, 300))
 
-				let creatorModeConifig = {
+				let creatorModeConfig = {
 					creatorMode: msg.creatorMode,
 					newProjectType: msg.newProjectType,
 					newProjectPath: msg.newProjectPath,
 				}
 
 				// Initialize with task
-				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConifig)
+				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig)
 			}
 		})
 	} else {
