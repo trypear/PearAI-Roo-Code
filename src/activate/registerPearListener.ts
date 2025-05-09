@@ -1,8 +1,6 @@
 import * as vscode from "vscode"
 import { ClineProvider } from "../core/webview/ClineProvider"
 import { assert } from "../utils/util"
-import { CreatorModeConfig } from "../schemas"
-
 
 export const getPearaiExtension = async () => {
 	const pearAiExtension = vscode.extensions.getExtension("pearai.pearai")

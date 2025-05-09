@@ -1,26 +1,26 @@
 import { CodeBracketIcon } from "@heroicons/react/24/outline"
 import { Button } from "./button"
-import { DocumentTextIcon as SolidDocumentTextIcon } from "@heroicons/react/24/solid"
+import { DocumentTextIcon as SolidDocumentTextIcon, StopCircleIcon, StopIcon } from "@heroicons/react/24/solid"
 import { FC } from "react"
 import { cn } from "@/lib/utils"
 
 export type PlanningBarProps = {
   isGenerating?: boolean;
   requestedPlan: string;
-  nextCallback?: () => void;
+  stopCallback?: () => void;
   className?: string;
 };
 
 export const PlanningBar: FC<PlanningBarProps> = ({
   isGenerating,
   requestedPlan,
-  nextCallback,
+  stopCallback,
   className,
 }) => {
   return (
     <div
       className={cn(
-        "bg-[#161718] w-full rounded-full flex text-white justify-between min-w-64 h-10 gap-4 relative overflow-clip",
+        "bg-[#000] w-full rounded-full flex text-white justify-between min-w-64 h-10 gap-4 relative overflow-clip",
         className,
       )}
     >
@@ -38,26 +38,27 @@ export const PlanningBar: FC<PlanningBarProps> = ({
       </div>
 
       <div className="flex justify-center align-middle mr-2 gap-4">
-        <div className="my-auto">
+        <div className="m-auto flex gap-2">
+          <div className="flex my-auto">
           <Button
             variant="default"
             toggled
-            className="bg-black hover:bg-black rounded-r-none"
+            className="bg-black hover:bg-black rounded-r-none cursor-default"
           >
             <SolidDocumentTextIcon />
           </Button>
-          <Button className="rounded-r-none bg-blue-700/60 hover:bg-blue-700/60 ">
+          <Button className="rounded-l-none bg-blue-700/60 hover:bg-blue-700/60 cursor-default">
             <CodeBracketIcon />
           </Button>
+          </div>
+
+          <Button variant="default" className="my-auto">
+            Not Working?
+          </Button>
+          <Button className="my-auto bg-red-500/20 hover:bg-red-500/40" disabled={!isGenerating} onClick={stopCallback}>
+            <StopIcon className="fill-red-500"  />
+          </Button>
         </div>
-        <Button
-          size="default"
-          variant="secondary"
-          className="my-auto rounded-lg text-[0.9em] cursor-pointer"
-          onClick={nextCallback}
-        >
-          Next
-        </Button>
         {/* <ArrowTurnDownLeftIcon className="size-4" /> */}
       </div>
     </div>

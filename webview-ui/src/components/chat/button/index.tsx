@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils"
 // FROM: https://vscode.dev/github/trypear/pearai-submodule/blob/acorn/253-submodule-api-fixed/gui/src/pages/creator/ui/button/index.tsx#L1-L121
 // TODO: UI LIBRARY COMPONENT SHARING SHIZZ HERE!
 const buttonVariants = cva(
-	"inline-flex items-center justify-center gap-2 border-none whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#a1a1aa] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+	"inline-flex items-center justify-center gap-2 border-none whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[#a1a1aa] disabled:pointer-events-none cursor-pointer disabled:cursor-default disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
 	{
 		variants: {
 			variant: {
