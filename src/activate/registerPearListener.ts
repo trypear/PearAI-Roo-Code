@@ -14,6 +14,9 @@ export const getPearaiExtension = async () => {
 	return pearAiExtension
 }
 
+// TODO: SHOULD HAVE TYPE SYNCED WITH THE PEARAI SUBMODULE!
+type CreatorModeState = "OVERLAY_CLOSED" | "OVERLAY_OPEN" | "OVERLAY_CLOSED_CREATOR_ACTIVE"
+
 export const registerPearListener = async () => {
 	// Getting the pear ai extension instance
 	const pearAiExtension = await getPearaiExtension()
@@ -61,7 +64,20 @@ export const registerPearListener = async () => {
 		});
 		// If there's a creator event in the cache after the extensions were refreshed, we need to get it!
 		pearAiExtension.exports.pearAPI.creatorMode.triggerCachedCreatorEvent(true);
-		console.log("triggerCachedCreatorEvent CALLED!")
+
+		pearAiExtension.exports.pearAPI.creatorMode.onDidChangeCreatorModeState(async (state: CreatorModeState) => {
+			// Get the sidebar provider
+			const sidebarProvider = ClineProvider.getVisibleInstance();
+			
+			if (sidebarProvider) {
+				// Send a message to the webview that will trigger a window event
+				sidebarProvider.postMessageToWebview({
+					type: "creatorModeUpdate",
+					text: state,
+				});
+			}
+		});
+
 	} else {
 		console.error("⚠️⚠️ PearAI API not available in exports ⚠️⚠️")
 	}
