@@ -1239,7 +1239,11 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				overflow: "hidden",
 			}}>
 			{apiConfiguration?.creatorModeConfig?.creatorMode === true && (
-				<PlanningBar requestedPlan="YEET" isGenerating={isStreaming} />
+				<PlanningBar
+					requestedPlan={task?.text || ""}
+					isGenerating={isStreaming}
+					stopCallback={() => vscode.postMessage({ type: "cancelTask" })}
+				/>
 			)}
 			{task ? (
 				<>
