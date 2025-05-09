@@ -68,6 +68,7 @@ export interface ExtensionMessage {
 		| "acceptInput"
 		| "setHistoryPreviewCollapsed"
 		| "commandExecutionStatus"
+		| "creatorModeUpdate"
 	text?: string
 	action?:
 		| "chatButtonClicked"
