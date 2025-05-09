@@ -86,6 +86,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		private readonly outputChannel: vscode.OutputChannel,
 		private readonly renderContext: "sidebar" | "editor" = "sidebar",
 		public readonly contextProxy: ContextProxy,
+		private readonly isCreatorView: boolean = false,
 	) {
 		super()
 
@@ -113,6 +114,16 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			.catch((error) => {
 				this.log(`Failed to initialize MCP Hub: ${error}`)
 			})
+	}
+
+	public static getSidebarInstance(): ClineProvider | undefined {
+		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreatorView)
+
+		if (!sidebar?.view?.visible) {
+			vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+		}
+
+		return sidebar
 	}
 
 	// Adds a new Cline instance to clineStack, marking the start of a new task.
@@ -474,6 +485,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 				| "experiments"
 			>
 		> = {},
+		creatorMode?: boolean
 	) {
 		const {
 			apiConfiguration,
@@ -493,7 +505,12 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		const cline = new Cline({
 			provider: this,
-			apiConfiguration: { ...apiConfiguration, pearaiAgentModels: pearaiAgentModels },
+			apiConfiguration: {
+				...apiConfiguration,
+				...apiConfiguration, 
+				pearaiAgentModels: pearaiAgentModels
+				creatorMode,
+			},
 			customInstructions: effectiveInstructions,
 			enableDiff,
 			enableCheckpoints,
