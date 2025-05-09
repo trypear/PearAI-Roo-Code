@@ -49,7 +49,7 @@ import {
 	vscInputBorder,
 	vscSidebarBorder,
 } from "../ui"
-import { CreatorModeBar } from "./CreatorModeBar"
+import { PlanningBar } from "./PlanningBar"
 
 import SystemPromptWarning from "./SystemPromptWarning"
 import { usePearAIModels } from "@/hooks/usePearAIModels"
@@ -1239,7 +1239,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				overflow: "hidden",
 			}}>
 			{apiConfiguration?.creatorModeConfig?.creatorMode === true && (
-				<CreatorModeBar requestedPlan="YEET" isGenerating={isStreaming} />
+				<PlanningBar requestedPlan="YEET" isGenerating={isStreaming} />
 			)}
 			{task ? (
 				<>
