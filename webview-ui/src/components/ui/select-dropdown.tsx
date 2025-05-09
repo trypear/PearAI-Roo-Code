@@ -117,14 +117,17 @@ export const SelectDropdown = React.memo(
 
 			// Filter options based on search value using memoized Fzf instance
 			const filteredOptions = React.useMemo(() => {
-				// If no search value, return all options without filtering
-				if (!searchValue) return options
+				// First filter out the project-manager option
+				const filteredByLabel = options.filter(option => option.label !== "🍐 project-manager")
+
+				// If no search value, return filtered options
+				if (!searchValue) return filteredByLabel
 
 				// Get fuzzy matching items - only perform search if we have a search value
 				const matchingItems = fzfInstance.find(searchValue).map((result) => result.item.original)
 
 				// Always include separators and shortcuts
-				return options.filter((option) => {
+				return filteredByLabel.filter((option) => {
 					if (option.type === DropdownOptionType.SEPARATOR || option.type === DropdownOptionType.SHORTCUT) {
 						return true
 					}
