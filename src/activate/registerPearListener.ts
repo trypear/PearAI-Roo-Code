@@ -24,38 +24,46 @@ export const registerPearListener = async () => {
 	if (pearAiExtension.exports) {
 		pearAiExtension.exports.pearAPI.creatorMode.onDidRequestExecutePlan(async (msg: any) => {
 			console.dir(`onDidRequestNewTask triggered with: ${JSON.stringify(msg)}`)
-
 			// Get the sidebar provider
-			const sidebarProvider = ClineProvider.getSidebarInstance()
+			let sidebarProvider = ClineProvider.getVisibleInstance()
 
-			if (sidebarProvider) {
-				// Focus the sidebar first
-				await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
-
-				// Wait for the view to be ready using a helper function
-				await ensureViewIsReady(sidebarProvider)
-
-				if (msg.creatorModeConfig?.creatorMode) {
-					// Switch to creator mode
-					await sidebarProvider.handleModeSwitch("creator")
-					await sidebarProvider.postStateToWebview()
-				}
-				// Navigate to chat view
-				await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
-
-				// Wait a brief moment for UI to update
-				await new Promise((resolve) => setTimeout(resolve, 300))
-
-				let creatorModeConfig = {
-					creatorMode: msg.creatorMode,
-					newProjectType: msg.newProjectType,
-					newProjectPath: msg.newProjectPath,
-				} satisfies CreatorModeConfig;
-
-				// Initialize with task
-				await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig)
+			// TODO: LOOK INTO THIS - THIS IS A JANKY FIX AND IT FEELS LIKE THIS IS TEMPERAMENTAL
+			while (!sidebarProvider) {
+				await new Promise((resolve) => setTimeout(resolve, 500))
+				sidebarProvider = ClineProvider.getVisibleInstance()
 			}
-		})
+
+			// Focus the sidebar first
+			await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+
+			// Wait for the view to be ready using a helper function
+			await ensureViewIsReady(sidebarProvider)
+
+			if (msg.creatorModeConfig?.creatorMode) {
+				// Switch to creator mode
+				await sidebarProvider.handleModeSwitch("creator")
+				await sidebarProvider.postStateToWebview()
+			}
+			// Navigate to chat view
+			await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+
+			// Wait a brief moment for UI to update
+			await new Promise((resolve) => setTimeout(resolve, 300))
+
+			let creatorModeConfig = {
+				creatorMode: true,
+				newProjectType: msg.newProjectType,
+				newProjectPath: msg.newProjectPath,
+			}
+
+			console.log('Called init with taskk', msg.plan, undefined, undefined, undefined, creatorModeConfig);
+
+			// Initialize with task
+			await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig);
+		});
+		// If there's a creator event in the cache after the extensions were refreshed, we need to get it!
+		pearAiExtension.exports.pearAPI.creatorMode.triggerCachedCreatorEvent(true);
+		console.log("triggerCachedCreatorEvent CALLED!")
 	} else {
 		console.error("⚠️⚠️ PearAI API not available in exports ⚠️⚠️")
 	}
