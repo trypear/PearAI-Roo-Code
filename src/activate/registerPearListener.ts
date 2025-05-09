@@ -39,25 +39,21 @@ export const registerPearListener = async () => {
 
 			// Wait for the view to be ready using a helper function
 			await ensureViewIsReady(sidebarProvider)
-
-			if (msg.creatorModeConfig?.creatorMode) {
-				// Switch to creator mode
-				await sidebarProvider.handleModeSwitch("creator")
-				await sidebarProvider.postStateToWebview()
-			}
-			// Navigate to chat view
-			await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
-
 			// Wait a brief moment for UI to update
 			await new Promise((resolve) => setTimeout(resolve, 300))
 
-			let creatorModeConfig = {
+			// * This does actually work but the UI update does not happen. This method calls this.postStateToWebview() so not sure what is going on - James
+			await sidebarProvider.handleModeSwitch("Creator")
+
+			// Clicl the chat btn
+			await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+
+			const creatorModeConfig = {
 				creatorMode: true,
 				newProjectType: msg.newProjectType,
 				newProjectPath: msg.newProjectPath,
 			}
 
-			console.log('Called init with taskk', msg.plan, undefined, undefined, undefined, creatorModeConfig);
 
 			// Initialize with task
 			await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig);
