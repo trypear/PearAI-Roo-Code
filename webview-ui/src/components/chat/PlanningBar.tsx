@@ -27,10 +27,10 @@ export const PlanningBar: FC<PlanningBarProps> = ({
     >
       {/* {isGenerating && <div className="absolute inset-0 rainbow-border-glow" />} */}
       <div className="flex-1 flex h-full align-middle ml-5 gap-4 relative overflow-hidden">
-        <div className="relative h-full my-auto mr-1 flex-shrink-0">
+        <div className="relative h-full my-auto mr-1 flex-shrink-0 min-w-4">
           <div className={`circle ${isGenerating ? "animated-circle" : ""}`} />
         </div>
-        <div className="my-auto text-sm flex-shrink-0">Planning</div>
+        <div className="my-auto text-sm flex-shrink-0">Creating</div>
         <div className="relative my-auto min-w-0 flex-shrink overflow-hidden max-w-64">
           <div className="text-muted-foreground text-sm truncate">
             {requestedPlan}
