@@ -38,6 +38,7 @@ import { buildApiHandler } from "../../api"
 import { GlobalState } from "../../schemas"
 import { MultiSearchReplaceDiffStrategy } from "../diff/strategies/multi-search-replace"
 import { getModels } from "../../api/providers/fetchers/cache"
+import { getpearAIExports } from "../../activate/registerPearListener"
 
 export const webviewMessageHandler = async (provider: ClineProvider, message: WebviewMessage) => {
 	// Utility functions provided for concise get/update of global state via contextProxy API.
@@ -1268,6 +1269,14 @@ export const webviewMessageHandler = async (provider: ClineProvider, message: We
 					),
 				),
 			)
+			break
+		case "openPearAICreatorFeedbackOverlay":
+			const pearAIExports = await getpearAIExports();
+			const currentCline = provider.getCurrentCline();
+			
+			
+			// Open the feedback form with the chat history
+			pearAIExports.pearAPI.creatorMode.openFeedbackForm(currentCline?.clineMessages || []);
 			break
 	}
 }

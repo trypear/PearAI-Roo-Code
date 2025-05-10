@@ -14,69 +14,73 @@ export const getPearaiExtension = async () => {
 	return pearAiExtension
 }
 
+// TODO: TYPES
+export const getpearAIExports = async () => {
+	const pearAiExtension = await getPearaiExtension()
+
+	assert(!!pearAiExtension.exports, "⚠️⚠️ Error, no PearAI Exports could be found :( ⚠️⚠️");
+
+	return pearAiExtension.exports;
+}
+
 // TODO: SHOULD HAVE TYPE SYNCED WITH THE PEARAI SUBMODULE!
 type CreatorModeState = "OVERLAY_CLOSED" | "OVERLAY_OPEN" | "OVERLAY_CLOSED_CREATOR_ACTIVE"
 
 export const registerPearListener = async () => {
 	// Getting the pear ai extension instance
-	const pearAiExtension = await getPearaiExtension()
+	const exports = await getpearAIExports()
 
-	// Access the API directly from exports
-	if (pearAiExtension.exports) {
-		pearAiExtension.exports.pearAPI.creatorMode.onDidRequestExecutePlan(async (msg: any) => {
-			console.dir(`onDidRequestNewTask triggered with: ${JSON.stringify(msg)}`)
-			// Get the sidebar provider
-			let sidebarProvider = ClineProvider.getVisibleInstance()
+	exports.pearAPI.creatorMode.onDidRequestExecutePlan(async (msg: any) => {
+		console.dir(`onDidRequestNewTask triggered with: ${JSON.stringify(msg)}`)
+		// Get the sidebar provider
+		let sidebarProvider = ClineProvider.getVisibleInstance()
 
-			// TODO: LOOK INTO THIS - THIS IS A JANKY FIX AND IT FEELS LIKE THIS IS TEMPERAMENTAL
-			while (!sidebarProvider) {
-				await new Promise((resolve) => setTimeout(resolve, 500))
-				sidebarProvider = ClineProvider.getVisibleInstance()
-			}
+		// TODO: LOOK INTO THIS - THIS IS A JANKY FIX AND IT FEELS LIKE THIS IS TEMPERAMENTAL
+		while (!sidebarProvider) {
+			await new Promise((resolve) => setTimeout(resolve, 500))
+			sidebarProvider = ClineProvider.getVisibleInstance()
+		}
 
-			// Focus the sidebar first
-			await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+		// Focus the sidebar first
+		await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
 
-			// Wait for the view to be ready using a helper function
-			await ensureViewIsReady(sidebarProvider)
-			// Wait a brief moment for UI to update
-			await new Promise((resolve) => setTimeout(resolve, 300))
+		// Wait for the view to be ready using a helper function
+		await ensureViewIsReady(sidebarProvider)
+		// Wait a brief moment for UI to update
+		await new Promise((resolve) => setTimeout(resolve, 300))
 
-			// * This does actually work but the UI update does not happen. This method calls this.postStateToWebview() so not sure what is going on - James
-			await sidebarProvider.handleModeSwitch("Creator")
+		// * This does actually work but the UI update does not happen. This method calls this.postStateToWebview() so not sure what is going on - James
+		await sidebarProvider.handleModeSwitch("Creator")
 
-			// Clicl the chat btn
-			await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+		// Clicl the chat btn
+		await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 
-			const creatorModeConfig = {
-				creatorMode: true,
-				newProjectType: msg.newProjectType,
-				newProjectPath: msg.newProjectPath,
-			}
+		const creatorModeConfig = {
+			creatorMode: true,
+			newProjectType: msg.newProjectType,
+			newProjectPath: msg.newProjectPath,
+		}
 
 
-			// Initialize with task
-			await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig);
-		});
-		// If there's a creator event in the cache after the extensions were refreshed, we need to get it!
-		pearAiExtension.exports.pearAPI.creatorMode.triggerCachedCreatorEvent(true);
+		// Initialize with task
+		await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig);
+	});
+	// If there's a creator event in the cache after the extensions were refreshed, we need to get it!
+	exports.pearAPI.creatorMode.triggerCachedCreatorEvent(true);
 
-		pearAiExtension.exports.pearAPI.creatorMode.onDidChangeCreatorModeState(async (state: CreatorModeState) => {
-			// Get the sidebar provider
-			const sidebarProvider = ClineProvider.getVisibleInstance();
-			
-			if (sidebarProvider) {
-				// Send a message to the webview that will trigger a window event
-				sidebarProvider.postMessageToWebview({
-					type: "creatorModeUpdate",
-					text: state,
-				});
-			}
-		});
+	exports.pearAPI.creatorMode.onDidChangeCreatorModeState(async (state: CreatorModeState) => {
+		// Get the sidebar provider
+		const sidebarProvider = ClineProvider.getVisibleInstance();
+		
+		if (sidebarProvider) {
+			// Send a message to the webview that will trigger a window event
+			sidebarProvider.postMessageToWebview({
+				type: "creatorModeUpdate",
+				text: state,
+			});
+		}
+	});
 
-	} else {
-		console.error("⚠️⚠️ PearAI API not available in exports ⚠️⚠️")
-	}
 }
 
 // TODO: decide if this is needed

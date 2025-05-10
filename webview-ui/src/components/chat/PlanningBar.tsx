@@ -3,6 +3,7 @@ import { Button } from "./button"
 import { DocumentTextIcon as SolidDocumentTextIcon, StopCircleIcon, StopIcon } from "@heroicons/react/24/solid"
 import { FC } from "react"
 import { cn } from "@/lib/utils"
+import { vscode } from "@src/utils/vscode"
 
 export type PlanningBarProps = {
   isGenerating?: boolean;
@@ -52,7 +53,7 @@ export const PlanningBar: FC<PlanningBarProps> = ({
           </Button>
           </div>
 
-          <Button variant="default" className="my-auto">
+          <Button variant="default" className="my-auto" onClick={() => vscode.postMessage({ type: "openPearAICreatorFeedbackOverlay" })}>
             Not Working?
           </Button>
           <Button className="my-auto bg-red-500/20 hover:bg-red-500/40" disabled={!isGenerating} onClick={stopCallback}>
