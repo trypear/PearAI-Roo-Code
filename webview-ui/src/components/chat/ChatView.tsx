@@ -49,6 +49,7 @@ import {
 	vscInputBorder,
 	vscSidebarBorder,
 } from "../ui"
+import { PlanningBar } from "./PlanningBar"
 
 import SystemPromptWarning from "./SystemPromptWarning"
 import { usePearAIModels } from "@/hooks/usePearAIModels"
@@ -96,7 +97,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		customModes,
 		telemetrySetting,
 		hasSystemPromptOverride,
-		historyPreviewCollapsed, // Added historyPreviewCollapsed
+		historyPreviewCollapsed,
+		creatorModeConfig,
 	} = useExtensionState()
 
 	const { tasks } = useTaskSearch()
@@ -158,182 +160,6 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	function playTts(text: string) {
 		vscode.postMessage({ type: "playTts", text })
 	}
-
-	useDeepCompareEffect(() => {
-		// if last message is an ask, show user ask UI
-		// if user finished a task, then start a new task with a new conversation history since in this moment that the extension is waiting for user response, the user could close the extension and the conversation history would be lost.
-		// basically as long as a task is active, the conversation history will be persisted
-		if (lastMessage) {
-			switch (lastMessage.type) {
-				case "ask":
-					const isPartial = lastMessage.partial === true
-					switch (lastMessage.ask) {
-						case "api_req_failed":
-							playSound("progress_loop")
-							setTextAreaDisabled(true)
-							setClineAsk("api_req_failed")
-							setEnableButtons(true)
-							setPrimaryButtonText(t("chat:retry.title"))
-							setSecondaryButtonText(t("chat:startNewTask.title"))
-							break
-						case "mistake_limit_reached":
-							playSound("progress_loop")
-							setTextAreaDisabled(false)
-							setClineAsk("mistake_limit_reached")
-							setEnableButtons(true)
-							setPrimaryButtonText(t("chat:proceedAnyways.title"))
-							setSecondaryButtonText(t("chat:startNewTask.title"))
-							break
-						case "followup":
-							if (!isPartial) {
-								playSound("notification")
-							}
-							setTextAreaDisabled(isPartial)
-							setClineAsk("followup")
-							// setting enable buttons to `false` would trigger a focus grab when
-							// the text area is enabled which is undesirable.
-							// We have no buttons for this tool, so no problem having them "enabled"
-							// to workaround this issue.  See #1358.
-							setEnableButtons(true)
-							setPrimaryButtonText(undefined)
-							setSecondaryButtonText(undefined)
-							break
-						case "tool":
-							if (!isAutoApproved(lastMessage) && !isPartial) {
-								playSound("notification")
-							}
-							setTextAreaDisabled(isPartial)
-							setClineAsk("tool")
-							setEnableButtons(!isPartial)
-							const tool = JSON.parse(lastMessage.text || "{}") as ClineSayTool
-							switch (tool.tool) {
-								case "editedExistingFile":
-								case "appliedDiff":
-								case "newFileCreated":
-								case "insertContent":
-									setPrimaryButtonText(t("chat:save.title"))
-									setSecondaryButtonText(t("chat:reject.title"))
-									break
-								case "finishTask":
-									setPrimaryButtonText(t("chat:completeSubtaskAndReturn"))
-									setSecondaryButtonText(undefined)
-									break
-								default:
-									setPrimaryButtonText(t("chat:approve.title"))
-									setSecondaryButtonText(t("chat:reject.title"))
-									break
-							}
-							break
-						case "browser_action_launch":
-							if (!isAutoApproved(lastMessage) && !isPartial) {
-								playSound("notification")
-							}
-							setTextAreaDisabled(isPartial)
-							setClineAsk("browser_action_launch")
-							setEnableButtons(!isPartial)
-							setPrimaryButtonText(t("chat:approve.title"))
-							setSecondaryButtonText(t("chat:reject.title"))
-							break
-						case "command":
-							if (!isAutoApproved(lastMessage) && !isPartial) {
-								playSound("notification")
-							}
-							setTextAreaDisabled(isPartial)
-							setClineAsk("command")
-							setEnableButtons(!isPartial)
-							setPrimaryButtonText(t("chat:runCommand.title"))
-							setSecondaryButtonText(t("chat:reject.title"))
-							break
-						case "command_output":
-							setTextAreaDisabled(false)
-							setClineAsk("command_output")
-							setEnableButtons(true)
-							setPrimaryButtonText(t("chat:proceedWhileRunning.title"))
-							setSecondaryButtonText(t("chat:killCommand.title"))
-							break
-						case "use_mcp_server":
-							if (!isAutoApproved(lastMessage) && !isPartial) {
-								playSound("notification")
-							}
-							setTextAreaDisabled(isPartial)
-							setClineAsk("use_mcp_server")
-							setEnableButtons(!isPartial)
-							setPrimaryButtonText(t("chat:approve.title"))
-							setSecondaryButtonText(t("chat:reject.title"))
-							break
-						case "completion_result":
-							// extension waiting for feedback. but we can just present a new task button
-							if (!isPartial) {
-								playSound("celebration")
-							}
-							setTextAreaDisabled(isPartial)
-							setClineAsk("completion_result")
-							setEnableButtons(!isPartial)
-							setPrimaryButtonText(t("chat:startNewTask.title"))
-							setSecondaryButtonText(undefined)
-							break
-						case "resume_task":
-							if (!isAutoApproved(lastMessage) && !isPartial) {
-								playSound("notification")
-							}
-							setTextAreaDisabled(false)
-							setClineAsk("resume_task")
-							setEnableButtons(true)
-							setPrimaryButtonText(t("chat:resumeTask.title"))
-							setSecondaryButtonText(t("chat:terminate.title"))
-							setDidClickCancel(false) // special case where we reset the cancel button state
-							break
-						case "resume_completed_task":
-							if (!isPartial) {
-								playSound("celebration")
-							}
-							setTextAreaDisabled(false)
-							setClineAsk("resume_completed_task")
-							setEnableButtons(true)
-							setPrimaryButtonText(t("chat:startNewTask.title"))
-							setSecondaryButtonText(undefined)
-							setDidClickCancel(false)
-							break
-					}
-					break
-				case "say":
-					// Don't want to reset since there could be a "say" after
-					// an "ask" while ask is waiting for response.
-					switch (lastMessage.say) {
-						case "api_req_retry_delayed":
-							setTextAreaDisabled(true)
-							break
-						case "api_req_started":
-							if (secondLastMessage?.ask === "command_output") {
-								// If the last ask is a command_output, and we
-								// receive an api_req_started, then that means
-								// the command has finished and we don't need
-								// input from the user anymore (in every other
-								// case, the user has to interact with input
-								// field or buttons to continue, which does the
-								// following automatically).
-								setInputValue("")
-								setTextAreaDisabled(true)
-								setSelectedImages([])
-								setClineAsk(undefined)
-								setEnableButtons(false)
-							}
-							break
-						case "api_req_finished":
-						case "error":
-						case "text":
-						case "browser_action":
-						case "browser_action_result":
-						case "command_output":
-						case "mcp_server_request_started":
-						case "mcp_server_response":
-						case "completion_result":
-							break
-					}
-					break
-			}
-		}
-	}, [lastMessage, secondLastMessage])
 
 	useEffect(() => {
 		if (messages.length === 0) {
@@ -850,6 +676,182 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	)
 
 	useEffect(() => {
+		// if last message is an ask, show user ask UI
+		// if user finished a task, then start a new task with a new conversation history since in this moment that the extension is waiting for user response, the user could close the extension and the conversation history would be lost.
+		// basically as long as a task is active, the conversation history will be persisted
+		if (lastMessage) {
+			switch (lastMessage.type) {
+				case "ask":
+					const isPartial = lastMessage.partial === true
+					switch (lastMessage.ask) {
+						case "api_req_failed":
+							playSound("progress_loop")
+							setTextAreaDisabled(true)
+							setClineAsk("api_req_failed")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:retry.title"))
+							setSecondaryButtonText(t("chat:startNewTask.title"))
+							break
+						case "mistake_limit_reached":
+							playSound("progress_loop")
+							setTextAreaDisabled(false)
+							setClineAsk("mistake_limit_reached")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:proceedAnyways.title"))
+							setSecondaryButtonText(t("chat:startNewTask.title"))
+							break
+						case "followup":
+							if (!isPartial) {
+								playSound("notification")
+							}
+							setTextAreaDisabled(isPartial)
+							setClineAsk("followup")
+							// setting enable buttons to `false` would trigger a focus grab when
+							// the text area is enabled which is undesirable.
+							// We have no buttons for this tool, so no problem having them "enabled"
+							// to workaround this issue.  See #1358.
+							setEnableButtons(true)
+							setPrimaryButtonText(undefined)
+							setSecondaryButtonText(undefined)
+							break
+						case "tool":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setTextAreaDisabled(isPartial)
+							setClineAsk("tool")
+							setEnableButtons(!isPartial)
+							const tool = JSON.parse(lastMessage.text || "{}") as ClineSayTool
+							switch (tool.tool) {
+								case "editedExistingFile":
+								case "appliedDiff":
+								case "newFileCreated":
+								case "insertContent":
+									setPrimaryButtonText(t("chat:save.title"))
+									setSecondaryButtonText(t("chat:reject.title"))
+									break
+								case "finishTask":
+									setPrimaryButtonText(t("chat:completeSubtaskAndReturn"))
+									setSecondaryButtonText(undefined)
+									break
+								default:
+									setPrimaryButtonText(t("chat:approve.title"))
+									setSecondaryButtonText(t("chat:reject.title"))
+									break
+							}
+							break
+						case "browser_action_launch":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setTextAreaDisabled(isPartial)
+							setClineAsk("browser_action_launch")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText(t("chat:approve.title"))
+							setSecondaryButtonText(t("chat:reject.title"))
+							break
+						case "command":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setTextAreaDisabled(isPartial)
+							setClineAsk("command")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText(t("chat:runCommand.title"))
+							setSecondaryButtonText(t("chat:reject.title"))
+							break
+						case "command_output":
+							setTextAreaDisabled(false)
+							setClineAsk("command_output")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:proceedWhileRunning.title"))
+							setSecondaryButtonText(t("chat:killCommand.title"))
+							break
+						case "use_mcp_server":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setTextAreaDisabled(isPartial)
+							setClineAsk("use_mcp_server")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText(t("chat:approve.title"))
+							setSecondaryButtonText(t("chat:reject.title"))
+							break
+						case "completion_result":
+							// extension waiting for feedback. but we can just present a new task button
+							if (!isPartial) {
+								playSound("celebration")
+							}
+							setTextAreaDisabled(isPartial)
+							setClineAsk("completion_result")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText(t("chat:startNewTask.title"))
+							setSecondaryButtonText(undefined)
+							break
+						case "resume_task":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setTextAreaDisabled(false)
+							setClineAsk("resume_task")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:resumeTask.title"))
+							setSecondaryButtonText(t("chat:terminate.title"))
+							setDidClickCancel(false) // special case where we reset the cancel button state
+							break
+						case "resume_completed_task":
+							if (!isPartial) {
+								playSound("celebration")
+							}
+							setTextAreaDisabled(false)
+							setClineAsk("resume_completed_task")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:startNewTask.title"))
+							setSecondaryButtonText(undefined)
+							setDidClickCancel(false)
+							break
+					}
+					break
+				case "say":
+					// Don't want to reset since there could be a "say" after
+					// an "ask" while ask is waiting for response.
+					switch (lastMessage.say) {
+						case "api_req_retry_delayed":
+							setTextAreaDisabled(true)
+							break
+						case "api_req_started":
+							if (secondLastMessage?.ask === "command_output") {
+								// If the last ask is a command_output, and we
+								// receive an api_req_started, then that means
+								// the command has finished and we don't need
+								// input from the user anymore (in every other
+								// case, the user has to interact with input
+								// field or buttons to continue, which does the
+								// following automatically).
+								setInputValue("")
+								setTextAreaDisabled(true)
+								setSelectedImages([])
+								setClineAsk(undefined)
+								setEnableButtons(false)
+							}
+							break
+						case "api_req_finished":
+						case "error":
+						case "text":
+						case "browser_action":
+						case "browser_action_result":
+						case "command_output":
+						case "mcp_server_request_started":
+						case "mcp_server_response":
+						case "completion_result":
+							break
+					}
+					break
+			}
+		}
+	}, [lastMessage, secondLastMessage, isAutoApproved, t])
+
+	useEffect(() => {
 		// This ensures the first message is not read, future user messages are
 		// labeled as `user_feedback`.
 		if (lastMessage && messages.length > 1) {
@@ -1237,6 +1239,13 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				flexDirection: "column",
 				overflow: "hidden",
 			}}>
+			{creatorModeConfig?.creatorMode === true && (
+				<PlanningBar
+					requestedPlan={task?.text || ""}
+					isGenerating={isStreaming}
+					stopCallback={() => vscode.postMessage({ type: "cancelTask" })}
+				/>
+			)}
 			{task ? (
 				<>
 					<TaskHeader

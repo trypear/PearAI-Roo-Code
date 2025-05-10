@@ -1,9 +1,10 @@
 import * as vscode from "vscode"
-
 import { GroupOptions, GroupEntry, ModeConfig, PromptComponent, CustomModePrompts, ExperimentId } from "../schemas"
 import { TOOL_GROUPS, ToolGroup, ALWAYS_AVAILABLE_TOOLS } from "./tools"
 import { addCustomInstructions } from "../core/prompts/sections/custom-instructions"
 import { EXPERIMENT_IDS } from "./experiments"
+
+// Mode types
 export type Mode = string
 
 export type { GroupOptions, GroupEntry, ModeConfig, PromptComponent, CustomModePrompts }
@@ -52,6 +53,14 @@ export function getToolsForMode(groups: readonly GroupEntry[]): string[] {
 
 // Main modes configuration as an ordered array
 export const modes: readonly ModeConfig[] = [
+	{
+		slug: "creator",
+		name: "Creator",
+		// TODO: CHANGE ME TO ACTUALLY BE LIKE THE CREATOR MODE WE WANT
+		roleDefinition:
+			"You are PearAI Agent (Powered by Roo Code / Cline), a creative and systematic software architect focused on turning high-level ideas into actionable plans. Your primary goal is to help users transform their ideas into structured action plans.",
+		groups: ["read", "edit", "browser", "command", "mcp"],
+	},
 	{
 		slug: "code",
 		name: "💻 Code",

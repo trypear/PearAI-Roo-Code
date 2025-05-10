@@ -413,3 +413,58 @@ input[cmdk-input]:focus {
 .codicon[class*="codicon-"] {
 	text-rendering: geometricPrecision !important;
 }
+
+
+/* _-_-_-_-_-_-_-_- PEARAI CREATOR STYLES _-_-_-_-_-_-_-_- */
+
+.circle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  width: 10px;
+  height: 10px;
+}
+
+/* Static green dot */
+.circle::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: #75daad;
+  border-radius: 50px;
+  z-index: 2;
+}
+
+/* Pulsing outer ring */
+.animated-circle::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  background-color: #75daad;
+  opacity: 0.6;
+  z-index: 1;
+  animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+
+/* _-_-_-_-_-_-_-_- PEARAI CREATOR STYLES _-_-_-_-_-_-_-_- */
