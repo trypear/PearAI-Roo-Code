@@ -540,7 +540,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		return cline
 	}
 
-	public async initClineWithHistoryItem(historyItem: HistoryItem & { rootTask?: Cline; parentTask?: Cline }) {
+	public async initClineWithHistoryItem(
+		historyItem: HistoryItem & { rootTask?: Cline; parentTask?: Cline },
+		options?: { creatorModeConfig?: CreatorModeConfig }
+	) {
 		await this.removeClineFromStack()
 
 		const {
@@ -571,6 +574,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			parentTask: historyItem.parentTask,
 			taskNumber: historyItem.number,
 			onCreated: (cline) => this.emit("clineCreated", cline),
+			creatorModeConfig: options?.creatorModeConfig,
 		})
 
 		await this.addClineToStack(cline)
@@ -886,6 +890,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		// Preserve parent and root task information for history item.
 		const rootTask = cline.rootTask
 		const parentTask = cline.parentTask
+		const creatorModeConfig = cline.creatorModeConfig
 
 		cline.abortTask()
 
@@ -913,7 +918,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		}
 
 		// Clears task again, so we need to abortTask manually above.
-		await this.initClineWithHistoryItem({ ...historyItem, rootTask, parentTask })
+		await this.initClineWithHistoryItem({ ...historyItem, rootTask, parentTask }, { creatorModeConfig })
 	}
 
 	async updateCustomInstructions(instructions?: string) {
@@ -1101,7 +1106,8 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		if (id !== this.getCurrentCline()?.taskId) {
 			// Non-current task.
 			const { historyItem } = await this.getTaskWithId(id)
-			await this.initClineWithHistoryItem(historyItem) // Clears existing task.
+			const creatorModeConfig = this.getCurrentCline()?.creatorModeConfig
+			await this.initClineWithHistoryItem(historyItem, { creatorModeConfig }) // Clears existing task.
 		}
 
 		await this.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
@@ -1244,10 +1250,9 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			historyPreviewCollapsed,
 		} = await this.getState()
 
-		// Construct API configuration with creator mode
+		const creatorModeConfig = currentCline?.creatorModeConfig;
 		const apiConfiguration = {
-			...baseApiConfiguration,
-			creatorModeConfig: currentCline?.creatorModeConfig,
+			...baseApiConfiguration
 		}
 
 		const telemetryKey = process.env.POSTHOG_API_KEY
@@ -1335,6 +1340,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			terminalCompressProgressBar: terminalCompressProgressBar ?? true,
 			hasSystemPromptOverride,
 			historyPreviewCollapsed: historyPreviewCollapsed ?? false,
+			creatorModeConfig,
 		}
 	}
 
