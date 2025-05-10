@@ -116,28 +116,33 @@ export class PearAIHandler extends BaseProvider implements SingleCompletionHandl
 	}
 
 	async *createMessage(systemPrompt: string, messages: any[]): AsyncGenerator<any> {
-		const generator = this.handler.createMessage(systemPrompt, messages)
-		let warningMsg = ""
+		try {
+			const generator = this.handler.createMessage(systemPrompt, messages)
+			let warningMsg = ""
 
-		for await (const chunk of generator) {
-			console.dir(chunk)
-			if (chunk.type === "text" && chunk.metadata?.ui_only) {
-				warningMsg += chunk.metadata?.content
-				continue
+			for await (const chunk of generator) {
+				console.dir(chunk)
+				if (chunk.type === "text" && chunk.metadata?.ui_only) {
+					warningMsg += chunk.metadata?.content ?? ""
+					continue
+				}
+				yield chunk
 			}
-			yield chunk
-		}
 
-		if (warningMsg) {
-			if (warningMsg.includes("pay-as-you-go")) {
-				vscode.window.showInformationMessage(warningMsg, "View Pay-As-You-Go").then((selection) => {
-					if (selection === "View Pay-As-You-Go") {
-						vscode.env.openExternal(vscode.Uri.parse("https://trypear.ai/pay-as-you-go"))
-					}
-				})
-			} else {
-				vscode.window.showInformationMessage(warningMsg)
+			if (warningMsg) {
+				if (warningMsg.includes("pay-as-you-go")) {
+					vscode.window.showInformationMessage(warningMsg, "View Pay-As-You-Go").then((selection) => {
+						if (selection === "View Pay-As-You-Go") {
+							vscode.env.openExternal(vscode.Uri.parse("https://trypear.ai/pay-as-you-go"))
+						}
+					})
+				} else {
+					vscode.window.showInformationMessage(warningMsg)
+				}
 			}
+		} catch (e) {
+			const errorMessage = e instanceof Error ? e.message : String(e)
+			vscode.window.showWarningMessage(`Notice: ${errorMessage}`)
 		}
 	}
 
