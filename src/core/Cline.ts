@@ -1932,7 +1932,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 				// if there's no assistant_responses, that means we got no text or tool_use content blocks from API which we should assume is an error
 				await this.say(
 					"error",
-					"Oops! Something went wrong. Please check the notifications on the bottom right of the screen for more details, or contact PearAI Support on Discord.",
+					"Oops! Something went wrong. Please check the notifications on the bottom right of the window for more details, or contact PearAI Support on Discord.",
 				)
 				await this.addToApiConversationHistory({
 					role: "assistant",
