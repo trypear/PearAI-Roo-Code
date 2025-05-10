@@ -149,22 +149,6 @@ export type ApiConfigMeta = z.infer<typeof apiConfigMetaSchema>
  * HistoryItem
  */
 
-export const historyItemSchema = z.object({
-	id: z.string(),
-	number: z.number(),
-	ts: z.number(),
-	task: z.string(),
-	tokensIn: z.number(),
-	tokensOut: z.number(),
-	cacheWrites: z.number().optional(),
-	cacheReads: z.number().optional(),
-	totalCost: z.number(),
-	size: z.number().optional(),
-	workspace: z.string().optional(),
-})
-
-export type HistoryItem = z.infer<typeof historyItemSchema>
-
 /**
  * GroupOptions
  */
@@ -339,6 +323,35 @@ export type Experiments = z.infer<typeof experimentsSchema>
 
 type _AssertExperiments = AssertEqual<Equals<ExperimentId, Keys<Experiments>>>
 
+export const creatorModeConfigSchema = z.object({
+	creatorMode: z.boolean().optional(),
+	newProjectType: z.string().optional(),
+	newProjectPath: z.string().optional(),
+});
+
+export type CreatorModeConfig = z.infer<typeof creatorModeConfigSchema>
+
+/**
+ * HistoryItem
+ */
+
+export const historyItemSchema = z.object({
+	id: z.string(),
+	number: z.number(),
+	ts: z.number(),
+	task: z.string(),
+	tokensIn: z.number(),
+	tokensOut: z.number(),
+	cacheWrites: z.number().optional(),
+	cacheReads: z.number().optional(),
+	totalCost: z.number(),
+	size: z.number().optional(),
+	workspace: z.string().optional(),
+	creatorModeConfig: creatorModeConfigSchema.optional(),
+})
+
+export type HistoryItem = z.infer<typeof historyItemSchema>
+
 /**
  * ProviderSettings
  */
@@ -449,6 +462,7 @@ export const providerSettingsSchema = z.object({
 			defaultModelId: z.string().optional(),
 		})
 		.optional(),
+	creatorModeConfig: creatorModeConfigSchema.optional(),
 })
 
 export type ProviderSettings = z.infer<typeof providerSettingsSchema>
@@ -546,6 +560,7 @@ const providerSettingsRecord: ProviderSettingsRecord = {
 	pearaiApiKey: undefined,
 	pearaiModelInfo: undefined,
 	pearaiAgentModels: undefined,
+	creatorModeConfig: undefined,
 	// X.AI (Grok)
 	xaiApiKey: undefined,
 }

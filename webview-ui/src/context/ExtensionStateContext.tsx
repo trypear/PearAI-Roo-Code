@@ -94,6 +94,16 @@ export interface ExtensionStateContextType extends ExtensionState {
 	terminalCompressProgressBar?: boolean
 	setTerminalCompressProgressBar: (value: boolean) => void
 	setHistoryPreviewCollapsed: (value: boolean) => void
+	creatorModeConfig?: {
+		creatorMode?: boolean
+		newProjectType?: string
+		newProjectPath?: string
+	}
+	setCreatorModeConfig: (value: {
+		creatorMode?: boolean
+		newProjectType?: string
+		newProjectPath?: string
+	}) => void
 }
 
 export const ExtensionStateContext = createContext<ExtensionStateContextType | undefined>(undefined)
@@ -103,6 +113,7 @@ export const mergeExtensionState = (prevState: ExtensionState, newState: Extensi
 		customModePrompts: prevCustomModePrompts,
 		customSupportPrompts: prevCustomSupportPrompts,
 		experiments: prevExperiments,
+		creatorModeConfig: prevCreatorModeConfig,
 		...prevRest
 	} = prevState
 
@@ -111,6 +122,7 @@ export const mergeExtensionState = (prevState: ExtensionState, newState: Extensi
 		customModePrompts: newCustomModePrompts,
 		customSupportPrompts: newCustomSupportPrompts,
 		experiments: newExperiments,
+		creatorModeConfig,
 		...newRest
 	} = newState
 
@@ -122,7 +134,7 @@ export const mergeExtensionState = (prevState: ExtensionState, newState: Extensi
 	// Note that we completely replace the previous apiConfiguration object with
 	// a new one since the state that is broadcast is the entire apiConfiguration
 	// and therefore merging is not necessary.
-	return { ...rest, apiConfiguration, customModePrompts, customSupportPrompts, experiments }
+	return { ...rest, apiConfiguration, creatorModeConfig, customModePrompts, customSupportPrompts, experiments }
 }
 
 export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -178,6 +190,7 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 		terminalZdotdir: false, // Default ZDOTDIR handling setting
 		terminalCompressProgressBar: true, // Default to compress progress bar output
 		historyPreviewCollapsed: false, // Initialize the new state (default to expanded)
+		creatorModeConfig: { creatorMode: false, newProjectType: "", newProjectPath: "" }, // Default creator mode config
 	})
 
 	const [didHydrateState, setDidHydrateState] = useState(false)
@@ -370,6 +383,8 @@ export const ExtensionStateContextProvider: React.FC<{ children: React.ReactNode
 			}),
 		setHistoryPreviewCollapsed: (value) =>
 			setState((prevState) => ({ ...prevState, historyPreviewCollapsed: value })), // Implement the setter
+		setCreatorModeConfig: (value) =>
+			setState((prevState) => ({ ...prevState, creatorModeConfig: value })),
 	}
 
 	return <ExtensionStateContext.Provider value={contextValue}>{children}</ExtensionStateContext.Provider>

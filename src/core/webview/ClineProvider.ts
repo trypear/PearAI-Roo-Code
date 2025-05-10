@@ -9,7 +9,7 @@ import axios from "axios"
 import pWaitFor from "p-wait-for"
 import * as vscode from "vscode"
 
-import { GlobalState, ProviderSettings, RooCodeSettings } from "../../schemas"
+import { CreatorModeConfig, GlobalState, ProviderSettings, RooCodeSettings } from "../../schemas"
 import { t } from "../../i18n"
 import { setPanel } from "../../activate/registerCommands"
 import {
@@ -86,6 +86,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		private readonly outputChannel: vscode.OutputChannel,
 		private readonly renderContext: "sidebar" | "editor" = "sidebar",
 		public readonly contextProxy: ContextProxy,
+		private readonly isCreatorView: boolean = false,
 	) {
 		super()
 
@@ -113,6 +114,16 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			.catch((error) => {
 				this.log(`Failed to initialize MCP Hub: ${error}`)
 			})
+	}
+
+	public static getSidebarInstance(): ClineProvider | undefined {
+		const sidebar = Array.from(this.activeInstances).find((instance) => !instance.isCreatorView)
+
+		if (!sidebar?.view?.visible) {
+			vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
+		}
+
+		return sidebar
 	}
 
 	// Adds a new Cline instance to clineStack, marking the start of a new task.
@@ -453,12 +464,9 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		return this.initClineWithTask(task, images, parent)
 	}
 
-	// When initializing a new task, (not from history but from a tool command
-	// new_task) there is no need to remove the previouse task since the new
-	// task is a subtask of the previous one, and when it finishes it is removed
-	// from the stack and the caller is resumed in this way we can have a chain
-	// of tasks, each one being a sub task of the previous one until the main
-	// task is finished.
+	// when initializing a new task, (not from history but from a tool command new_task) there is no need to remove the previouse task
+	// since the new task is a sub task of the previous one, and when it finishes it is removed from the stack and the caller is resumed
+	// in this way we can have a chain of tasks, each one being a sub task of the previous one until the main task is finished
 	public async initClineWithTask(
 		task?: string,
 		images?: string[],
@@ -474,6 +482,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 				| "experiments"
 			>
 		> = {},
+		creatorModeConfig?: CreatorModeConfig,
 	) {
 		const {
 			apiConfiguration,
@@ -486,6 +495,15 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			experiments,
 		} = await this.getState()
 
+		// Update API configuration with creator mode
+		await this.updateApiConfiguration({
+			...apiConfiguration,
+			creatorModeConfig,
+		})
+
+		// Post updated state to webview immediately
+		await this.postStateToWebview()
+
 		const modePrompt = customModePrompts?.[mode] as PromptComponent
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 
@@ -493,7 +511,12 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		const cline = new Cline({
 			provider: this,
-			apiConfiguration: { ...apiConfiguration, pearaiAgentModels: pearaiAgentModels },
+			apiConfiguration: {
+				...apiConfiguration,
+				creatorModeConfig,
+				pearaiAgentModels,
+			},
+			creatorModeConfig,
 			customInstructions: effectiveInstructions,
 			enableDiff,
 			enableCheckpoints,
@@ -517,7 +540,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		return cline
 	}
 
-	public async initClineWithHistoryItem(historyItem: HistoryItem & { rootTask?: Cline; parentTask?: Cline }) {
+	public async initClineWithHistoryItem(
+		historyItem: HistoryItem & { rootTask?: Cline; parentTask?: Cline },
+		options?: { creatorModeConfig?: CreatorModeConfig }
+	) {
 		await this.removeClineFromStack()
 
 		const {
@@ -548,6 +574,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			parentTask: historyItem.parentTask,
 			taskNumber: historyItem.number,
 			onCreated: (cline) => this.emit("clineCreated", cline),
+			creatorModeConfig: options?.creatorModeConfig,
 		})
 
 		await this.addClineToStack(cline)
@@ -824,6 +851,14 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	async updateApiConfiguration(providerSettings: ProviderSettings) {
 		// Update mode's default config.
 		const { mode } = await this.getState()
+		const currentCline = this.getCurrentCline()
+
+		// Preserve creator mode when updating configuration
+		const updatedConfig: ProviderSettings = {
+			...providerSettings,
+			creatorModeConfig: currentCline?.creatorModeConfig,
+		}
+		
 
 		if (mode) {
 			const currentApiConfigName = this.getGlobalState("currentApiConfigName")
@@ -835,10 +870,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			}
 		}
 
-		await this.contextProxy.setProviderSettings(providerSettings)
+		await this.contextProxy.setProviderSettings(updatedConfig)
 
 		if (this.getCurrentCline()) {
-			this.getCurrentCline()!.api = buildApiHandler(providerSettings)
+			this.getCurrentCline()!.api = buildApiHandler(updatedConfig)
 		}
 	}
 
@@ -855,6 +890,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		// Preserve parent and root task information for history item.
 		const rootTask = cline.rootTask
 		const parentTask = cline.parentTask
+		const creatorModeConfig = cline.creatorModeConfig
 
 		cline.abortTask()
 
@@ -882,7 +918,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		}
 
 		// Clears task again, so we need to abortTask manually above.
-		await this.initClineWithHistoryItem({ ...historyItem, rootTask, parentTask })
+		await this.initClineWithHistoryItem({ ...historyItem, rootTask, parentTask }, { creatorModeConfig })
 	}
 
 	async updateCustomInstructions(instructions?: string) {
@@ -1070,7 +1106,8 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		if (id !== this.getCurrentCline()?.taskId) {
 			// Non-current task.
 			const { historyItem } = await this.getTaskWithId(id)
-			await this.initClineWithHistoryItem(historyItem) // Clears existing task.
+			const creatorModeConfig = this.getCurrentCline()?.creatorModeConfig
+			await this.initClineWithHistoryItem(historyItem, { creatorModeConfig }) // Clears existing task.
 		}
 
 		await this.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
@@ -1150,8 +1187,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	}
 
 	async getStateToPostToWebview() {
+		const currentCline = this.getCurrentCline()
+		// Get base state
 		const {
-			apiConfiguration,
+			apiConfiguration: baseApiConfiguration,
 			lastShownAnnouncementId,
 			customInstructions,
 			alwaysAllowReadOnly,
@@ -1210,6 +1249,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			terminalCompressProgressBar,
 			historyPreviewCollapsed,
 		} = await this.getState()
+
+		const creatorModeConfig = currentCline?.creatorModeConfig;
+		const apiConfiguration = {
+			...baseApiConfiguration
+		}
 
 		const telemetryKey = process.env.POSTHOG_API_KEY
 		const machineId = vscode.env.machineId
@@ -1296,6 +1340,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			terminalCompressProgressBar: terminalCompressProgressBar ?? true,
 			hasSystemPromptOverride,
 			historyPreviewCollapsed: historyPreviewCollapsed ?? false,
+			creatorModeConfig,
 		}
 	}
 

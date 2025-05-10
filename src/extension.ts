@@ -26,7 +26,13 @@ import { TerminalRegistry } from "./integrations/terminal/TerminalRegistry"
 import { API } from "./exports/api"
 import { migrateSettings } from "./utils/migrateSettings"
 
-import { handleUri, registerCommands, registerCodeActions, registerTerminalActions } from "./activate"
+import {
+	handleUri,
+	registerCommands,
+	registerCodeActions,
+	registerTerminalActions,
+	registerPearListener,
+} from "./activate"
 import { formatLanguage } from "./shared/language"
 
 /**
@@ -71,6 +77,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	const contextProxy = await ContextProxy.getInstance(context)
 	const provider = new ClineProvider(context, outputChannel, "sidebar", contextProxy)
 	telemetryService.setProvider(provider)
+
+	registerPearListener(provider);
 
 	context.subscriptions.push(
 		vscode.window.registerWebviewViewProvider(ClineProvider.sideBarId, provider, {

@@ -11,7 +11,7 @@ import { serializeError } from "serialize-error"
 import * as vscode from "vscode"
 
 // schemas
-import { TokenUsage, ToolUsage, ToolName, ModelInfo } from "../schemas"
+import { TokenUsage, ToolUsage, ToolName, ModelInfo, CreatorModeConfig } from "../schemas"
 
 // api
 import { ApiHandler, buildApiHandler } from "../api"
@@ -127,6 +127,7 @@ export type ClineOptions = {
 	taskNumber?: number
 	onCreated?: (cline: Cline) => void
 	pearaiModels?: Record<string, ModelInfo>
+	creatorModeConfig?: CreatorModeConfig
 }
 
 export class Cline extends EventEmitter<ClineEvents> {
@@ -142,6 +143,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 	pausedModeSlug: string = defaultModeSlug
 	private pauseInterval: NodeJS.Timeout | undefined
 
+	public creatorModeConfig: CreatorModeConfig
 	readonly apiConfiguration: ApiConfiguration
 	api: ApiHandler
 	private promptCacheKey: string
@@ -220,6 +222,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		parentTask,
 		taskNumber = -1,
 		onCreated,
+		creatorModeConfig,
 	}: ClineOptions) {
 		super()
 
@@ -256,6 +259,8 @@ export class Cline extends EventEmitter<ClineEvents> {
 		this.globalStoragePath = provider.context.globalStorageUri.fsPath
 		this.diffViewProvider = new DiffViewProvider(this.cwd)
 		this.enableCheckpoints = enableCheckpoints
+
+		this.creatorModeConfig = creatorModeConfig ?? historyItem?.creatorModeConfig ?? { creatorMode: false }
 
 		this.rootTask = rootTask
 		this.parentTask = parentTask
@@ -371,6 +376,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 				taskNumber: this.taskNumber,
 				globalStoragePath: this.globalStoragePath,
 				workspace: this.cwd,
+				creatorModeConfig: this.creatorModeConfig,
 			})
 
 			this.emit("taskTokenUsageUpdated", this.taskId, tokenUsage)
