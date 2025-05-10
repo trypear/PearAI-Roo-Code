@@ -260,7 +260,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		this.diffViewProvider = new DiffViewProvider(this.cwd)
 		this.enableCheckpoints = enableCheckpoints
 
-		this.creatorModeConfig = creatorModeConfig ?? { creatorMode: false }
+		this.creatorModeConfig = creatorModeConfig ?? historyItem?.creatorModeConfig ?? { creatorMode: false }
 
 		this.rootTask = rootTask
 		this.parentTask = parentTask
@@ -376,6 +376,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 				taskNumber: this.taskNumber,
 				globalStoragePath: this.globalStoragePath,
 				workspace: this.cwd,
+				creatorModeConfig: this.creatorModeConfig,
 			})
 
 			this.emit("taskTokenUsageUpdated", this.taskId, tokenUsage)

@@ -137,7 +137,10 @@ export const webviewMessageHandler = async (provider: ClineProvider, message: We
 			// Could also do this in extension .ts
 			//provider.postMessageToWebview({ type: "text", text: `Extension: ${Date.now()}` })
 			// initializing new instance of Cline will make sure that any agentically running promises in old instance don't affect our new task. this essentially creates a fresh slate for the new task
-			await provider.initClineWithTask(message.text, message.images)
+			const existingCline = provider.getCurrentCline()
+			const creatorModeConfig = existingCline?.creatorModeConfig
+			
+			await provider.initClineWithTask(message.text, message.images, undefined, {}, creatorModeConfig)
 			break
 		case "apiConfiguration":
 			if (message.apiConfiguration) {

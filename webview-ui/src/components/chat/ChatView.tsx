@@ -97,7 +97,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		customModes,
 		telemetrySetting,
 		hasSystemPromptOverride,
-		historyPreviewCollapsed, // Added historyPreviewCollapsed
+		historyPreviewCollapsed,
+		creatorModeConfig,
 	} = useExtensionState()
 
 	const { tasks } = useTaskSearch()
@@ -1238,7 +1239,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				flexDirection: "column",
 				overflow: "hidden",
 			}}>
-			{apiConfiguration?.creatorModeConfig?.creatorMode === true && (
+			{creatorModeConfig?.creatorMode === true && (
 				<PlanningBar
 					requestedPlan={task?.text || ""}
 					isGenerating={isStreaming}

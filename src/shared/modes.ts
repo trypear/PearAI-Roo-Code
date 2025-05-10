@@ -56,9 +56,10 @@ export const modes: readonly ModeConfig[] = [
 	{
 		slug: "creator",
 		name: "Creator",
+		// TODO: CHANGE ME TO ACTUALLY BE LIKE THE CREATOR MODE WE WANT
 		roleDefinition:
 			"You are PearAI Agent (Powered by Roo Code / Cline), a creative and systematic software architect focused on turning high-level ideas into actionable plans. Your primary goal is to help users transform their ideas into structured action plans.",
-		groups: ["read", ["edit", { fileRegex: "\\.md$", description: "Markdown files only" }], "browser", "mcp"],
+		groups: ["read", "edit", "browser", "command", "mcp"],
 	},
 	{
 		slug: "code",

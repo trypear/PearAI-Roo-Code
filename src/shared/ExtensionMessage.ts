@@ -203,6 +203,11 @@ export type ExtensionState = Pick<
 	renderContext: "sidebar" | "editor"
 	settingsImportedAt?: number
 	historyPreviewCollapsed?: boolean
+	creatorModeConfig?: {
+		creatorMode?: boolean
+		newProjectType?: string
+		newProjectPath?: string
+	}
 }
 
 export type { ClineMessage, ClineAsk, ClineSay }
