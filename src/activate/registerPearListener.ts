@@ -22,38 +22,39 @@ export const getpearAIExports = async () => {
 
 	return pearAiExtension.exports;
 }
-
+ 
 // TODO: SHOULD HAVE TYPE SYNCED WITH THE PEARAI SUBMODULE!
 type CreatorModeState = "OVERLAY_CLOSED" | "OVERLAY_OPEN" | "OVERLAY_CLOSED_CREATOR_ACTIVE"
 
-export const registerPearListener = async () => {
+export const registerPearListener = async (provider: ClineProvider) => {
 	// Getting the pear ai extension instance
 	const exports = await getpearAIExports()
 
 	exports.pearAPI.creatorMode.onDidRequestExecutePlan(async (msg: any) => {
 		console.dir(`onDidRequestNewTask triggered with: ${JSON.stringify(msg)}`)
-		// Get the sidebar provider
-		let sidebarProvider = ClineProvider.getVisibleInstance()
 
-		// TODO: LOOK INTO THIS - THIS IS A JANKY FIX AND IT FEELS LIKE THIS IS TEMPERAMENTAL
-		while (!sidebarProvider) {
-			await new Promise((resolve) => setTimeout(resolve, 500))
-			sidebarProvider = ClineProvider.getVisibleInstance()
+		let canContinue = false;
+
+		while(!canContinue) {
+			await new Promise((resolve) => setTimeout(resolve, 10));
+			canContinue = provider.viewLaunched && provider.isViewLaunched;
 		}
 
+
+		// Get the sidebar provider
 		// Focus the sidebar first
 		await vscode.commands.executeCommand("pearai-roo-cline.SidebarProvider.focus")
 
 		// Wait for the view to be ready using a helper function
-		await ensureViewIsReady(sidebarProvider)
+		await ensureViewIsReady(provider)
 		// Wait a brief moment for UI to update
-		await new Promise((resolve) => setTimeout(resolve, 300))
+		await new Promise((resolve) => setTimeout(resolve, 3000))
 
 		// * This does actually work but the UI update does not happen. This method calls this.postStateToWebview() so not sure what is going on - James
-		await sidebarProvider.handleModeSwitch("Creator")
+		await provider.handleModeSwitch("Creator")
 
 		// Clicl the chat btn
-		await sidebarProvider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
+		await provider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })
 
 		const creatorModeConfig = {
 			creatorMode: true,
@@ -63,7 +64,7 @@ export const registerPearListener = async () => {
 
 
 		// Initialize with task
-		await sidebarProvider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig);
+		await provider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig);
 	});
 	// If there's a creator event in the cache after the extensions were refreshed, we need to get it!
 	exports.pearAPI.creatorMode.triggerCachedCreatorEvent(true);
