@@ -21,6 +21,7 @@ export interface DropdownOption {
 	disabled?: boolean
 	type?: DropdownOptionType
 	pinned?: boolean
+	backendOnly?: boolean;
 }
 
 export interface SelectDropdownProps {
@@ -157,7 +158,8 @@ export const SelectDropdown = React.memo(
 					result.pop()
 				}
 
-				return result
+				// filtering out "backendOnly" options
+				return result.filter(x => !x.backendOnly);
 			}, [filteredOptions])
 
 			const handleSelect = React.useCallback(
