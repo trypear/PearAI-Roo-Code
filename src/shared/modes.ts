@@ -60,7 +60,7 @@ export const modes: readonly ModeConfig[] = [
 		name: "🍐 PearAI Creator Webapp Manager",
 		roleDefinition: "You are a PearAI Creator Webapp Manager",
 		customInstructions:
-			"<PEARAI_CREATOR_WEBAPP_MANAGER></PEARAL_CREATOR_WEBAPP_MANAGER>",
+			"<PEARAI_CREATOR_WEBAPP_MANAGER></PEARAI_CREATOR_WEBAPP_MANAGER>",
 		groups: ["read", "edit", "browser", "command", "mcp"],
 		backendOnly: true,
 	},
