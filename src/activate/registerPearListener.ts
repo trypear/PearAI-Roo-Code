@@ -1,6 +1,7 @@
 import * as vscode from "vscode"
 import { ClineProvider } from "../core/webview/ClineProvider"
 import { assert } from "../utils/util"
+import { PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG } from "../shared/modes"
 
 export const getPearaiExtension = async () => {
 	const pearAiExtension = vscode.extensions.getExtension("pearai.pearai")
@@ -51,7 +52,11 @@ export const registerPearListener = async (provider: ClineProvider) => {
 		await new Promise((resolve) => setTimeout(resolve, 3000))
 
 		// * This does actually work but the UI update does not happen. This method calls this.postStateToWebview() so not sure what is going on - James
-		await provider.handleModeSwitch("Creator")
+		if(msg.newProjectType !== "NONE") {
+			// Only switch to the creator manager if we're creating a new project
+			// TODO: later when we need to make a different type of project, we need to change this
+			await provider.handleModeSwitch(PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG);
+		}
 
 		// Clicl the chat btn
 		await provider.postMessageToWebview({ type: "action", action: "chatButtonClicked" })

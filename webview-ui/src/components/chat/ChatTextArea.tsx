@@ -1039,6 +1039,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 										value: mode.slug,
 										label: mode.name,
 										type: DropdownOptionType.ITEM,
+										backendOnly: mode.backendOnly
 									})),
 									{
 										value: "sep-1",
