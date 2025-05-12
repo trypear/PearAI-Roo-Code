@@ -32,7 +32,7 @@ export const PlanningBar: FC<PlanningBarProps> = ({
         </div>
         <div className="my-auto text-sm flex-shrink-0">Creating</div>
         <div className="relative my-auto min-w-0 flex-shrink overflow-hidden max-w-64">
-          <div className="text-muted-foreground text-sm truncate">
+          <div className="text-white/80 text-sm truncate">
             {requestedPlan}
           </div>
         </div>
