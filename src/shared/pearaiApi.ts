@@ -1,8 +1,8 @@
 // CHANGE AS NEEDED FOR DEVELOPMENT
 // PROD:
-export const PEARAI_URL = "https://server.trypear.ai/pearai-server-api2/integrations/cline"
+// export const PEARAI_URL = "https://server.trypear.ai/pearai-server-api2/integrations/cline"
 // DEV:
-// export const PEARAI_URL = "http://localhost:8000/integrations/cline"
+export const PEARAI_URL = "http://localhost:8000/integrations/cline"
 
 import {
 	anthropicModels,
@@ -51,6 +51,18 @@ export const pearaiModels = {
 		cacheReadsPrice: 0.3,
 		description:
 			"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
+	},
+	"pearai-creator-model": {
+		maxTokens: 8192,
+		contextWindow: 200_000,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 3.0,
+		outputPrice: 15.0,
+		cacheWritesPrice: 3.75,
+		cacheReadsPrice: 0.3,
+		description:
+			"PearAI Model automatically routes you the best model for Creator. Recommended for most users.",
 	},
 } as const satisfies Record<string, ModelInfo>
 
