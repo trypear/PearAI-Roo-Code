@@ -39,6 +39,7 @@ import { GlobalState } from "../../schemas"
 import { MultiSearchReplaceDiffStrategy } from "../diff/strategies/multi-search-replace"
 import { getModels } from "../../api/providers/fetchers/cache"
 import { getpearAIExports } from "../../activate/registerPearListener"
+import { AGENT_RULES_DIR } from "../../shared/constants"
 
 export const webviewMessageHandler = async (provider: ClineProvider, message: WebviewMessage) => {
 	// Utility functions provided for concise get/update of global state via contextProxy API.
@@ -398,7 +399,7 @@ export const webviewMessageHandler = async (provider: ClineProvider, message: We
 			}
 
 			const workspaceFolder = vscode.workspace.workspaceFolders[0]
-			const rooDir = path.join(workspaceFolder.uri.fsPath, ".roo")
+			const rooDir = path.join(workspaceFolder.uri.fsPath, AGENT_RULES_DIR)
 			const mcpPath = path.join(rooDir, "mcp.json")
 
 			try {

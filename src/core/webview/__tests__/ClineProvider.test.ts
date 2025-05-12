@@ -10,6 +10,7 @@ import { setTtsEnabled } from "../../../utils/tts"
 import { defaultModeSlug } from "../../../shared/modes"
 import { experimentDefault } from "../../../shared/experiments"
 import { ContextProxy } from "../../config/ContextProxy"
+import { AGENT_RULES_DIR } from "../../../shared/constants"
 
 // Mock setup must come before imports
 jest.mock("../../prompts/sections/custom-instructions")
@@ -1980,7 +1981,7 @@ describe("Project MCP Settings", () => {
 
 		// Verify directory was created
 		expect(fs.mkdir).toHaveBeenCalledWith(
-			expect.stringContaining(".roo"),
+			expect.stringContaining(AGENT_RULES_DIR),
 			expect.objectContaining({ recursive: true }),
 		)
 
@@ -2023,7 +2024,7 @@ describe("Project MCP Settings", () => {
 
 		// Verify error message was shown
 		expect(vscode.window.showErrorMessage).toHaveBeenCalledWith(
-			expect.stringContaining("Failed to create or open .roo/mcp.json"),
+			expect.stringContaining(`Failed to create or open ${AGENT_RULES_DIR}/mcp.json`),
 		)
 	})
 })

@@ -29,6 +29,7 @@ jest.*
 .roomodes
 .rooignore
 .roo/**
+.pearai-agent/**
 benchmark/**
 cline_docs/**
 e2e/**
