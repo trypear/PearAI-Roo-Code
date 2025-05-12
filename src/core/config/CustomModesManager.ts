@@ -7,9 +7,9 @@ import { fileExistsAtPath } from "../../utils/fs"
 import { arePathsEqual, getWorkspacePath } from "../../utils/path"
 import { logger } from "../../utils/logging"
 import { GlobalFileNames } from "../../shared/globalFileNames"
+import { AGENT_MODES_FILE_NAME } from "../../shared/constants"
 
-const ROOMODES_FILENAME = ".roomodes"
-
+const ROOMODES_FILENAME = AGENT_MODES_FILE_NAME
 export class CustomModesManager {
 	private static readonly cacheTTL = 10_000
 
@@ -154,11 +154,11 @@ export class CustomModesManager {
 						return
 					}
 
-					// Get modes from .roomodes if it exists (takes precedence)
+					// Get modes from .pearai-agent-modes if it exists (takes precedence)
 					const roomodesPath = await this.getWorkspaceRoomodes()
 					const roomodesModes = roomodesPath ? await this.loadModesFromFile(roomodesPath) : []
 
-					// Merge modes from both sources (.roomodes takes precedence)
+					// Merge modes from both sources (.pearai-agent-modes takes precedence)
 					const mergedModes = await this.mergeCustomModes(roomodesModes, result.data.customModes)
 					await this.context.globalState.update("customModes", mergedModes)
 					this.clearCache()
@@ -167,7 +167,7 @@ export class CustomModesManager {
 			}),
 		)
 
-		// Watch .roomodes file if it exists
+		// Watch .pearai-agent-modes file if it exists
 		const roomodesPath = await this.getWorkspaceRoomodes()
 
 		if (roomodesPath) {
@@ -176,7 +176,7 @@ export class CustomModesManager {
 					if (arePathsEqual(document.uri.fsPath, roomodesPath)) {
 						const settingsModes = await this.loadModesFromFile(settingsPath)
 						const roomodesModes = await this.loadModesFromFile(roomodesPath)
-						// .roomodes takes precedence
+						// .pearai-agent-modes takes precedence
 						const mergedModes = await this.mergeCustomModes(roomodesModes, settingsModes)
 						await this.context.globalState.update("customModes", mergedModes)
 						this.clearCache()
@@ -199,7 +199,7 @@ export class CustomModesManager {
 		const settingsPath = await this.getCustomModesFilePath()
 		const settingsModes = await this.loadModesFromFile(settingsPath)
 
-		// Get modes from .roomodes if it exists.
+		// Get modes from .pearai-agent-modes if it exists
 		const roomodesPath = await this.getWorkspaceRoomodes()
 		const roomodesModes = roomodesPath ? await this.loadModesFromFile(roomodesPath) : []
 

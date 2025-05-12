@@ -6,7 +6,7 @@
 		"createNewMode": "Tạo chế độ mới",
 		"editModesConfig": "Chỉnh sửa cấu hình chế độ",
 		"editGlobalModes": "Chỉnh sửa chế độ toàn cục",
-		"editProjectModes": "Chỉnh sửa chế độ dự án (.roomodes)",
+		"editProjectModes": "Chỉnh sửa chế độ dự án (.pearai-agent-ignore)",
 		"createModeHelpText": "Nhấn + để tạo chế độ tùy chỉnh mới, hoặc chỉ cần yêu cầu Roo trong chat tạo một chế độ cho bạn!"
 	},
 	"apiConfiguration": {
@@ -37,12 +37,12 @@
 		"title": "Hướng dẫn tùy chỉnh dành riêng cho chế độ (tùy chọn)",
 		"resetToDefault": "Đặt lại về mặc định",
 		"description": "Thêm hướng dẫn hành vi dành riêng cho chế độ {{modeName}}.",
-		"loadFromFile": "Hướng dẫn tùy chỉnh dành riêng cho chế độ {{modeName}} cũng có thể được tải từ thư mục <span>.roo/rules-{{modeSlug}}/</span> trong không gian làm việc của bạn (.roorules-{{modeSlug}} và .clinerules-{{modeSlug}} đã lỗi thời và sẽ sớm ngừng hoạt động)."
+		"loadFromFile": "Hướng dẫn tùy chỉnh dành riêng cho chế độ {{modeName}} cũng có thể được tải từ thư mục <span>.pearai-agent/rules-{{modeSlug}}/</span> trong không gian làm việc của bạn (.roorules-{{modeSlug}} và .clinerules-{{modeSlug}} đã lỗi thời và sẽ sớm ngừng hoạt động)."
 	},
 	"globalCustomInstructions": {
 		"title": "Hướng dẫn tùy chỉnh cho tất cả các chế độ",
 		"description": "Những hướng dẫn này áp dụng cho tất cả các chế độ. Chúng cung cấp một bộ hành vi cơ bản có thể được nâng cao bởi hướng dẫn dành riêng cho chế độ bên dưới.\nNếu bạn muốn Roo suy nghĩ và nói bằng ngôn ngữ khác với ngôn ngữ hiển thị trình soạn thảo của bạn ({{language}}), bạn có thể chỉ định ở đây.",
-		"loadFromFile": "Hướng dẫn cũng có thể được tải từ thư mục <span>.roo/rules/</span> trong không gian làm việc của bạn (.roorules và .clinerules đã lỗi thời và sẽ sớm ngừng hoạt động)."
+		"loadFromFile": "Hướng dẫn cũng có thể được tải từ thư mục <span>.pearai-agent/rules/</span> trong không gian làm việc của bạn (.roorules và .clinerules đã lỗi thời và sẽ sớm ngừng hoạt động)."
 	},
 	"systemPrompt": {
 		"preview": "Xem trước lời nhắc hệ thống",
@@ -101,7 +101,7 @@
 	},
 	"advancedSystemPrompt": {
 		"title": "Nâng cao: Ghi đè lời nhắc hệ thống",
-		"description": "Bạn có thể hoàn toàn thay thế lời nhắc hệ thống cho chế độ này (ngoài định nghĩa vai trò và hướng dẫn tùy chỉnh) bằng cách tạo một tệp tại .roo/system-prompt-{{modeSlug}} trong không gian làm việc của bạn. Đây là một tính năng rất nâng cao bỏ qua các biện pháp bảo vệ và kiểm tra nhất quán tích hợp sẵn (đặc biệt là xung quanh việc sử dụng công cụ), vì vậy hãy cẩn thận!"
+		"description": "Bạn có thể hoàn toàn thay thế lời nhắc hệ thống cho chế độ này (ngoài định nghĩa vai trò và hướng dẫn tùy chỉnh) bằng cách tạo một tệp tại .pearai-agent/system-prompt-{{modeSlug}} trong không gian làm việc của bạn. Đây là một tính năng rất nâng cao bỏ qua các biện pháp bảo vệ và kiểm tra nhất quán tích hợp sẵn (đặc biệt là xung quanh việc sử dụng công cụ), vì vậy hãy cẩn thận!"
 	},
 	"createModeDialog": {
 		"title": "Tạo chế độ mới",
@@ -122,7 +122,7 @@
 				"description": "Có sẵn trong tất cả các không gian làm việc"
 			},
 			"project": {
-				"label": "Dành riêng cho dự án (.roomodes)",
+				"label": "Dành riêng cho dự án (.pearai-agent-ignore)",
 				"description": "Chỉ có sẵn trong không gian làm việc này, được ưu tiên hơn toàn cục"
 			}
 		},

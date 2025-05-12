@@ -298,9 +298,9 @@
 			"label": "Çalışma alanı dosyaları bağlam sınırı",
 			"description": "Mevcut çalışma dizini ayrıntılarına dahil edilecek maksimum dosya sayısı. Daha yüksek değerler daha fazla bağlam sağlar ancak token kullanımını artırır."
 		},
-		"rooignore": {
-			"label": "Listelerde ve aramalarda .rooignore dosyalarını göster",
-			"description": "Etkinleştirildiğinde, .rooignore'daki desenlerle eşleşen dosyalar kilit sembolü ile listelerde gösterilecektir. Devre dışı bırakıldığında, bu dosyalar dosya listelerinden ve aramalardan tamamen gizlenecektir."
+		"pearai-agent-ignore": {
+			"label": "Listelerde ve aramalarda .pearai-agent-ignore dosyalarını göster",
+			"description": "Etkinleştirildiğinde, .pearai-agent-ignore'daki desenlerle eşleşen dosyalar kilit sembolü ile listelerde gösterilecektir. Devre dışı bırakıldığında, bu dosyalar dosya listelerinden ve aramalardan tamamen gizlenecektir."
 		},
 		"maxReadFile": {
 			"label": "Dosya okuma otomatik kısaltma eşiği",

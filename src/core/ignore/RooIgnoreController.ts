@@ -3,13 +3,13 @@ import { fileExistsAtPath } from "../../utils/fs"
 import fs from "fs/promises"
 import ignore, { Ignore } from "ignore"
 import * as vscode from "vscode"
+import { AGENT_IGNORE_FILE_NAME } from "../../shared/constants"
 
 export const LOCK_TEXT_SYMBOL = "\u{1F512}"
-
 /**
  * Controls LLM access to files by enforcing ignore patterns.
  * Designed to be instantiated once in Cline.ts and passed to file manipulation services.
- * Uses the 'ignore' library to support standard .gitignore syntax in .rooignore files.
+ * Uses the 'ignore' library to support standard .gitignore syntax in .pearai-agent-ignore files.
  */
 export class RooIgnoreController {
 	private cwd: string
@@ -21,7 +21,7 @@ export class RooIgnoreController {
 		this.cwd = cwd
 		this.ignoreInstance = ignore()
 		this.rooIgnoreContent = undefined
-		// Set up file watcher for .rooignore
+		// Set up file watcher for .pearai-agent-ignore
 		this.setupFileWatcher()
 	}
 
@@ -34,10 +34,10 @@ export class RooIgnoreController {
 	}
 
 	/**
-	 * Set up the file watcher for .rooignore changes
+	 * Set up the file watcher for .pearai-agent-ignore changes
 	 */
 	private setupFileWatcher(): void {
-		const rooignorePattern = new vscode.RelativePattern(this.cwd, ".rooignore")
+		const rooignorePattern = new vscode.RelativePattern(this.cwd, AGENT_IGNORE_FILE_NAME)
 		const fileWatcher = vscode.workspace.createFileSystemWatcher(rooignorePattern)
 
 		// Watch for changes and updates
@@ -58,24 +58,24 @@ export class RooIgnoreController {
 	}
 
 	/**
-	 * Load custom patterns from .rooignore if it exists
+	 * Load custom patterns from .pearai-agent-ignore if it exists
 	 */
 	private async loadRooIgnore(): Promise<void> {
 		try {
 			// Reset ignore instance to prevent duplicate patterns
 			this.ignoreInstance = ignore()
-			const ignorePath = path.join(this.cwd, ".rooignore")
+			const ignorePath = path.join(this.cwd, AGENT_IGNORE_FILE_NAME)
 			if (await fileExistsAtPath(ignorePath)) {
 				const content = await fs.readFile(ignorePath, "utf8")
 				this.rooIgnoreContent = content
 				this.ignoreInstance.add(content)
-				this.ignoreInstance.add(".rooignore")
+				this.ignoreInstance.add(AGENT_IGNORE_FILE_NAME)
 			} else {
 				this.rooIgnoreContent = undefined
 			}
 		} catch (error) {
 			// Should never happen: reading file failed even though it exists
-			console.error("Unexpected error loading .rooignore:", error)
+			console.error(`Unexpected error loading ${AGENT_IGNORE_FILE_NAME}:`, error)
 		}
 	}
 
@@ -85,7 +85,7 @@ export class RooIgnoreController {
 	 * @returns true if file is accessible, false if ignored
 	 */
 	validateAccess(filePath: string): boolean {
-		// Always allow access if .rooignore does not exist
+		// Always allow access if .pearai-agent-ignore does not exist
 		if (!this.rooIgnoreContent) {
 			return true
 		}
@@ -109,7 +109,7 @@ export class RooIgnoreController {
 	 * @returns path of file that is being accessed if it is being accessed, undefined if command is allowed
 	 */
 	validateCommand(command: string): string | undefined {
-		// Always allow if no .rooignore exists
+		// Always allow if no .pearai-agent-ignore exists
 		if (!this.rooIgnoreContent) {
 			return undefined
 		}
@@ -188,14 +188,14 @@ export class RooIgnoreController {
 	}
 
 	/**
-	 * Get formatted instructions about the .rooignore file for the LLM
-	 * @returns Formatted instructions or undefined if .rooignore doesn't exist
+	 * Get formatted instructions about the .pearai-agent-ignore file for the LLM
+	 * @returns Formatted instructions or undefined if .pearai-agent-ignore doesn't exist
 	 */
 	getInstructions(): string | undefined {
 		if (!this.rooIgnoreContent) {
 			return undefined
 		}
 
-		return `# .rooignore\n\n(The following is provided by a root-level .rooignore file where the user has specified files and directories that should not be accessed. When using list_files, you'll notice a ${LOCK_TEXT_SYMBOL} next to files that are blocked. Attempting to access the file's contents e.g. through read_file will result in an error.)\n\n${this.rooIgnoreContent}\n.rooignore`
+		return `# ${AGENT_IGNORE_FILE_NAME}\n\n(The following is provided by a root-level ${AGENT_IGNORE_FILE_NAME} file where the user has specified files and directories that should not be accessed. When using list_files, you'll notice a ${LOCK_TEXT_SYMBOL} next to files that are blocked. Attempting to access the file's contents e.g. through read_file will result in an error.)\n\n${this.rooIgnoreContent}\n${AGENT_IGNORE_FILE_NAME}`
 	}
 }

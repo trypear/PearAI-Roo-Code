@@ -29,6 +29,7 @@ import { Tab, TabContent, TabHeader } from "../common/Tab"
 import i18next from "i18next"
 import { useAppTranslation } from "@src/i18n/TranslationContext"
 import { Trans } from "react-i18next"
+import { AGENT_MODES_FILE_NAME, AGENT_RULES_DIR } from "@roo/shared/constants"
 
 // Get all available groups that should show in prompts view
 const availableGroups = (Object.keys(TOOL_GROUPS) as ToolGroup[]).filter((group) => !TOOL_GROUPS[group].alwaysAvailable)
@@ -459,7 +460,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 												e.preventDefault() // Prevent blur
 												vscode.postMessage({
 													type: "openFile",
-													text: "./.roomodes",
+													text: `./${AGENT_MODES_FILE_NAME}`,
 													values: {
 														create: true,
 														content: JSON.stringify({ customModes: [] }, null, 2),
@@ -819,7 +820,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 												// Open or create an empty file
 												vscode.postMessage({
 													type: "openFile",
-													text: `./.roo/rules-${currentMode.slug}/rules.md`,
+													text: `./${AGENT_RULES_DIR}/rules-${currentMode.slug}/rules.md`,
 													values: {
 														create: true,
 														content: "",
@@ -901,7 +902,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 
 													vscode.postMessage({
 														type: "openFile",
-														text: `./.roo/system-prompt-${currentMode.slug}`,
+														text: `./${AGENT_RULES_DIR}/system-prompt-${currentMode.slug}`,
 														values: {
 															create: true,
 															content: "",
@@ -956,7 +957,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 										onClick={() =>
 											vscode.postMessage({
 												type: "openFile",
-												text: "./.roo/rules/rules.md",
+												text: `./${AGENT_RULES_DIR}/rules/rules.md`,
 												values: {
 													create: true,
 													content: "",
