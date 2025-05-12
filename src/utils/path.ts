@@ -2,6 +2,7 @@ import * as path from "path"
 import os from "os"
 import * as vscode from "vscode"
 
+
 /*
 The Node.js 'path' module resolves and normalizes paths differently depending on the platform:
 - On Windows, it uses backslashes (\) as the default path separator.

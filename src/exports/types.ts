@@ -2,215 +2,175 @@
 // Do not edit it directly.
 
 type ProviderSettings = {
-	apiProvider?:
-		| (
-				| "anthropic"
-				| "glama"
-				| "openrouter"
-				| "bedrock"
-				| "vertex"
-				| "openai"
-				| "ollama"
-				| "vscode-lm"
-				| "lmstudio"
-				| "gemini"
-				| "openai-native"
-				| "mistral"
-				| "deepseek"
-				| "unbound"
-				| "requesty"
-				| "human-relay"
-				| "fake-ai"
-				| "pearai"
-				| "xai"
-		  )
-		| undefined
-	apiModelId?: string | undefined
-	apiKey?: string | undefined
-	anthropicBaseUrl?: string | undefined
-	anthropicUseAuthToken?: boolean | undefined
-	glamaModelId?: string | undefined
-	glamaApiKey?: string | undefined
-	openRouterApiKey?: string | undefined
-	openRouterModelId?: string | undefined
-	openRouterBaseUrl?: string | undefined
-	openRouterSpecificProvider?: string | undefined
-	openRouterUseMiddleOutTransform?: boolean | undefined
-	awsAccessKey?: string | undefined
-	awsSecretKey?: string | undefined
-	awsSessionToken?: string | undefined
-	awsRegion?: string | undefined
-	awsUseCrossRegionInference?: boolean | undefined
-	awsUsePromptCache?: boolean | undefined
-	awspromptCacheId?: string | undefined
-	awsProfile?: string | undefined
-	awsUseProfile?: boolean | undefined
-	awsCustomArn?: string | undefined
-	vertexKeyFile?: string | undefined
-	vertexJsonCredentials?: string | undefined
-	vertexProjectId?: string | undefined
-	vertexRegion?: string | undefined
-	openAiBaseUrl?: string | undefined
-	openAiApiKey?: string | undefined
-	openAiLegacyFormat?: boolean | undefined
-	openAiR1FormatEnabled?: boolean | undefined
-	openAiModelId?: string | undefined
-	openAiCustomModelInfo?:
-		| ({
-				maxTokens?: (number | null) | undefined
-				maxThinkingTokens?: (number | null) | undefined
-				contextWindow: number
-				supportsImages?: boolean | undefined
-				supportsComputerUse?: boolean | undefined
-				supportsPromptCache: boolean
-				isPromptCacheOptional?: boolean | undefined
-				inputPrice?: number | undefined
-				outputPrice?: number | undefined
-				cacheWritesPrice?: number | undefined
-				cacheReadsPrice?: number | undefined
-				description?: string | undefined
-				reasoningEffort?: ("low" | "medium" | "high") | undefined
-				thinking?: boolean | undefined
-				minTokensPerCachePoint?: number | undefined
-				maxCachePoints?: number | undefined
-				cachableFields?: string[] | undefined
-				underlyingModel?: string | undefined
-				tiers?:
-					| {
-							contextWindow: number
-							inputPrice?: number | undefined
-							outputPrice?: number | undefined
-							cacheWritesPrice?: number | undefined
-							cacheReadsPrice?: number | undefined
-					  }[]
-					| undefined
-		  } | null)
-		| undefined
-	openAiUseAzure?: boolean | undefined
-	azureApiVersion?: string | undefined
-	openAiStreamingEnabled?: boolean | undefined
-	enableReasoningEffort?: boolean | undefined
-	openAiHostHeader?: string | undefined
-	openAiHeaders?:
-		| {
-				[x: string]: string
-		  }
-		| undefined
-	ollamaModelId?: string | undefined
-	ollamaBaseUrl?: string | undefined
-	vsCodeLmModelSelector?:
-		| {
-				vendor?: string | undefined
-				family?: string | undefined
-				version?: string | undefined
-				id?: string | undefined
-		  }
-		| undefined
-	lmStudioModelId?: string | undefined
-	lmStudioBaseUrl?: string | undefined
-	lmStudioDraftModelId?: string | undefined
-	lmStudioSpeculativeDecodingEnabled?: boolean | undefined
-	geminiApiKey?: string | undefined
-	googleGeminiBaseUrl?: string | undefined
-	openAiNativeApiKey?: string | undefined
-	openAiNativeBaseUrl?: string | undefined
-	mistralApiKey?: string | undefined
-	mistralCodestralUrl?: string | undefined
-	deepSeekBaseUrl?: string | undefined
-	deepSeekApiKey?: string | undefined
-	unboundApiKey?: string | undefined
-	unboundModelId?: string | undefined
-	requestyApiKey?: string | undefined
-	requestyModelId?: string | undefined
-	xaiApiKey?: string | undefined
-	modelMaxTokens?: number | undefined
-	modelMaxThinkingTokens?: number | undefined
-	includeMaxTokens?: boolean | undefined
-	reasoningEffort?: ("low" | "medium" | "high") | undefined
-	promptCachingEnabled?: boolean | undefined
-	diffEnabled?: boolean | undefined
-	fuzzyMatchThreshold?: number | undefined
-	modelTemperature?: (number | null) | undefined
-	rateLimitSeconds?: number | undefined
-	fakeAi?: unknown | undefined
-	pearaiBaseUrl?: string | undefined
-	pearaiModelId?: string | undefined
-	pearaiApiKey?: string | undefined
-	pearaiModelInfo?:
-		| ({
-				maxTokens?: (number | null) | undefined
-				maxThinkingTokens?: (number | null) | undefined
-				contextWindow: number
-				supportsImages?: boolean | undefined
-				supportsComputerUse?: boolean | undefined
-				supportsPromptCache: boolean
-				isPromptCacheOptional?: boolean | undefined
-				inputPrice?: number | undefined
-				outputPrice?: number | undefined
-				cacheWritesPrice?: number | undefined
-				cacheReadsPrice?: number | undefined
-				description?: string | undefined
-				reasoningEffort?: ("low" | "medium" | "high") | undefined
-				thinking?: boolean | undefined
-				minTokensPerCachePoint?: number | undefined
-				maxCachePoints?: number | undefined
-				cachableFields?: string[] | undefined
-				underlyingModel?: string | undefined
-				tiers?:
-					| {
-							contextWindow: number
-							inputPrice?: number | undefined
-							outputPrice?: number | undefined
-							cacheWritesPrice?: number | undefined
-							cacheReadsPrice?: number | undefined
-					  }[]
-					| undefined
-		  } | null)
-		| undefined
-	pearaiAgentModels?:
-		| {
-				models: {
-					[x: string]: {
-						maxTokens?: (number | null) | undefined
-						maxThinkingTokens?: (number | null) | undefined
-						contextWindow: number
-						supportsImages?: boolean | undefined
-						supportsComputerUse?: boolean | undefined
-						supportsPromptCache: boolean
-						isPromptCacheOptional?: boolean | undefined
-						inputPrice?: number | undefined
-						outputPrice?: number | undefined
-						cacheWritesPrice?: number | undefined
-						cacheReadsPrice?: number | undefined
-						description?: string | undefined
-						reasoningEffort?: ("low" | "medium" | "high") | undefined
-						thinking?: boolean | undefined
-						minTokensPerCachePoint?: number | undefined
-						maxCachePoints?: number | undefined
-						cachableFields?: string[] | undefined
-						underlyingModel?: string | undefined
-						tiers?:
-							| {
-									contextWindow: number
-									inputPrice?: number | undefined
-									outputPrice?: number | undefined
-									cacheWritesPrice?: number | undefined
-									cacheReadsPrice?: number | undefined
-							  }[]
-							| undefined
-					}
-				}
-				defaultModelId?: string | undefined
-		  }
-		| undefined
-	creatorModeConfig?:
-		| {
-				creatorMode?: boolean | undefined
-				newProjectType?: string | undefined
-				newProjectPath?: string | undefined
-		  }
-		| undefined
-}
+    apiProvider?: ("anthropic" | "glama" | "openrouter" | "bedrock" | "vertex" | "openai" | "ollama" | "vscode-lm" | "lmstudio" | "gemini" | "openai-native" | "mistral" | "deepseek" | "unbound" | "requesty" | "human-relay" | "fake-ai" | "pearai" | "xai") | undefined;
+    apiModelId?: string | undefined;
+    apiKey?: string | undefined;
+    anthropicBaseUrl?: string | undefined;
+    anthropicUseAuthToken?: boolean | undefined;
+    glamaModelId?: string | undefined;
+    glamaApiKey?: string | undefined;
+    openRouterApiKey?: string | undefined;
+    openRouterModelId?: string | undefined;
+    openRouterBaseUrl?: string | undefined;
+    openRouterSpecificProvider?: string | undefined;
+    openRouterUseMiddleOutTransform?: boolean | undefined;
+    awsAccessKey?: string | undefined;
+    awsSecretKey?: string | undefined;
+    awsSessionToken?: string | undefined;
+    awsRegion?: string | undefined;
+    awsUseCrossRegionInference?: boolean | undefined;
+    awsUsePromptCache?: boolean | undefined;
+    awspromptCacheId?: string | undefined;
+    awsProfile?: string | undefined;
+    awsUseProfile?: boolean | undefined;
+    awsCustomArn?: string | undefined;
+    vertexKeyFile?: string | undefined;
+    vertexJsonCredentials?: string | undefined;
+    vertexProjectId?: string | undefined;
+    vertexRegion?: string | undefined;
+    openAiBaseUrl?: string | undefined;
+    openAiApiKey?: string | undefined;
+    openAiLegacyFormat?: boolean | undefined;
+    openAiR1FormatEnabled?: boolean | undefined;
+    openAiModelId?: string | undefined;
+    openAiCustomModelInfo?: ({
+        maxTokens?: (number | null) | undefined;
+        maxThinkingTokens?: (number | null) | undefined;
+        contextWindow: number;
+        supportsImages?: boolean | undefined;
+        supportsComputerUse?: boolean | undefined;
+        supportsPromptCache: boolean;
+        isPromptCacheOptional?: boolean | undefined;
+        inputPrice?: number | undefined;
+        outputPrice?: number | undefined;
+        cacheWritesPrice?: number | undefined;
+        cacheReadsPrice?: number | undefined;
+        description?: string | undefined;
+        reasoningEffort?: ("low" | "medium" | "high") | undefined;
+        thinking?: boolean | undefined;
+        minTokensPerCachePoint?: number | undefined;
+        maxCachePoints?: number | undefined;
+        cachableFields?: string[] | undefined;
+        underlyingModel?: string | undefined;
+        tiers?: {
+            contextWindow: number;
+            inputPrice?: number | undefined;
+            outputPrice?: number | undefined;
+            cacheWritesPrice?: number | undefined;
+            cacheReadsPrice?: number | undefined;
+        }[] | undefined;
+    } | null) | undefined;
+    openAiUseAzure?: boolean | undefined;
+    azureApiVersion?: string | undefined;
+    openAiStreamingEnabled?: boolean | undefined;
+    enableReasoningEffort?: boolean | undefined;
+    openAiHostHeader?: string | undefined;
+    openAiHeaders?: {
+        [x: string]: string;
+    } | undefined;
+    ollamaModelId?: string | undefined;
+    ollamaBaseUrl?: string | undefined;
+    vsCodeLmModelSelector?: {
+        vendor?: string | undefined;
+        family?: string | undefined;
+        version?: string | undefined;
+        id?: string | undefined;
+    } | undefined;
+    lmStudioModelId?: string | undefined;
+    lmStudioBaseUrl?: string | undefined;
+    lmStudioDraftModelId?: string | undefined;
+    lmStudioSpeculativeDecodingEnabled?: boolean | undefined;
+    geminiApiKey?: string | undefined;
+    googleGeminiBaseUrl?: string | undefined;
+    openAiNativeApiKey?: string | undefined;
+    openAiNativeBaseUrl?: string | undefined;
+    mistralApiKey?: string | undefined;
+    mistralCodestralUrl?: string | undefined;
+    deepSeekBaseUrl?: string | undefined;
+    deepSeekApiKey?: string | undefined;
+    unboundApiKey?: string | undefined;
+    unboundModelId?: string | undefined;
+    requestyApiKey?: string | undefined;
+    requestyModelId?: string | undefined;
+    xaiApiKey?: string | undefined;
+    modelMaxTokens?: number | undefined;
+    modelMaxThinkingTokens?: number | undefined;
+    includeMaxTokens?: boolean | undefined;
+    reasoningEffort?: ("low" | "medium" | "high") | undefined;
+    promptCachingEnabled?: boolean | undefined;
+    diffEnabled?: boolean | undefined;
+    fuzzyMatchThreshold?: number | undefined;
+    modelTemperature?: (number | null) | undefined;
+    rateLimitSeconds?: number | undefined;
+    fakeAi?: unknown | undefined;
+    pearaiBaseUrl?: string | undefined;
+    pearaiModelId?: string | undefined;
+    pearaiApiKey?: string | undefined;
+    pearaiModelInfo?: ({
+        maxTokens?: (number | null) | undefined;
+        maxThinkingTokens?: (number | null) | undefined;
+        contextWindow: number;
+        supportsImages?: boolean | undefined;
+        supportsComputerUse?: boolean | undefined;
+        supportsPromptCache: boolean;
+        isPromptCacheOptional?: boolean | undefined;
+        inputPrice?: number | undefined;
+        outputPrice?: number | undefined;
+        cacheWritesPrice?: number | undefined;
+        cacheReadsPrice?: number | undefined;
+        description?: string | undefined;
+        reasoningEffort?: ("low" | "medium" | "high") | undefined;
+        thinking?: boolean | undefined;
+        minTokensPerCachePoint?: number | undefined;
+        maxCachePoints?: number | undefined;
+        cachableFields?: string[] | undefined;
+        underlyingModel?: string | undefined;
+        tiers?: {
+            contextWindow: number;
+            inputPrice?: number | undefined;
+            outputPrice?: number | undefined;
+            cacheWritesPrice?: number | undefined;
+            cacheReadsPrice?: number | undefined;
+        }[] | undefined;
+    } | null) | undefined;
+    pearaiAgentModels?: {
+        models: {
+            [x: string]: {
+                maxTokens?: (number | null) | undefined;
+                maxThinkingTokens?: (number | null) | undefined;
+                contextWindow: number;
+                supportsImages?: boolean | undefined;
+                supportsComputerUse?: boolean | undefined;
+                supportsPromptCache: boolean;
+                isPromptCacheOptional?: boolean | undefined;
+                inputPrice?: number | undefined;
+                outputPrice?: number | undefined;
+                cacheWritesPrice?: number | undefined;
+                cacheReadsPrice?: number | undefined;
+                description?: string | undefined;
+                reasoningEffort?: ("low" | "medium" | "high") | undefined;
+                thinking?: boolean | undefined;
+                minTokensPerCachePoint?: number | undefined;
+                maxCachePoints?: number | undefined;
+                cachableFields?: string[] | undefined;
+                underlyingModel?: string | undefined;
+                tiers?: {
+                    contextWindow: number;
+                    inputPrice?: number | undefined;
+                    outputPrice?: number | undefined;
+                    cacheWritesPrice?: number | undefined;
+                    cacheReadsPrice?: number | undefined;
+                }[] | undefined;
+            };
+        };
+        defaultModelId?: string | undefined;
+    } | undefined;
+    creatorModeConfig?: {
+        creatorMode?: boolean | undefined;
+        newProjectType?: string | undefined;
+        newProjectPath?: string | undefined;
+    } | undefined;
+};
 
 export type { ProviderSettings }
 
@@ -392,207 +352,123 @@ type GlobalSettings = {
 export type { GlobalSettings }
 
 type ClineMessage = {
-	ts: number
-	type: "ask" | "say"
-	ask?:
-		| (
-				| "followup"
-				| "command"
-				| "command_output"
-				| "completion_result"
-				| "tool"
-				| "api_req_failed"
-				| "resume_task"
-				| "resume_completed_task"
-				| "mistake_limit_reached"
-				| "browser_action_launch"
-				| "use_mcp_server"
-		  )
-		| undefined
-	say?:
-		| (
-				| "error"
-				| "api_req_started"
-				| "api_req_finished"
-				| "api_req_retried"
-				| "api_req_retry_delayed"
-				| "api_req_deleted"
-				| "text"
-				| "reasoning"
-				| "completion_result"
-				| "user_feedback"
-				| "user_feedback_diff"
-				| "command_output"
-				| "shell_integration_warning"
-				| "browser_action"
-				| "browser_action_result"
-				| "mcp_server_request_started"
-				| "mcp_server_response"
-				| "subtask_result"
-				| "checkpoint_saved"
-				| "rooignore_error"
-				| "diff_error"
-		  )
-		| undefined
-	text?: string | undefined
-	images?: string[] | undefined
-	partial?: boolean | undefined
-	reasoning?: string | undefined
-	conversationHistoryIndex?: number | undefined
-	checkpoint?:
-		| {
-				[x: string]: unknown
-		  }
-		| undefined
-	progressStatus?:
-		| {
-				id?: string | undefined
-				icon?: string | undefined
-				text?: string | undefined
-		  }
-		| undefined
-}
+    ts: number;
+    type: "ask" | "say";
+    ask?: ("followup" | "command" | "command_output" | "completion_result" | "tool" | "api_req_failed" | "resume_task" | "resume_completed_task" | "mistake_limit_reached" | "browser_action_launch" | "use_mcp_server") | undefined;
+    say?: ("error" | "api_req_started" | "api_req_finished" | "api_req_retried" | "api_req_retry_delayed" | "api_req_deleted" | "text" | "reasoning" | "completion_result" | "user_feedback" | "user_feedback_diff" | "command_output" | "shell_integration_warning" | "browser_action" | "browser_action_result" | "mcp_server_request_started" | "mcp_server_response" | "subtask_result" | "checkpoint_saved" | "rooignore_error" | "diff_error") | undefined;
+    text?: string | undefined;
+    images?: string[] | undefined;
+    partial?: boolean | undefined;
+    reasoning?: string | undefined;
+    conversationHistoryIndex?: number | undefined;
+    checkpoint?: {
+        [x: string]: unknown;
+    } | undefined;
+    progressStatus?: {
+        id?: string | undefined;
+        icon?: string | undefined;
+        text?: string | undefined;
+    } | undefined;
+};
 
 export type { ClineMessage }
 
 type TokenUsage = {
-	totalTokensIn: number
-	totalTokensOut: number
-	totalCacheWrites?: number | undefined
-	totalCacheReads?: number | undefined
-	totalCost: number
-	contextTokens: number
-}
+    totalTokensIn: number;
+    totalTokensOut: number;
+    totalCacheWrites?: number | undefined;
+    totalCacheReads?: number | undefined;
+    totalCost: number;
+    contextTokens: number;
+};
 
 export type { TokenUsage }
 
 type RooCodeEvents = {
-	message: [
-		{
-			taskId: string
-			action: "created" | "updated"
-			message: {
-				ts: number
-				type: "ask" | "say"
-				ask?:
-					| (
-							| "followup"
-							| "command"
-							| "command_output"
-							| "completion_result"
-							| "tool"
-							| "api_req_failed"
-							| "resume_task"
-							| "resume_completed_task"
-							| "mistake_limit_reached"
-							| "browser_action_launch"
-							| "use_mcp_server"
-					  )
-					| undefined
-				say?:
-					| (
-							| "error"
-							| "api_req_started"
-							| "api_req_finished"
-							| "api_req_retried"
-							| "api_req_retry_delayed"
-							| "api_req_deleted"
-							| "text"
-							| "reasoning"
-							| "completion_result"
-							| "user_feedback"
-							| "user_feedback_diff"
-							| "command_output"
-							| "shell_integration_warning"
-							| "browser_action"
-							| "browser_action_result"
-							| "mcp_server_request_started"
-							| "mcp_server_response"
-							| "subtask_result"
-							| "checkpoint_saved"
-							| "rooignore_error"
-							| "diff_error"
-					  )
-					| undefined
-				text?: string | undefined
-				images?: string[] | undefined
-				partial?: boolean | undefined
-				reasoning?: string | undefined
-				conversationHistoryIndex?: number | undefined
-				checkpoint?:
-					| {
-							[x: string]: unknown
-					  }
-					| undefined
-				progressStatus?:
-					| {
-							id?: string | undefined
-							icon?: string | undefined
-							text?: string | undefined
-					  }
-					| undefined
-			}
-		},
-	]
-	taskCreated: [string]
-	taskStarted: [string]
-	taskModeSwitched: [string, string]
-	taskPaused: [string]
-	taskUnpaused: [string]
-	taskAskResponded: [string]
-	taskAborted: [string]
-	taskSpawned: [string, string]
-	taskCompleted: [
-		string,
-		{
-			totalTokensIn: number
-			totalTokensOut: number
-			totalCacheWrites?: number | undefined
-			totalCacheReads?: number | undefined
-			totalCost: number
-			contextTokens: number
-		},
-		{
-			[x: string]: {
-				attempts: number
-				failures: number
-			}
-		},
-	]
-	taskTokenUsageUpdated: [
-		string,
-		{
-			totalTokensIn: number
-			totalTokensOut: number
-			totalCacheWrites?: number | undefined
-			totalCacheReads?: number | undefined
-			totalCost: number
-			contextTokens: number
-		},
-	]
-	taskToolFailed: [
-		string,
-		(
-			| "execute_command"
-			| "read_file"
-			| "write_to_file"
-			| "apply_diff"
-			| "insert_content"
-			| "search_and_replace"
-			| "search_files"
-			| "list_files"
-			| "list_code_definition_names"
-			| "browser_action"
-			| "use_mcp_tool"
-			| "access_mcp_resource"
-			| "ask_followup_question"
-			| "attempt_completion"
-			| "switch_mode"
-			| "new_task"
-			| "fetch_instructions"
-		),
-		string,
-	]
-}
+    message: [
+        {
+            taskId: string;
+            action: "created" | "updated";
+            message: {
+                ts: number;
+                type: "ask" | "say";
+                ask?: ("followup" | "command" | "command_output" | "completion_result" | "tool" | "api_req_failed" | "resume_task" | "resume_completed_task" | "mistake_limit_reached" | "browser_action_launch" | "use_mcp_server") | undefined;
+                say?: ("error" | "api_req_started" | "api_req_finished" | "api_req_retried" | "api_req_retry_delayed" | "api_req_deleted" | "text" | "reasoning" | "completion_result" | "user_feedback" | "user_feedback_diff" | "command_output" | "shell_integration_warning" | "browser_action" | "browser_action_result" | "mcp_server_request_started" | "mcp_server_response" | "subtask_result" | "checkpoint_saved" | "rooignore_error" | "diff_error") | undefined;
+                text?: string | undefined;
+                images?: string[] | undefined;
+                partial?: boolean | undefined;
+                reasoning?: string | undefined;
+                conversationHistoryIndex?: number | undefined;
+                checkpoint?: {
+                    [x: string]: unknown;
+                } | undefined;
+                progressStatus?: {
+                    id?: string | undefined;
+                    icon?: string | undefined;
+                    text?: string | undefined;
+                } | undefined;
+            };
+        }
+    ];
+    taskCreated: [
+        string
+    ];
+    taskStarted: [
+        string
+    ];
+    taskModeSwitched: [
+        string,
+        string
+    ];
+    taskPaused: [
+        string
+    ];
+    taskUnpaused: [
+        string
+    ];
+    taskAskResponded: [
+        string
+    ];
+    taskAborted: [
+        string
+    ];
+    taskSpawned: [
+        string,
+        string
+    ];
+    taskCompleted: [
+        string,
+        {
+            totalTokensIn: number;
+            totalTokensOut: number;
+            totalCacheWrites?: number | undefined;
+            totalCacheReads?: number | undefined;
+            totalCost: number;
+            contextTokens: number;
+        },
+        {
+            [x: string]: {
+                attempts: number;
+                failures: number;
+            };
+        }
+    ];
+    taskTokenUsageUpdated: [
+        string,
+        {
+            totalTokensIn: number;
+            totalTokensOut: number;
+            totalCacheWrites?: number | undefined;
+            totalCacheReads?: number | undefined;
+            totalCost: number;
+            contextTokens: number;
+        }
+    ];
+    taskToolFailed: [
+        string,
+        "execute_command" | "read_file" | "write_to_file" | "apply_diff" | "insert_content" | "search_and_replace" | "search_files" | "list_files" | "list_code_definition_names" | "browser_action" | "use_mcp_tool" | "access_mcp_resource" | "ask_followup_question" | "attempt_completion" | "switch_mode" | "new_task" | "fetch_instructions",
+        string
+    ];
+};
 
 export type { RooCodeEvents }

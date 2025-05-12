@@ -2,6 +2,7 @@ import { Anthropic } from "@anthropic-ai/sdk"
 import * as path from "path"
 import * as diff from "diff"
 import { RooIgnoreController, LOCK_TEXT_SYMBOL } from "../ignore/RooIgnoreController"
+import { AGENT_IGNORE_FILE_NAME } from "../../shared/constants"
 
 export const formatResponse = {
 	toolDenied: () => `The user denied this operation.`,
@@ -15,7 +16,7 @@ export const formatResponse = {
 	toolError: (error?: string) => `The tool execution failed with the following error:\n<error>\n${error}\n</error>`,
 
 	rooIgnoreError: (path: string) =>
-		`Access to ${path} is blocked by the .rooignore file settings. You must try to continue in the task without using this file, or ask the user to update the .rooignore file.`,
+		`Access to ${path} is blocked by the ${AGENT_IGNORE_FILE_NAME} file settings. You must try to continue in the task without using this file, or ask the user to update the ${AGENT_IGNORE_FILE_NAME} file.`,
 
 	noToolsUsed: () =>
 		`[ERROR] You did not use a tool in your previous response! Please retry with a tool use.

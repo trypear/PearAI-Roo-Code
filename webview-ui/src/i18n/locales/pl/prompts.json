@@ -6,7 +6,7 @@
 		"createNewMode": "Utwórz nowy tryb",
 		"editModesConfig": "Edytuj konfigurację trybów",
 		"editGlobalModes": "Edytuj tryby globalne",
-		"editProjectModes": "Edytuj tryby projektu (.roomodes)",
+		"editProjectModes": "Edytuj tryby projektu (.pearai-agent-ignore)",
 		"createModeHelpText": "Kliknij +, aby utworzyć nowy niestandardowy tryb, lub po prostu poproś Roo w czacie, aby utworzył go dla Ciebie!"
 	},
 	"apiConfiguration": {
@@ -37,12 +37,12 @@
 		"title": "Niestandardowe instrukcje dla trybu (opcjonalne)",
 		"resetToDefault": "Przywróć domyślne",
 		"description": "Dodaj wytyczne dotyczące zachowania specyficzne dla trybu {{modeName}}.",
-		"loadFromFile": "Niestandardowe instrukcje dla trybu {{modeName}} mogą być również ładowane z folderu <span>.roo/rules-{{modeSlug}}/</span> w Twoim obszarze roboczym (.roorules-{{modeSlug}} i .clinerules-{{modeSlug}} są przestarzałe i wkrótce przestaną działać)."
+		"loadFromFile": "Niestandardowe instrukcje dla trybu {{modeName}} mogą być również ładowane z folderu <span>.pearai-agent/rules-{{modeSlug}}/</span> w Twoim obszarze roboczym (.roorules-{{modeSlug}} i .clinerules-{{modeSlug}} są przestarzałe i wkrótce przestaną działać)."
 	},
 	"globalCustomInstructions": {
 		"title": "Niestandardowe instrukcje dla wszystkich trybów",
 		"description": "Te instrukcje dotyczą wszystkich trybów. Zapewniają podstawowy zestaw zachowań, które mogą być rozszerzone przez instrukcje specyficzne dla trybów poniżej.\nJeśli chcesz, aby Roo myślał i mówił w języku innym niż język wyświetlania Twojego edytora ({{language}}), możesz to określić tutaj.",
-		"loadFromFile": "Instrukcje mogą być również ładowane z folderu <span>.roo/rules/</span> w Twoim obszarze roboczym (.roorules i .clinerules są przestarzałe i wkrótce przestaną działać)."
+		"loadFromFile": "Instrukcje mogą być również ładowane z folderu <span>.pearai-agent/rules/</span> w Twoim obszarze roboczym (.roorules i .clinerules są przestarzałe i wkrótce przestaną działać)."
 	},
 	"systemPrompt": {
 		"preview": "Podgląd podpowiedzi systemowej",
@@ -101,7 +101,7 @@
 	},
 	"advancedSystemPrompt": {
 		"title": "Zaawansowane: Zastąp podpowiedź systemową",
-		"description": "Możesz całkowicie zastąpić podpowiedź systemową dla tego trybu (oprócz definicji roli i niestandardowych instrukcji) poprzez utworzenie pliku w .roo/system-prompt-{{modeSlug}} w swoim obszarze roboczym. Jest to bardzo zaawansowana funkcja, która omija wbudowane zabezpieczenia i kontrole spójności (szczególnie wokół używania narzędzi), więc bądź ostrożny!"
+		"description": "Możesz całkowicie zastąpić podpowiedź systemową dla tego trybu (oprócz definicji roli i niestandardowych instrukcji) poprzez utworzenie pliku w .pearai-agent/system-prompt-{{modeSlug}} w swoim obszarze roboczym. Jest to bardzo zaawansowana funkcja, która omija wbudowane zabezpieczenia i kontrole spójności (szczególnie wokół używania narzędzi), więc bądź ostrożny!"
 	},
 	"createModeDialog": {
 		"title": "Utwórz nowy tryb",
@@ -122,7 +122,7 @@
 				"description": "Dostępny we wszystkich obszarach roboczych"
 			},
 			"project": {
-				"label": "Specyficzny dla projektu (.roomodes)",
+				"label": "Specyficzny dla projektu (.pearai-agent-ignore)",
 				"description": "Dostępny tylko w tym obszarze roboczym, ma pierwszeństwo przed globalnym"
 			}
 		},
