@@ -30,6 +30,8 @@ jest.*
 .rooignore
 .roo/**
 .pearai-agent/**
+.pearai-agent-ignore
+.pearai-agent-modes
 benchmark/**
 cline_docs/**
 e2e/**
