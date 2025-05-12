@@ -3,8 +3,13 @@ import { useDebounce, useEvent } from "react-use"
 import { Trans } from "react-i18next"
 import { LanguageModelChatSelector } from "vscode"
 import { Checkbox } from "vscrui"
-import { VSCodeLink, VSCodeRadio, VSCodeRadioGroup, VSCodeTextField } from "@vscode/webview-ui-toolkit/react"
-import { VSCodeButton } from "@vscode/webview-ui-toolkit/react"
+import {
+	VSCodeButton,
+	VSCodeLink,
+	VSCodeRadio,
+	VSCodeRadioGroup,
+	VSCodeTextField,
+} from "@vscode/webview-ui-toolkit/react"
 import { ExternalLinkIcon } from "@radix-ui/react-icons"
 
 import { ReasoningEffort as ReasoningEffortType } from "@roo/schemas"
@@ -87,7 +92,7 @@ const ApiOptions = ({
 	useEffect(() => {
 		const propHeaders = apiConfiguration?.openAiHeaders || {}
 		if (JSON.stringify(customHeaders) !== JSON.stringify(Object.entries(propHeaders))) setCustomHeaders(Object.entries(propHeaders))
-	}, [apiConfiguration?.openAiHeaders])
+	}, [apiConfiguration?.openAiHeaders, customHeaders])
 
 	const [anthropicBaseUrlSelected, setAnthropicBaseUrlSelected] = useState(!!apiConfiguration?.anthropicBaseUrl)
 	const [openAiNativeBaseUrlSelected, setOpenAiNativeBaseUrlSelected] = useState(
