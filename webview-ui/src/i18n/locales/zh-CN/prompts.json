@@ -6,7 +6,7 @@
 		"createNewMode": "新建模式",
 		"editModesConfig": "模式设置",
 		"editGlobalModes": "修改全局模式",
-		"editProjectModes": "编辑项目模式 (.roomodes)",
+		"editProjectModes": "编辑项目模式 (.pearai-agent-ignore)",
 		"createModeHelpText": "点击 + 创建模式，或在对话时让Roo创建一个新模式。"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "全局可用"
 			},
 			"project": {
-				"label": "项目特定 (.roomodes)",
+				"label": "项目特定 (.pearai-agent-ignore)",
 				"description": "仅当前项目有效"
 			}
 		},

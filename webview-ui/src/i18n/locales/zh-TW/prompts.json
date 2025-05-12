@@ -6,7 +6,7 @@
 		"createNewMode": "建立新模式",
 		"editModesConfig": "編輯模式設定",
 		"editGlobalModes": "編輯全域模式",
-		"editProjectModes": "編輯專案模式 (.roomodes)",
+		"editProjectModes": "編輯專案模式 (.pearai-agent-ignore)",
 		"createModeHelpText": "點選 + 建立新的自訂模式，或者在聊天中直接請 Roo 為您建立！"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "在所有工作區可用"
 			},
 			"project": {
-				"label": "專案特定 (.roomodes)",
+				"label": "專案特定 (.pearai-agent-ignore)",
 				"description": "僅在此工作區可用，優先於全域模式"
 			}
 		},

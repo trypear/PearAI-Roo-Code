@@ -6,7 +6,7 @@
 		"createNewMode": "새 모드 만들기",
 		"editModesConfig": "모드 구성 편집",
 		"editGlobalModes": "전역 모드 편집",
-		"editProjectModes": "프로젝트 모드 편집 (.roomodes)",
+		"editProjectModes": "프로젝트 모드 편집 (.pearai-agent-ignore)",
 		"createModeHelpText": "새 커스텀 모드를 만들려면 + 버튼을 클릭하거나, 채팅에서 Roo에게 만들어달라고 요청하세요!"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "모든 작업 공간에서 사용 가능"
 			},
 			"project": {
-				"label": "프로젝트별 (.roomodes)",
+				"label": "프로젝트별 (.pearai-agent-ignore)",
 				"description": "이 작업 공간에서만 사용 가능, 전역보다 우선"
 			}
 		},

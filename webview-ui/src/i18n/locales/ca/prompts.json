@@ -6,7 +6,7 @@
 		"createNewMode": "Crear nou mode",
 		"editModesConfig": "Editar configuració de modes",
 		"editGlobalModes": "Editar modes globals",
-		"editProjectModes": "Editar modes de projecte (.roomodes)",
+		"editProjectModes": "Editar modes de projecte (.pearai-agent-ignore)",
 		"createModeHelpText": "Feu clic a + per crear un nou mode personalitzat, o simplement demaneu a Roo al xat que en creï un per a vostè!"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "Disponible a tots els espais de treball"
 			},
 			"project": {
-				"label": "Específic del projecte (.roomodes)",
+				"label": "Específic del projecte (.pearai-agent-ignore)",
 				"description": "Només disponible en aquest espai de treball, té prioritat sobre el global"
 			}
 		},

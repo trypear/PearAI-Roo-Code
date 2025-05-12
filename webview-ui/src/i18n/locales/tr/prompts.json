@@ -6,7 +6,7 @@
 		"createNewMode": "Yeni mod oluştur",
 		"editModesConfig": "Mod yapılandırmasını düzenle",
 		"editGlobalModes": "Global modları düzenle",
-		"editProjectModes": "Proje modlarını düzenle (.roomodes)",
+		"editProjectModes": "Proje modlarını düzenle (.pearai-agent-ignore)",
 		"createModeHelpText": "Yeni bir özel mod oluşturmak için + düğmesine tıklayın veya sohbette Roo'dan sizin için bir tane oluşturmasını isteyin!"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "Tüm çalışma alanlarında kullanılabilir"
 			},
 			"project": {
-				"label": "Projeye özgü (.roomodes)",
+				"label": "Projeye özgü (.pearai-agent-ignore)",
 				"description": "Yalnızca bu çalışma alanında kullanılabilir, globale göre önceliklidir"
 			}
 		},

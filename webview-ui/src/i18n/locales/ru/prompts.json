@@ -6,7 +6,7 @@
 		"createNewMode": "Создать новый режим",
 		"editModesConfig": "Редактировать конфигурацию режимов",
 		"editGlobalModes": "Редактировать глобальные режимы",
-		"editProjectModes": "Редактировать режимы проекта (.roomodes)",
+		"editProjectModes": "Редактировать режимы проекта (.pearai-agent-ignore)",
 		"createModeHelpText": "Нажмите +, чтобы создать новый пользовательский режим, или просто попросите Roo в чате создать его для вас!"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "Доступно во всех рабочих пространствах"
 			},
 			"project": {
-				"label": "Для проекта (.roomodes)",
+				"label": "Для проекта (.pearai-agent-ignore)",
 				"description": "Доступно только в этом рабочем пространстве, имеет приоритет над глобальными"
 			}
 		},

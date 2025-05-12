@@ -6,7 +6,7 @@
 		"createNewMode": "Tạo chế độ mới",
 		"editModesConfig": "Chỉnh sửa cấu hình chế độ",
 		"editGlobalModes": "Chỉnh sửa chế độ toàn cục",
-		"editProjectModes": "Chỉnh sửa chế độ dự án (.roomodes)",
+		"editProjectModes": "Chỉnh sửa chế độ dự án (.pearai-agent-ignore)",
 		"createModeHelpText": "Nhấn + để tạo chế độ tùy chỉnh mới, hoặc chỉ cần yêu cầu Roo trong chat tạo một chế độ cho bạn!"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "Có sẵn trong tất cả các không gian làm việc"
 			},
 			"project": {
-				"label": "Dành riêng cho dự án (.roomodes)",
+				"label": "Dành riêng cho dự án (.pearai-agent-ignore)",
 				"description": "Chỉ có sẵn trong không gian làm việc này, được ưu tiên hơn toàn cục"
 			}
 		},

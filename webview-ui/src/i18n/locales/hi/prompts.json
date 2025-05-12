@@ -6,7 +6,7 @@
 		"createNewMode": "नया मोड बनाएँ",
 		"editModesConfig": "मोड कॉन्फ़िगरेशन संपादित करें",
 		"editGlobalModes": "ग्लोबल मोड्स संपादित करें",
-		"editProjectModes": "प्रोजेक्ट मोड्स संपादित करें (.roomodes)",
+		"editProjectModes": "प्रोजेक्ट मोड्स संपादित करें (.pearai-agent-ignore)",
 		"createModeHelpText": "नया कस्टम मोड बनाने के लिए + पर क्लिक करें, या बस चैट में Roo से आपके लिए एक बनाने को कहें!"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "सभी वर्कस्पेस में उपलब्ध"
 			},
 			"project": {
-				"label": "प्रोजेक्ट-विशिष्ट (.roomodes)",
+				"label": "प्रोजेक्ट-विशिष्ट (.pearai-agent-ignore)",
 				"description": "केवल इस वर्कस्पेस में उपलब्ध, ग्लोबल पर प्राथमिकता रखता है"
 			}
 		},

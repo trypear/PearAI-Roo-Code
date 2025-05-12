@@ -6,7 +6,7 @@
 		"createNewMode": "新しいモードを作成",
 		"editModesConfig": "モード設定を編集",
 		"editGlobalModes": "グローバルモードを編集",
-		"editProjectModes": "プロジェクトモードを編集 (.roomodes)",
+		"editProjectModes": "プロジェクトモードを編集 (.pearai-agent-ignore)",
 		"createModeHelpText": "+ をクリックして新しいカスタムモードを作成するか、チャットで Roo に作成を依頼してください！"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "すべてのワークスペースで利用可能"
 			},
 			"project": {
-				"label": "プロジェクト固有 (.roomodes)",
+				"label": "プロジェクト固有 (.pearai-agent-ignore)",
 				"description": "このワークスペースでのみ使用可能、グローバルよりも優先"
 			}
 		},

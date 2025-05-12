@@ -6,7 +6,7 @@
 		"createNewMode": "Neuen Modus erstellen",
 		"editModesConfig": "Moduskonfiguration bearbeiten",
 		"editGlobalModes": "Globale Modi bearbeiten",
-		"editProjectModes": "Projektmodi bearbeiten (.roomodes)",
+		"editProjectModes": "Projektmodi bearbeiten (.pearai-agent-ignore)",
 		"createModeHelpText": "Klicke auf +, um einen neuen benutzerdefinierten Modus zu erstellen, oder bitte Roo einfach im Chat, einen für dich zu erstellen!"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "Verfügbar in allen Arbeitsbereichen"
 			},
 			"project": {
-				"label": "Projektspezifisch (.roomodes)",
+				"label": "Projektspezifisch (.pearai-agent-ignore)",
 				"description": "Nur in diesem Arbeitsbereich verfügbar, hat Vorrang vor global"
 			}
 		},

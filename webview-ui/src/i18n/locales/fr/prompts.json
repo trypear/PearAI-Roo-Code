@@ -6,7 +6,7 @@
 		"createNewMode": "Créer un nouveau mode",
 		"editModesConfig": "Modifier la configuration des modes",
 		"editGlobalModes": "Modifier les modes globaux",
-		"editProjectModes": "Modifier les modes du projet (.roomodes)",
+		"editProjectModes": "Modifier les modes du projet (.pearai-agent-ignore)",
 		"createModeHelpText": "Cliquez sur + pour créer un nouveau mode personnalisé, ou demandez simplement à Roo dans le chat de vous en créer un !"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "Disponible dans tous les espaces de travail"
 			},
 			"project": {
-				"label": "Spécifique au projet (.roomodes)",
+				"label": "Spécifique au projet (.pearai-agent-ignore)",
 				"description": "Disponible uniquement dans cet espace de travail, a priorité sur le global"
 			}
 		},

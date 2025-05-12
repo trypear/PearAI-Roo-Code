@@ -6,7 +6,7 @@
 		"createNewMode": "Utwórz nowy tryb",
 		"editModesConfig": "Edytuj konfigurację trybów",
 		"editGlobalModes": "Edytuj tryby globalne",
-		"editProjectModes": "Edytuj tryby projektu (.roomodes)",
+		"editProjectModes": "Edytuj tryby projektu (.pearai-agent-ignore)",
 		"createModeHelpText": "Kliknij +, aby utworzyć nowy niestandardowy tryb, lub po prostu poproś Roo w czacie, aby utworzył go dla Ciebie!"
 	},
 	"apiConfiguration": {
@@ -122,7 +122,7 @@
 				"description": "Dostępny we wszystkich obszarach roboczych"
 			},
 			"project": {
-				"label": "Specyficzny dla projektu (.roomodes)",
+				"label": "Specyficzny dla projektu (.pearai-agent-ignore)",
 				"description": "Dostępny tylko w tym obszarze roboczym, ma pierwszeństwo przed globalnym"
 			}
 		},
