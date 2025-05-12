@@ -175,114 +175,179 @@ type ProviderSettings = {
 export type { ProviderSettings }
 
 type GlobalSettings = {
-    currentApiConfigName?: string | undefined;
-    listApiConfigMeta?: {
-        id: string;
-        name: string;
-        apiProvider?: ("anthropic" | "glama" | "openrouter" | "bedrock" | "vertex" | "openai" | "ollama" | "vscode-lm" | "lmstudio" | "gemini" | "openai-native" | "mistral" | "deepseek" | "unbound" | "requesty" | "human-relay" | "fake-ai" | "pearai" | "xai") | undefined;
-    }[] | undefined;
-    pinnedApiConfigs?: {
-        [x: string]: boolean;
-    } | undefined;
-    lastShownAnnouncementId?: string | undefined;
-    customInstructions?: string | undefined;
-    taskHistory?: {
-        id: string;
-        number: number;
-        ts: number;
-        task: string;
-        tokensIn: number;
-        tokensOut: number;
-        cacheWrites?: number | undefined;
-        cacheReads?: number | undefined;
-        totalCost: number;
-        size?: number | undefined;
-        workspace?: string | undefined;
-        creatorModeConfig?: {
-            creatorMode?: boolean | undefined;
-            newProjectType?: string | undefined;
-            newProjectPath?: string | undefined;
-        } | undefined;
-    }[] | undefined;
-    autoApprovalEnabled?: boolean | undefined;
-    alwaysAllowReadOnly?: boolean | undefined;
-    alwaysAllowReadOnlyOutsideWorkspace?: boolean | undefined;
-    alwaysAllowWrite?: boolean | undefined;
-    alwaysAllowWriteOutsideWorkspace?: boolean | undefined;
-    writeDelayMs?: number | undefined;
-    alwaysAllowBrowser?: boolean | undefined;
-    alwaysApproveResubmit?: boolean | undefined;
-    requestDelaySeconds?: number | undefined;
-    alwaysAllowMcp?: boolean | undefined;
-    alwaysAllowModeSwitch?: boolean | undefined;
-    alwaysAllowSubtasks?: boolean | undefined;
-    alwaysAllowExecute?: boolean | undefined;
-    allowedCommands?: string[] | undefined;
-    browserToolEnabled?: boolean | undefined;
-    browserViewportSize?: string | undefined;
-    screenshotQuality?: number | undefined;
-    remoteBrowserEnabled?: boolean | undefined;
-    remoteBrowserHost?: string | undefined;
-    cachedChromeHostUrl?: string | undefined;
-    enableCheckpoints?: boolean | undefined;
-    ttsEnabled?: boolean | undefined;
-    ttsSpeed?: number | undefined;
-    soundEnabled?: boolean | undefined;
-    soundVolume?: number | undefined;
-    maxOpenTabsContext?: number | undefined;
-    maxWorkspaceFiles?: number | undefined;
-    showRooIgnoredFiles?: boolean | undefined;
-    maxReadFileLine?: number | undefined;
-    terminalOutputLineLimit?: number | undefined;
-    terminalShellIntegrationTimeout?: number | undefined;
-    terminalShellIntegrationDisabled?: boolean | undefined;
-    terminalCommandDelay?: number | undefined;
-    terminalPowershellCounter?: boolean | undefined;
-    terminalZshClearEolMark?: boolean | undefined;
-    terminalZshOhMy?: boolean | undefined;
-    terminalZshP10k?: boolean | undefined;
-    terminalZdotdir?: boolean | undefined;
-    terminalCompressProgressBar?: boolean | undefined;
-    rateLimitSeconds?: number | undefined;
-    diffEnabled?: boolean | undefined;
-    fuzzyMatchThreshold?: number | undefined;
-    experiments?: {
-        powerSteering: boolean;
-    } | undefined;
-    language?: ("ca" | "de" | "en" | "es" | "fr" | "hi" | "it" | "ja" | "ko" | "pl" | "pt-BR" | "ru" | "tr" | "vi" | "zh-CN" | "zh-TW") | undefined;
-    telemetrySetting?: ("unset" | "enabled" | "disabled") | undefined;
-    mcpEnabled?: boolean | undefined;
-    enableMcpServerCreation?: boolean | undefined;
-    mode?: string | undefined;
-    modeApiConfigs?: {
-        [x: string]: string;
-    } | undefined;
-    customModes?: {
-        slug: string;
-        name: string;
-        roleDefinition: string;
-        customInstructions?: string | undefined;
-        groups: (("read" | "edit" | "browser" | "command" | "mcp" | "modes") | [
-            "read" | "edit" | "browser" | "command" | "mcp" | "modes",
-            {
-                fileRegex?: string | undefined;
-                description?: string | undefined;
-            }
-        ])[];
-        source?: ("global" | "project") | undefined;
-    }[] | undefined;
-    customModePrompts?: {
-        [x: string]: {
-            roleDefinition?: string | undefined;
-            customInstructions?: string | undefined;
-        } | undefined;
-    } | undefined;
-    customSupportPrompts?: {
-        [x: string]: string | undefined;
-    } | undefined;
-    enhancementApiConfigId?: string | undefined;
-    historyPreviewCollapsed?: boolean | undefined;
-};
+	currentApiConfigName?: string | undefined
+	listApiConfigMeta?:
+		| {
+				id: string
+				name: string
+				apiProvider?:
+					| (
+							| "anthropic"
+							| "glama"
+							| "openrouter"
+							| "bedrock"
+							| "vertex"
+							| "openai"
+							| "ollama"
+							| "vscode-lm"
+							| "lmstudio"
+							| "gemini"
+							| "openai-native"
+							| "mistral"
+							| "deepseek"
+							| "unbound"
+							| "requesty"
+							| "human-relay"
+							| "fake-ai"
+							| "pearai"
+							| "xai"
+					  )
+					| undefined
+		  }[]
+		| undefined
+	pinnedApiConfigs?:
+		| {
+				[x: string]: boolean
+		  }
+		| undefined
+	lastShownAnnouncementId?: string | undefined
+	customInstructions?: string | undefined
+	taskHistory?:
+		| {
+				id: string
+				number: number
+				ts: number
+				task: string
+				tokensIn: number
+				tokensOut: number
+				cacheWrites?: number | undefined
+				cacheReads?: number | undefined
+				totalCost: number
+				size?: number | undefined
+				workspace?: string | undefined
+				creatorModeConfig?:
+					| {
+							creatorMode?: boolean | undefined
+							newProjectType?: string | undefined
+							newProjectPath?: string | undefined
+					  }
+					| undefined
+		  }[]
+		| undefined
+	autoApprovalEnabled?: boolean | undefined
+	alwaysAllowReadOnly?: boolean | undefined
+	alwaysAllowReadOnlyOutsideWorkspace?: boolean | undefined
+	alwaysAllowWrite?: boolean | undefined
+	alwaysAllowWriteOutsideWorkspace?: boolean | undefined
+	writeDelayMs?: number | undefined
+	alwaysAllowBrowser?: boolean | undefined
+	alwaysApproveResubmit?: boolean | undefined
+	requestDelaySeconds?: number | undefined
+	alwaysAllowMcp?: boolean | undefined
+	alwaysAllowModeSwitch?: boolean | undefined
+	alwaysAllowSubtasks?: boolean | undefined
+	alwaysAllowExecute?: boolean | undefined
+	allowedCommands?: string[] | undefined
+	browserToolEnabled?: boolean | undefined
+	browserViewportSize?: string | undefined
+	screenshotQuality?: number | undefined
+	remoteBrowserEnabled?: boolean | undefined
+	remoteBrowserHost?: string | undefined
+	cachedChromeHostUrl?: string | undefined
+	enableCheckpoints?: boolean | undefined
+	ttsEnabled?: boolean | undefined
+	ttsSpeed?: number | undefined
+	soundEnabled?: boolean | undefined
+	soundVolume?: number | undefined
+	maxOpenTabsContext?: number | undefined
+	maxWorkspaceFiles?: number | undefined
+	showRooIgnoredFiles?: boolean | undefined
+	maxReadFileLine?: number | undefined
+	terminalOutputLineLimit?: number | undefined
+	terminalShellIntegrationTimeout?: number | undefined
+	terminalShellIntegrationDisabled?: boolean | undefined
+	terminalCommandDelay?: number | undefined
+	terminalPowershellCounter?: boolean | undefined
+	terminalZshClearEolMark?: boolean | undefined
+	terminalZshOhMy?: boolean | undefined
+	terminalZshP10k?: boolean | undefined
+	terminalZdotdir?: boolean | undefined
+	terminalCompressProgressBar?: boolean | undefined
+	rateLimitSeconds?: number | undefined
+	diffEnabled?: boolean | undefined
+	fuzzyMatchThreshold?: number | undefined
+	experiments?:
+		| {
+				powerSteering: boolean
+		  }
+		| undefined
+	language?:
+		| (
+				| "ca"
+				| "de"
+				| "en"
+				| "es"
+				| "fr"
+				| "hi"
+				| "it"
+				| "ja"
+				| "ko"
+				| "pl"
+				| "pt-BR"
+				| "ru"
+				| "tr"
+				| "vi"
+				| "zh-CN"
+				| "zh-TW"
+		  )
+		| undefined
+	telemetrySetting?: ("unset" | "enabled" | "disabled") | undefined
+	mcpEnabled?: boolean | undefined
+	enableMcpServerCreation?: boolean | undefined
+	mode?: string | undefined
+	modeApiConfigs?:
+		| {
+				[x: string]: string
+		  }
+		| undefined
+	customModes?:
+		| {
+				slug: string
+				name: string
+				roleDefinition: string
+				customInstructions?: string | undefined
+				groups: (
+					| ("read" | "edit" | "browser" | "command" | "mcp" | "modes")
+					| [
+							"read" | "edit" | "browser" | "command" | "mcp" | "modes",
+							{
+								fileRegex?: string | undefined
+								description?: string | undefined
+							},
+					  ]
+				)[]
+				source?: ("global" | "project") | undefined
+				backendOnly?: boolean | undefined
+		  }[]
+		| undefined
+	customModePrompts?:
+		| {
+				[x: string]:
+					| {
+							roleDefinition?: string | undefined
+							customInstructions?: string | undefined
+					  }
+					| undefined
+		  }
+		| undefined
+	customSupportPrompts?:
+		| {
+				[x: string]: string | undefined
+		  }
+		| undefined
+	enhancementApiConfigId?: string | undefined
+	historyPreviewCollapsed?: boolean | undefined
+}
 
 export type { GlobalSettings }
 

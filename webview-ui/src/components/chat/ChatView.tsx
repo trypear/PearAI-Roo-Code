@@ -1242,7 +1242,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 			{creatorModeConfig?.creatorMode === true && (
 				<PlanningBar
 					requestedPlan={task?.text || ""}
-					isGenerating={isStreaming}
+					isStreaming={isStreaming}
 					stopCallback={() => vscode.postMessage({ type: "cancelTask" })}
 				/>
 			)}

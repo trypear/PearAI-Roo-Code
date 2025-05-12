@@ -364,6 +364,7 @@ type GlobalSettings = {
 					  ]
 				)[]
 				source?: ("global" | "project") | undefined
+				backendOnly?: boolean | undefined
 		  }[]
 		| undefined
 	customModePrompts?:

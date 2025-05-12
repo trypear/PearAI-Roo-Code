@@ -69,7 +69,7 @@ const PromptsView = ({ onDone }: PromptsViewProps) => {
 	const [visualMode, setVisualMode] = useState(mode)
 
 	// Memoize modes to preserve array order
-	const modes = useMemo(() => getAllModes(customModes), [customModes])
+	const modes = useMemo(() => getAllModes(customModes).filter(x => !x.backendOnly), [customModes])
 
 	const [testPrompt, setTestPrompt] = useState("")
 	const [isEnhancing, setIsEnhancing] = useState(false)

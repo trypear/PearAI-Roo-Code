@@ -813,14 +813,14 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 					"flex",
 					"flex-col",
 					"gap-2",
-					"m-[10px_15px]",
+					// "m-[10px_15px]",
 					"p-2",
 					"outline-none",
 					"border-none",
-					"w-[calc(100%-30px)]",
+					// "w-[calc(100%-30px)]",
 					"rounded-xl",
-					"ml-auto",
-					"mr-auto",
+					// "ml-auto",
+					// "mr-auto",
 					"box-border",
 					textAreaDisabled ? "opacity-50" : "opacity-100",
 				)}
@@ -1039,6 +1039,7 @@ const ChatTextArea = forwardRef<HTMLTextAreaElement, ChatTextAreaProps>(
 										value: mode.slug,
 										label: mode.name,
 										type: DropdownOptionType.ITEM,
+										backendOnly: mode.backendOnly
 									})),
 									{
 										value: "sep-1",

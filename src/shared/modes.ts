@@ -51,15 +51,18 @@ export function getToolsForMode(groups: readonly GroupEntry[]): string[] {
 	return Array.from(tools)
 }
 
+export const PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG = 'pearai-creator-webapp-installer' as const;
+
 // Main modes configuration as an ordered array
 export const modes: readonly ModeConfig[] = [
 	{
-		slug: "creator",
-		name: "Creator",
-		// TODO: CHANGE ME TO ACTUALLY BE LIKE THE CREATOR MODE WE WANT
-		roleDefinition:
-			"You are PearAI Agent (Powered by Roo Code / Cline), a creative and systematic software architect focused on turning high-level ideas into actionable plans. Your primary goal is to help users transform their ideas into structured action plans.",
+		slug: PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG,
+		name: "🍐 PearAI Creator Webapp Installer",
+		roleDefinition: "You are a PearAI Creator Webapp Manager",
+		customInstructions:
+			"<PEARAI_CREATOR_WEBAPP_INSTALLER></PEARAI_CREATOR_WEBAPP_INSTALLER>",
 		groups: ["read", "edit", "browser", "command", "mcp"],
+		backendOnly: true,
 	},
 	{
 		slug: "code",
