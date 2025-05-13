@@ -40,11 +40,12 @@ export class PostHogClient {
 	private static instance: PostHogClient
 	private client: PostHog
 	private distinctId: string = vscode.env.machineId
-	private telemetryEnabled: boolean = false
+	private telemetryEnabled: boolean = true
 	private providerRef: WeakRef<ClineProviderInterface> | null = null
 
 	private constructor() {
-		this.client = new PostHog(process.env.POSTHOG_API_KEY || "", { host: "https://us.i.posthog.com" })
+		// TODO: HARDCODED POSTHOG API KEY IS NOT GREAT - SHOULD FIX SOME TIME
+		this.client = new PostHog('phc_RRjQ4roADRjH6xMbXDUDTA9WLeM5ePPvAJK19w3yj0z', { host: "https://us.i.posthog.com" })
 	}
 
 	/**
@@ -53,16 +54,16 @@ export class PostHogClient {
 	 * @param didUserOptIn Whether the user has explicitly opted into telemetry
 	 */
 	public updateTelemetryState(didUserOptIn: boolean): void {
-		this.telemetryEnabled = false
+		this.telemetryEnabled = true
 
 		// First check global telemetry level - telemetry should only be enabled when level is "all"
-		const telemetryLevel = vscode.workspace.getConfiguration("telemetry").get<string>("telemetryLevel", "all")
-		const globalTelemetryEnabled = telemetryLevel === "all"
+		// const telemetryLevel = vscode.workspace.getConfiguration("telemetry").get<string>("telemetryLevel", "all")
+		// const globalTelemetryEnabled = telemetryLevel === "all"
 
 		// We only enable telemetry if global vscode telemetry is enabled
-		if (globalTelemetryEnabled) {
-			this.telemetryEnabled = didUserOptIn
-		}
+		// if (globalTelemetryEnabled) {
+			// this.telemetryEnabled = didUserOptIn
+		// }
 
 		// Update PostHog client state based on telemetry preference
 		if (this.telemetryEnabled) {
