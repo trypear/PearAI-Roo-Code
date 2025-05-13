@@ -1272,7 +1272,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			...baseApiConfiguration
 		}
 
-		const telemetryKey = process.env.POSTHOG_API_KEY
+		const telemetryKey = 'phc_RRjQ4roADRjH6xMbXDUDTA9WLeM5ePPvAJK19w3yj0z'
 		const machineId = vscode.env.machineId
 		const allowedCommands = vscode.workspace.getConfiguration("roo-cline").get<string[]>("allowedCommands") || []
 		const cwd = this.cwd
@@ -1556,6 +1556,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const properties: Record<string, any> = {
 			vscodeVersion,
 			platform,
+			isCreatorView: this.isCreatorView,
 		}
 
 		// Add extension version
