@@ -834,6 +834,14 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 						apiProvider: "pearai",
 						apiModelId: "pearai-model-creator",
 					}
+				} else {
+					if (apiConfig.apiModelId == "pearai-model-creator") {
+						apiConfig = {
+							...apiConfig,
+							apiProvider: "pearai",
+							apiModelId: "pearai-model",
+						}
+					}
 				}
 
 				await Promise.all([
