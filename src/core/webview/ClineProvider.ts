@@ -24,7 +24,7 @@ import { supportPrompt } from "../../shared/support-prompt"
 import { GlobalFileNames } from "../../shared/globalFileNames"
 import { HistoryItem } from "../../shared/HistoryItem"
 import { ExtensionMessage } from "../../shared/ExtensionMessage"
-import { Mode, PromptComponent, defaultModeSlug } from "../../shared/modes"
+import { Mode, PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG, PromptComponent, defaultModeSlug } from "../../shared/modes"
 import { experimentDefault } from "../../shared/experiments"
 import { formatLanguage } from "../../shared/language"
 import { Terminal } from "../../integrations/terminal/Terminal"
@@ -825,7 +825,16 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			const config = listApiConfig?.find((c) => c.id === savedConfigId)
 
 			if (config?.name) {
-				const apiConfig = await this.providerSettingsManager.loadConfig(config.name)
+				let apiConfig = await this.providerSettingsManager.loadConfig(config.name)
+
+				// Switch to pearai-model-creator model if we are in Creator Mode
+				if (newMode == PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG) {
+					apiConfig = {
+						...apiConfig,
+						apiProvider: "pearai",
+						apiModelId: "pearai-model-creator",
+					}
+				}
 
 				await Promise.all([
 					this.updateGlobalState("currentApiConfigName", config.name),
@@ -858,7 +867,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			...providerSettings,
 			creatorModeConfig: currentCline?.creatorModeConfig,
 		}
-		
+
 
 		if (mode) {
 			const currentApiConfigName = this.getGlobalState("currentApiConfigName")
