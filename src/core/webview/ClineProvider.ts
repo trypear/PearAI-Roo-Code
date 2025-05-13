@@ -1556,7 +1556,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const properties: Record<string, any> = {
 			vscodeVersion,
 			platform,
-			isCreatorView: this.isCreatorView,
 		}
 
 		// Add extension version
@@ -1592,6 +1591,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		if (currentCline?.diffStrategy) {
 			properties.diffStrategy = currentCline.diffStrategy.getName()
+		}
+
+		// Add creator mode context if available
+		if (currentCline?.creatorModeConfig?.creatorMode) {
+			properties.isCreatorMode = true
 		}
 
 		return properties
