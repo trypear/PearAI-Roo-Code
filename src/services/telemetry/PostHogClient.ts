@@ -62,10 +62,14 @@ export class PostHogClient {
 			if (exports) {
 				this.pearaiId = await exports.pearAPI.getUserId()
 				this.client.identify({
-					distinctId: this.pearaiId,
+					distinctId: this.vscMachineId,
 					properties: {
-						vscMachineId: this.vscMachineId
+						pearAiId: this.pearaiId, 
 					}
+				});
+				this.client.alias({
+					distinctId: this.vscMachineId,
+					alias: this.pearaiId,
 				})
 			}
 		} catch (error) {
