@@ -384,6 +384,7 @@
 		"@google/genai": "^0.9.0",
 		"@mistralai/mistralai": "^1.3.6",
 		"@modelcontextprotocol/sdk": "^1.7.0",
+		"@pearai/core": "file:./../pearai-submodule/core",
 		"@types/clone-deep": "^4.0.4",
 		"@types/pdf-parse": "^1.1.4",
 		"@types/tmp": "^0.2.6",
