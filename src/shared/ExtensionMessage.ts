@@ -68,6 +68,7 @@ export interface ExtensionMessage {
 		| "acceptInput"
 		| "setHistoryPreviewCollapsed"
 		| "commandExecutionStatus"
+		| "creatorModeUpdate"
 	text?: string
 	action?:
 		| "chatButtonClicked"
@@ -182,7 +183,7 @@ export type ExtensionState = Pick<
 	enableCheckpoints: boolean
 	maxOpenTabsContext: number // Maximum number of VSCode open tabs to include in context (0-500)
 	maxWorkspaceFiles: number // Maximum number of files to include in current working directory details (0-500)
-	showRooIgnoredFiles: boolean // Whether to show .rooignore'd files in listings
+	showRooIgnoredFiles: boolean // Whether to show .pearai-agent-ignore'd files in listings
 	maxReadFileLine: number // Maximum number of lines to read from a file before truncating
 
 	experiments: Record<ExperimentId, boolean> // Map of experiment IDs to their enabled state
@@ -202,6 +203,11 @@ export type ExtensionState = Pick<
 	renderContext: "sidebar" | "editor"
 	settingsImportedAt?: number
 	historyPreviewCollapsed?: boolean
+	creatorModeConfig?: {
+		creatorMode?: boolean
+		newProjectType?: string
+		newProjectPath?: string
+	}
 }
 
 export type { ClineMessage, ClineAsk, ClineSay }

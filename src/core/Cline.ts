@@ -11,7 +11,7 @@ import { serializeError } from "serialize-error"
 import * as vscode from "vscode"
 
 // schemas
-import { TokenUsage, ToolUsage, ToolName, ModelInfo } from "../schemas"
+import { TokenUsage, ToolUsage, ToolName, ModelInfo, CreatorModeConfig } from "../schemas"
 
 // api
 import { ApiHandler, buildApiHandler } from "../api"
@@ -127,6 +127,7 @@ export type ClineOptions = {
 	taskNumber?: number
 	onCreated?: (cline: Cline) => void
 	pearaiModels?: Record<string, ModelInfo>
+	creatorModeConfig?: CreatorModeConfig
 }
 
 export class Cline extends EventEmitter<ClineEvents> {
@@ -142,6 +143,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 	pausedModeSlug: string = defaultModeSlug
 	private pauseInterval: NodeJS.Timeout | undefined
 
+	public creatorModeConfig: CreatorModeConfig
 	readonly apiConfiguration: ApiConfiguration
 	api: ApiHandler
 	private promptCacheKey: string
@@ -220,6 +222,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 		parentTask,
 		taskNumber = -1,
 		onCreated,
+		creatorModeConfig,
 	}: ClineOptions) {
 		super()
 
@@ -242,8 +245,13 @@ export class Cline extends EventEmitter<ClineEvents> {
 			console.error("Failed to initialize RooIgnoreController:", error)
 		})
 
-		this.apiConfiguration = apiConfiguration
-		this.api = buildApiHandler(apiConfiguration)
+		this.creatorModeConfig = creatorModeConfig ?? historyItem?.creatorModeConfig ?? { creatorMode: false }
+		
+		this.apiConfiguration = {
+			...apiConfiguration,
+			creatorModeConfig: this.creatorModeConfig
+		}
+		this.api = buildApiHandler(this.apiConfiguration)
 		this.promptCacheKey = crypto.randomUUID()
 
 		this.urlContentFetcher = new UrlContentFetcher(provider.context)
@@ -256,6 +264,8 @@ export class Cline extends EventEmitter<ClineEvents> {
 		this.globalStoragePath = provider.context.globalStorageUri.fsPath
 		this.diffViewProvider = new DiffViewProvider(this.cwd)
 		this.enableCheckpoints = enableCheckpoints
+
+		this.creatorModeConfig = creatorModeConfig ?? historyItem?.creatorModeConfig ?? { creatorMode: false }
 
 		this.rootTask = rootTask
 		this.parentTask = parentTask
@@ -371,6 +381,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 				taskNumber: this.taskNumber,
 				globalStoragePath: this.globalStoragePath,
 				workspace: this.cwd,
+				creatorModeConfig: this.creatorModeConfig,
 			})
 
 			this.emit("taskTokenUsageUpdated", this.taskId, tokenUsage)
@@ -1926,7 +1937,7 @@ export class Cline extends EventEmitter<ClineEvents> {
 				// if there's no assistant_responses, that means we got no text or tool_use content blocks from API which we should assume is an error
 				await this.say(
 					"error",
-					"Unexpected API Response: The language model did not provide any assistant messages. This may indicate an issue with the API or the model's output.",
+					"Oops! Something went wrong. Please check the notifications on the bottom right of the window for more details, or contact PearAI Support on Discord.",
 				)
 				await this.addToApiConversationHistory({
 					role: "assistant",

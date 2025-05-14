@@ -128,6 +128,7 @@ export interface WebviewMessage {
 		| "toggleApiConfigPin"
 		| "setHistoryPreviewCollapsed"
 		| "openPearAIAuth"
+		| "openPearAICreatorFeedbackOverlay"
 	text?: string
 	disabled?: boolean
 	askResponse?: ClineAskResponse

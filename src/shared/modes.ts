@@ -1,9 +1,10 @@
 import * as vscode from "vscode"
-
 import { GroupOptions, GroupEntry, ModeConfig, PromptComponent, CustomModePrompts, ExperimentId } from "../schemas"
 import { TOOL_GROUPS, ToolGroup, ALWAYS_AVAILABLE_TOOLS } from "./tools"
 import { addCustomInstructions } from "../core/prompts/sections/custom-instructions"
 import { EXPERIMENT_IDS } from "./experiments"
+
+// Mode types
 export type Mode = string
 
 export type { GroupOptions, GroupEntry, ModeConfig, PromptComponent, CustomModePrompts }
@@ -50,8 +51,19 @@ export function getToolsForMode(groups: readonly GroupEntry[]): string[] {
 	return Array.from(tools)
 }
 
+export const PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG = 'pearai-creator-webapp-installer' as const;
+
 // Main modes configuration as an ordered array
 export const modes: readonly ModeConfig[] = [
+	{
+		slug: PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG,
+		name: "🍐 PearAI Creator Webapp Installer",
+		roleDefinition: "You are a PearAI Creator Webapp Manager",
+		customInstructions:
+			"<PEARAI_CREATOR_WEBAPP_INSTALLER></PEARAI_CREATOR_WEBAPP_INSTALLER>",
+		groups: ["read", "edit", "browser", "command", "mcp"],
+		backendOnly: true,
+	},
 	{
 		slug: "code",
 		name: "💻 Code",

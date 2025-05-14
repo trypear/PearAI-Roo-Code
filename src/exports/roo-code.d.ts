@@ -202,6 +202,13 @@ type ProviderSettings = {
 				defaultModelId?: string | undefined
 		  }
 		| undefined
+	creatorModeConfig?:
+		| {
+				creatorMode?: boolean | undefined
+				newProjectType?: string | undefined
+				newProjectPath?: string | undefined
+		  }
+		| undefined
 }
 
 type GlobalSettings = {
@@ -255,6 +262,13 @@ type GlobalSettings = {
 				totalCost: number
 				size?: number | undefined
 				workspace?: string | undefined
+				creatorModeConfig?:
+					| {
+							creatorMode?: boolean | undefined
+							newProjectType?: string | undefined
+							newProjectPath?: string | undefined
+					  }
+					| undefined
 		  }[]
 		| undefined
 	autoApprovalEnabled?: boolean | undefined
@@ -350,6 +364,7 @@ type GlobalSettings = {
 					  ]
 				)[]
 				source?: ("global" | "project") | undefined
+				backendOnly?: boolean | undefined
 		  }[]
 		| undefined
 	customModePrompts?:

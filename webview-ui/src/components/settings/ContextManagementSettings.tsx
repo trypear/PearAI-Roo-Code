@@ -84,11 +84,11 @@ export const ContextManagementSettings = ({
 						onChange={(e: any) => setCachedStateField("showRooIgnoredFiles", e.target.checked)}
 						data-testid="show-rooignored-files-checkbox">
 						<label className="block font-medium mb-1">
-							{t("settings:contextManagement.rooignore.label")}
+							{t("settings:contextManagement.pearai-agent-ignore.label")}
 						</label>
 					</VSCodeCheckbox>
 					<div className="text-vscode-descriptionForeground text-sm mt-1">
-						{t("settings:contextManagement.rooignore.description")}
+						{t("settings:contextManagement.pearai-agent-ignore.description")}
 					</div>
 				</div>
 

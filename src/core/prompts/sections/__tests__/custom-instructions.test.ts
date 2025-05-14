@@ -42,7 +42,7 @@ describe("loadRuleFiles", () => {
 	})
 
 	it("should read and trim file content", async () => {
-		// Simulate no .roo/rules directory
+		// Simulate no .pearai-agent/rules directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 		readFileMock.mockResolvedValue("  content with spaces  ")
 		const result = await loadRuleFiles("/fake/path")
@@ -51,7 +51,7 @@ describe("loadRuleFiles", () => {
 	})
 
 	it("should handle ENOENT error", async () => {
-		// Simulate no .roo/rules directory
+		// Simulate no .pearai-agent/rules directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 		readFileMock.mockRejectedValue({ code: "ENOENT" })
 		const result = await loadRuleFiles("/fake/path")
@@ -59,7 +59,7 @@ describe("loadRuleFiles", () => {
 	})
 
 	it("should handle EISDIR error", async () => {
-		// Simulate no .roo/rules directory
+		// Simulate no .pearai-agent/rules directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 		readFileMock.mockRejectedValue({ code: "EISDIR" })
 		const result = await loadRuleFiles("/fake/path")
@@ -67,7 +67,7 @@ describe("loadRuleFiles", () => {
 	})
 
 	it("should throw on unexpected errors", async () => {
-		// Simulate no .roo/rules directory
+		// Simulate no .pearai-agent/rules directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 		const error = new Error("Permission denied") as NodeJS.ErrnoException
 		error.code = "EPERM"
@@ -79,7 +79,7 @@ describe("loadRuleFiles", () => {
 	})
 
 	it("should not combine content from multiple rule files when they exist", async () => {
-		// Simulate no .roo/rules directory
+		// Simulate no .pearai-agent/rules directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 		readFileMock.mockImplementation((filePath: PathLike) => {
 			if (filePath.toString().endsWith(".roorules")) {
@@ -96,7 +96,7 @@ describe("loadRuleFiles", () => {
 	})
 
 	it("should handle when no rule files exist", async () => {
-		// Simulate no .roo/rules directory
+		// Simulate no .pearai-agent/rules directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 		readFileMock.mockRejectedValue({ code: "ENOENT" })
 
@@ -105,7 +105,7 @@ describe("loadRuleFiles", () => {
 	})
 
 	it("should skip directories with same name as rule files", async () => {
-		// Simulate no .roo/rules directory
+		// Simulate no .pearai-agent/rules directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 		readFileMock.mockImplementation((filePath: PathLike) => {
 			if (filePath.toString().endsWith(".roorules")) {
@@ -121,16 +121,16 @@ describe("loadRuleFiles", () => {
 		expect(result).toBe("")
 	})
 
-	it("should use .roo/rules/ directory when it exists and has files", async () => {
-		// Simulate .roo/rules directory exists
+	it("should use .pearai-agent/rules/ directory when it exists and has files", async () => {
+		// Simulate .pearai-agent/rules directory exists
 		statMock.mockResolvedValueOnce({
 			isDirectory: jest.fn().mockReturnValue(true),
 		} as any)
 
 		// Simulate listing files
 		readdirMock.mockResolvedValueOnce([
-			{ name: "file1.txt", isFile: () => true, isSymbolicLink: () => false, parentPath: "/fake/path/.roo/rules" },
-			{ name: "file2.txt", isFile: () => true, isSymbolicLink: () => false, parentPath: "/fake/path/.roo/rules" },
+			{ name: "file1.txt", isFile: () => true, isSymbolicLink: () => false, parentPath: "/fake/path/.pearai-agent/rules" },
+			{ name: "file2.txt", isFile: () => true, isSymbolicLink: () => false, parentPath: "/fake/path/.pearai-agent/rules" },
 		] as any)
 
 		statMock.mockImplementation(
@@ -141,31 +141,31 @@ describe("loadRuleFiles", () => {
 		)
 
 		readFileMock.mockImplementation((filePath: PathLike) => {
-			if (filePath.toString() === "/fake/path/.roo/rules/file1.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/file1.txt") {
 				return Promise.resolve("content of file1")
 			}
-			if (filePath.toString() === "/fake/path/.roo/rules/file2.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/file2.txt") {
 				return Promise.resolve("content of file2")
 			}
 			return Promise.reject({ code: "ENOENT" })
 		})
 
 		const result = await loadRuleFiles("/fake/path")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/file1.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/file1.txt:")
 		expect(result).toContain("content of file1")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/file2.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/file2.txt:")
 		expect(result).toContain("content of file2")
 
 		// We expect both checks because our new implementation checks the files again for validation
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/file1.txt")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/file2.txt")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/file1.txt", "utf-8")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/file2.txt", "utf-8")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/file1.txt")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/file2.txt")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/file1.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/file2.txt", "utf-8")
 	})
 
-	it("should fall back to .roorules when .roo/rules/ is empty", async () => {
-		// Simulate .roo/rules directory exists
+	it("should fall back to .roorules when .pearai-agent/rules/ is empty", async () => {
+		// Simulate .pearai-agent/rules directory exists
 		statMock.mockResolvedValueOnce({
 			isDirectory: jest.fn().mockReturnValue(true),
 		} as any)
@@ -186,7 +186,7 @@ describe("loadRuleFiles", () => {
 	})
 
 	it("should handle errors when reading directory", async () => {
-		// Simulate .roo/rules directory exists
+		// Simulate .pearai-agent/rules directory exists
 		statMock.mockResolvedValueOnce({
 			isDirectory: jest.fn().mockReturnValue(true),
 		} as any)
@@ -206,8 +206,8 @@ describe("loadRuleFiles", () => {
 		expect(result).toBe("\n# Rules from .roorules:\nroo rules content\n")
 	})
 
-	it("should read files from nested subdirectories in .roo/rules/", async () => {
-		// Simulate .roo/rules directory exists
+	it("should read files from nested subdirectories in .pearai-agent/rules/", async () => {
+		// Simulate .pearai-agent/rules directory exists
 		statMock.mockResolvedValueOnce({
 			isDirectory: jest.fn().mockReturnValue(true),
 		} as any)
@@ -219,28 +219,28 @@ describe("loadRuleFiles", () => {
 				isFile: () => false,
 				isSymbolicLink: () => false,
 				isDirectory: () => true,
-				parentPath: "/fake/path/.roo/rules",
+				parentPath: "/fake/path/.pearai-agent/rules",
 			},
 			{
 				name: "root.txt",
 				isFile: () => true,
 				isSymbolicLink: () => false,
 				isDirectory: () => false,
-				parentPath: "/fake/path/.roo/rules",
+				parentPath: "/fake/path/.pearai-agent/rules",
 			},
 			{
 				name: "nested1.txt",
 				isFile: () => true,
 				isSymbolicLink: () => false,
 				isDirectory: () => false,
-				parentPath: "/fake/path/.roo/rules/subdir",
+				parentPath: "/fake/path/.pearai-agent/rules/subdir",
 			},
 			{
 				name: "nested2.txt",
 				isFile: () => true,
 				isSymbolicLink: () => false,
 				isDirectory: () => false,
-				parentPath: "/fake/path/.roo/rules/subdir/subdir2",
+				parentPath: "/fake/path/.pearai-agent/rules/subdir/subdir2",
 			},
 		] as any)
 
@@ -259,13 +259,13 @@ describe("loadRuleFiles", () => {
 
 		readFileMock.mockImplementation((filePath: PathLike) => {
 			const path = filePath.toString()
-			if (path === "/fake/path/.roo/rules/root.txt") {
+			if (path === "/fake/path/.pearai-agent/rules/root.txt") {
 				return Promise.resolve("root file content")
 			}
-			if (path === "/fake/path/.roo/rules/subdir/nested1.txt") {
+			if (path === "/fake/path/.pearai-agent/rules/subdir/nested1.txt") {
 				return Promise.resolve("nested file 1 content")
 			}
-			if (path === "/fake/path/.roo/rules/subdir/subdir2/nested2.txt") {
+			if (path === "/fake/path/.pearai-agent/rules/subdir/subdir2/nested2.txt") {
 				return Promise.resolve("nested file 2 content")
 			}
 			return Promise.reject({ code: "ENOENT" })
@@ -274,24 +274,24 @@ describe("loadRuleFiles", () => {
 		const result = await loadRuleFiles("/fake/path")
 
 		// Check root file content
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/root.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/root.txt:")
 		expect(result).toContain("root file content")
 
 		// Check nested files content
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/subdir/nested1.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/subdir/nested1.txt:")
 		expect(result).toContain("nested file 1 content")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/subdir/subdir2/nested2.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/subdir/subdir2/nested2.txt:")
 		expect(result).toContain("nested file 2 content")
 
 		// Verify correct paths were checked
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/root.txt")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/subdir/nested1.txt")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules/subdir/subdir2/nested2.txt")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/root.txt")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/subdir/nested1.txt")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/subdir/subdir2/nested2.txt")
 
 		// Verify files were read with correct paths
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/root.txt", "utf-8")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/subdir/nested1.txt", "utf-8")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/subdir/subdir2/nested2.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/root.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/subdir/nested1.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/subdir/subdir2/nested2.txt", "utf-8")
 	})
 })
 
@@ -301,7 +301,7 @@ describe("addCustomInstructions", () => {
 	})
 
 	it("should combine all instruction types when provided", async () => {
-		// Simulate no .roo/rules-test-mode directory
+		// Simulate no .pearai-agent/rules-test-mode directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 
 		readFileMock.mockResolvedValue("mode specific rules")
@@ -323,7 +323,7 @@ describe("addCustomInstructions", () => {
 	})
 
 	it("should return empty string when no instructions provided", async () => {
-		// Simulate no .roo/rules directory
+		// Simulate no .pearai-agent/rules directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 
 		readFileMock.mockRejectedValue({ code: "ENOENT" })
@@ -333,7 +333,7 @@ describe("addCustomInstructions", () => {
 	})
 
 	it("should handle missing mode-specific rules file", async () => {
-		// Simulate no .roo/rules-test-mode directory
+		// Simulate no .pearai-agent/rules-test-mode directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 
 		readFileMock.mockRejectedValue({ code: "ENOENT" })
@@ -351,7 +351,7 @@ describe("addCustomInstructions", () => {
 	})
 
 	it("should handle unknown language codes properly", async () => {
-		// Simulate no .roo/rules-test-mode directory
+		// Simulate no .pearai-agent/rules-test-mode directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 
 		readFileMock.mockRejectedValue({ code: "ENOENT" })
@@ -370,7 +370,7 @@ describe("addCustomInstructions", () => {
 	})
 
 	it("should throw on unexpected errors", async () => {
-		// Simulate no .roo/rules-test-mode directory
+		// Simulate no .pearai-agent/rules-test-mode directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 
 		const error = new Error("Permission denied") as NodeJS.ErrnoException
@@ -383,7 +383,7 @@ describe("addCustomInstructions", () => {
 	})
 
 	it("should skip mode-specific rule files that are directories", async () => {
-		// Simulate no .roo/rules-test-mode directory
+		// Simulate no .pearai-agent/rules-test-mode directory
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 
 		readFileMock.mockImplementation((filePath: PathLike) => {
@@ -405,8 +405,8 @@ describe("addCustomInstructions", () => {
 		expect(result).not.toContain("Rules from .clinerules-test-mode")
 	})
 
-	it("should use .roo/rules-test-mode/ directory when it exists and has files", async () => {
-		// Simulate .roo/rules-test-mode directory exists
+	it("should use .pearai-agent/rules-test-mode/ directory when it exists and has files", async () => {
+		// Simulate .pearai-agent/rules-test-mode directory exists
 		statMock.mockResolvedValueOnce({
 			isDirectory: jest.fn().mockReturnValue(true),
 		} as any)
@@ -417,13 +417,13 @@ describe("addCustomInstructions", () => {
 				name: "rule1.txt",
 				isFile: () => true,
 				isSymbolicLink: () => false,
-				parentPath: "/fake/path/.roo/rules-test-mode",
+				parentPath: "/fake/path/.pearai-agent/rules-test-mode",
 			},
 			{
 				name: "rule2.txt",
 				isFile: () => true,
 				isSymbolicLink: () => false,
-				parentPath: "/fake/path/.roo/rules-test-mode",
+				parentPath: "/fake/path/.pearai-agent/rules-test-mode",
 			},
 		] as any)
 
@@ -435,10 +435,10 @@ describe("addCustomInstructions", () => {
 		)
 
 		readFileMock.mockImplementation((filePath: PathLike) => {
-			if (filePath.toString() === "/fake/path/.roo/rules-test-mode/rule1.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules-test-mode/rule1.txt") {
 				return Promise.resolve("mode specific rule 1")
 			}
-			if (filePath.toString() === "/fake/path/.roo/rules-test-mode/rule2.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules-test-mode/rule2.txt") {
 				return Promise.resolve("mode specific rule 2")
 			}
 			return Promise.reject({ code: "ENOENT" })
@@ -452,21 +452,21 @@ describe("addCustomInstructions", () => {
 			{ language: "es" },
 		)
 
-		expect(result).toContain("# Rules from /fake/path/.roo/rules-test-mode")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules-test-mode/rule1.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules-test-mode")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules-test-mode/rule1.txt:")
 		expect(result).toContain("mode specific rule 1")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules-test-mode/rule2.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules-test-mode/rule2.txt:")
 		expect(result).toContain("mode specific rule 2")
 
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode/rule1.txt")
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode/rule2.txt")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode/rule1.txt", "utf-8")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules-test-mode/rule2.txt", "utf-8")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules-test-mode")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules-test-mode/rule1.txt")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules-test-mode/rule2.txt")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules-test-mode/rule1.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules-test-mode/rule2.txt", "utf-8")
 	})
 
-	it("should fall back to .roorules-test-mode when .roo/rules-test-mode/ does not exist", async () => {
-		// Simulate .roo/rules-test-mode directory does not exist
+	it("should fall back to .roorules-test-mode when .pearai-agent/rules-test-mode/ does not exist", async () => {
+		// Simulate .pearai-agent/rules-test-mode directory does not exist
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 
 		// Simulate .roorules-test-mode exists
@@ -487,8 +487,8 @@ describe("addCustomInstructions", () => {
 		expect(result).toContain("Rules from .roorules-test-mode:\nmode specific rules from file")
 	})
 
-	it("should fall back to .clinerules-test-mode when .roo/rules-test-mode/ and .roorules-test-mode do not exist", async () => {
-		// Simulate .roo/rules-test-mode directory does not exist
+	it("should fall back to .clinerules-test-mode when .pearai-agent/rules-test-mode/ and .roorules-test-mode do not exist", async () => {
+		// Simulate .pearai-agent/rules-test-mode directory does not exist
 		statMock.mockRejectedValueOnce({ code: "ENOENT" })
 
 		// Simulate file reading
@@ -512,12 +512,12 @@ describe("addCustomInstructions", () => {
 		expect(result).toContain("Rules from .clinerules-test-mode:\nmode specific rules from cline file")
 	})
 
-	it("should correctly format content from directories when using .roo/rules-test-mode/", async () => {
+	it("should correctly format content from directories when using .pearai-agent/rules-test-mode/", async () => {
 		// Need to reset mockImplementation first to avoid interference from previous tests
 		statMock.mockReset()
 		readFileMock.mockReset()
 
-		// Simulate .roo/rules-test-mode directory exists
+		// Simulate .pearai-agent/rules-test-mode directory exists
 		statMock.mockImplementationOnce(() =>
 			Promise.resolve({
 				isDirectory: jest.fn().mockReturnValue(true),
@@ -526,7 +526,7 @@ describe("addCustomInstructions", () => {
 
 		// Simulate directory has files
 		readdirMock.mockResolvedValueOnce([
-			{ name: "rule1.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules-test-mode" },
+			{ name: "rule1.txt", isFile: () => true, parentPath: "/fake/path/.pearai-agent/rules-test-mode" },
 		] as any)
 		readFileMock.mockReset()
 
@@ -534,7 +534,7 @@ describe("addCustomInstructions", () => {
 		let statCallCount = 0
 		statMock.mockImplementation((filePath) => {
 			statCallCount++
-			if (filePath === "/fake/path/.roo/rules-test-mode/rule1.txt") {
+			if (filePath === "/fake/path/.pearai-agent/rules-test-mode/rule1.txt") {
 				return Promise.resolve({
 					isFile: jest.fn().mockReturnValue(true),
 					isDirectory: jest.fn().mockReturnValue(false),
@@ -547,7 +547,7 @@ describe("addCustomInstructions", () => {
 		})
 
 		readFileMock.mockImplementation((filePath: PathLike) => {
-			if (filePath.toString() === "/fake/path/.roo/rules-test-mode/rule1.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules-test-mode/rule1.txt") {
 				return Promise.resolve("mode specific rule content")
 			}
 			return Promise.reject({ code: "ENOENT" })
@@ -560,8 +560,8 @@ describe("addCustomInstructions", () => {
 			"test-mode",
 		)
 
-		expect(result).toContain("# Rules from /fake/path/.roo/rules-test-mode")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules-test-mode/rule1.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules-test-mode")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules-test-mode/rule1.txt:")
 		expect(result).toContain("mode specific rule content")
 
 		expect(statCallCount).toBeGreaterThan(0)
@@ -589,7 +589,7 @@ describe("Directory existence checks", () => {
 		await loadRuleFiles("/fake/path")
 
 		// Verify stat was called to check directory existence
-		expect(statMock).toHaveBeenCalledWith("/fake/path/.roo/rules")
+		expect(statMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules")
 	})
 
 	it("should handle when directory does not exist", async () => {
@@ -609,7 +609,7 @@ describe("Directory existence checks", () => {
 // Indirectly test readTextFilesFromDirectory and formatDirectoryContent through loadRuleFiles
 describe("Rules directory reading", () => {
 	it("should follow symbolic links in the rules directory", async () => {
-		// Simulate .roo/rules directory exists
+		// Simulate .pearai-agent/rules directory exists
 		statMock.mockResolvedValueOnce({
 			isDirectory: jest.fn().mockReturnValue(true),
 		} as any)
@@ -621,29 +621,29 @@ describe("Rules directory reading", () => {
 					name: "regular.txt",
 					isFile: () => true,
 					isSymbolicLink: () => false,
-					parentPath: "/fake/path/.roo/rules",
+					parentPath: "/fake/path/.pearai-agent/rules",
 				},
 				{
 					name: "link.txt",
 					isFile: () => false,
 					isSymbolicLink: () => true,
-					parentPath: "/fake/path/.roo/rules",
+					parentPath: "/fake/path/.pearai-agent/rules",
 				},
 				{
 					name: "link_dir",
 					isFile: () => false,
 					isSymbolicLink: () => true,
-					parentPath: "/fake/path/.roo/rules",
+					parentPath: "/fake/path/.pearai-agent/rules",
 				},
 				{
 					name: "nested_link.txt",
 					isFile: () => false,
 					isSymbolicLink: () => true,
-					parentPath: "/fake/path/.roo/rules",
+					parentPath: "/fake/path/.pearai-agent/rules",
 				},
 			] as any)
 			.mockResolvedValueOnce([
-				{ name: "subdir_link.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules/symlink-target-dir" },
+				{ name: "subdir_link.txt", isFile: () => true, parentPath: "/fake/path/.pearai-agent/rules/symlink-target-dir" },
 			] as any)
 
 		// Simulate readlink response
@@ -657,7 +657,7 @@ describe("Rules directory reading", () => {
 		statMock.mockReset()
 		statMock.mockImplementation((path: string) => {
 			// For directory check
-			if (path === "/fake/path/.roo/rules" || path.endsWith("dir")) {
+			if (path === "/fake/path/.pearai-agent/rules" || path.endsWith("dir")) {
 				return Promise.resolve({
 					isDirectory: jest.fn().mockReturnValue(true),
 					isFile: jest.fn().mockReturnValue(false),
@@ -682,16 +682,16 @@ describe("Rules directory reading", () => {
 
 		// Simulate file content reading
 		readFileMock.mockImplementation((filePath: PathLike) => {
-			if (filePath.toString() === "/fake/path/.roo/rules/regular.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/regular.txt") {
 				return Promise.resolve("regular file content")
 			}
-			if (filePath.toString() === "/fake/path/.roo/rules/../symlink-target.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/../symlink-target.txt") {
 				return Promise.resolve("symlink target content")
 			}
-			if (filePath.toString() === "/fake/path/.roo/rules/symlink-target-dir/subdir_link.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/symlink-target-dir/subdir_link.txt") {
 				return Promise.resolve("regular file content under symlink target dir")
 			}
-			if (filePath.toString() === "/fake/path/.roo/rules/../nested-symlink-target.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/../nested-symlink-target.txt") {
 				return Promise.resolve("nested symlink target content")
 			}
 			return Promise.reject({ code: "ENOENT" })
@@ -700,47 +700,47 @@ describe("Rules directory reading", () => {
 		const result = await loadRuleFiles("/fake/path")
 
 		// Verify both regular file and symlink target content are included
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/regular.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/regular.txt:")
 		expect(result).toContain("regular file content")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/../symlink-target.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/../symlink-target.txt:")
 		expect(result).toContain("symlink target content")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/symlink-target-dir/subdir_link.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/symlink-target-dir/subdir_link.txt:")
 		expect(result).toContain("regular file content under symlink target dir")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/../nested-symlink-target.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/../nested-symlink-target.txt:")
 		expect(result).toContain("nested symlink target content")
 
 		// Verify readlink was called with the symlink path
-		expect(readlinkMock).toHaveBeenCalledWith("/fake/path/.roo/rules/link.txt")
-		expect(readlinkMock).toHaveBeenCalledWith("/fake/path/.roo/rules/link_dir")
+		expect(readlinkMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/link.txt")
+		expect(readlinkMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/link_dir")
 
 		// Verify both files were read
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/regular.txt", "utf-8")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/../symlink-target.txt", "utf-8")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/symlink-target-dir/subdir_link.txt", "utf-8")
-		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.roo/rules/../nested-symlink-target.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/regular.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/../symlink-target.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/symlink-target-dir/subdir_link.txt", "utf-8")
+		expect(readFileMock).toHaveBeenCalledWith("/fake/path/.pearai-agent/rules/../nested-symlink-target.txt", "utf-8")
 	})
 	beforeEach(() => {
 		jest.clearAllMocks()
 	})
 
 	it("should correctly format multiple files from directory", async () => {
-		// Simulate .roo/rules directory exists
+		// Simulate .pearai-agent/rules directory exists
 		statMock.mockResolvedValueOnce({
 			isDirectory: jest.fn().mockReturnValue(true),
 		} as any)
 
 		// Simulate listing files
 		readdirMock.mockResolvedValueOnce([
-			{ name: "file1.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules" },
-			{ name: "file2.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules" },
-			{ name: "file3.txt", isFile: () => true, parentPath: "/fake/path/.roo/rules" },
+			{ name: "file1.txt", isFile: () => true, parentPath: "/fake/path/.pearai-agent/rules" },
+			{ name: "file2.txt", isFile: () => true, parentPath: "/fake/path/.pearai-agent/rules" },
+			{ name: "file3.txt", isFile: () => true, parentPath: "/fake/path/.pearai-agent/rules" },
 		] as any)
 
 		statMock.mockImplementation((path) => {
 			expect([
-				"/fake/path/.roo/rules/file1.txt",
-				"/fake/path/.roo/rules/file2.txt",
-				"/fake/path/.roo/rules/file3.txt",
+				"/fake/path/.pearai-agent/rules/file1.txt",
+				"/fake/path/.pearai-agent/rules/file2.txt",
+				"/fake/path/.pearai-agent/rules/file3.txt",
 			]).toContain(path)
 
 			return Promise.resolve({
@@ -749,13 +749,13 @@ describe("Rules directory reading", () => {
 		})
 
 		readFileMock.mockImplementation((filePath: PathLike) => {
-			if (filePath.toString() === "/fake/path/.roo/rules/file1.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/file1.txt") {
 				return Promise.resolve("content of file1")
 			}
-			if (filePath.toString() === "/fake/path/.roo/rules/file2.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/file2.txt") {
 				return Promise.resolve("content of file2")
 			}
-			if (filePath.toString() === "/fake/path/.roo/rules/file3.txt") {
+			if (filePath.toString() === "/fake/path/.pearai-agent/rules/file3.txt") {
 				return Promise.resolve("content of file3")
 			}
 			return Promise.reject({ code: "ENOENT" })
@@ -763,16 +763,16 @@ describe("Rules directory reading", () => {
 
 		const result = await loadRuleFiles("/fake/path")
 
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/file1.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/file1.txt:")
 		expect(result).toContain("content of file1")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/file2.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/file2.txt:")
 		expect(result).toContain("content of file2")
-		expect(result).toContain("# Rules from /fake/path/.roo/rules/file3.txt:")
+		expect(result).toContain("# Rules from /fake/path/.pearai-agent/rules/file3.txt:")
 		expect(result).toContain("content of file3")
 	})
 
 	it("should handle empty file list gracefully", async () => {
-		// Simulate .roo/rules directory exists
+		// Simulate .pearai-agent/rules directory exists
 		statMock.mockResolvedValueOnce({
 			isDirectory: jest.fn().mockReturnValue(true),
 		} as any)

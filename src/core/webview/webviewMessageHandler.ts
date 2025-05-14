@@ -38,6 +38,8 @@ import { buildApiHandler } from "../../api"
 import { GlobalState } from "../../schemas"
 import { MultiSearchReplaceDiffStrategy } from "../diff/strategies/multi-search-replace"
 import { getModels } from "../../api/providers/fetchers/cache"
+import { getpearAIExports } from "../../activate/registerPearListener"
+import { AGENT_RULES_DIR } from "../../shared/constants"
 
 export const webviewMessageHandler = async (provider: ClineProvider, message: WebviewMessage) => {
 	// Utility functions provided for concise get/update of global state via contextProxy API.
@@ -136,7 +138,10 @@ export const webviewMessageHandler = async (provider: ClineProvider, message: We
 			// Could also do this in extension .ts
 			//provider.postMessageToWebview({ type: "text", text: `Extension: ${Date.now()}` })
 			// initializing new instance of Cline will make sure that any agentically running promises in old instance don't affect our new task. this essentially creates a fresh slate for the new task
-			await provider.initClineWithTask(message.text, message.images)
+			const existingCline = provider.getCurrentCline()
+			const creatorModeConfig = existingCline?.creatorModeConfig
+			
+			await provider.initClineWithTask(message.text, message.images, undefined, {}, creatorModeConfig)
 			break
 		case "apiConfiguration":
 			if (message.apiConfiguration) {
@@ -394,7 +399,7 @@ export const webviewMessageHandler = async (provider: ClineProvider, message: We
 			}
 
 			const workspaceFolder = vscode.workspace.workspaceFolders[0]
-			const rooDir = path.join(workspaceFolder.uri.fsPath, ".roo")
+			const rooDir = path.join(workspaceFolder.uri.fsPath, AGENT_RULES_DIR)
 			const mcpPath = path.join(rooDir, "mcp.json")
 
 			try {
@@ -1268,6 +1273,14 @@ export const webviewMessageHandler = async (provider: ClineProvider, message: We
 					),
 				),
 			)
+			break
+		case "openPearAICreatorFeedbackOverlay":
+			const pearAIExports = await getpearAIExports();
+			const currentCline = provider.getCurrentCline();
+			
+			
+			// Open the feedback form with the chat history
+			pearAIExports.pearAPI.creatorMode.openFeedbackForm(currentCline?.clineMessages || []);
 			break
 	}
 }

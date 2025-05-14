@@ -32,6 +32,7 @@ import { fileExistsAtPath } from "../../utils/fs"
 import { arePathsEqual } from "../../utils/path"
 import { injectEnv } from "../../utils/config"
 import { PEARAI_URL } from "../../shared/pearaiApi"
+import { AGENT_RULES_DIR } from "../../shared/constants"
 
 export type McpConnection = {
 	server: McpServer
@@ -498,7 +499,7 @@ export class McpHub {
 		}
 
 		const workspaceFolder = vscode.workspace.workspaceFolders[0]
-		const projectMcpDir = path.join(workspaceFolder.uri.fsPath, ".roo")
+		const projectMcpDir = path.join(workspaceFolder.uri.fsPath, AGENT_RULES_DIR)
 		const projectMcpPath = path.join(projectMcpDir, "mcp.json")
 
 		try {
