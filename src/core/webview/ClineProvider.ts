@@ -1272,7 +1272,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			...baseApiConfiguration
 		}
 
-		const telemetryKey = 'phc_RRjQ4roADRjH6xMbXDUDTA9WLeM5ePPvAJK19w3yj0z'
+		const telemetryKey = 'phc_EixCfQZYA5It6ZjtZG2C8THsUQzPzXZsdCsvR8AYhfh'
 		const machineId = vscode.env.machineId
 		const allowedCommands = vscode.workspace.getConfiguration("roo-cline").get<string[]>("allowedCommands") || []
 		const cwd = this.cwd

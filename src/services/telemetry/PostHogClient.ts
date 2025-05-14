@@ -50,7 +50,7 @@ export class PostHogClient {
 		this.pearaiId = this.vscMachineId // Initialize with machine ID as fallback
 		this.telemetryEnabled = true
 		this.providerRef = null
-		this.client = new PostHog('phc_RRjQ4roADRjH6xMbXDUDTA9WLeM5ePPvAJK19w3yj0z', { host: "https://us.i.posthog.com" })
+		this.client = new PostHog('phc_EixCfQZYA5It6ZjtZG2C8THsUQzPzXZsdCsvR8AYhfh', { host: "https://us.i.posthog.com" })
 
 		// getting the pearai id from the submodule
 		void this.initializePearAIId()
@@ -59,8 +59,9 @@ export class PostHogClient {
 	private async initializePearAIId(): Promise<void> {
 		try {
 			const exports = await getpearAIExports()
-			if (exports) {
-				this.pearaiId = await exports.pearAPI.getUserId()
+			const pearaiId = await exports.pearAPI.getUserId()
+			if (pearaiId) {
+				this.pearaiId = pearaiId
 				this.client.identify({
 					distinctId: this.vscMachineId,
 					properties: {
