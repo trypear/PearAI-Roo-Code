@@ -3,6 +3,7 @@ import path from "path"
 
 import { LANGUAGES, isLanguage } from "../../../shared/language"
 import { Dirent } from "fs"
+import { AGENT_RULES_DIR } from "../../../shared/constants"
 
 /**
  * Safely read a file and return its trimmed content
@@ -156,8 +157,8 @@ function formatDirectoryContent(dirPath: string, files: Array<{ filename: string
  * Load rule files from the specified directory
  */
 export async function loadRuleFiles(cwd: string): Promise<string> {
-	// Check for .roo/rules/ directory
-	const rooRulesDir = path.join(cwd, ".roo", "rules")
+	// Check for .pearai-agent/rules/ directory
+	const rooRulesDir = path.join(cwd, AGENT_RULES_DIR, "rules")
 	if (await directoryExists(rooRulesDir)) {
 		const files = await readTextFilesFromDirectory(rooRulesDir)
 		if (files.length > 0) {
@@ -192,8 +193,8 @@ export async function addCustomInstructions(
 	let usedRuleFile = ""
 
 	if (mode) {
-		// Check for .roo/rules-${mode}/ directory
-		const modeRulesDir = path.join(cwd, ".roo", `rules-${mode}`)
+		// Check for .pearai-agent/rules-${mode}/ directory
+		const modeRulesDir = path.join(cwd, AGENT_RULES_DIR, `rules-${mode}`)
 		if (await directoryExists(modeRulesDir)) {
 			const files = await readTextFilesFromDirectory(modeRulesDir)
 			if (files.length > 0) {
@@ -241,7 +242,7 @@ export async function addCustomInstructions(
 
 	// Add mode-specific rules first if they exist
 	if (modeRuleContent && modeRuleContent.trim()) {
-		if (usedRuleFile.includes(path.join(".roo", `rules-${mode}`))) {
+		if (usedRuleFile.includes(path.join(AGENT_RULES_DIR, `rules-${mode}`))) {
 			rules.push(modeRuleContent.trim())
 		} else {
 			rules.push(`# Rules from ${usedRuleFile}:\n${modeRuleContent}`)

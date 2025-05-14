@@ -298,7 +298,7 @@
 			"label": "ワークスペースファイルコンテキスト制限",
 			"description": "現在の作業ディレクトリの詳細に含めるファイルの最大数。高い値はより多くのコンテキストを提供しますが、token使用量が増加します。"
 		},
-		"rooignore": {
+		"pearai-agent-ignore": {
 			"label": "リストと検索で.rooignoreファイルを表示",
 			"description": "有効にすると、.rooignoreのパターンに一致するファイルがロックシンボル付きでリストに表示されます。無効にすると、これらのファイルはファイルリストや検索から完全に非表示になります。"
 		},
@@ -344,7 +344,7 @@
 		},
 		"zshOhMy": {
 			"label": "Oh My Zsh 統合を有効化",
-			"description": "有効にすると、ITERM_SHELL_INTEGRATION_INSTALLED=Yes を設定して Oh My Zsh シェル統合機能を有効にします。（実験的）"
+			"description": "有効にすると、ITERM_SHELL_INTEGRATION_INSTALLED=Yes を設定して Oh My Zsh シェル統合機能を有効にします。この設定を適用するには、IDEの再起動が必要な場合があります。（実験的）"
 		},
 		"zshP10k": {
 			"label": "Powerlevel10k 統合を有効化",

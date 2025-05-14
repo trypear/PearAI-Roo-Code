@@ -23,10 +23,11 @@ export const PlanningBar: FC<PlanningBarProps> = ({ isStreaming, requestedPlan, 
 				className={`${isStreaming ? "rainbow-border-glow-visible" : ""}
             absolute inset-0 rainbow-border-glow blur -z-10 rounded-full `}
 			/>
-			<div className="flex-1 flex h-full align-middle ml-5 gap-4 relative overflow-hidden">
-				<div className="relative h-full my-auto mr-1 flex-shrink-0 min-w-4">
+							<div className="relative h-full my-auto mr-1 flex-shrink-0 min-w-4 ml-4">
 					<div className={`circle ${isStreaming ? "animated-circle" : ""}`} />
 				</div>
+			<div className="flex-1 flex h-full align-middle gap-4 relative overflow-hidden">
+
 				<div className="my-auto text-sm flex-shrink-0">Creating</div>
 				<div className="relative my-auto min-w-0 flex-shrink overflow-hidden max-w-64">
 					<div className="text-white/80 text-sm truncate">{requestedPlan}</div>

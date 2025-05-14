@@ -45,7 +45,7 @@
 		"list_api_config": "Error al obtener la lista de configuraciones de API",
 		"update_server_timeout": "Error al actualizar el tiempo de espera del servidor",
 		"failed_update_project_mcp": "Error al actualizar los servidores MCP del proyecto",
-		"create_mcp_json": "Error al crear o abrir .roo/mcp.json: {{error}}",
+		"create_mcp_json": "Error al crear o abrir .pearai-agent/mcp.json: {{error}}",
 		"hmr_not_running": "El servidor de desarrollo local no está en ejecución, HMR no funcionará. Por favor, ejecuta 'npm run dev' antes de lanzar la extensión para habilitar HMR.",
 		"retrieve_current_mode": "Error al recuperar el modo actual del estado.",
 		"failed_delete_repo": "Error al eliminar el repositorio o rama asociada: {{error}}",

@@ -23,7 +23,7 @@ describe("CustomModesManager", () => {
 	// Use path.sep to ensure correct path separators for the current platform
 	const mockStoragePath = `${path.sep}mock${path.sep}settings`
 	const mockSettingsPath = path.join(mockStoragePath, "settings", GlobalFileNames.customModes)
-	const mockRoomodes = `${path.sep}mock${path.sep}workspace${path.sep}.roomodes`
+	const mockRoomodes = `${path.sep}mock${path.sep}workspace${path.sep}.pearai-agent-ignore`
 
 	beforeEach(() => {
 		mockOnUpdate = jest.fn()
@@ -60,7 +60,7 @@ describe("CustomModesManager", () => {
 	})
 
 	describe("getCustomModes", () => {
-		it("should merge modes with .roomodes taking precedence", async () => {
+		it("should merge modes with .pearai-agent-ignore taking precedence", async () => {
 			const settingsModes = [
 				{ slug: "mode1", name: "Mode 1", roleDefinition: "Role 1", groups: ["read"] },
 				{ slug: "mode2", name: "Mode 2", roleDefinition: "Role 2", groups: ["read"] },
@@ -87,13 +87,13 @@ describe("CustomModesManager", () => {
 			expect(modes).toHaveLength(3)
 			expect(modes.map((m) => m.slug)).toEqual(["mode2", "mode3", "mode1"])
 
-			// mode2 should come from .roomodes since it takes precedence
+			// mode2 should come from .pearai-agent-ignore since it takes precedence
 			const mode2 = modes.find((m) => m.slug === "mode2")
 			expect(mode2?.name).toBe("Mode 2 Override")
 			expect(mode2?.roleDefinition).toBe("Role 2 Override")
 		})
 
-		it("should handle missing .roomodes file", async () => {
+		it("should handle missing .pearai-agent-ignore file", async () => {
 			const settingsModes = [{ slug: "mode1", name: "Mode 1", roleDefinition: "Role 1", groups: ["read"] }]
 
 			;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
@@ -112,7 +112,7 @@ describe("CustomModesManager", () => {
 			expect(modes[0].slug).toBe("mode1")
 		})
 
-		it("should handle invalid JSON in .roomodes", async () => {
+		it("should handle invalid JSON in .pearai-agent-ignore", async () => {
 			const settingsModes = [{ slug: "mode1", name: "Mode 1", roleDefinition: "Role 1", groups: ["read"] }]
 
 			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
@@ -127,14 +127,265 @@ describe("CustomModesManager", () => {
 
 			const modes = await manager.getCustomModes()
 
-			// Should fall back to settings modes when .roomodes is invalid
+			// Should fall back to settings modes when .pearai-agent-ignore is invalid
 			expect(modes).toHaveLength(1)
 			expect(modes[0].slug).toBe("mode1")
+		})
+
+		it("should memoize results for 10 seconds", async () => {
+			// Setup test data
+			const settingsModes = [{ slug: "mode1", name: "Mode 1", roleDefinition: "Role 1", groups: ["read"] }]
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: settingsModes })
+				}
+				throw new Error("File not found")
+			})
+
+			// Mock fileExistsAtPath to only return true for settings path
+			;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
+				return path === mockSettingsPath
+			})
+
+			// First call should read from file
+			const firstResult = await manager.getCustomModes()
+
+			// Reset mock to verify it's not called again
+			jest.clearAllMocks()
+
+			// Setup mocks again for second call
+			;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
+				return path === mockSettingsPath
+			})
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: settingsModes })
+				}
+				throw new Error("File not found")
+			})
+
+			// Second call should use cached result
+			const secondResult = await manager.getCustomModes()
+			expect(fs.readFile).not.toHaveBeenCalled()
+			expect(secondResult).toHaveLength(1)
+			expect(secondResult[0].slug).toBe("mode1")
+
+			// Results should be the same object (not just equal)
+			expect(secondResult).toBe(firstResult)
+		})
+
+		it("should invalidate cache when modes are updated", async () => {
+			// Setup initial data
+			const settingsModes = [{ slug: "mode1", name: "Mode 1", roleDefinition: "Role 1", groups: ["read"] }]
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: settingsModes })
+				}
+				throw new Error("File not found")
+			})
+			;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
+
+			// First call to cache the result
+			await manager.getCustomModes()
+
+			// Reset mocks to track new calls
+			jest.clearAllMocks()
+
+			// Update a mode
+			const updatedMode: ModeConfig = {
+				slug: "mode1",
+				name: "Updated Mode 1",
+				roleDefinition: "Updated Role 1",
+				groups: ["read"],
+				source: "global",
+			}
+
+			// Mock the updated file content
+			const updatedSettingsModes = [updatedMode]
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: updatedSettingsModes })
+				}
+				throw new Error("File not found")
+			})
+
+			// Update the mode
+			await manager.updateCustomMode("mode1", updatedMode)
+
+			// Reset mocks again
+			jest.clearAllMocks()
+
+			// Next call should read from file again (cache invalidated)
+			await manager.getCustomModes()
+			expect(fs.readFile).toHaveBeenCalled()
+		})
+
+		it("should invalidate cache when modes are deleted", async () => {
+			// Setup initial data
+			const settingsModes = [{ slug: "mode1", name: "Mode 1", roleDefinition: "Role 1", groups: ["read"] }]
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: settingsModes })
+				}
+				throw new Error("File not found")
+			})
+			;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
+
+			// First call to cache the result
+			await manager.getCustomModes()
+
+			// Reset mocks to track new calls
+			jest.clearAllMocks()
+
+			// Delete a mode
+			await manager.deleteCustomMode("mode1")
+
+			// Mock the updated file content (empty)
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: [] })
+				}
+				throw new Error("File not found")
+			})
+
+			// Reset mocks again
+			jest.clearAllMocks()
+
+			// Next call should read from file again (cache invalidated)
+			await manager.getCustomModes()
+			expect(fs.readFile).toHaveBeenCalled()
+		})
+
+		it("should invalidate cache when modes are updated (simulating file changes)", async () => {
+			// Setup initial data
+			const settingsModes = [{ slug: "mode1", name: "Mode 1", roleDefinition: "Role 1", groups: ["read"] }]
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: settingsModes })
+				}
+				throw new Error("File not found")
+			})
+			;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
+				return path === mockSettingsPath
+			})
+			;(fs.writeFile as jest.Mock).mockResolvedValue(undefined)
+
+			// First call to cache the result
+			await manager.getCustomModes()
+
+			// Reset mocks to track new calls
+			jest.clearAllMocks()
+
+			// Setup for update
+			const updatedMode: ModeConfig = {
+				slug: "mode1",
+				name: "Updated Mode 1",
+				roleDefinition: "Updated Role 1",
+				groups: ["read"],
+				source: "global",
+			}
+
+			// Mock the updated file content
+			const updatedSettingsModes = [updatedMode]
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: updatedSettingsModes })
+				}
+				throw new Error("File not found")
+			})
+
+			// Simulate a file change by updating a mode
+			// This should invalidate the cache
+			await manager.updateCustomMode("mode1", updatedMode)
+
+			// Reset mocks again
+			jest.clearAllMocks()
+
+			// Setup mocks again
+			;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
+				return path === mockSettingsPath
+			})
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: updatedSettingsModes })
+				}
+				throw new Error("File not found")
+			})
+
+			// Next call should read from file again (cache was invalidated by the update)
+			await manager.getCustomModes()
+			expect(fs.readFile).toHaveBeenCalled()
+		})
+
+		it("should refresh cache after TTL expires", async () => {
+			// Setup test data
+			const settingsModes = [{ slug: "mode1", name: "Mode 1", roleDefinition: "Role 1", groups: ["read"] }]
+			;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+				if (path === mockSettingsPath) {
+					return JSON.stringify({ customModes: settingsModes })
+				}
+				throw new Error("File not found")
+			})
+			;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
+				return path === mockSettingsPath
+			})
+
+			// Mock Date.now to control time
+			const originalDateNow = Date.now
+			let currentTime = 1000
+			Date.now = jest.fn(() => currentTime)
+
+			try {
+				// First call should read from file
+				await manager.getCustomModes()
+
+				// Reset mock to verify it's not called again
+				jest.clearAllMocks()
+
+				// Setup mocks again for second call
+				;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
+					return path === mockSettingsPath
+				})
+				;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+					if (path === mockSettingsPath) {
+						return JSON.stringify({ customModes: settingsModes })
+					}
+					throw new Error("File not found")
+				})
+
+				// Second call within TTL should use cache
+				await manager.getCustomModes()
+				expect(fs.readFile).not.toHaveBeenCalled()
+
+				// Advance time beyond TTL (10 seconds)
+				currentTime += 11000
+
+				// Reset mocks again
+				jest.clearAllMocks()
+
+				// Setup mocks again for third call
+				;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
+					return path === mockSettingsPath
+				})
+				;(fs.readFile as jest.Mock).mockImplementation(async (path: string) => {
+					if (path === mockSettingsPath) {
+						return JSON.stringify({ customModes: settingsModes })
+					}
+					throw new Error("File not found")
+				})
+
+				// Call after TTL should read from file again
+				await manager.getCustomModes()
+				expect(fs.readFile).toHaveBeenCalled()
+			} finally {
+				// Restore original Date.now
+				Date.now = originalDateNow
+			}
 		})
 	})
 
 	describe("updateCustomMode", () => {
-		it("should update mode in settings file while preserving .roomodes precedence", async () => {
+		it("should update mode in settings file while preserving .pearai-agent-ignore precedence", async () => {
 			const newMode: ModeConfig = {
 				slug: "mode1",
 				name: "Updated Mode 1",
@@ -198,13 +449,13 @@ describe("CustomModesManager", () => {
 				}),
 			)
 
-			// Should update global state with merged modes where .roomodes takes precedence
+			// Should update global state with merged modes where .pearai-agent-ignore takes precedence
 			expect(mockContext.globalState.update).toHaveBeenCalledWith(
 				"customModes",
 				expect.arrayContaining([
 					expect.objectContaining({
 						slug: "mode1",
-						name: "Roomodes Mode 1", // .roomodes version should take precedence
+						name: "Roomodes Mode 1", // .pearai-agent-ignore version should take precedence
 						source: "project",
 					}),
 				]),
@@ -214,7 +465,7 @@ describe("CustomModesManager", () => {
 			expect(mockOnUpdate).toHaveBeenCalled()
 		})
 
-		it("creates .roomodes file when adding project-specific mode", async () => {
+		it("creates .pearai-agent-ignore file when adding project-specific mode", async () => {
 			const projectMode: ModeConfig = {
 				slug: "project-mode",
 				name: "Project Mode",
@@ -223,7 +474,7 @@ describe("CustomModesManager", () => {
 				source: "project",
 			}
 
-			// Mock .roomodes to not exist initially
+			// Mock .pearai-agent-ignore to not exist initially
 			let roomodesContent: any = null
 			;(fileExistsAtPath as jest.Mock).mockImplementation(async (path: string) => {
 				return path === mockSettingsPath
@@ -249,7 +500,7 @@ describe("CustomModesManager", () => {
 
 			await manager.updateCustomMode("project-mode", projectMode)
 
-			// Verify .roomodes was created with the project mode
+			// Verify .pearai-agent-ignore was created with the project mode
 			expect(fs.writeFile).toHaveBeenCalledWith(
 				expect.any(String), // Don't check exact path as it may have different separators on different platforms
 				expect.stringContaining("project-mode"),
@@ -260,7 +511,7 @@ describe("CustomModesManager", () => {
 			const writeCall = (fs.writeFile as jest.Mock).mock.calls[0]
 			expect(path.normalize(writeCall[0])).toBe(path.normalize(mockRoomodes))
 
-			// Verify the content written to .roomodes
+			// Verify the content written to .pearai-agent-ignore
 			expect(roomodesContent).toEqual({
 				customModes: [
 					expect.objectContaining({

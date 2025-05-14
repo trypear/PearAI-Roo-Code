@@ -52,7 +52,7 @@ export const registerPearListener = async (provider: ClineProvider) => {
 		await new Promise((resolve) => setTimeout(resolve, 3000))
 
 		// * This does actually work but the UI update does not happen. This method calls this.postStateToWebview() so not sure what is going on - James
-		if(msg.newProjectType !== "NONE") {
+		if(msg.newProjectType === "WEBAPP") {
 			// Only switch to the creator manager if we're creating a new project
 			// TODO: later when we need to make a different type of project, we need to change this
 			await provider.handleModeSwitch(PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG);

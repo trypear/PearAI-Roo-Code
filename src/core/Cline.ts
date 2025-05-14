@@ -265,6 +265,8 @@ export class Cline extends EventEmitter<ClineEvents> {
 		this.diffViewProvider = new DiffViewProvider(this.cwd)
 		this.enableCheckpoints = enableCheckpoints
 
+		this.creatorModeConfig = creatorModeConfig ?? historyItem?.creatorModeConfig ?? { creatorMode: false }
+
 		this.rootTask = rootTask
 		this.parentTask = parentTask
 		this.taskNumber = taskNumber

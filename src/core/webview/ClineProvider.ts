@@ -24,7 +24,7 @@ import { supportPrompt } from "../../shared/support-prompt"
 import { GlobalFileNames } from "../../shared/globalFileNames"
 import { HistoryItem } from "../../shared/HistoryItem"
 import { ExtensionMessage } from "../../shared/ExtensionMessage"
-import { Mode, PromptComponent, defaultModeSlug } from "../../shared/modes"
+import { Mode, PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG, PromptComponent, defaultModeSlug } from "../../shared/modes"
 import { experimentDefault } from "../../shared/experiments"
 import { formatLanguage } from "../../shared/language"
 import { Terminal } from "../../integrations/terminal/Terminal"
@@ -825,7 +825,24 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			const config = listApiConfig?.find((c) => c.id === savedConfigId)
 
 			if (config?.name) {
-				const apiConfig = await this.providerSettingsManager.loadConfig(config.name)
+				let apiConfig = await this.providerSettingsManager.loadConfig(config.name)
+
+				// Switch to pearai-model-creator model if we are in Creator Mode
+				if (newMode == PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG) {
+					apiConfig = {
+						...apiConfig,
+						apiProvider: "pearai",
+						apiModelId: "pearai-model-creator",
+					}
+				} else {
+					if (apiConfig.apiModelId == "pearai-model-creator") {
+						apiConfig = {
+							...apiConfig,
+							apiProvider: "pearai",
+							apiModelId: "pearai-model",
+						}
+					}
+				}
 
 				await Promise.all([
 					this.updateGlobalState("currentApiConfigName", config.name),
@@ -858,7 +875,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			...providerSettings,
 			creatorModeConfig: currentCline?.creatorModeConfig,
 		}
-		
+
 
 		if (mode) {
 			const currentApiConfigName = this.getGlobalState("currentApiConfigName")
@@ -1237,6 +1254,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			customSupportPrompts,
 			enhancementApiConfigId,
 			autoApprovalEnabled,
+			customModes,
 			experiments,
 			maxOpenTabsContext,
 			maxWorkspaceFiles,
@@ -1254,7 +1272,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			...baseApiConfiguration
 		}
 
-		const telemetryKey = process.env.POSTHOG_API_KEY
+		const telemetryKey = 'phc_RRjQ4roADRjH6xMbXDUDTA9WLeM5ePPvAJK19w3yj0z'
 		const machineId = vscode.env.machineId
 		const allowedCommands = vscode.workspace.getConfiguration("roo-cline").get<string[]>("allowedCommands") || []
 		const cwd = this.cwd
@@ -1321,7 +1339,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			customSupportPrompts: customSupportPrompts ?? {},
 			enhancementApiConfigId,
 			autoApprovalEnabled: autoApprovalEnabled ?? true,
-			customModes: await this.customModesManager.getCustomModes(),
+			customModes,
 			experiments: experiments ?? experimentDefault,
 			mcpServers: this.mcpHub?.getAllServers() ?? [],
 			maxOpenTabsContext: maxOpenTabsContext ?? 20,
@@ -1573,6 +1591,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		if (currentCline?.diffStrategy) {
 			properties.diffStrategy = currentCline.diffStrategy.getName()
+		}
+
+		// Add creator mode context if available
+		if (currentCline?.creatorModeConfig?.creatorMode) {
+			properties.isCreatorMode = true
 		}
 
 		return properties
