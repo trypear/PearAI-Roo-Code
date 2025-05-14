@@ -31,7 +31,7 @@
 	"roleDefinition": {
 		"title": "Role Definition",
 		"resetToDefault": "Reset to default",
-		"description": "Define Roo's expertise and personality for this mode. This description shapes how Roo presents itself and approaches tasks."
+		"description": "Define Agent's expertise and personality for this mode. This description shapes how Roo presents itself and approaches tasks."
 	},
 	"customInstructions": {
 		"title": "Mode-specific Custom Instructions (optional)",
@@ -128,7 +128,7 @@
 		},
 		"roleDefinition": {
 			"label": "Role Definition",
-			"description": "Define Roo's expertise and personality for this mode."
+			"description": "Define Agent's expertise and personality for this mode."
 		},
 		"tools": {
 			"label": "Available Tools",
