@@ -1,4 +1,8 @@
-# Contributing to Roo Code
+# PearAI Contributing
+Go [here](https://github.com/trypear/pearai-master/blob/main/README.md) for the most up-to-date setup and contributing information to get started contributing to PearAI.
+
+______________
+## Roo Code Contribution Guide
 
 We're thrilled you're interested in contributing to Roo Code. Whether you're fixing a bug, adding a feature, or improving our docs, every contribution makes Roo Code smarter! To keep our community vibrant and welcoming, all members must adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
