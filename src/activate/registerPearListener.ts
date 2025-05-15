@@ -69,7 +69,7 @@ export const registerPearListener = async (provider: ClineProvider) => {
 
 
 		// Initialize with task
-		await provider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig);
+		await provider.initClineWithTask(msg.plan, msg.images, undefined, undefined, creatorModeConfig);
 	});
 	// If there's a creator event in the cache after the extensions were refreshed, we need to get it!
 	exports.pearAPI.creatorMode.triggerCachedCreatorEvent(true);
