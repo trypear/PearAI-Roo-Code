@@ -2,8 +2,8 @@ import { GitCommit } from "../utils/git"
 
 import {
 	GlobalSettings,
-	ApiConfigMeta,
-	ProviderSettings as ApiConfiguration,
+	ProviderSettingsEntry,
+	ProviderSettings,
 	HistoryItem,
 	ModeConfig,
 	TelemetrySetting,
@@ -17,7 +17,7 @@ import { McpServer } from "./mcp"
 import { Mode } from "./modes"
 import { RouterModels } from "./api"
 
-export type { ApiConfigMeta, ToolProgressStatus }
+export type { ProviderSettingsEntry, ToolProgressStatus }
 
 export interface LanguageModelChatSelector {
 	vendor?: string
@@ -69,6 +69,7 @@ export interface ExtensionMessage {
 		| "setHistoryPreviewCollapsed"
 		| "commandExecutionStatus"
 		| "creatorModeUpdate"
+		| "vsCodeSetting"
 	text?: string
 	action?:
 		| "chatButtonClicked"
@@ -96,7 +97,7 @@ export interface ExtensionMessage {
 	vsCodeLmModels?: { vendor?: string; family?: string; version?: string; id?: string }[]
 	mcpServers?: McpServer[]
 	commits?: GitCommit[]
-	listApiConfig?: ApiConfigMeta[]
+	listApiConfig?: ProviderSettingsEntry[]
 	mode?: Mode
 	customMode?: ModeConfig
 	slug?: string
@@ -106,6 +107,8 @@ export interface ExtensionMessage {
 	promptText?: string
 	results?: { path: string; type: "file" | "folder"; label?: string }[]
 	error?: string
+	setting?: string
+	value?: any
 }
 
 export type ExtensionState = Pick<
@@ -171,7 +174,7 @@ export type ExtensionState = Pick<
 	version: string
 	clineMessages: ClineMessage[]
 	currentTaskItem?: HistoryItem
-	apiConfiguration?: ApiConfiguration
+	apiConfiguration?: ProviderSettings
 	uriScheme?: string
 	shouldShowAnnouncement: boolean
 

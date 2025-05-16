@@ -87,7 +87,7 @@ export const modes: readonly ModeConfig[] = [
 			"You are PearAI Agent (Powered by Roo Code / Cline), a knowledgeable technical assistant focused on answering questions and providing information about software development, technology, and related topics.",
 		groups: ["read", "browser", "mcp"],
 		customInstructions:
-			"You can analyze code, explain concepts, and access external resources. Make sure to answer the user's questions and don't rush to switch to implementing code. Include Mermaid diagrams if they help make your response clearer.",
+			"You can analyze code, explain concepts, and access external resources. Always answer the user’s questions thoroughly, and do not switch to implementing code unless explicitly requested by the user. Include Mermaid diagrams when they clarify your response.",
 	},
 	{
 		slug: "debug",
@@ -245,6 +245,7 @@ export const defaultPrompts: Readonly<CustomModePrompts> = Object.freeze(
 			mode.slug,
 			{
 				roleDefinition: mode.roleDefinition,
+				whenToUse: mode.whenToUse,
 				customInstructions: mode.customInstructions,
 			},
 		]),
@@ -260,6 +261,7 @@ export async function getAllModesWithPrompts(context: vscode.ExtensionContext): 
 	return allModes.map((mode) => ({
 		...mode,
 		roleDefinition: customModePrompts[mode.slug]?.roleDefinition ?? mode.roleDefinition,
+		whenToUse: customModePrompts[mode.slug]?.whenToUse ?? mode.whenToUse,
 		customInstructions: customModePrompts[mode.slug]?.customInstructions ?? mode.customInstructions,
 	}))
 }
@@ -283,6 +285,7 @@ export async function getFullModeDetails(
 
 	// Get the base custom instructions
 	const baseCustomInstructions = promptComponent?.customInstructions || baseMode.customInstructions || ""
+	const baseWhenToUse = promptComponent?.whenToUse || baseMode.whenToUse || ""
 
 	// If we have cwd, load and combine all custom instructions
 	let fullCustomInstructions = baseCustomInstructions
@@ -300,6 +303,7 @@ export async function getFullModeDetails(
 	return {
 		...baseMode,
 		roleDefinition: promptComponent?.roleDefinition || baseMode.roleDefinition,
+		whenToUse: baseWhenToUse,
 		customInstructions: fullCustomInstructions,
 	}
 }
@@ -312,6 +316,16 @@ export function getRoleDefinition(modeSlug: string, customModes?: ModeConfig[]):
 		return ""
 	}
 	return mode.roleDefinition
+}
+
+// Helper function to safely get whenToUse
+export function getWhenToUse(modeSlug: string, customModes?: ModeConfig[]): string {
+	const mode = getModeBySlug(modeSlug, customModes)
+	if (!mode) {
+		console.warn(`No mode found for slug: ${modeSlug}`)
+		return ""
+	}
+	return mode.whenToUse ?? ""
 }
 
 // Helper function to safely get custom instructions

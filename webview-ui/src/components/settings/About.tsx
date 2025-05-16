@@ -38,11 +38,14 @@ export const About = ({ version, telemetrySetting, setTelemetrySetting, classNam
 						<Upload className="p-0.5" />
 						{t("settings:footer.settings.export")}
 					</Button>
-					<Button onClick={() => vscode.postMessage({ type: "importSettings" })}>
+					<Button onClick={() => vscode.postMessage({ type: "importSettings" })} className="w-28">
 						<Download className="p-0.5" />
 						{t("settings:footer.settings.import")}
 					</Button>
-					<Button variant="destructive" onClick={() => vscode.postMessage({ type: "resetState" })}>
+					<Button
+						variant="destructive"
+						onClick={() => vscode.postMessage({ type: "resetState" })}
+						className="w-28">
 						<TriangleAlert className="p-0.5" />
 						{t("settings:footer.settings.reset")}
 					</Button>

@@ -109,7 +109,7 @@
 	"diffError": {
 		"title": "Modification échouée"
 	},
-	"troubleMessage": "Agent rencontre des difficultés...",
+	"troubleMessage": "Roo rencontre des difficultés...",
 	"apiRequest": {
 		"title": "Requête API",
 		"failed": "Échec de la requête API",
@@ -135,47 +135,47 @@
 		"current": "Actuel"
 	},
 	"fileOperations": {
-		"wantsToRead": "Agent veut lire ce fichier :",
-		"wantsToReadOutsideWorkspace": "Agent veut lire ce fichier en dehors de l'espace de travail :",
-		"didRead": "Agent a lu ce fichier :",
-		"wantsToEdit": "Agent veut éditer ce fichier :",
-		"wantsToEditOutsideWorkspace": "Agent veut éditer ce fichier en dehors de l'espace de travail :",
-		"wantsToCreate": "Agent veut créer un nouveau fichier :",
-		"wantsToSearchReplace": "Agent veut effectuer une recherche et remplacement sur ce fichier :",
-		"didSearchReplace": "Agent a effectué une recherche et remplacement sur ce fichier :",
-		"wantsToInsert": "Agent veut insérer du contenu dans ce fichier :",
-		"wantsToInsertWithLineNumber": "Agent veut insérer du contenu dans ce fichier à la ligne {{lineNumber}} :",
-		"wantsToInsertAtEnd": "Agent veut ajouter du contenu à la fin de ce fichier :"
+		"wantsToRead": "Roo veut lire ce fichier :",
+		"wantsToReadOutsideWorkspace": "Roo veut lire ce fichier en dehors de l'espace de travail :",
+		"didRead": "Roo a lu ce fichier :",
+		"wantsToEdit": "Roo veut éditer ce fichier :",
+		"wantsToEditOutsideWorkspace": "Roo veut éditer ce fichier en dehors de l'espace de travail :",
+		"wantsToCreate": "Roo veut créer un nouveau fichier :",
+		"wantsToSearchReplace": "Roo veut effectuer une recherche et remplacement sur ce fichier :",
+		"didSearchReplace": "Roo a effectué une recherche et remplacement sur ce fichier :",
+		"wantsToInsert": "Roo veut insérer du contenu dans ce fichier :",
+		"wantsToInsertWithLineNumber": "Roo veut insérer du contenu dans ce fichier à la ligne {{lineNumber}} :",
+		"wantsToInsertAtEnd": "Roo veut ajouter du contenu à la fin de ce fichier :"
 	},
 	"instructions": {
-		"wantsToFetch": "Agent veut récupérer des instructions détaillées pour aider à la tâche actuelle"
+		"wantsToFetch": "Roo veut récupérer des instructions détaillées pour aider à la tâche actuelle"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Agent veut voir les fichiers de premier niveau dans ce répertoire :",
-		"didViewTopLevel": "Agent a vu les fichiers de premier niveau dans ce répertoire :",
-		"wantsToViewRecursive": "Agent veut voir récursivement tous les fichiers dans ce répertoire :",
-		"didViewRecursive": "Agent a vu récursivement tous les fichiers dans ce répertoire :",
-		"wantsToViewDefinitions": "Agent veut voir les noms de définitions de code source utilisés dans ce répertoire :",
-		"didViewDefinitions": "Agent a vu les noms de définitions de code source utilisés dans ce répertoire :",
-		"wantsToSearch": "Agent veut rechercher dans ce répertoire <code>{{regex}}</code> :",
-		"didSearch": "Agent a recherché dans ce répertoire <code>{{regex}}</code> :"
+		"wantsToViewTopLevel": "Roo veut voir les fichiers de premier niveau dans ce répertoire :",
+		"didViewTopLevel": "Roo a vu les fichiers de premier niveau dans ce répertoire :",
+		"wantsToViewRecursive": "Roo veut voir récursivement tous les fichiers dans ce répertoire :",
+		"didViewRecursive": "Roo a vu récursivement tous les fichiers dans ce répertoire :",
+		"wantsToViewDefinitions": "Roo veut voir les noms de définitions de code source utilisés dans ce répertoire :",
+		"didViewDefinitions": "Roo a vu les noms de définitions de code source utilisés dans ce répertoire :",
+		"wantsToSearch": "Roo veut rechercher dans ce répertoire <code>{{regex}}</code> :",
+		"didSearch": "Roo a recherché dans ce répertoire <code>{{regex}}</code> :"
 	},
 	"commandOutput": "Sortie de commande",
 	"response": "Réponse",
 	"arguments": "Arguments",
 	"mcp": {
-		"wantsToUseTool": "Agent veut utiliser un outil sur le serveur MCP {{serverName}} :",
-		"wantsToAccessResource": "Agent veut accéder à une ressource sur le serveur MCP {{serverName}} :"
+		"wantsToUseTool": "Roo veut utiliser un outil sur le serveur MCP {{serverName}} :",
+		"wantsToAccessResource": "Roo veut accéder à une ressource sur le serveur MCP {{serverName}} :"
 	},
 	"modes": {
-		"wantsToSwitch": "Agent veut passer au mode <code>{{mode}}</code>",
-		"wantsToSwitchWithReason": "Agent veut passer au mode <code>{{mode}}</code> car : {{reason}}",
-		"didSwitch": "Agent est passé au mode <code>{{mode}}</code>",
-		"didSwitchWithReason": "Agent est passé au mode <code>{{mode}}</code> car : {{reason}}"
+		"wantsToSwitch": "Roo veut passer au mode <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "Roo veut passer au mode <code>{{mode}}</code> car : {{reason}}",
+		"didSwitch": "Roo est passé au mode <code>{{mode}}</code>",
+		"didSwitchWithReason": "Roo est passé au mode <code>{{mode}}</code> car : {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Agent veut créer une nouvelle sous-tâche en mode <code>{{mode}}</code> :",
-		"wantsToFinish": "Agent veut terminer cette sous-tâche",
+		"wantsToCreate": "Roo veut créer une nouvelle sous-tâche en mode <code>{{mode}}</code> :",
+		"wantsToFinish": "Roo veut terminer cette sous-tâche",
 		"newTaskContent": "Instructions de la sous-tâche",
 		"completionContent": "Sous-tâche terminée",
 		"resultContent": "Résultats de la sous-tâche",
@@ -183,7 +183,7 @@
 		"completionInstructions": "Sous-tâche terminée ! Vous pouvez examiner les résultats et suggérer des corrections ou les prochaines étapes. Si tout semble bon, confirmez pour retourner le résultat à la tâche parente."
 	},
 	"questions": {
-		"hasQuestion": "Agent a une question :"
+		"hasQuestion": "Roo a une question :"
 	},
 	"taskCompleted": "Tâche terminée",
 	"powershell": {
@@ -202,17 +202,17 @@
 		"copyToInput": "Copier vers l'entrée (ou Shift + clic)"
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.15 est sortie",
-		"description": "Agent Code 3.15 apporte de nouvelles fonctionnalités et améliorations basées sur vos retours.",
+		"title": "🎉 Roo Code 3.17 est sortie",
+		"description": "Roo Code 3.17 apporte de puissantes nouvelles fonctionnalités et améliorations basées sur vos retours.",
 		"whatsNew": "Quoi de neuf",
-		"feature1": "<bold>Mise en cache des prompts pour Vertex</bold> : Ajout du support de mise en cache des prompts pour Vertex AI, améliorant les temps de réponse et réduisant les coûts API",
-		"feature2": "<bold>Solution de secours pour Terminal</bold> : Implémentation d'un mécanisme de secours lorsque l'intégration shell du terminal VSCode échoue",
-		"feature3": "<bold>Extraits de code améliorés</bold> : Rendu et interaction améliorés des extraits de code dans l'interface de chat",
+		"feature1": "<bold>Mise en cache implicite pour Gemini</bold> : Les appels à l'API Gemini sont désormais automatiquement mis en cache, réduisant les coûts d'API",
+		"feature2": "<bold>Sélection de mode plus intelligente</bold> : Les définitions de mode peuvent maintenant inclure des indications sur quand chaque mode doit être utilisé, permettant une meilleure orchestration",
+		"feature3": "<bold>Condensation intelligente du contexte</bold> : Résume intelligemment l'historique des conversations lorsque le contexte se remplit au lieu de le tronquer (activer dans Paramètres -> Expérimental)",
 		"hideButton": "Masquer l'annonce",
 		"detailsDiscussLinks": "Obtenez plus de détails et participez aux discussions sur <discordLink>Discord</discordLink> et <redditLink>Reddit</redditLink> 🚀"
 	},
 	"browser": {
-		"rooWantsToUse": "Agent veut utiliser le navigateur :",
+		"rooWantsToUse": "Roo veut utiliser le navigateur :",
 		"consoleLogs": "Journaux de console",
 		"noNewLogs": "(Pas de nouveaux journaux)",
 		"screenshot": "Capture d'écran du navigateur",
@@ -231,6 +231,15 @@
 			"scrollDown": "Défiler vers le bas",
 			"scrollUp": "Défiler vers le haut",
 			"close": "Fermer le navigateur"
+		}
+	},
+	"codeblock": {
+		"tooltips": {
+			"expand": "Développer le bloc de code",
+			"collapse": "Réduire le bloc de code",
+			"enable_wrap": "Activer le retour à la ligne",
+			"disable_wrap": "Désactiver le retour à la ligne",
+			"copy_code": "Copier le code"
 		}
 	},
 	"systemPromptWarning": "AVERTISSEMENT : Remplacement d'instructions système personnalisées actif. Cela peut gravement perturber la fonctionnalité et provoquer un comportement imprévisible.",

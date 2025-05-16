@@ -407,13 +407,20 @@ input[cmdk-input]:focus {
 }
 
 /*
- * Use geometric precision for codicons to avoid blurriness 
+ * Use geometric precision for codicons to avoid blurriness
  */
 
 .codicon[class*="codicon-"] {
 	text-rendering: geometricPrecision !important;
 }
 
+/*
+ * Fix the color of <a> in ChatView
+ */
+
+ a:focus {
+	outline: 1px solid var(--vscode-focusBorder);
+}
 
 /* _-_-_-_-_-_-_-_- PEARAI CREATOR STYLES _-_-_-_-_-_-_-_- */
 
