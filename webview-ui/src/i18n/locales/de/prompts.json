@@ -7,7 +7,7 @@
 		"editModesConfig": "Moduskonfiguration bearbeiten",
 		"editGlobalModes": "Globale Modi bearbeiten",
 		"editProjectModes": "Projektmodi bearbeiten (.pearai-agent-ignore)",
-		"createModeHelpText": "Klicke auf +, um einen neuen benutzerdefinierten Modus zu erstellen, oder bitte Roo einfach im Chat, einen für dich zu erstellen!"
+		"createModeHelpText": "Klicke auf +, um einen neuen benutzerdefinierten Modus zu erstellen, oder bitte Agent einfach im Chat, einen für dich zu erstellen!"
 	},
 	"apiConfiguration": {
 		"title": "API-Konfiguration",
@@ -31,7 +31,7 @@
 	"roleDefinition": {
 		"title": "Rollendefinition",
 		"resetToDefault": "Auf Standardwerte zurücksetzen",
-		"description": "Definiere Roos Expertise und Persönlichkeit für diesen Modus. Diese Beschreibung prägt, wie Roo sich präsentiert und an Aufgaben herangeht."
+		"description": "Definiere Roos Expertise und Persönlichkeit für diesen Modus. Diese Beschreibung prägt, wie Agent sich präsentiert und an Aufgaben herangeht."
 	},
 	"customInstructions": {
 		"title": "Modusspezifische benutzerdefinierte Anweisungen (optional)",
@@ -41,7 +41,7 @@
 	},
 	"globalCustomInstructions": {
 		"title": "Benutzerdefinierte Anweisungen für alle Modi",
-		"description": "Diese Anweisungen gelten für alle Modi. Sie bieten einen grundlegenden Satz von Verhaltensweisen, die durch modusspezifische Anweisungen unten erweitert werden können.\nWenn du möchtest, dass Roo in einer anderen Sprache als deiner Editor-Anzeigesprache ({{language}}) denkt und spricht, kannst du das hier angeben.",
+		"description": "Diese Anweisungen gelten für alle Modi. Sie bieten einen grundlegenden Satz von Verhaltensweisen, die durch modusspezifische Anweisungen unten erweitert werden können.\nWenn du möchtest, dass Agent in einer anderen Sprache als deiner Editor-Anzeigesprache ({{language}}) denkt und spricht, kannst du das hier angeben.",
 		"loadFromFile": "Anweisungen können auch aus dem Ordner <span>.pearai-agent/rules/</span> in deinem Arbeitsbereich geladen werden (.roorules und .clinerules sind veraltet und werden bald nicht mehr funktionieren)."
 	},
 	"systemPrompt": {
@@ -63,7 +63,7 @@
 		"types": {
 			"ENHANCE": {
 				"label": "Prompt verbessern",
-				"description": "Verwenden Sie die Prompt-Verbesserung, um maßgeschneiderte Vorschläge oder Verbesserungen für Ihre Eingaben zu erhalten. Dies stellt sicher, dass Roo Ihre Absicht versteht und die bestmöglichen Antworten liefert. Verfügbar über das ✨-Symbol im Chat."
+				"description": "Verwenden Sie die Prompt-Verbesserung, um maßgeschneiderte Vorschläge oder Verbesserungen für Ihre Eingaben zu erhalten. Dies stellt sicher, dass Agent Ihre Absicht versteht und die bestmöglichen Antworten liefert. Verfügbar über das ✨-Symbol im Chat."
 			},
 			"EXPLAIN": {
 				"label": "Code erklären",

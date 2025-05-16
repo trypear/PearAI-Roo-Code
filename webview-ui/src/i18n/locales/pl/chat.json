@@ -1,5 +1,5 @@
 {
-	"greeting": "Witamy w Roo Code",
+	"greeting": "Witamy w PearAI Agent (Powered by Roo Code / Cline)",
 	"task": {
 		"title": "Zadanie",
 		"seeMore": "Zobacz więcej",
@@ -70,7 +70,7 @@
 	},
 	"scrollToBottom": "Przewiń do dołu czatu",
 	"about": "Generuj, refaktoryzuj i debuguj kod z pomocą sztucznej inteligencji.<br />Sprawdź naszą <DocsLink>dokumentację</DocsLink>, aby dowiedzieć się więcej.",
-	"onboarding": "<strong>Twoja lista zadań w tym obszarze roboczym jest pusta.</strong> Zacznij od wpisania zadania poniżej. Nie wiesz, jak zacząć? Przeczytaj więcej o tym, co Roo może dla Ciebie zrobić w <DocsLink>dokumentacji</DocsLink>.",
+	"onboarding": "<strong>Twoja lista zadań w tym obszarze roboczym jest pusta.</strong> Zacznij od wpisania zadania poniżej. Nie wiesz, jak zacząć? Przeczytaj więcej o tym, co Agent może dla Ciebie zrobić w <DocsLink>dokumentacji</DocsLink>.",
 	"rooTips": {
 		"boomerangTasks": {
 			"title": "Zadania bumerangowe",
@@ -192,7 +192,7 @@
 	"autoApprove": {
 		"title": "Automatyczne zatwierdzanie:",
 		"none": "Brak",
-		"description": "Automatyczne zatwierdzanie pozwala Roo Code wykonywać działania bez pytania o pozwolenie. Włącz tylko dla działań, którym w pełni ufasz. Bardziej szczegółowa konfiguracja dostępna w <settingsLink>Ustawieniach</settingsLink>."
+		"description": "Automatyczne zatwierdzanie pozwala PearAI Agent (Powered by Roo Code / Cline) wykonywać działania bez pytania o pozwolenie. Włącz tylko dla działań, którym w pełni ufasz. Bardziej szczegółowa konfiguracja dostępna w <settingsLink>Ustawieniach</settingsLink>."
 	},
 	"reasoning": {
 		"thinking": "Myślenie",
@@ -202,7 +202,7 @@
 		"copyToInput": "Kopiuj do pola wprowadzania (lub Shift + kliknięcie)"
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.15 wydany",
+		"title": "🎉 PearAI Agent (Powered by Roo Code / Cline) 3.15 wydany",
 		"description": "Agent Code 3.15 przynosi nowe funkcje i ulepszenia na podstawie Twoich opinii.",
 		"whatsNew": "Co nowego",
 		"feature1": "<bold>Buforowanie podpowiedzi dla Vertex</bold>: Dodano obsługę buforowania podpowiedzi dla Vertex AI, poprawiając czasy odpowiedzi i zmniejszając koszty API",
@@ -236,7 +236,7 @@
 	"systemPromptWarning": "OSTRZEŻENIE: Aktywne niestandardowe zastąpienie instrukcji systemowych. Może to poważnie zakłócić funkcjonalność i powodować nieprzewidywalne zachowanie.",
 	"shellIntegration": {
 		"title": "Ostrzeżenie wykonania polecenia",
-		"description": "Twoje polecenie jest wykonywane bez integracji powłoki terminala VSCode. Aby ukryć to ostrzeżenie, możesz wyłączyć integrację powłoki w sekcji <strong>Terminal</strong> w <settingsLink>ustawieniach Roo Code</settingsLink> lub rozwiązać problemy z integracją terminala VSCode korzystając z poniższego linku.",
+		"description": "Twoje polecenie jest wykonywane bez integracji powłoki terminala VSCode. Aby ukryć to ostrzeżenie, możesz wyłączyć integrację powłoki w sekcji <strong>Terminal</strong> w <settingsLink>ustawieniach PearAI Agent (Powered by Roo Code / Cline)</settingsLink> lub rozwiązać problemy z integracją terminala VSCode korzystając z poniższego linku.",
 		"troubleshooting": "Kliknij tutaj, aby zobaczyć dokumentację integracji powłoki."
 	}
 }

@@ -7,7 +7,7 @@
 		"editModesConfig": "Chỉnh sửa cấu hình chế độ",
 		"editGlobalModes": "Chỉnh sửa chế độ toàn cục",
 		"editProjectModes": "Chỉnh sửa chế độ dự án (.pearai-agent-ignore)",
-		"createModeHelpText": "Nhấn + để tạo chế độ tùy chỉnh mới, hoặc chỉ cần yêu cầu Roo trong chat tạo một chế độ cho bạn!"
+		"createModeHelpText": "Nhấn + để tạo chế độ tùy chỉnh mới, hoặc chỉ cần yêu cầu Agent trong chat tạo một chế độ cho bạn!"
 	},
 	"apiConfiguration": {
 		"title": "Cấu hình API",
@@ -31,7 +31,7 @@
 	"roleDefinition": {
 		"title": "Định nghĩa vai trò",
 		"resetToDefault": "Đặt lại về mặc định",
-		"description": "Xác định chuyên môn và tính cách của Roo cho chế độ này. Mô tả này định hình cách Roo giới thiệu bản thân và tiếp cận nhiệm vụ."
+		"description": "Xác định chuyên môn và tính cách của Agent cho chế độ này. Mô tả này định hình cách Agent giới thiệu bản thân và tiếp cận nhiệm vụ."
 	},
 	"customInstructions": {
 		"title": "Hướng dẫn tùy chỉnh dành riêng cho chế độ (tùy chọn)",
@@ -41,7 +41,7 @@
 	},
 	"globalCustomInstructions": {
 		"title": "Hướng dẫn tùy chỉnh cho tất cả các chế độ",
-		"description": "Những hướng dẫn này áp dụng cho tất cả các chế độ. Chúng cung cấp một bộ hành vi cơ bản có thể được nâng cao bởi hướng dẫn dành riêng cho chế độ bên dưới.\nNếu bạn muốn Roo suy nghĩ và nói bằng ngôn ngữ khác với ngôn ngữ hiển thị trình soạn thảo của bạn ({{language}}), bạn có thể chỉ định ở đây.",
+		"description": "Những hướng dẫn này áp dụng cho tất cả các chế độ. Chúng cung cấp một bộ hành vi cơ bản có thể được nâng cao bởi hướng dẫn dành riêng cho chế độ bên dưới.\nNếu bạn muốn Agent suy nghĩ và nói bằng ngôn ngữ khác với ngôn ngữ hiển thị trình soạn thảo của bạn ({{language}}), bạn có thể chỉ định ở đây.",
 		"loadFromFile": "Hướng dẫn cũng có thể được tải từ thư mục <span>.pearai-agent/rules/</span> trong không gian làm việc của bạn (.roorules và .clinerules đã lỗi thời và sẽ sớm ngừng hoạt động)."
 	},
 	"systemPrompt": {
@@ -63,7 +63,7 @@
 		"types": {
 			"ENHANCE": {
 				"label": "Nâng cao lời nhắc",
-				"description": "Sử dụng nâng cao lời nhắc để nhận đề xuất hoặc cải tiến phù hợp cho đầu vào của bạn. Điều này đảm bảo Roo hiểu ý định của bạn và cung cấp phản hồi tốt nhất có thể. Có sẵn thông qua biểu tượng ✨ trong chat."
+				"description": "Sử dụng nâng cao lời nhắc để nhận đề xuất hoặc cải tiến phù hợp cho đầu vào của bạn. Điều này đảm bảo Agent hiểu ý định của bạn và cung cấp phản hồi tốt nhất có thể. Có sẵn thông qua biểu tượng ✨ trong chat."
 			},
 			"EXPLAIN": {
 				"label": "Giải thích mã",
@@ -128,7 +128,7 @@
 		},
 		"roleDefinition": {
 			"label": "Định nghĩa vai trò",
-			"description": "Xác định chuyên môn và tính cách của Roo cho chế độ này."
+			"description": "Xác định chuyên môn và tính cách của Agent cho chế độ này."
 		},
 		"tools": {
 			"label": "Công cụ có sẵn",

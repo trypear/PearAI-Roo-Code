@@ -1,14 +1,14 @@
 {
 	"title": "Serwery MCP",
 	"done": "Gotowe",
-	"description": "<0>Model Context Protocol</0> umożliwia komunikację z lokalnie uruchomionymi serwerami MCP, które zapewniają dodatkowe narzędzia i zasoby rozszerzające możliwości Roo. Możesz korzystać z <1>serwerów stworzonych przez społeczność</1> lub poprosić Roo o utworzenie nowych narzędzi specyficznych dla twojego przepływu pracy (np. \"dodaj narzędzie, które pobiera najnowszą dokumentację npm\").",
+	"description": "<0>Model Context Protocol</0> umożliwia komunikację z lokalnie uruchomionymi serwerami MCP, które zapewniają dodatkowe narzędzia i zasoby rozszerzające możliwości Roo. Możesz korzystać z <1>serwerów stworzonych przez społeczność</1> lub poprosić Agent o utworzenie nowych narzędzi specyficznych dla twojego przepływu pracy (np. \"dodaj narzędzie, które pobiera najnowszą dokumentację npm\").",
 	"enableToggle": {
 		"title": "Włącz serwery MCP",
-		"description": "Po włączeniu, Roo będzie mógł komunikować się z serwerami MCP w celu uzyskania zaawansowanych funkcji. Jeśli nie korzystasz z MCP, możesz to wyłączyć, aby zmniejszyć zużycie tokenów przez Roo."
+		"description": "Po włączeniu, Agent będzie mógł komunikować się z serwerami MCP w celu uzyskania zaawansowanych funkcji. Jeśli nie korzystasz z MCP, możesz to wyłączyć, aby zmniejszyć zużycie tokenów przez Roo."
 	},
 	"enableServerCreation": {
 		"title": "Włącz tworzenie serwerów MCP",
-		"description": "Po włączeniu, Roo może pomóc w tworzeniu nowych serwerów MCP za pomocą poleceń takich jak \"dodaj nowe narzędzie do...\". Jeśli nie potrzebujesz tworzyć serwerów MCP, możesz to wyłączyć, aby zmniejszyć zużycie tokenów przez Roo."
+		"description": "Po włączeniu, Agent może pomóc w tworzeniu nowych serwerów MCP za pomocą poleceń takich jak \"dodaj nowe narzędzie do...\". Jeśli nie potrzebujesz tworzyć serwerów MCP, możesz to wyłączyć, aby zmniejszyć zużycie tokenów przez Roo."
 	},
 	"editGlobalMCP": "Edytuj globalne MCP",
 	"editProjectMCP": "Edytuj projektowe MCP",

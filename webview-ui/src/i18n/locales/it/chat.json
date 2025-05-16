@@ -1,5 +1,5 @@
 {
-	"greeting": "Benvenuto a Roo Code",
+	"greeting": "Benvenuto a PearAI Agent (Powered by Roo Code / Cline)",
 	"task": {
 		"title": "Attività",
 		"seeMore": "Vedi altro",
@@ -192,7 +192,7 @@
 	"autoApprove": {
 		"title": "Auto-approvazione:",
 		"none": "Nessuna",
-		"description": "L'auto-approvazione permette a Roo Code di eseguire azioni senza chiedere permesso. Abilita solo per azioni di cui ti fidi completamente. Configurazione più dettagliata disponibile nelle <settingsLink>Impostazioni</settingsLink>."
+		"description": "L'auto-approvazione permette a PearAI Agent (Powered by Roo Code / Cline) di eseguire azioni senza chiedere permesso. Abilita solo per azioni di cui ti fidi completamente. Configurazione più dettagliata disponibile nelle <settingsLink>Impostazioni</settingsLink>."
 	},
 	"reasoning": {
 		"thinking": "Sto pensando",
@@ -202,7 +202,7 @@
 		"copyToInput": "Copia nell'input (o Shift + clic)"
 	},
 	"announcement": {
-		"title": "🎉 Rilasciato Roo Code 3.15",
+		"title": "🎉 Rilasciato PearAI Agent (Powered by Roo Code / Cline) 3.15",
 		"description": "Agent Code 3.15 porta nuove funzionalità e miglioramenti basati sui tuoi feedback.",
 		"whatsNew": "Novità",
 		"feature1": "<bold>Caching dei prompt per Vertex</bold>: Aggiunto supporto per il caching dei prompt per Vertex AI, migliorando i tempi di risposta e riducendo i costi API",
@@ -236,7 +236,7 @@
 	"systemPromptWarning": "ATTENZIONE: Sovrascrittura personalizzata delle istruzioni di sistema attiva. Questo può compromettere gravemente le funzionalità e causare comportamenti imprevedibili.",
 	"shellIntegration": {
 		"title": "Avviso di esecuzione comando",
-		"description": "Il tuo comando viene eseguito senza l'integrazione shell del terminale VSCode. Per sopprimere questo avviso puoi disattivare l'integrazione shell nella sezione <strong>Terminal</strong> delle <settingsLink>impostazioni di Roo Code</settingsLink> o risolvere i problemi di integrazione del terminale VSCode utilizzando il link qui sotto.",
+		"description": "Il tuo comando viene eseguito senza l'integrazione shell del terminale VSCode. Per sopprimere questo avviso puoi disattivare l'integrazione shell nella sezione <strong>Terminal</strong> delle <settingsLink>impostazioni di PearAI Agent (Powered by Roo Code / Cline)</settingsLink> o risolvere i problemi di integrazione del terminale VSCode utilizzando il link qui sotto.",
 		"troubleshooting": "Clicca qui per la documentazione sull'integrazione shell."
 	}
 }

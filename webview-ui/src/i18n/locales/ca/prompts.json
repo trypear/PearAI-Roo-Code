@@ -7,7 +7,7 @@
 		"editModesConfig": "Editar configuració de modes",
 		"editGlobalModes": "Editar modes globals",
 		"editProjectModes": "Editar modes de projecte (.pearai-agent-ignore)",
-		"createModeHelpText": "Feu clic a + per crear un nou mode personalitzat, o simplement demaneu a Roo al xat que en creï un per a vostè!"
+		"createModeHelpText": "Feu clic a + per crear un nou mode personalitzat, o simplement demaneu a Agent al xat que en creï un per a vostè!"
 	},
 	"apiConfiguration": {
 		"title": "Configuració d'API",
@@ -31,7 +31,7 @@
 	"roleDefinition": {
 		"title": "Definició de rol",
 		"resetToDefault": "Restablir a valors predeterminats",
-		"description": "Definiu l'experiència i personalitat de Roo per a aquest mode. Aquesta descripció determina com Roo es presenta i aborda les tasques."
+		"description": "Definiu l'experiència i personalitat de Agent per a aquest mode. Aquesta descripció determina com Agent es presenta i aborda les tasques."
 	},
 	"customInstructions": {
 		"title": "Instruccions personalitzades específiques del mode (opcional)",
@@ -41,7 +41,7 @@
 	},
 	"globalCustomInstructions": {
 		"title": "Instruccions personalitzades per a tots els modes",
-		"description": "Aquestes instruccions s'apliquen a tots els modes. Proporcionen un conjunt bàsic de comportaments que es poden millorar amb instruccions específiques de cada mode a continuació.\nSi voleu que Roo pensi i parli en un idioma diferent al de la visualització del vostre editor ({{language}}), podeu especificar-ho aquí.",
+		"description": "Aquestes instruccions s'apliquen a tots els modes. Proporcionen un conjunt bàsic de comportaments que es poden millorar amb instruccions específiques de cada mode a continuació.\nSi voleu que Agent pensi i parli en un idioma diferent al de la visualització del vostre editor ({{language}}), podeu especificar-ho aquí.",
 		"loadFromFile": "Les instruccions també es poden carregar des de la carpeta <span>.pearai-agent/rules/</span> al vostre espai de treball (.roorules i .clinerules estan obsolets i deixaran de funcionar aviat)."
 	},
 	"systemPrompt": {
@@ -63,7 +63,7 @@
 		"types": {
 			"ENHANCE": {
 				"label": "Millorar prompt",
-				"description": "Utilitzeu la millora de prompts per obtenir suggeriments o millores personalitzades per a les vostres entrades. Això assegura que Roo entengui la vostra intenció i proporcioni les millors respostes possibles. Disponible a través de la icona ✨ al xat."
+				"description": "Utilitzeu la millora de prompts per obtenir suggeriments o millores personalitzades per a les vostres entrades. Això assegura que Agent entengui la vostra intenció i proporcioni les millors respostes possibles. Disponible a través de la icona ✨ al xat."
 			},
 			"EXPLAIN": {
 				"label": "Explicar codi",
@@ -128,7 +128,7 @@
 		},
 		"roleDefinition": {
 			"label": "Definició de rol",
-			"description": "Definiu l'experiència i personalitat de Roo per a aquest mode."
+			"description": "Definiu l'experiència i personalitat de Agent per a aquest mode."
 		},
 		"tools": {
 			"label": "Eines disponibles",

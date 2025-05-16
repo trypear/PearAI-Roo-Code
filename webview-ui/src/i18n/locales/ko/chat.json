@@ -192,7 +192,7 @@
 	"autoApprove": {
 		"title": "자동 승인:",
 		"none": "없음",
-		"description": "자동 승인을 사용하면 Roo Code가 권한을 요청하지 않고 작업을 수행할 수 있습니다. 완전히 신뢰할 수 있는 작업에만 활성화하세요. 더 자세한 구성은 <settingsLink>설정</settingsLink>에서 사용할 수 있습니다."
+		"description": "자동 승인을 사용하면 PearAI Agent (Powered by Roo Code / Cline)가 권한을 요청하지 않고 작업을 수행할 수 있습니다. 완전히 신뢰할 수 있는 작업에만 활성화하세요. 더 자세한 구성은 <settingsLink>설정</settingsLink>에서 사용할 수 있습니다."
 	},
 	"reasoning": {
 		"thinking": "생각 중",
@@ -202,7 +202,7 @@
 		"copyToInput": "입력창에 복사 (또는 Shift + 클릭)"
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.15 출시",
+		"title": "🎉 PearAI Agent (Powered by Roo Code / Cline) 3.15 출시",
 		"description": "Agent Code 3.15는 사용자 피드백을 기반으로 새로운 기능과 개선사항을 제공합니다.",
 		"whatsNew": "새로운 기능",
 		"feature1": "<bold>Vertex용 프롬프트 캐싱</bold>: Vertex AI에 프롬프트 캐싱 지원이 추가되어 응답 시간 개선 및 API 비용 절감",
@@ -236,7 +236,7 @@
 	"systemPromptWarning": "경고: 사용자 정의 시스템 프롬프트 재정의가 활성화되었습니다. 이로 인해 기능이 심각하게 손상되고 예측할 수 없는 동작이 발생할 수 있습니다.",
 	"shellIntegration": {
 		"title": "명령 실행 경고",
-		"description": "명령이 VSCode 터미널 쉘 통합 없이 실행되고 있습니다. 이 경고를 숨기려면 <settingsLink>Roo Code 설정</settingsLink>의 <strong>Terminal</strong> 섹션에서 쉘 통합을 비활성화하거나 아래 링크를 사용하여 VSCode 터미널 통합 문제를 해결하세요.",
+		"description": "명령이 VSCode 터미널 쉘 통합 없이 실행되고 있습니다. 이 경고를 숨기려면 <settingsLink>PearAI Agent (Powered by Roo Code / Cline) 설정</settingsLink>의 <strong>Terminal</strong> 섹션에서 쉘 통합을 비활성화하거나 아래 링크를 사용하여 VSCode 터미널 통합 문제를 해결하세요.",
 		"troubleshooting": "쉘 통합 문서를 보려면 여기를 클릭하세요."
 	}
 }

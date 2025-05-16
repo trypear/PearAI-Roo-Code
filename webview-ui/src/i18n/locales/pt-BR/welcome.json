@@ -1,6 +1,6 @@
 {
 	"greeting": "Olá, eu sou o Roo!",
-	"introduction": "<strong>Roo Code é o principal agente de codificação autônomo.</strong> Prepare-se para arquitetar, codificar, depurar e aumentar sua produtividade como nunca antes. Para continuar, o Roo Code necessita de uma chave API.",
+	"introduction": "<strong>PearAI Agent (Powered by Roo Code / Cline) é o principal agente de codificação autônomo.</strong> Prepare-se para arquitetar, codificar, depurar e aumentar sua produtividade como nunca antes. Para continuar, o PearAI Agent (Powered by Roo Code / Cline) necessita de uma chave API.",
 	"notice": "Para começar, esta extensão precisa de um provedor de API.",
 	"start": "Vamos lá!",
 	"chooseProvider": "Escolha um provedor de API para começar:",
@@ -16,7 +16,7 @@
 	"startRouter": "Configuração rápida através de um roteador",
 	"startCustom": "Use sua própria chave API",
 	"telemetry": {
-		"title": "Ajude a melhorar o Roo Code",
+		"title": "Ajude a melhorar o PearAI Agent (Powered by Roo Code / Cline)",
 		"anonymousTelemetry": "Envie dados de uso e erros anônimos para nos ajudar a corrigir bugs e melhorar a extensão. Nenhum código, texto ou informação pessoal é enviado.",
 		"changeSettings": "Você sempre pode mudar isso na parte inferior das <settingsLink>configurações</settingsLink>",
 		"settings": "configurações",
