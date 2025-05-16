@@ -87,7 +87,7 @@
 		"enter_valid_path": "Please enter a valid path"
 	},
 	"input": {
-		"task_prompt": "What should Roo do?",
+		"task_prompt": "What should Agent do?",
 		"task_placeholder": "Type your task here"
 	}
 }

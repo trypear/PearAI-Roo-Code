@@ -828,19 +828,11 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 				let apiConfig = await this.providerSettingsManager.loadConfig(config.name)
 
 				// Switch to pearai-model-creator model if we are in Creator Mode
-				if (newMode == PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG) {
+				if (newMode == PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG || newMode.includes('creator')) {
 					apiConfig = {
 						...apiConfig,
 						apiProvider: "pearai",
 						apiModelId: "pearai-model-creator",
-					}
-				} else {
-					if (apiConfig.apiModelId == "pearai-model-creator") {
-						apiConfig = {
-							...apiConfig,
-							apiProvider: "pearai",
-							apiModelId: "pearai-model",
-						}
 					}
 				}
 
