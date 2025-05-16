@@ -1,14 +1,14 @@
 {
 	"title": "MCP 伺服器",
 	"done": "完成",
-	"description": "<0>Model Context Protocol</0> 能與本機執行的 MCP 伺服器通訊，提供額外的工具和資源來擴展 Roo 的功能。您可以使用<1>社群開發的伺服器</1>，或請 Roo 為您的工作流程建立新工具（例如「新增一個取得最新 npm 文件的工具」）。",
+	"description": "<0>Model Context Protocol</0> 能與本機執行的 MCP 伺服器通訊，提供額外的工具和資源來擴展 Agent 的功能。您可以使用<1>社群開發的伺服器</1>，或請 Agent 為您的工作流程建立新工具（例如「新增一個取得最新 npm 文件的工具」）。",
 	"enableToggle": {
 		"title": "啟用 MCP 伺服器",
-		"description": "啟用後，Roo 將能與 MCP 伺服器互動以取得進階功能。如果您不使用 MCP，可以停用此功能以減少 Roo 的 token 使用量。"
+		"description": "啟用後，Agent 將能與 MCP 伺服器互動以取得進階功能。如果您不使用 MCP，可以停用此功能以減少 Agent 的 token 使用量。"
 	},
 	"enableServerCreation": {
 		"title": "啟用 MCP 伺服器建立",
-		"description": "啟用後，Roo 可以透過如「新增工具到...」等命令協助您建立新的 MCP 伺服器。如果您不需要建立 MCP 伺服器，可以停用此功能以減少 Roo 的 token 使用量。"
+		"description": "啟用後，Agent 可以透過如「新增工具到...」等命令協助您建立新的 MCP 伺服器。如果您不需要建立 MCP 伺服器，可以停用此功能以減少 Agent 的 token 使用量。"
 	},
 	"editGlobalMCP": "編輯全域 MCP",
 	"editProjectMCP": "編輯專案 MCP",

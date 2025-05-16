@@ -87,7 +87,7 @@
 		"enter_valid_path": "Vui lòng nhập đường dẫn hợp lệ"
 	},
 	"input": {
-		"task_prompt": "Bạn muốn Roo làm gì?",
+		"task_prompt": "Bạn muốn Agent làm gì?",
 		"task_placeholder": "Nhập nhiệm vụ của bạn ở đây"
 	}
 }

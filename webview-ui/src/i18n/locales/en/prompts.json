@@ -7,7 +7,7 @@
 		"editModesConfig": "Edit modes configuration",
 		"editGlobalModes": "Edit Global Modes",
 		"editProjectModes": "Edit Project Modes (.pearai-agent-ignore)",
-		"createModeHelpText": "Hit the + to create a new custom mode, or just ask Roo in chat to create one for you!"
+		"createModeHelpText": "Hit the + to create a new custom mode, or just ask Agent in chat to create one for you!"
 	},
 	"apiConfiguration": {
 		"title": "API Configuration",
@@ -31,7 +31,7 @@
 	"roleDefinition": {
 		"title": "Role Definition",
 		"resetToDefault": "Reset to default",
-		"description": "Define Agent's expertise and personality for this mode. This description shapes how Roo presents itself and approaches tasks."
+		"description": "Define Agent's expertise and personality for this mode. This description shapes how Agent presents itself and approaches tasks."
 	},
 	"customInstructions": {
 		"title": "Mode-specific Custom Instructions (optional)",
@@ -41,7 +41,7 @@
 	},
 	"globalCustomInstructions": {
 		"title": "Custom Instructions for All Modes",
-		"description": "These instructions apply to all modes. They provide a base set of behaviors that can be enhanced by mode-specific instructions below.\nIf you would like Roo to think and speak in a different language than your editor display language ({{language}}), you can specify it here.",
+		"description": "These instructions apply to all modes. They provide a base set of behaviors that can be enhanced by mode-specific instructions below.\nIf you would like Agent to think and speak in a different language than your editor display language ({{language}}), you can specify it here.",
 		"loadFromFile": "Instructions can also be loaded from the <span>.pearai-agent/rules/</span> folder in your workspace (.roorules and .clinerules are deprecated and will stop working soon)."
 	},
 	"systemPrompt": {
@@ -63,7 +63,7 @@
 		"types": {
 			"ENHANCE": {
 				"label": "Enhance Prompt",
-				"description": "Use prompt enhancement to get tailored suggestions or improvements for your inputs. This ensures Roo understands your intent and provides the best possible responses. Available via the ✨ icon in chat."
+				"description": "Use prompt enhancement to get tailored suggestions or improvements for your inputs. This ensures Agent understands your intent and provides the best possible responses. Available via the ✨ icon in chat."
 			},
 			"EXPLAIN": {
 				"label": "Explain Code",

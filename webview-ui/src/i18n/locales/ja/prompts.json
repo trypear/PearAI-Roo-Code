@@ -7,7 +7,7 @@
 		"editModesConfig": "モード設定を編集",
 		"editGlobalModes": "グローバルモードを編集",
 		"editProjectModes": "プロジェクトモードを編集 (.pearai-agent-ignore)",
-		"createModeHelpText": "+ をクリックして新しいカスタムモードを作成するか、チャットで Roo に作成を依頼してください！"
+		"createModeHelpText": "+ をクリックして新しいカスタムモードを作成するか、チャットで Agent に作成を依頼してください！"
 	},
 	"apiConfiguration": {
 		"title": "API設定",

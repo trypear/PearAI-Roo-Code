@@ -1,14 +1,14 @@
 {
 	"title": "MCP-Server",
 	"done": "Fertig",
-	"description": "Das <0>Model Context Protocol</0> ermöglicht die Kommunikation mit lokal laufenden MCP-Servern, die zusätzliche Tools und Ressourcen zur Erweiterung der Fähigkeiten von Roo bereitstellen. Du kannst <1>von der Community erstellte Server</1> verwenden oder Roo bitten, neue Tools speziell für deinen Workflow zu erstellen (z.B. \"ein Tool hinzufügen, das die neueste npm-Dokumentation abruft\").",
+	"description": "Das <0>Model Context Protocol</0> ermöglicht die Kommunikation mit lokal laufenden MCP-Servern, die zusätzliche Tools und Ressourcen zur Erweiterung der Fähigkeiten von Agent bereitstellen. Du kannst <1>von der Community erstellte Server</1> verwenden oder Agent bitten, neue Tools speziell für deinen Workflow zu erstellen (z.B. \"ein Tool hinzufügen, das die neueste npm-Dokumentation abruft\").",
 	"enableToggle": {
 		"title": "MCP-Server aktivieren",
-		"description": "Wenn aktiviert, kann Roo mit MCP-Servern für erweiterte Funktionen interagieren. Wenn du MCP nicht verwendest, kannst du dies deaktivieren, um den Token-Verbrauch von Roo zu reduzieren."
+		"description": "Wenn aktiviert, kann Agent mit MCP-Servern für erweiterte Funktionen interagieren. Wenn du MCP nicht verwendest, kannst du dies deaktivieren, um den Token-Verbrauch von Agent zu reduzieren."
 	},
 	"enableServerCreation": {
 		"title": "MCP-Server-Erstellung aktivieren",
-		"description": "Wenn aktiviert, kann Roo dir helfen, neue MCP-Server über Befehle wie \"neues Tool hinzufügen zu...\" zu erstellen. Wenn du keine MCP-Server erstellen musst, kannst du dies deaktivieren, um den Token-Verbrauch von Roo zu reduzieren."
+		"description": "Wenn aktiviert, kann Agent dir helfen, neue MCP-Server über Befehle wie \"neues Tool hinzufügen zu...\" zu erstellen. Wenn du keine MCP-Server erstellen musst, kannst du dies deaktivieren, um den Token-Verbrauch von Agent zu reduzieren."
 	},
 	"editGlobalMCP": "Globales MCP bearbeiten",
 	"editProjectMCP": "Projekt-MCP bearbeiten",

@@ -1,5 +1,5 @@
 {
-	"greeting": "欢迎使用 Roo Code",
+	"greeting": "欢迎使用 PearAI Agent (Powered by Roo Code / Cline)",
 	"task": {
 		"title": "任务",
 		"seeMore": "展开",
@@ -70,7 +70,7 @@
 	},
 	"scrollToBottom": "滚动到聊天底部",
 	"about": "通过 AI 辅助生成、重构和调试代码。<br />查看我们的 <DocsLink>文档</DocsLink> 了解更多信息。",
-	"onboarding": "<strong>此工作区中的任务列表为空。</strong> 请在下方输入任务开始。 不确定如何开始？ 在 <DocsLink>文档</DocsLink> 中阅读更多关于 Roo 可以为您做什么的信息。",
+	"onboarding": "<strong>此工作区中的任务列表为空。</strong> 请在下方输入任务开始。 不确定如何开始？ 在 <DocsLink>文档</DocsLink> 中阅读更多关于 Agent 可以为您做什么的信息。",
 	"rooTips": {
 		"boomerangTasks": {
 			"title": "任务拆分",
@@ -202,7 +202,7 @@
 		"copyToInput": "复制到输入框（或按住Shift点击）"
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.15 已发布",
+		"title": "🎉 PearAI Agent (Powered by Roo Code / Cline) 3.15 已发布",
 		"description": "Agent Code 3.15 带来基于您反馈的新功能和改进。",
 		"whatsNew": "新特性",
 		"feature1": "<bold>Vertex 提示词缓存</bold>: 为 Vertex AI 添加提示词缓存支持，提高响应速度并降低 API 费用",
@@ -236,7 +236,7 @@
 	"systemPromptWarning": "警告：自定义系统提示词覆盖已激活。这可能严重破坏功能并导致不可预测的行为。",
 	"shellIntegration": {
 		"title": "命令执行警告",
-		"description": "您的命令正在没有 VSCode 终端 shell 集成的情况下执行。要隐藏此警告，您可以在 <settingsLink>Roo Code 设置</settingsLink>的 <strong>Terminal</strong> 部分禁用 shell 集成，或使用下方链接排查 VSCode 终端集成问题。",
+		"description": "您的命令正在没有 VSCode 终端 shell 集成的情况下执行。要隐藏此警告，您可以在 <settingsLink>PearAI Agent (Powered by Roo Code / Cline) 设置</settingsLink>的 <strong>Terminal</strong> 部分禁用 shell 集成，或使用下方链接排查 VSCode 终端集成问题。",
 		"troubleshooting": "点击此处查看 shell 集成文档。"
 	}
 }
