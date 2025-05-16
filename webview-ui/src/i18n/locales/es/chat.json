@@ -109,7 +109,7 @@
 	"diffError": {
 		"title": "Edición fallida"
 	},
-	"troubleMessage": "Agent está teniendo problemas...",
+	"troubleMessage": "Roo está teniendo problemas...",
 	"apiRequest": {
 		"title": "Solicitud API",
 		"failed": "Solicitud API falló",
@@ -135,47 +135,47 @@
 		"current": "Actual"
 	},
 	"instructions": {
-		"wantsToFetch": "Agent quiere obtener instrucciones detalladas para ayudar con la tarea actual"
+		"wantsToFetch": "Roo quiere obtener instrucciones detalladas para ayudar con la tarea actual"
 	},
 	"fileOperations": {
-		"wantsToRead": "Agent quiere leer este archivo:",
-		"wantsToReadOutsideWorkspace": "Agent quiere leer este archivo fuera del espacio de trabajo:",
-		"didRead": "Agent leyó este archivo:",
-		"wantsToEdit": "Agent quiere editar este archivo:",
-		"wantsToEditOutsideWorkspace": "Agent quiere editar este archivo fuera del espacio de trabajo:",
-		"wantsToCreate": "Agent quiere crear un nuevo archivo:",
-		"wantsToSearchReplace": "Agent quiere realizar búsqueda y reemplazo en este archivo:",
-		"didSearchReplace": "Agent realizó búsqueda y reemplazo en este archivo:",
-		"wantsToInsert": "Agent quiere insertar contenido en este archivo:",
-		"wantsToInsertWithLineNumber": "Agent quiere insertar contenido en este archivo en la línea {{lineNumber}}:",
-		"wantsToInsertAtEnd": "Agent quiere añadir contenido al final de este archivo:"
+		"wantsToRead": "Roo quiere leer este archivo:",
+		"wantsToReadOutsideWorkspace": "Roo quiere leer este archivo fuera del espacio de trabajo:",
+		"didRead": "Roo leyó este archivo:",
+		"wantsToEdit": "Roo quiere editar este archivo:",
+		"wantsToEditOutsideWorkspace": "Roo quiere editar este archivo fuera del espacio de trabajo:",
+		"wantsToCreate": "Roo quiere crear un nuevo archivo:",
+		"wantsToSearchReplace": "Roo quiere realizar búsqueda y reemplazo en este archivo:",
+		"didSearchReplace": "Roo realizó búsqueda y reemplazo en este archivo:",
+		"wantsToInsert": "Roo quiere insertar contenido en este archivo:",
+		"wantsToInsertWithLineNumber": "Roo quiere insertar contenido en este archivo en la línea {{lineNumber}}:",
+		"wantsToInsertAtEnd": "Roo quiere añadir contenido al final de este archivo:"
 	},
 	"directoryOperations": {
-		"wantsToViewTopLevel": "Agent quiere ver los archivos de nivel superior en este directorio:",
-		"didViewTopLevel": "Agent vio los archivos de nivel superior en este directorio:",
-		"wantsToViewRecursive": "Agent quiere ver recursivamente todos los archivos en este directorio:",
-		"didViewRecursive": "Agent vio recursivamente todos los archivos en este directorio:",
-		"wantsToViewDefinitions": "Agent quiere ver nombres de definiciones de código fuente utilizados en este directorio:",
-		"didViewDefinitions": "Agent vio nombres de definiciones de código fuente utilizados en este directorio:",
-		"wantsToSearch": "Agent quiere buscar en este directorio <code>{{regex}}</code>:",
-		"didSearch": "Agent buscó en este directorio <code>{{regex}}</code>:"
+		"wantsToViewTopLevel": "Roo quiere ver los archivos de nivel superior en este directorio:",
+		"didViewTopLevel": "Roo vio los archivos de nivel superior en este directorio:",
+		"wantsToViewRecursive": "Roo quiere ver recursivamente todos los archivos en este directorio:",
+		"didViewRecursive": "Roo vio recursivamente todos los archivos en este directorio:",
+		"wantsToViewDefinitions": "Roo quiere ver nombres de definiciones de código fuente utilizados en este directorio:",
+		"didViewDefinitions": "Roo vio nombres de definiciones de código fuente utilizados en este directorio:",
+		"wantsToSearch": "Roo quiere buscar en este directorio <code>{{regex}}</code>:",
+		"didSearch": "Roo buscó en este directorio <code>{{regex}}</code>:"
 	},
 	"commandOutput": "Salida del comando",
 	"response": "Respuesta",
 	"arguments": "Argumentos",
 	"mcp": {
-		"wantsToUseTool": "Agent quiere usar una herramienta en el servidor MCP {{serverName}}:",
-		"wantsToAccessResource": "Agent quiere acceder a un recurso en el servidor MCP {{serverName}}:"
+		"wantsToUseTool": "Roo quiere usar una herramienta en el servidor MCP {{serverName}}:",
+		"wantsToAccessResource": "Roo quiere acceder a un recurso en el servidor MCP {{serverName}}:"
 	},
 	"modes": {
-		"wantsToSwitch": "Agent quiere cambiar a modo <code>{{mode}}</code>",
-		"wantsToSwitchWithReason": "Agent quiere cambiar a modo <code>{{mode}}</code> porque: {{reason}}",
-		"didSwitch": "Agent cambió a modo <code>{{mode}}</code>",
-		"didSwitchWithReason": "Agent cambió a modo <code>{{mode}}</code> porque: {{reason}}"
+		"wantsToSwitch": "Roo quiere cambiar a modo <code>{{mode}}</code>",
+		"wantsToSwitchWithReason": "Roo quiere cambiar a modo <code>{{mode}}</code> porque: {{reason}}",
+		"didSwitch": "Roo cambió a modo <code>{{mode}}</code>",
+		"didSwitchWithReason": "Roo cambió a modo <code>{{mode}}</code> porque: {{reason}}"
 	},
 	"subtasks": {
-		"wantsToCreate": "Agent quiere crear una nueva subtarea en modo <code>{{mode}}</code>:",
-		"wantsToFinish": "Agent quiere finalizar esta subtarea",
+		"wantsToCreate": "Roo quiere crear una nueva subtarea en modo <code>{{mode}}</code>:",
+		"wantsToFinish": "Roo quiere finalizar esta subtarea",
 		"newTaskContent": "Instrucciones de la subtarea",
 		"completionContent": "Subtarea completada",
 		"resultContent": "Resultados de la subtarea",
@@ -183,7 +183,7 @@
 		"completionInstructions": "¡Subtarea completada! Puedes revisar los resultados y sugerir correcciones o próximos pasos. Si todo se ve bien, confirma para devolver el resultado a la tarea principal."
 	},
 	"questions": {
-		"hasQuestion": "Agent tiene una pregunta:"
+		"hasQuestion": "Roo tiene una pregunta:"
 	},
 	"taskCompleted": "Tarea completada",
 	"powershell": {
@@ -202,17 +202,17 @@
 		"copyToInput": "Copiar a la entrada (o Shift + clic)"
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.15 publicado",
-		"description": "Agent Code 3.15 trae nuevas funcionalidades y mejoras basadas en tus comentarios.",
+		"title": "🎉 Roo Code 3.17 publicado",
+		"description": "Roo Code 3.17 trae potentes nuevas funcionalidades y mejoras basadas en tus comentarios.",
 		"whatsNew": "Novedades",
-		"feature1": "<bold>Caché de prompts para Vertex</bold>: Se ha añadido soporte de caché de prompts para Vertex AI, mejorando los tiempos de respuesta y reduciendo los costos de API",
-		"feature2": "<bold>Mecanismo alternativo para Terminal</bold>: Se ha implementado un mecanismo alternativo cuando falla la integración de shell de terminal de VSCode",
-		"feature3": "<bold>Fragmentos de código mejorados</bold>: Renderizado e interacción mejorados de fragmentos de código en la interfaz de chat",
+		"feature1": "<bold>Caché implícito para Gemini</bold>: Las llamadas a la API de Gemini ahora se almacenan automáticamente en caché, reduciendo los costos de API",
+		"feature2": "<bold>Selección de modo más inteligente</bold>: Las definiciones de modo ahora pueden incluir orientación sobre cuándo debe usarse cada modo, permitiendo una mejor orquestación",
+		"feature3": "<bold>Condensación inteligente de contexto</bold>: Resume de forma inteligente el historial de conversación cuando el contexto se llena en lugar de truncarlo (activar en Configuración -> Experimental)",
 		"hideButton": "Ocultar anuncio",
 		"detailsDiscussLinks": "Obtén más detalles y participa en <discordLink>Discord</discordLink> y <redditLink>Reddit</redditLink> 🚀"
 	},
 	"browser": {
-		"rooWantsToUse": "Agent quiere usar el navegador:",
+		"rooWantsToUse": "Roo quiere usar el navegador:",
 		"consoleLogs": "Registros de la consola",
 		"noNewLogs": "(No hay nuevos registros)",
 		"screenshot": "Captura de pantalla del navegador",
@@ -231,6 +231,15 @@
 			"scrollDown": "Desplazar hacia abajo",
 			"scrollUp": "Desplazar hacia arriba",
 			"close": "Cerrar navegador"
+		}
+	},
+	"codeblock": {
+		"tooltips": {
+			"expand": "Expandir bloque de código",
+			"collapse": "Contraer bloque de código",
+			"enable_wrap": "Activar ajuste de línea",
+			"disable_wrap": "Desactivar ajuste de línea",
+			"copy_code": "Copiar código"
 		}
 	},
 	"systemPromptWarning": "ADVERTENCIA: Anulación de instrucciones del sistema personalizada activa. Esto puede romper gravemente la funcionalidad y causar un comportamiento impredecible.",

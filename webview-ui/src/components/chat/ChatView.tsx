@@ -54,6 +54,7 @@ import { PlanningBar } from "./PlanningBar"
 import SystemPromptWarning from "./SystemPromptWarning"
 import { usePearAIModels } from "@/hooks/usePearAIModels"
 import { CheckpointWarning } from "./CheckpointWarning"
+import { buildDocLink } from "@src/utils/docLinks"
 
 export interface ChatViewProps {
 	isHidden: boolean
@@ -128,7 +129,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	const [inputValue, setInputValue] = useState("")
 	const [lastInputValue, setLastInputValue] = useState("")
 	const textAreaRef = useRef<HTMLTextAreaElement>(null)
-	const [textAreaDisabled, setTextAreaDisabled] = useState(false)
+	const [sendingDisabled, setSendingDisabled] = useState(false)
 	const [selectedImages, setSelectedImages] = useState<string[]>([])
 	const [lastInputImages, setLastInputImages] = useState<string[]>([])
 
@@ -161,9 +162,185 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		vscode.postMessage({ type: "playTts", text })
 	}
 
+	useDeepCompareEffect(() => {
+		// if last message is an ask, show user ask UI
+		// if user finished a task, then start a new task with a new conversation history since in this moment that the extension is waiting for user response, the user could close the extension and the conversation history would be lost.
+		// basically as long as a task is active, the conversation history will be persisted
+		if (lastMessage) {
+			switch (lastMessage.type) {
+				case "ask":
+					const isPartial = lastMessage.partial === true
+					switch (lastMessage.ask) {
+						case "api_req_failed":
+							playSound("progress_loop")
+							setSendingDisabled(true)
+							setClineAsk("api_req_failed")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:retry.title"))
+							setSecondaryButtonText(t("chat:startNewTask.title"))
+							break
+						case "mistake_limit_reached":
+							playSound("progress_loop")
+							setSendingDisabled(false)
+							setClineAsk("mistake_limit_reached")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:proceedAnyways.title"))
+							setSecondaryButtonText(t("chat:startNewTask.title"))
+							break
+						case "followup":
+							if (!isPartial) {
+								playSound("notification")
+							}
+							setSendingDisabled(isPartial)
+							setClineAsk("followup")
+							// setting enable buttons to `false` would trigger a focus grab when
+							// the text area is enabled which is undesirable.
+							// We have no buttons for this tool, so no problem having them "enabled"
+							// to workaround this issue.  See #1358.
+							setEnableButtons(true)
+							setPrimaryButtonText(undefined)
+							setSecondaryButtonText(undefined)
+							break
+						case "tool":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setSendingDisabled(isPartial)
+							setClineAsk("tool")
+							setEnableButtons(!isPartial)
+							const tool = JSON.parse(lastMessage.text || "{}") as ClineSayTool
+							switch (tool.tool) {
+								case "editedExistingFile":
+								case "appliedDiff":
+								case "newFileCreated":
+								case "insertContent":
+									setPrimaryButtonText(t("chat:save.title"))
+									setSecondaryButtonText(t("chat:reject.title"))
+									break
+								case "finishTask":
+									setPrimaryButtonText(t("chat:completeSubtaskAndReturn"))
+									setSecondaryButtonText(undefined)
+									break
+								default:
+									setPrimaryButtonText(t("chat:approve.title"))
+									setSecondaryButtonText(t("chat:reject.title"))
+									break
+							}
+							break
+						case "browser_action_launch":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setSendingDisabled(isPartial)
+							setClineAsk("browser_action_launch")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText(t("chat:approve.title"))
+							setSecondaryButtonText(t("chat:reject.title"))
+							break
+						case "command":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setSendingDisabled(isPartial)
+							setClineAsk("command")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText(t("chat:runCommand.title"))
+							setSecondaryButtonText(t("chat:reject.title"))
+							break
+						case "command_output":
+							setSendingDisabled(false)
+							setClineAsk("command_output")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:proceedWhileRunning.title"))
+							setSecondaryButtonText(t("chat:killCommand.title"))
+							break
+						case "use_mcp_server":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setSendingDisabled(isPartial)
+							setClineAsk("use_mcp_server")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText(t("chat:approve.title"))
+							setSecondaryButtonText(t("chat:reject.title"))
+							break
+						case "completion_result":
+							// extension waiting for feedback. but we can just present a new task button
+							if (!isPartial) {
+								playSound("celebration")
+							}
+							setSendingDisabled(isPartial)
+							setClineAsk("completion_result")
+							setEnableButtons(!isPartial)
+							setPrimaryButtonText(t("chat:startNewTask.title"))
+							setSecondaryButtonText(undefined)
+							break
+						case "resume_task":
+							if (!isAutoApproved(lastMessage) && !isPartial) {
+								playSound("notification")
+							}
+							setSendingDisabled(false)
+							setClineAsk("resume_task")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:resumeTask.title"))
+							setSecondaryButtonText(t("chat:terminate.title"))
+							setDidClickCancel(false) // special case where we reset the cancel button state
+							break
+						case "resume_completed_task":
+							if (!isPartial) {
+								playSound("celebration")
+							}
+							setSendingDisabled(false)
+							setClineAsk("resume_completed_task")
+							setEnableButtons(true)
+							setPrimaryButtonText(t("chat:startNewTask.title"))
+							setSecondaryButtonText(undefined)
+							setDidClickCancel(false)
+							break
+					}
+					break
+				case "say":
+					// Don't want to reset since there could be a "say" after
+					// an "ask" while ask is waiting for response.
+					switch (lastMessage.say) {
+						case "api_req_retry_delayed":
+							setSendingDisabled(true)
+							break
+						case "api_req_started":
+							if (secondLastMessage?.ask === "command_output") {
+								// If the last ask is a command_output, and we
+								// receive an api_req_started, then that means
+								// the command has finished and we don't need
+								// input from the user anymore (in every other
+								// case, the user has to interact with input
+								// field or buttons to continue, which does the
+								// following automatically).
+								setInputValue("")
+								setSendingDisabled(true)
+								setSelectedImages([])
+								setClineAsk(undefined)
+								setEnableButtons(false)
+							}
+							break
+						case "api_req_finished":
+						case "error":
+						case "text":
+						case "browser_action":
+						case "browser_action_result":
+						case "command_output":
+						case "mcp_server_request_started":
+						case "mcp_server_response":
+						case "completion_result":
+							break
+					}
+					break
+			}
+		}
+	}, [lastMessage, secondLastMessage])
+
 	useEffect(() => {
 		if (messages.length === 0) {
-			setTextAreaDisabled(false)
+			setSendingDisabled(false)
 			setClineAsk(undefined)
 			setEnableButtons(false)
 			setPrimaryButtonText(undefined)
@@ -219,7 +396,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		setLastInputValue(inputValue)
 		setLastInputImages(selectedImages)
 		setInputValue("")
-		setTextAreaDisabled(true)
+		setSendingDisabled(true)
 		setSelectedImages([])
 		setClineAsk(undefined)
 		setEnableButtons(false)
@@ -317,7 +494,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					break
 			}
 
-			setTextAreaDisabled(true)
+			setSendingDisabled(true)
 			setClineAsk(undefined)
 			setEnableButtons(false)
 		},
@@ -364,7 +541,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					vscode.postMessage({ type: "terminalOperation", terminalOperation: "abort" })
 					break
 			}
-			setTextAreaDisabled(true)
+			setSendingDisabled(true)
 			setClineAsk(undefined)
 			setEnableButtons(false)
 		},
@@ -385,7 +562,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 	const selectImages = useCallback(() => vscode.postMessage({ type: "selectImages" }), [])
 
 	const shouldDisableImages =
-		!model?.supportsImages || textAreaDisabled || selectedImages.length >= MAX_IMAGES_PER_MESSAGE
+		!model?.supportsImages || sendingDisabled || selectedImages.length >= MAX_IMAGES_PER_MESSAGE
 
 	const handleMessage = useCallback(
 		(e: MessageEvent) => {
@@ -395,7 +572,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				case "action":
 					switch (message.action!) {
 						case "didBecomeVisible":
-							if (!isHidden && !textAreaDisabled && !enableButtons) {
+							if (!isHidden && !sendingDisabled && !enableButtons) {
 								textAreaRef.current?.focus()
 							}
 							break
@@ -404,7 +581,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							break
 						case "PearAIKeysNotFound":
 							setInputValue(lastInputValue)
-							setTextAreaDisabled(false)
+							setSendingDisabled(false)
 							setSelectedImages(lastInputImages)
 							setEnableButtons(true)
 							disableAutoScrollRef.current = true
@@ -444,7 +621,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		},
 		[
 			isHidden,
-			textAreaDisabled,
+			sendingDisabled,
 			enableButtons,
 			handleChatReset,
 			handleSendMessage,
@@ -454,7 +631,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 			lastInputValue,
 			lastInputImages,
 			setInputValue,
-			setTextAreaDisabled,
+			setSendingDisabled,
 			setSelectedImages,
 			setEnableButtons,
 		],
@@ -467,7 +644,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
-			if (!isHidden && !textAreaDisabled && !enableButtons) {
+			if (!isHidden && !sendingDisabled && !enableButtons) {
 				textAreaRef.current?.focus()
 			}
 		}, 50)
@@ -475,7 +652,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		return () => {
 			clearTimeout(timer)
 		}
-	}, [isHidden, textAreaDisabled, enableButtons])
+	}, [isHidden, sendingDisabled, enableButtons])
 
 	const visibleMessages = useMemo(() => {
 		return modifiedMessages.filter((message) => {
@@ -598,7 +775,9 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 
 	const isAutoApproved = useCallback(
 		(message: ClineMessage | undefined) => {
-			if (!autoApprovalEnabled || !message || message.type !== "ask") return false
+			if (!autoApprovalEnabled || !message || message.type !== "ask") {
+				return false
+			}
 
 			if (message.ask === "browser_action_launch") {
 				return alwaysAllowBrowser
@@ -612,7 +791,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				return alwaysAllowExecute && isAllowedCommand(message)
 			}
 
-			// For read/write operations, check if it's outside workspace and if we have permission for that
+			// For read/write operations, check if it's outside workspace and if
+			// we have permission for that.
 			if (message.ask === "tool") {
 				let tool: any = {}
 
@@ -686,7 +866,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					switch (lastMessage.ask) {
 						case "api_req_failed":
 							playSound("progress_loop")
-							setTextAreaDisabled(true)
+							setSendingDisabled(true)
 							setClineAsk("api_req_failed")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:retry.title"))
@@ -694,7 +874,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							break
 						case "mistake_limit_reached":
 							playSound("progress_loop")
-							setTextAreaDisabled(false)
+							setSendingDisabled(false)
 							setClineAsk("mistake_limit_reached")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:proceedAnyways.title"))
@@ -704,7 +884,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							if (!isPartial) {
 								playSound("notification")
 							}
-							setTextAreaDisabled(isPartial)
+							setSendingDisabled(isPartial)
 							setClineAsk("followup")
 							// setting enable buttons to `false` would trigger a focus grab when
 							// the text area is enabled which is undesirable.
@@ -718,7 +898,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							if (!isAutoApproved(lastMessage) && !isPartial) {
 								playSound("notification")
 							}
-							setTextAreaDisabled(isPartial)
+							setSendingDisabled(isPartial)
 							setClineAsk("tool")
 							setEnableButtons(!isPartial)
 							const tool = JSON.parse(lastMessage.text || "{}") as ClineSayTool
@@ -744,7 +924,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							if (!isAutoApproved(lastMessage) && !isPartial) {
 								playSound("notification")
 							}
-							setTextAreaDisabled(isPartial)
+							setSendingDisabled(isPartial)
 							setClineAsk("browser_action_launch")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText(t("chat:approve.title"))
@@ -754,14 +934,14 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							if (!isAutoApproved(lastMessage) && !isPartial) {
 								playSound("notification")
 							}
-							setTextAreaDisabled(isPartial)
+							setSendingDisabled(isPartial)
 							setClineAsk("command")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText(t("chat:runCommand.title"))
 							setSecondaryButtonText(t("chat:reject.title"))
 							break
 						case "command_output":
-							setTextAreaDisabled(false)
+							setSendingDisabled(false)
 							setClineAsk("command_output")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:proceedWhileRunning.title"))
@@ -771,7 +951,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							if (!isAutoApproved(lastMessage) && !isPartial) {
 								playSound("notification")
 							}
-							setTextAreaDisabled(isPartial)
+							setSendingDisabled(isPartial)
 							setClineAsk("use_mcp_server")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText(t("chat:approve.title"))
@@ -782,7 +962,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							if (!isPartial) {
 								playSound("celebration")
 							}
-							setTextAreaDisabled(isPartial)
+							setSendingDisabled(isPartial)
 							setClineAsk("completion_result")
 							setEnableButtons(!isPartial)
 							setPrimaryButtonText(t("chat:startNewTask.title"))
@@ -792,7 +972,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							if (!isAutoApproved(lastMessage) && !isPartial) {
 								playSound("notification")
 							}
-							setTextAreaDisabled(false)
+							setSendingDisabled(false)
 							setClineAsk("resume_task")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:resumeTask.title"))
@@ -803,7 +983,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 							if (!isPartial) {
 								playSound("celebration")
 							}
-							setTextAreaDisabled(false)
+							setSendingDisabled(false)
 							setClineAsk("resume_completed_task")
 							setEnableButtons(true)
 							setPrimaryButtonText(t("chat:startNewTask.title"))
@@ -817,7 +997,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 					// an "ask" while ask is waiting for response.
 					switch (lastMessage.say) {
 						case "api_req_retry_delayed":
-							setTextAreaDisabled(true)
+							setSendingDisabled(true)
 							break
 						case "api_req_started":
 							if (secondLastMessage?.ask === "command_output") {
@@ -829,7 +1009,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 								// field or buttons to continue, which does the
 								// following automatically).
 								setInputValue("")
-								setTextAreaDisabled(true)
+								setSendingDisabled(true)
 								setSelectedImages([])
 								setClineAsk(undefined)
 								setEnableButtons(false)
@@ -1153,13 +1333,26 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		}
 
 		const autoApprove = async () => {
-			if (isAutoApproved(lastMessage)) {
+			if (lastMessage?.ask && isAutoApproved(lastMessage)) {
+				// Note that `isAutoApproved` can only return true if
+				// lastMessage is an ask of type "browser_action_launch",
+				// "use_mcp_server", "command", or "tool".
+
 				// Add delay for write operations.
-				if (lastMessage?.ask === "tool" && isWriteToolAction(lastMessage)) {
+				if (lastMessage.ask === "tool" && isWriteToolAction(lastMessage)) {
 					await new Promise((resolve) => setTimeout(resolve, writeDelayMs))
 				}
 
-				handlePrimaryButtonClick()
+				vscode.postMessage({ type: "askResponse", askResponse: "yesButtonClicked" })
+
+				// This is copied from `handlePrimaryButtonClick`, which we used
+				// to call from `autoApprove`. I'm not sure how many of these
+				// things are actually needed.
+				setInputValue("")
+				setSelectedImages([])
+				setSendingDisabled(true)
+				setClineAsk(undefined)
+				setEnableButtons(false)
 			}
 		}
 		autoApprove()
@@ -1220,7 +1413,7 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 		acceptInput: () => {
 			if (enableButtons && primaryButtonText) {
 				handlePrimaryButtonClick(inputValue, selectedImages)
-			} else if (!textAreaDisabled && (inputValue.trim() || selectedImages.length > 0)) {
+			} else if (!sendingDisabled && (inputValue.trim() || selectedImages.length > 0)) {
 				handleSendMessage(inputValue, selectedImages)
 			}
 		},
@@ -1444,8 +1637,8 @@ const ChatViewComponent: React.ForwardRefRenderFunction<ChatViewRef, ChatViewPro
 				ref={textAreaRef}
 				inputValue={inputValue}
 				setInputValue={setInputValue}
-				textAreaDisabled={textAreaDisabled}
-				selectApiConfigDisabled={textAreaDisabled && clineAsk !== "api_req_failed"}
+				sendingDisabled={sendingDisabled}
+				selectApiConfigDisabled={sendingDisabled && clineAsk !== "api_req_failed"}
 				placeholderText={placeholderText}
 				selectedImages={selectedImages}
 				setSelectedImages={setSelectedImages}

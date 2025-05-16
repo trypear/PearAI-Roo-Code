@@ -9,16 +9,10 @@ import axios from "axios"
 import pWaitFor from "p-wait-for"
 import * as vscode from "vscode"
 
-import { CreatorModeConfig, GlobalState, ProviderSettings, RooCodeSettings } from "../../schemas"
+import type { GlobalState, ProviderName, ProviderSettings, RooCodeSettings, ProviderSettingsEntry, CreatorModeConfig } from "../../schemas"
 import { t } from "../../i18n"
 import { setPanel } from "../../activate/registerCommands"
-import {
-	ApiConfiguration,
-	ApiProvider,
-	requestyDefaultModelId,
-	openRouterDefaultModelId,
-	glamaDefaultModelId,
-} from "../../shared/api"
+import { requestyDefaultModelId, openRouterDefaultModelId, glamaDefaultModelId } from "../../shared/api"
 import { findLast } from "../../shared/array"
 import { supportPrompt } from "../../shared/support-prompt"
 import { GlobalFileNames } from "../../shared/globalFileNames"
@@ -41,8 +35,8 @@ import { ContextProxy } from "../config/ContextProxy"
 import { ProviderSettingsManager } from "../config/ProviderSettingsManager"
 import { CustomModesManager } from "../config/CustomModesManager"
 import { buildApiHandler } from "../../api"
-import { CodeActionName } from "../CodeActionProvider"
-import { Cline, ClineOptions } from "../Cline"
+import { CodeActionName } from "../../activate/CodeActionProvider"
+import { Task, TaskOptions } from "../task/Task"
 import { getNonce } from "./getNonce"
 import { getUri } from "./getUri"
 import { getSystemPromptFilePath } from "../prompts/sections/custom-system-prompt"
@@ -59,7 +53,7 @@ import { PearAIAgentModelsConfig } from "../../api/providers/pearai/pearai"
  */
 
 export type ClineProviderEvents = {
-	clineCreated: [cline: Cline]
+	clineCreated: [cline: Task]
 }
 
 export class ClineProvider extends EventEmitter<ClineProviderEvents> implements vscode.WebviewViewProvider {
@@ -68,7 +62,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	private static activeInstances: Set<ClineProvider> = new Set()
 	private disposables: vscode.Disposable[] = []
 	private view?: vscode.WebviewView | vscode.WebviewPanel
-	private clineStack: Cline[] = []
+	private clineStack: Task[] = []
 	private _workspaceTracker?: WorkspaceTracker // workSpaceTracker read-only for access outside this class
 	public get workspaceTracker(): WorkspaceTracker | undefined {
 		return this._workspaceTracker
@@ -77,7 +71,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 	public isViewLaunched = false
 	public settingsImportedAt?: number
-	public readonly latestAnnouncementId = "apr-30-2025-3-15" // Update for v3.15.0 announcement
+	public readonly latestAnnouncementId = "may-14-2025-3-17" // Update for v3.17.0 announcement
 	public readonly providerSettingsManager: ProviderSettingsManager
 	public readonly customModesManager: CustomModesManager
 
@@ -129,7 +123,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	// Adds a new Cline instance to clineStack, marking the start of a new task.
 	// The instance is pushed to the top of the stack (LIFO order).
 	// When the task is completed, the top instance is removed, reactivating the previous task.
-	async addClineToStack(cline: Cline) {
+	async addClineToStack(cline: Task) {
 		console.log(`[subtasks] adding task ${cline.taskId}.${cline.instanceId} to stack`)
 
 		// Add this cline instance into the stack that represents the order of all the called tasks.
@@ -174,7 +168,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 	// returns the current cline object in the stack (the top one)
 	// if the stack is empty, returns undefined
-	getCurrentCline(): Cline | undefined {
+	getCurrentCline(): Task | undefined {
 		if (this.clineStack.length === 0) {
 			return undefined
 		}
@@ -190,15 +184,15 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		return this.clineStack.map((cline) => cline.taskId)
 	}
 
-	// remove the current task/cline instance (at the top of the stack), ao this task is finished
+	// remove the current task/cline instance (at the top of the stack), so this task is finished
 	// and resume the previous task/cline instance (if it exists)
 	// this is used when a sub task is finished and the parent task needs to be resumed
 	async finishSubTask(lastMessage: string) {
 		console.log(`[subtasks] finishing subtask ${lastMessage}`)
 		// remove the last cline instance from the stack (this is the finished sub task)
 		await this.removeClineFromStack()
-		// resume the last cline instance in the stack (if it exists - this is the 'parnt' calling task)
-		this.getCurrentCline()?.resumePausedTask(lastMessage)
+		// resume the last cline instance in the stack (if it exists - this is the 'parent' calling task)
+		await this.getCurrentCline()?.resumePausedTask(lastMessage)
 	}
 
 	/*
@@ -265,7 +259,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			return false
 		}
 
-		// check if there is a cline instance in the stack (if this provider has an active task)
+		// Check if there is a cline instance in the stack (if this provider has an active task)
 		if (visibleProvider.getCurrentCline()) {
 			return true
 		}
@@ -460,7 +454,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		return data
 	}
 
-	public async initClineWithSubTask(parent: Cline, task?: string, images?: string[]) {
+	public async initClineWithSubTask(parent: Task, task?: string, images?: string[]) {
 		return this.initClineWithTask(task, images, parent)
 	}
 
@@ -470,28 +464,20 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	public async initClineWithTask(
 		task?: string,
 		images?: string[],
-		parentTask?: Cline,
+		parentTask?: Task,
 		options: Partial<
 			Pick<
-				ClineOptions,
-				| "customInstructions"
-				| "enableDiff"
-				| "enableCheckpoints"
-				| "fuzzyMatchThreshold"
-				| "consecutiveMistakeLimit"
-				| "experiments"
+				TaskOptions,
+				"enableDiff" | "enableCheckpoints" | "fuzzyMatchThreshold" | "consecutiveMistakeLimit" | "experiments"
 			>
 		> = {},
 		creatorModeConfig?: CreatorModeConfig,
 	) {
 		const {
 			apiConfiguration,
-			customModePrompts,
 			diffEnabled: enableDiff,
 			enableCheckpoints,
 			fuzzyMatchThreshold,
-			mode,
-			customInstructions: globalInstructions,
 			experiments,
 		} = await this.getState()
 
@@ -509,7 +495,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		const pearaiAgentModels = await this.getPearAIAgentModels()
 
-		const cline = new Cline({
+		const cline = new Task({
 			provider: this,
 			apiConfiguration: {
 				...apiConfiguration,
@@ -518,6 +504,8 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			},
 			creatorModeConfig,
 			customInstructions: effectiveInstructions,
+			provider: this,
+			apiConfiguration,
 			enableDiff,
 			enableCheckpoints,
 			fuzzyMatchThreshold,
@@ -541,19 +529,16 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	}
 
 	public async initClineWithHistoryItem(
-		historyItem: HistoryItem & { rootTask?: Cline; parentTask?: Cline },
+		historyItem: HistoryItem & { rootTask?: Task; parentTask?: Task },
 		options?: { creatorModeConfig?: CreatorModeConfig }
 	) {
 		await this.removeClineFromStack()
 
 		const {
 			apiConfiguration,
-			customModePrompts,
 			diffEnabled: enableDiff,
 			enableCheckpoints,
 			fuzzyMatchThreshold,
-			mode,
-			customInstructions: globalInstructions,
 			experiments,
 		} = await this.getState()
 
@@ -561,7 +546,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const effectiveInstructions = [globalInstructions, modePrompt?.customInstructions].filter(Boolean).join("\n\n")
 
 		const pearaiAgentModels = await this.getPearAIAgentModels()
-		const cline = new Cline({
+		const cline = new Task({
 			provider: this,
 			apiConfiguration: { ...apiConfiguration, pearaiAgentModels: pearaiAgentModels },
 			customInstructions: effectiveInstructions,
@@ -803,7 +788,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	 * @param newMode The mode to switch to
 	 */
 	public async handleModeSwitch(newMode: Mode) {
-		// Capture mode switch telemetry event
 		const cline = this.getCurrentCline()
 
 		if (cline) {
@@ -820,33 +804,37 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		// Update listApiConfigMeta first to ensure UI has latest data
 		await this.updateGlobalState("listApiConfigMeta", listApiConfig)
 
-		// If this mode has a saved config, use it
+		// If this mode has a saved config, use it.
 		if (savedConfigId) {
-			const config = listApiConfig?.find((c) => c.id === savedConfigId)
+			const profile = listApiConfig.find(({ id }) => id === savedConfigId)
 
-			if (config?.name) {
-				let apiConfig = await this.providerSettingsManager.loadConfig(config.name)
+			// TODO: Nang to look at
+			// if (config?.name) {
+			// 	let apiConfig = await this.providerSettingsManager.loadConfig(config.name)
 
-				// Switch to pearai-model-creator model if we are in Creator Mode
-				if (newMode == PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG || newMode.includes('creator')) {
-					apiConfig = {
-						...apiConfig,
-						apiProvider: "pearai",
-						apiModelId: "pearai-model-creator",
-					}
-				}
+			// 	// Switch to pearai-model-creator model if we are in Creator Mode
+			// 	if (newMode == PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG || newMode.includes('creator')) {
+			// 		apiConfig = {
+			// 			...apiConfig,
+			// 			apiProvider: "pearai",
+			// 			apiModelId: "pearai-model-creator",
+			// 		}
+			// 	}
 
-				await Promise.all([
-					this.updateGlobalState("currentApiConfigName", config.name),
-					this.updateApiConfiguration(apiConfig),
-				])
+			// 	await Promise.all([
+			// 		this.updateGlobalState("currentApiConfigName", config.name),
+			// 		this.updateApiConfiguration(apiConfig),
+			// 	])
+			// }
+			if (profile?.name) {
+				await this.activateProviderProfile({ name: profile.name })
 			}
 		} else {
-			// If no saved config for this mode, save current config as default
+			// If no saved config for this mode, save current config as default.
 			const currentApiConfigName = this.getGlobalState("currentApiConfigName")
 
 			if (currentApiConfigName) {
-				const config = listApiConfig?.find((c) => c.name === currentApiConfigName)
+				const config = listApiConfig.find((c) => c.name === currentApiConfigName)
 
 				if (config?.id) {
 					await this.providerSettingsManager.setModeConfig(newMode, config.id)
@@ -867,24 +855,132 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			...providerSettings,
 			creatorModeConfig: currentCline?.creatorModeConfig,
 		}
+	}
 
+	// Provider Profile Management
 
-		if (mode) {
-			const currentApiConfigName = this.getGlobalState("currentApiConfigName")
-			const listApiConfig = await this.providerSettingsManager.listConfig()
-			const config = listApiConfig?.find((c) => c.name === currentApiConfigName)
+	getProviderProfileEntries(): ProviderSettingsEntry[] {
+		return this.contextProxy.getValues().listApiConfigMeta || []
+	}
 
-			if (config?.id) {
-				await this.providerSettingsManager.setModeConfig(mode, config.id)
+	getProviderProfileEntry(name: string): ProviderSettingsEntry | undefined {
+		return this.getProviderProfileEntries().find((profile) => profile.name === name)
+	}
+
+	public hasProviderProfileEntry(name: string): boolean {
+		return !!this.getProviderProfileEntry(name)
+	}
+
+	async upsertProviderProfile(
+		name: string,
+		providerSettings: ProviderSettings,
+		activate: boolean = true,
+	): Promise<string | undefined> {
+		try {
+			// TODO: Do we need to be calling `activateProfile`? It's not
+			// clear to me what the source of truth should be; in some cases
+			// we rely on the `ContextProxy`'s data store and in other cases
+			// we rely on the `ProviderSettingsManager`'s data store. It might
+			// be simpler to unify these two.
+			const id = await this.providerSettingsManager.saveConfig(name, providerSettings)
+
+			if (activate) {
+				const { mode } = await this.getState()
+
+				// These promises do the following:
+				// 1. Adds or updates the list of provider profiles.
+				// 2. Sets the current provider profile.
+				// 3. Sets the current mode's provider profile.
+				// 4. Copies the provider settings to the context.
+				//
+				// Note: 1, 2, and 4 can be done in one `ContextProxy` call:
+				// this.contextProxy.setValues({ ...providerSettings, listApiConfigMeta: ..., currentApiConfigName: ... })
+				// We should probably switch to that and verify that it works.
+				// I left the original implementation in just to be safe.
+				await Promise.all([
+					this.updateGlobalState("listApiConfigMeta", await this.providerSettingsManager.listConfig()),
+					this.updateGlobalState("currentApiConfigName", name),
+					this.providerSettingsManager.setModeConfig(mode, id),
+					this.contextProxy.setProviderSettings(providerSettings),
+				])
+
+				// Change the provider for the current task.
+				// TODO: We should rename `buildApiHandler` for clarity (e.g. `getProviderClient`).
+				const task = this.getCurrentCline()
+
+				if (task) {
+					task.api = buildApiHandler(providerSettings)
+				}
+			} else {
+				await this.updateGlobalState("listApiConfigMeta", await this.providerSettingsManager.listConfig())
 			}
-		}
 
-		await this.contextProxy.setProviderSettings(updatedConfig)
+			// await this.contextProxy.setProviderSettings(updatedConfig)
 
-		if (this.getCurrentCline()) {
-			this.getCurrentCline()!.api = buildApiHandler(updatedConfig)
+			// if (this.getCurrentCline()) {
+			// 	this.getCurrentCline()!.api = buildApiHandler(updatedConfig)
+			await this.postStateToWebview()
+			return id
+		} catch (error) {
+			this.log(
+				`Error create new api configuration: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
+			)
+
+			vscode.window.showErrorMessage(t("common:errors.create_api_config"))
+			return undefined
 		}
 	}
+
+	async deleteProviderProfile(profileToDelete: ProviderSettingsEntry) {
+		const globalSettings = this.contextProxy.getValues()
+		let profileToActivate: string | undefined = globalSettings.currentApiConfigName
+
+		if (profileToDelete.name === profileToActivate) {
+			profileToActivate = this.getProviderProfileEntries().find(({ name }) => name !== profileToDelete.name)?.name
+		}
+
+		if (!profileToActivate) {
+			throw new Error("You cannot delete the last profile")
+		}
+
+		const entries = this.getProviderProfileEntries().filter(({ name }) => name !== profileToDelete.name)
+
+		await this.contextProxy.setValues({
+			...globalSettings,
+			currentApiConfigName: profileToActivate,
+			listApiConfigMeta: entries,
+		})
+
+		await this.postStateToWebview()
+	}
+
+	async activateProviderProfile(args: { name: string } | { id: string }) {
+		const { name, id, ...providerSettings } = await this.providerSettingsManager.activateProfile(args)
+
+		// See `upsertProviderProfile` for a description of what this is doing.
+		await Promise.all([
+			this.contextProxy.setValue("listApiConfigMeta", await this.providerSettingsManager.listConfig()),
+			this.contextProxy.setValue("currentApiConfigName", name),
+			this.contextProxy.setProviderSettings(providerSettings),
+		])
+
+		const { mode } = await this.getState()
+
+		if (id) {
+			await this.providerSettingsManager.setModeConfig(mode, id)
+		}
+
+		// Change the provider for the current task.
+		const task = this.getCurrentCline()
+
+		if (task) {
+			task.api = buildApiHandler(providerSettings)
+		}
+
+		await this.postStateToWebview()
+	}
+
+	// Task Management
 
 	async cancelTask() {
 		const cline = this.getCurrentCline()
@@ -933,11 +1029,6 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	async updateCustomInstructions(instructions?: string) {
 		// User may be clearing the field.
 		await this.updateGlobalState("customInstructions", instructions || undefined)
-
-		if (this.getCurrentCline()) {
-			this.getCurrentCline()!.customInstructions = instructions || undefined
-		}
-
 		await this.postStateToWebview()
 	}
 
@@ -995,14 +1086,14 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 			throw error
 		}
 
-		const newConfiguration: ApiConfiguration = {
+		const newConfiguration: ProviderSettings = {
 			...apiConfiguration,
 			apiProvider: "openrouter",
 			openRouterApiKey: apiKey,
 			openRouterModelId: apiConfiguration?.openRouterModelId || openRouterDefaultModelId,
 		}
 
-		await this.upsertApiConfiguration(currentApiConfigName, newConfiguration)
+		await this.upsertProviderProfile(currentApiConfigName, newConfiguration)
 	}
 
 	// Glama
@@ -1025,14 +1116,14 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 
 		const { apiConfiguration, currentApiConfigName } = await this.getState()
 
-		const newConfiguration: ApiConfiguration = {
+		const newConfiguration: ProviderSettings = {
 			...apiConfiguration,
 			apiProvider: "glama",
 			glamaApiKey: apiKey,
 			glamaModelId: apiConfiguration?.glamaModelId || glamaDefaultModelId,
 		}
 
-		await this.upsertApiConfiguration(currentApiConfigName, newConfiguration)
+		await this.upsertProviderProfile(currentApiConfigName, newConfiguration)
 	}
 
 	// Requesty
@@ -1040,36 +1131,14 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 	async handleRequestyCallback(code: string) {
 		let { apiConfiguration, currentApiConfigName } = await this.getState()
 
-		const newConfiguration: ApiConfiguration = {
+		const newConfiguration: ProviderSettings = {
 			...apiConfiguration,
 			apiProvider: "requesty",
 			requestyApiKey: code,
 			requestyModelId: apiConfiguration?.requestyModelId || requestyDefaultModelId,
 		}
 
-		await this.upsertApiConfiguration(currentApiConfigName, newConfiguration)
-	}
-
-	// Save configuration
-
-	async upsertApiConfiguration(configName: string, apiConfiguration: ApiConfiguration) {
-		try {
-			await this.providerSettingsManager.saveConfig(configName, apiConfiguration)
-			const listApiConfig = await this.providerSettingsManager.listConfig()
-
-			await Promise.all([
-				this.updateGlobalState("listApiConfigMeta", listApiConfig),
-				this.updateApiConfiguration(apiConfiguration),
-				this.updateGlobalState("currentApiConfigName", configName),
-			])
-
-			await this.postStateToWebview()
-		} catch (error) {
-			this.log(
-				`Error create new api configuration: ${JSON.stringify(error, Object.getOwnPropertyNames(error), 2)}`,
-			)
-			vscode.window.showErrorMessage(t("common:errors.create_api_config"))
-		}
+		await this.upsertProviderProfile(currentApiConfigName, newConfiguration)
 	}
 
 	// Task history
@@ -1365,7 +1434,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const customModes = await this.customModesManager.getCustomModes()
 
 		// Determine apiProvider with the same logic as before.
-		const apiProvider: ApiProvider = stateValues.apiProvider ? stateValues.apiProvider : "anthropic"
+		const apiProvider: ProviderName = stateValues.apiProvider ? stateValues.apiProvider : "anthropic"
 
 		// Build the apiConfiguration object combining state values and secrets.
 		const providerSettings = this.contextProxy.getProviderSettings()
@@ -1544,10 +1613,12 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		const appVersion = this.context.extension?.packageJSON?.version
 		const vscodeVersion = vscode.version
 		const platform = process.platform
+		const editorName = vscode.env.appName // Get the editor name (VS Code, Cursor, etc.)
 
 		const properties: Record<string, any> = {
 			vscodeVersion,
 			platform,
+			editorName,
 		}
 
 		// Add extension version
@@ -1588,6 +1659,10 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 		// Add creator mode context if available
 		if (currentCline?.creatorModeConfig?.creatorMode) {
 			properties.isCreatorMode = true
+		}
+		// Add isSubtask property that indicates whether this task is a subtask
+		if (currentCline) {
+			properties.isSubtask = !!currentCline.parentTask
 		}
 
 		return properties
