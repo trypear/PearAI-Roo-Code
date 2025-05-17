@@ -89,7 +89,7 @@ export const ChatRowContent = ({
 	onSuggestionClick,
 }: ChatRowContentProps) => {
 	const { t } = useTranslation()
-	const { mcpServers, alwaysAllowMcp, currentCheckpoint } = useExtensionState()
+	const { mcpServers, alwaysAllowMcp, currentCheckpoint, creatorModeConfig } = useExtensionState()
 	const [reasoningCollapsed, setReasoningCollapsed] = useState(true)
 	const [isDiffErrorExpanded, setIsDiffErrorExpanded] = useState(false)
 	const [showCopySuccess, setShowCopySuccess] = useState(false)
@@ -922,6 +922,18 @@ export const ChatRowContent = ({
 				case "shell_integration_warning":
 					return <CommandExecutionError />
 				case "mcp_server_response":
+					const mcpResponse = safeJsonParse<{
+						success: true;
+						site_url: string;
+						admin_url: string;
+						claim_url: string;
+						id: string;
+					} | undefined>(message.text)
+					console.dir(`MCP REPSONSE: ${JSON.stringify(mcpResponse)}`);
+					const isNetlifyResponse = mcpResponse?.success === true && mcpResponse?.site_url && mcpResponse?.claim_url;
+					if(isNetlifyResponse && creatorModeConfig?.creatorMode) {
+						return <div className="text-red-500 text-2xl">HELLO I AM A PEAR MCP RESPONSE TO NETLIFY</div>
+					}
 					return (
 						<>
 							<div style={{ paddingTop: 0 }}>
@@ -991,6 +1003,10 @@ export const ChatRowContent = ({
 					)
 				case "use_mcp_server":
 					const useMcpServer = safeJsonParse<ClineAskUseMcpServer>(message.text)
+
+					if(useMcpServer?.serverName === "pearai" && creatorModeConfig?.creatorMode) {
+						return <div className="text-red-500 text-2xl"> HELLO I AM A PEAR MCP CALL</div>
+					}
 
 					if (!useMcpServer) {
 						return null
