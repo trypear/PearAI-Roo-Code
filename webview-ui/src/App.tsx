@@ -26,7 +26,7 @@ const tabsByMessageAction: Partial<Record<NonNullable<ExtensionMessage["action"]
 }
 
 const App = () => {
-	const { didHydrateState, showWelcome, shouldShowAnnouncement, telemetrySetting, telemetryKey, machineId } =
+	const { didHydrateState, showWelcome, shouldShowAnnouncement, telemetrySetting, telemetryKey, machineId, creatorModeConfig, mode, setMode } =
 		useExtensionState()
 
 	const [showAnnouncement, setShowAnnouncement] = useState(false)
@@ -44,6 +44,14 @@ const App = () => {
 
 	const settingsRef = useRef<SettingsViewRef>(null)
 	const chatViewRef = useRef<ChatViewRef>(null)
+
+	useEffect(() => {
+		if(!chatViewRef.current) {
+			if(mode === ""){ // IF CREATOR MODE
+				setMode("code");
+			}
+		}
+	}, [mode, setMode, chatViewRef.current]);
 
 	const switchTab = useCallback((newTab: Tab) => {
 		setCurrentSection(undefined)
