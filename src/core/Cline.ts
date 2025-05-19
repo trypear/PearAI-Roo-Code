@@ -92,6 +92,7 @@ import { ClineProvider } from "./webview/ClineProvider"
 import { validateToolUse } from "./mode-validator"
 import { MultiSearchReplaceDiffStrategy } from "./diff/strategies/multi-search-replace"
 import { readApiMessages, saveApiMessages, readTaskMessages, saveTaskMessages, taskMetadata } from "./task-persistence"
+import { pearaiDeployWebappTool } from "./tools/pearaiDeployWebappTool"
 
 type UserContent = Array<Anthropic.Messages.ContentBlockParam>
 
@@ -1310,6 +1311,8 @@ export class Cline extends EventEmitter<ClineEvents> {
 							const modeName = getModeBySlug(mode, customModes)?.name ?? mode
 							return `[${block.name} in ${modeName} mode: '${message}']`
 						}
+						default:
+							return `[${block.name}]`
 					}
 				}
 
@@ -1553,6 +1556,16 @@ export class Cline extends EventEmitter<ClineEvents> {
 							removeClosingTag,
 							toolDescription,
 							askFinishSubTaskApproval,
+						)
+						break
+					case "pearai_deploy_webapp":
+						await pearaiDeployWebappTool(
+							this,
+							block,
+							askApproval,
+							handleError,
+							pushToolResult,
+							removeClosingTag
 						)
 						break
 				}
