@@ -63,6 +63,10 @@ export const toolParamNames = [
 	"ignore_case",
 	"start_line",
 	"end_line",
+	"zip_file_path",
+	"env_file_path",
+	"site_id",
+	"isStatic",
 ] as const
 
 export type ToolParamName = (typeof toolParamNames)[number]
@@ -157,6 +161,12 @@ export interface SearchAndReplaceToolUse extends ToolUse {
 		Partial<Pick<Record<ToolParamName, string>, "use_regex" | "ignore_case" | "start_line" | "end_line">>
 }
 
+export interface PearaiDeployWebappToolUse extends ToolUse {
+	name: "pearai_deploy_webapp"
+	params: Required<Pick<Record<ToolParamName, string>, "zip_file_path" | "env_file_path" | "isStatic">> &
+		Partial<Pick<Record<ToolParamName, string>, "site_id">>
+}
+
 // Define tool group configuration
 export type ToolGroupConfig = {
 	tools: readonly string[]
@@ -181,6 +191,7 @@ export const TOOL_DISPLAY_NAMES: Record<ToolName, string> = {
 	new_task: "create new task",
 	insert_content: "insert content",
 	search_and_replace: "search and replace",
+	pearai_deploy_webapp: "deploy webapp",
 } as const
 
 export type { ToolGroup }
@@ -197,7 +208,7 @@ export const TOOL_GROUPS: Record<ToolGroup, ToolGroupConfig> = {
 		tools: ["browser_action"],
 	},
 	command: {
-		tools: ["execute_command"],
+		tools: ["execute_command", "pearai_deploy_webapp"],
 	},
 	mcp: {
 		tools: ["use_mcp_tool", "access_mcp_resource"],

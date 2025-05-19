@@ -918,6 +918,7 @@ export const toolNames = [
 	"switch_mode",
 	"new_task",
 	"fetch_instructions",
+	"pearai_deploy_webapp",
 ] as const
 
 export const toolNamesSchema = z.enum(toolNames)
