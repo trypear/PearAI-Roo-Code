@@ -10,13 +10,13 @@ Deploy a web application to Netlify. This tool can be used for both new deployme
 <parameter>
 <name>zip_file_path</name>
 <type>string</type>
-<description>Path to the zip file containing the web application files</description>
+<description>Absoulute path to the zip file containing the web application files</description>
 <required>true</required>
 </parameter>
 <parameter>
 <name>env_file_path</name>
 <type>string</type>
-<description>Path to the environment file containing deployment configuration</description>
+<description>Absoulute path to the environment file containing deployment configuration</description>
 <required>true</required>
 </parameter>
 <parameter>

@@ -6,6 +6,11 @@ import { formatResponse } from "../prompts/responses"
 import { getReadablePath } from "../../utils/path"
 import { isPathOutsideWorkspace } from "../../utils/pathUtils"
 import { fileExistsAtPath } from "../../utils/fs"
+import FormData from "form-data"
+import fetch from "node-fetch"
+import * as vscode from "vscode"
+
+const SERVER_URL = "https://server.trypear.ai/pearai-server-api2"
 
 export async function pearaiDeployWebappTool(
     cline: Cline,
@@ -78,11 +83,63 @@ export async function pearaiDeployWebappTool(
             return
         }
 
-        // TODO: Implement actual deployment logic here
-        // For now, just simulate a successful deployment
+        // Read files
+        const zipContent = await fs.readFile(zip_file_path)
+        const envContent = await fs.readFile(env_file_path)
+
+        // Prepare form data
+        const form = new FormData()
+        form.append("zip_file", zipContent, {
+            filename: "dist.zip",
+            contentType: "application/zip",
+        })
+        form.append("env_file", envContent, {
+            filename: ".env",
+            contentType: "text/plain",
+        })
+        if (site_id) {
+            form.append("site_id", site_id)
+        }
+        if (isStatic) {
+            form.append("static", "true")
+        }
+
+        // Get auth token from extension context
+        const authToken = await vscode.commands.executeCommand("pearai-roo-cline.getPearAIApiKey")
+        if (!authToken) {
+            vscode.commands.executeCommand("pearai-roo-cline.PearAIKeysNotFound", undefined)
+            vscode.window.showErrorMessage("PearAI API key not found.", "Login to PearAI").then(async (selection) => {
+                if (selection === "Login to PearAI") {
+                    const extensionUrl = `${vscode.env.uriScheme}://pearai.pearai/auth`
+                    const callbackUri = await vscode.env.asExternalUri(vscode.Uri.parse(extensionUrl))
+                    vscode.env.openExternal(
+                        await vscode.env.asExternalUri(
+                            vscode.Uri.parse(`https://trypear.ai/signin?callback=${callbackUri.toString()}`),
+                        ),
+                    )
+                }
+            })
+            throw new Error("PearAI API key not found. Please login to PearAI.")
+        }
+
+        // Make POST request to deployment endpoint
+        const endpoint = site_id ? `${SERVER_URL}/redeploy-netlify` : `${SERVER_URL}/deploy-netlify`
+        const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+            body: form,
+        })
+
+        if (!response.ok) {
+            throw new Error(`Deployment failed with status ${response.status}: ${await response.text()}`)
+        }
+
+        const result = await response.text()
         pushToolResult(
             formatResponse.toolResult(
-                `Successfully deployed webapp${site_id ? ` to site ${site_id}` : " (new site)"}${isStatic ? " (static deployment)" : ""}`
+                `Successfully deployed webapp${site_id ? ` to site ${site_id}` : " (new site)"}${isStatic ? " (static deployment)" : ""}\n\n${result}`
             )
         )
 
