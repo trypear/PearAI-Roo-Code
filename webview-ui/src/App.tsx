@@ -26,7 +26,7 @@ const tabsByMessageAction: Partial<Record<NonNullable<ExtensionMessage["action"]
 }
 
 const App = () => {
-	const { didHydrateState, showWelcome, shouldShowAnnouncement, telemetrySetting, telemetryKey, machineId } =
+	const { didHydrateState, showWelcome, shouldShowAnnouncement, telemetrySetting, telemetryKey, machineId, creatorModeConfig, mode, setMode} =
 		useExtensionState()
 
 	const [showAnnouncement, setShowAnnouncement] = useState(false)
@@ -44,6 +44,17 @@ const App = () => {
 
 	const settingsRef = useRef<SettingsViewRef>(null)
 	const chatViewRef = useRef<ChatViewRef>(null)
+
+	// Exit Creator mode system prompts if the user is not in creator mode
+	useEffect(() => {
+		if (creatorModeConfig && !creatorModeConfig.creatorMode) {
+			if (typeof mode === "string" && mode.toLowerCase().includes("pearai")) {
+				let mode = "code"
+				setMode(mode);
+				vscode.postMessage({ type: "mode", text: "code" })
+			}
+		}
+	}, [mode, setMode, chatViewRef, creatorModeConfig]);
 
 	const switchTab = useCallback((newTab: Tab) => {
 		setCurrentSection(undefined)

@@ -482,7 +482,7 @@ export class ClineProvider extends EventEmitter<ClineProviderEvents> implements 
 				| "experiments"
 			>
 		> = {},
-		creatorModeConfig?: CreatorModeConfig,
+		creatorModeConfig: CreatorModeConfig = { creatorMode: false },
 	) {
 		const {
 			apiConfiguration,
