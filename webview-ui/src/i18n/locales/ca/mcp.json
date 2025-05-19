@@ -1,14 +1,14 @@
 {
 	"title": "Servidors MCP",
 	"done": "Fet",
-	"description": "El <0>Model Context Protocol</0> permet la comunicació amb servidors MCP que s'executen localment i proporcionen eines i recursos addicionals per ampliar les capacitats de Roo. Pots utilitzar <1>servidors creats per la comunitat</1> o demanar a Roo que creï noves eines específiques per al teu flux de treball (per exemple, \"afegir una eina que obtingui la documentació més recent de npm\").",
+	"description": "El <0>Model Context Protocol</0> permet la comunicació amb servidors MCP que s'executen localment i proporcionen eines i recursos addicionals per ampliar les capacitats de Roo. Pots utilitzar <1>servidors creats per la comunitat</1> o demanar a Agent que creï noves eines específiques per al teu flux de treball (per exemple, \"afegir una eina que obtingui la documentació més recent de npm\").",
 	"enableToggle": {
 		"title": "Habilitar servidors MCP",
-		"description": "Quan està habilitat, Roo podrà interactuar amb servidors MCP per a funcionalitats avançades. Si no utilitzes MCP, pots desactivar això per reduir l'ús de tokens de Roo."
+		"description": "Quan està habilitat, Agent podrà interactuar amb servidors MCP per a funcionalitats avançades. Si no utilitzes MCP, pots desactivar això per reduir l'ús de tokens de Roo."
 	},
 	"enableServerCreation": {
 		"title": "Habilitar creació de servidors MCP",
-		"description": "Quan està habilitat, Roo pot ajudar-te a crear nous servidors MCP mitjançant ordres com \"afegir una nova eina per a...\". Si no necessites crear servidors MCP, pots desactivar això per reduir l'ús de tokens de Roo."
+		"description": "Quan està habilitat, Agent pot ajudar-te a crear nous servidors MCP mitjançant ordres com \"afegir una nova eina per a...\". Si no necessites crear servidors MCP, pots desactivar això per reduir l'ús de tokens de Roo."
 	},
 	"editGlobalMCP": "Editar MCP Global",
 	"editProjectMCP": "Editar MCP del Projecte",

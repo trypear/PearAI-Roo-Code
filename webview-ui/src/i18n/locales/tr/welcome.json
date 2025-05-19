@@ -1,6 +1,6 @@
 {
 	"greeting": "Merhaba, ben Roo!",
-	"introduction": "<strong>Roo Code, önde gelen otonom kodlama aracıdır.</strong> Daha önce hiç görmediğin şekilde mimari tasarım yapmaya, kod yazmaya, hata ayıklamaya ve üretkenliğini artırmaya hazırlan. Devam etmek için Roo Code'un bir API anahtarına ihtiyacı var.",
+	"introduction": "<strong>PearAI Agent (Powered by Roo Code / Cline), önde gelen otonom kodlama aracıdır.</strong> Daha önce hiç görmediğin şekilde mimari tasarım yapmaya, kod yazmaya, hata ayıklamaya ve üretkenliğini artırmaya hazırlan. Devam etmek için PearAI Agent (Powered by Roo Code / Cline)'un bir API anahtarına ihtiyacı var.",
 	"notice": "Başlamak için bu eklentinin bir API sağlayıcısına ihtiyacı var.",
 	"start": "Hadi başlayalım!",
 	"chooseProvider": "Başlamak için bir API sağlayıcısı seç:",

@@ -1,5 +1,5 @@
 {
-	"greeting": "Welcome to PearAI Agent (Powered by Roo Code / Cline)",
+	"greeting": "Welcome to PearAI Agent (Powered by PearAI Agent (Powered by Roo Code / Cline) / Cline)",
 	"task": {
 		"title": "Task",
 		"seeMore": "See more",
@@ -192,10 +192,10 @@
 	"autoApprove": {
 		"title": "Auto-approve:",
 		"none": "None",
-		"description": "Auto-approve allows PearAI Agent (Powered by Roo Code / Cline) to perform actions without asking for permission. Only enable for actions you fully trust. More detailed configuration available in <settingsLink>Settings</settingsLink>."
+		"description": "Auto-approve allows PearAI Agent (Powered by PearAI Agent (Powered by Roo Code / Cline) / Cline) to perform actions without asking for permission. Only enable for actions you fully trust. More detailed configuration available in <settingsLink>Settings</settingsLink>."
 	},
 	"announcement": {
-		"title": "🎉 Roo Code 3.15 Released",
+		"title": "🎉 PearAI Agent (Powered by Roo Code / Cline) 3.15 Released",
 		"description": "Agent Code 3.15 brings new features and improvements based on your feedback.",
 		"whatsNew": "What's New",
 		"feature1": "<bold>Prompt Caching for Vertex</bold>: Added prompt caching support for Vertex AI, improving response times and reducing API costs",
@@ -236,7 +236,7 @@
 	"systemPromptWarning": "WARNING: Custom system prompt override active. This can severely break functionality and cause unpredictable behavior.",
 	"shellIntegration": {
 		"title": "Command Execution Warning",
-		"description": "Your command is being executed without VSCode terminal shell integration. To suppress this warning you can disable shell integration in the <strong>Terminal</strong> section of the <settingsLink>PearAI Agent (Powered by Roo Code / Cline) settings</settingsLink> or troubleshoot VSCode terminal integration using the link below.",
+		"description": "Your command is being executed without VSCode terminal shell integration. To suppress this warning you can disable shell integration in the <strong>Terminal</strong> section of the <settingsLink>PearAI Agent (Powered by PearAI Agent (Powered by Roo Code / Cline) / Cline) settings</settingsLink> or troubleshoot VSCode terminal integration using the link below.",
 		"troubleshooting": "Click here for shell integration documentation."
 	}
 }

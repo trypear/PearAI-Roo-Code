@@ -2,7 +2,7 @@ import * as vscode from "vscode"
 import { ClineProvider } from "../core/webview/ClineProvider"
 import { assert } from "../utils/util"
 import { PEARAI_CREATOR_MODE_WEBAPP_MANAGER_SLUG } from "../shared/modes"
-import { PearAIExtensionExports } from "@pearai/core"
+// import { PearAIExtensionExports } from "@pearai/core"
 
 export const getPearaiExtension = async () => {
 	const pearAiExtension = vscode.extensions.getExtension("pearai.pearai")
@@ -17,7 +17,7 @@ export const getPearaiExtension = async () => {
 }
 
 // TODO: TYPES
-export const getpearAIExports = async (): Promise<PearAIExtensionExports> => {
+export const getpearAIExports = async (): Promise<any> => {
 	const pearAiExtension = await getPearaiExtension()
 
 	assert(!!pearAiExtension.exports, "⚠️⚠️ Error, no PearAI Exports could be found :( ⚠️⚠️");
@@ -31,7 +31,7 @@ type CreatorModeState = "OVERLAY_CLOSED" | "OVERLAY_OPEN" | "OVERLAY_CLOSED_CREA
 export const registerPearListener = async (provider: ClineProvider) => {
 	// Getting the pear ai extension instance
 	const exports = await getpearAIExports()
-	exports.pearAPI.creatorMode.onDidRequestExecutePlan(async (msg) => {
+	exports.pearAPI.creatorMode.onDidRequestExecutePlan(async (msg: any) => {
 		console.dir(`onDidRequestNewTask triggered with: ${JSON.stringify(msg)}`)
 
 		let canContinue = false;
@@ -69,7 +69,7 @@ export const registerPearListener = async (provider: ClineProvider) => {
 
 
 		// Initialize with task
-		await provider.initClineWithTask(msg.plan, undefined, undefined, undefined, creatorModeConfig);
+		await provider.initClineWithTask(msg.plan, msg.images, undefined, undefined, creatorModeConfig);
 	});
 	// If there's a creator event in the cache after the extensions were refreshed, we need to get it!
 	exports.pearAPI.creatorMode.triggerCachedCreatorEvent(true);
