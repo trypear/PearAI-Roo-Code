@@ -28,6 +28,11 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 	override async *createMessage(systemPrompt: string, messages: Anthropic.Messages.MessageParam[]): ApiStream {
 		const modelId = this.getModel().id
 
+		if (this.isGpt5FamilyModel(modelId)) {
+			yield* this.handleGpt5FamilyMessage(modelId, systemPrompt, messages)
+			return
+		}
+
 		if (modelId.startsWith("o1")) {
 			yield* this.handleO1FamilyMessage(modelId, systemPrompt, messages)
 			return
@@ -39,6 +44,32 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 		}
 
 		yield* this.handleDefaultModelMessage(modelId, systemPrompt, messages)
+	}
+
+	private isGpt5FamilyModel(modelId: string): boolean {
+		return modelId.startsWith("gpt-5")
+	}
+
+	private async *handleGpt5FamilyMessage(
+		modelId: string,
+		systemPrompt: string,
+		messages: Anthropic.Messages.MessageParam[],
+	): ApiStream {
+		const stream = await this.client.chat.completions.create({
+			model: modelId,
+			messages: [
+				{
+					role: "developer",
+					content: `Formatting re-enabled\n${systemPrompt}`,
+				},
+				...convertToOpenAiMessages(messages),
+			],
+			stream: true,
+			stream_options: { include_usage: true },
+			reasoning_effort: this.getModel().info.reasoningEffort as any,
+		})
+
+		yield* this.handleStreamResponse(stream)
 	}
 
 	private async *handleO1FamilyMessage(
@@ -81,7 +112,7 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 			],
 			stream: true,
 			stream_options: { include_usage: true },
-			reasoning_effort: this.getModel().info.reasoningEffort,
+			reasoning_effort: this.getModel().info.reasoningEffort as any,
 		})
 
 		yield* this.handleStreamResponse(stream)
@@ -153,6 +184,8 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 				requestOptions = this.getO1CompletionOptions(modelId, prompt)
 			} else if (modelId.startsWith("o3-mini")) {
 				requestOptions = this.getO3CompletionOptions(modelId, prompt)
+			} else if (this.isGpt5FamilyModel(modelId)) {
+				requestOptions = this.getGpt5CompletionOptions(modelId, prompt)
 			} else {
 				requestOptions = this.getDefaultCompletionOptions(modelId, prompt)
 			}
@@ -184,7 +217,18 @@ export class OpenAiNativeHandler extends BaseProvider implements SingleCompletio
 		return {
 			model: "o3-mini",
 			messages: [{ role: "user", content: prompt }],
-			reasoning_effort: this.getModel().info.reasoningEffort,
+			reasoning_effort: this.getModel().info.reasoningEffort as any,
+		}
+	}
+
+	private getGpt5CompletionOptions(
+		modelId: string,
+		prompt: string,
+	): OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming {
+		return {
+			model: modelId,
+			messages: [{ role: "user", content: prompt }],
+			reasoning_effort: this.getModel().info.reasoningEffort as any,
 		}
 	}
 

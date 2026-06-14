@@ -190,6 +190,30 @@ describe("OpenAiNativeHandler", () => {
 				reasoning_effort: "medium",
 			})
 		})
+
+		it("should handle gpt-5 model family correctly", async () => {
+			handler = new OpenAiNativeHandler({
+				...mockOptions,
+				apiModelId: "gpt-5.4-mini",
+			})
+
+			const stream = handler.createMessage(systemPrompt, messages)
+			const chunks: any[] = []
+			for await (const chunk of stream) {
+				chunks.push(chunk)
+			}
+
+			expect(mockCreate).toHaveBeenCalledWith({
+				model: "gpt-5.4-mini",
+				messages: [
+					{ role: "developer", content: "Formatting re-enabled\n" + systemPrompt },
+					{ role: "user", content: "Hello!" },
+				],
+				stream: true,
+				stream_options: { include_usage: true },
+				reasoning_effort: "medium",
+			})
+		})
 	})
 
 	describe("streaming models", () => {
@@ -336,6 +360,21 @@ describe("OpenAiNativeHandler", () => {
 			})
 		})
 
+		it("should complete prompt successfully with gpt-5 model", async () => {
+			handler = new OpenAiNativeHandler({
+				apiModelId: "gpt-5.4-mini",
+				openAiNativeApiKey: "test-api-key",
+			})
+
+			const result = await handler.completePrompt("Test prompt")
+			expect(result).toBe("Test response")
+			expect(mockCreate).toHaveBeenCalledWith({
+				model: "gpt-5.4-mini",
+				messages: [{ role: "user", content: "Test prompt" }],
+				reasoning_effort: "medium",
+			})
+		})
+
 		it("should handle API errors", async () => {
 			mockCreate.mockRejectedValueOnce(new Error("API Error"))
 			await expect(handler.completePrompt("Test prompt")).rejects.toThrow(
@@ -366,7 +405,7 @@ describe("OpenAiNativeHandler", () => {
 				openAiNativeApiKey: "test-api-key",
 			})
 			const modelInfo = handlerWithoutModel.getModel()
-			expect(modelInfo.id).toBe("gpt-4o") // Default model
+			expect(modelInfo.id).toBe("gpt-5.4-mini") // Default model
 			expect(modelInfo.info).toBeDefined()
 		})
 	})

@@ -245,7 +245,7 @@ export class OpenAiHandler extends BaseProvider implements SingleCompletionHandl
 				],
 				stream: true,
 				stream_options: { include_usage: true },
-				reasoning_effort: this.getModel().info.reasoningEffort,
+				reasoning_effort: this.getModel().info.reasoningEffort as any,
 			})
 
 			yield* this.handleStreamResponse(stream)

@@ -137,6 +137,37 @@ describe("AnthropicHandler", () => {
 			// Verify API
 			expect(mockCreate).toHaveBeenCalled()
 		})
+
+		it("should handle prompt caching for the current default model", async () => {
+			handler = new AnthropicHandler({
+				...mockOptions,
+				apiModelId: "claude-sonnet-4-6",
+			})
+
+			const stream = handler.createMessage(systemPrompt, [
+				{
+					role: "user",
+					content: [{ type: "text" as const, text: "First message" }],
+				},
+				{
+					role: "assistant",
+					content: [{ type: "text" as const, text: "Response" }],
+				},
+				{
+					role: "user",
+					content: [{ type: "text" as const, text: "Second message" }],
+				},
+			])
+
+			for await (const _chunk of stream) {
+				// Drain stream so the API call is made.
+			}
+
+			const [request, requestOptions] = mockCreate.mock.calls[0]
+			expect(request.model).toBe("claude-sonnet-4-6")
+			expect(request.system[0].cache_control).toEqual({ type: "ephemeral" })
+			expect(requestOptions.headers["anthropic-beta"]).toContain("prompt-caching-2024-07-31")
+		})
 	})
 
 	describe("completePrompt", () => {
@@ -181,7 +212,7 @@ describe("AnthropicHandler", () => {
 				apiModelId: undefined,
 			})
 			const model = handlerWithoutModel.getModel()
-			expect(model.id).toBeDefined()
+			expect(model.id).toBe("claude-sonnet-4-6")
 			expect(model.info).toBeDefined()
 		})
 

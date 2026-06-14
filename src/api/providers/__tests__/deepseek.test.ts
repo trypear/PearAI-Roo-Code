@@ -154,8 +154,8 @@ describe("DeepSeekHandler", () => {
 			const model = handler.getModel()
 			expect(model.id).toBe(mockOptions.apiModelId)
 			expect(model.info).toBeDefined()
-			expect(model.info.maxTokens).toBe(8192)
-			expect(model.info.contextWindow).toBe(64_000)
+			expect(model.info.maxTokens).toBe(384_000)
+			expect(model.info.contextWindow).toBe(1_000_000)
 			expect(model.info.supportsImages).toBe(false)
 			expect(model.info.supportsPromptCache).toBe(true) // Should be true now
 		})
@@ -165,13 +165,17 @@ describe("DeepSeekHandler", () => {
 				...mockOptions,
 				apiModelId: "invalid-model",
 			})
+			const defaultModel = new DeepSeekHandler({
+				...mockOptions,
+				apiModelId: undefined,
+			}).getModel()
 			const model = handlerWithInvalidModel.getModel()
 			expect(model.id).toBe("invalid-model") // Returns provided ID
 			expect(model.info).toBeDefined()
 			// With the current implementation, it's the same object reference when using default model info
-			expect(model.info).toBe(handler.getModel().info)
+			expect(model.info).toBe(defaultModel.info)
 			// Should have the same base properties
-			expect(model.info.contextWindow).toBe(handler.getModel().info.contextWindow)
+			expect(model.info.contextWindow).toBe(defaultModel.info.contextWindow)
 			// And should have supportsPromptCache set to true
 			expect(model.info.supportsPromptCache).toBe(true)
 		})

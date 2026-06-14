@@ -157,15 +157,63 @@ export interface ModelInfo {
 	cacheWritesPrice?: number
 	cacheReadsPrice?: number
 	description?: string
-	reasoningEffort?: "low" | "medium" | "high"
+	reasoningEffort?: "none" | "minimal" | "low" | "medium" | "high" | "xhigh"
 	thinking?: boolean
 }
 
 // Anthropic
 // https://docs.anthropic.com/en/docs/about-claude/models
 export type AnthropicModelId = keyof typeof anthropicModels
-export const anthropicDefaultModelId: AnthropicModelId = "claude-3-5-sonnet-20241022"
+export const anthropicDefaultModelId: AnthropicModelId = "claude-sonnet-4-6"
 export const anthropicModels = {
+	"claude-fable-5": {
+		maxTokens: 128_000,
+		contextWindow: 1_000_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 10.0,
+		outputPrice: 50.0,
+		cacheWritesPrice: 12.5,
+		cacheReadsPrice: 1.0,
+		description: "Anthropic's most capable widely released model for demanding reasoning and agentic work.",
+	},
+	"claude-opus-4-8": {
+		maxTokens: 128_000,
+		contextWindow: 1_000_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 5.0,
+		outputPrice: 25.0,
+		cacheWritesPrice: 6.25,
+		cacheReadsPrice: 0.5,
+		description: "Anthropic's Opus-tier model for complex reasoning, coding, and high-autonomy work.",
+	},
+	"claude-sonnet-4-6": {
+		maxTokens: 128_000,
+		contextWindow: 1_000_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 3.0,
+		outputPrice: 15.0,
+		cacheWritesPrice: 3.75,
+		cacheReadsPrice: 0.3,
+		description: "Anthropic's balanced current model for speed, intelligence, and coding workflows.",
+	},
+	"claude-haiku-4-5-20251001": {
+		maxTokens: 128_000,
+		contextWindow: 200_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 1.0,
+		outputPrice: 5.0,
+		cacheWritesPrice: 1.25,
+		cacheReadsPrice: 0.1,
+		description: "Anthropic's fastest current model with near-frontier intelligence.",
+	},
 	"claude-3-7-sonnet-20250219:thinking": {
 		maxTokens: 128_000,
 		contextWindow: 200_000,
@@ -591,10 +639,10 @@ export const requestyDefaultModelInfo: ModelInfo = {
 
 // OpenRouter
 // https://openrouter.ai/models?order=newest&supported_parameters=tools
-export const openRouterDefaultModelId = "anthropic/claude-3.7-sonnet"
+export const openRouterDefaultModelId = "anthropic/claude-sonnet-4.6"
 export const openRouterDefaultModelInfo: ModelInfo = {
-	maxTokens: 8192,
-	contextWindow: 200_000,
+	maxTokens: 128_000,
+	contextWindow: 1_000_000,
 	supportsImages: true,
 	supportsComputerUse: true,
 	supportsPromptCache: true,
@@ -602,8 +650,7 @@ export const openRouterDefaultModelInfo: ModelInfo = {
 	outputPrice: 15.0,
 	cacheWritesPrice: 3.75,
 	cacheReadsPrice: 0.3,
-	description:
-		"Claude 3.7 Sonnet is an advanced large language model with improved reasoning, coding, and problem-solving capabilities. It introduces a hybrid reasoning approach, allowing users to choose between rapid responses and extended, step-by-step processing for complex tasks. The model demonstrates notable improvements in coding, particularly in front-end development and full-stack updates, and excels in agentic workflows, where it can autonomously navigate multi-step processes. Claude 3.7 Sonnet maintains performance parity with its predecessor in standard mode while offering an extended reasoning mode for enhanced accuracy in math, coding, and instruction-following tasks. Read more at the [blog post here](https://www.anthropic.com/news/claude-3-7-sonnet)",
+	description: "Claude Sonnet 4.6 through OpenRouter, a balanced current model for coding and agentic workflows.",
 }
 
 // Vertex AI
@@ -757,8 +804,64 @@ export const requestyModelInfoSaneDefaults: ModelInfo = {
 // Gemini
 // https://ai.google.dev/gemini-api/docs/models/gemini
 export type GeminiModelId = keyof typeof geminiModels
-export const geminiDefaultModelId: GeminiModelId = "gemini-2.0-flash-001"
+export const geminiDefaultModelId: GeminiModelId = "gemini-3.5-flash"
 export const geminiModels = {
+	"gemini-3.5-flash": {
+		maxTokens: 65_536,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 1.5,
+		outputPrice: 9.0,
+	},
+	"gemini-3.1-pro-preview": {
+		maxTokens: 65_536,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 2.0,
+		outputPrice: 12.0,
+	},
+	"gemini-3.1-pro-preview-customtools": {
+		maxTokens: 65_536,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 2.0,
+		outputPrice: 12.0,
+	},
+	"gemini-3.1-flash-lite": {
+		maxTokens: 65_536,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 0.125,
+		outputPrice: 0.75,
+	},
+	"gemini-2.5-pro": {
+		maxTokens: 65_536,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 1.25,
+		outputPrice: 10.0,
+	},
+	"gemini-2.5-flash": {
+		maxTokens: 65_536,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 0.3,
+		outputPrice: 2.5,
+	},
+	"gemini-2.5-flash-lite": {
+		maxTokens: 65_536,
+		contextWindow: 1_048_576,
+		supportsImages: true,
+		supportsPromptCache: true,
+		inputPrice: 0.1,
+		outputPrice: 0.4,
+	},
 	"gemini-2.0-flash-001": {
 		maxTokens: 8192,
 		contextWindow: 1_048_576,
@@ -860,8 +963,74 @@ export const geminiModels = {
 // OpenAI Native
 // https://openai.com/api/pricing/
 export type OpenAiNativeModelId = keyof typeof openAiNativeModels
-export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-4o"
+export const openAiNativeDefaultModelId: OpenAiNativeModelId = "gpt-5.4-mini"
 export const openAiNativeModels = {
+	"gpt-5.5": {
+		maxTokens: 128_000,
+		contextWindow: 1_000_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 5.0,
+		outputPrice: 30.0,
+		cacheReadsPrice: 0.5,
+		reasoningEffort: "medium",
+	},
+	"gpt-5.5-pro": {
+		maxTokens: 128_000,
+		contextWindow: 1_000_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 30.0,
+		outputPrice: 180.0,
+		cacheReadsPrice: 3.0,
+		reasoningEffort: "xhigh",
+	},
+	"gpt-5.4": {
+		maxTokens: 128_000,
+		contextWindow: 1_000_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 2.5,
+		outputPrice: 15.0,
+		cacheReadsPrice: 0.25,
+		reasoningEffort: "medium",
+	},
+	"gpt-5.4-pro": {
+		maxTokens: 128_000,
+		contextWindow: 1_000_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 30.0,
+		outputPrice: 180.0,
+		cacheReadsPrice: 3.0,
+		reasoningEffort: "high",
+	},
+	"gpt-5.4-mini": {
+		maxTokens: 128_000,
+		contextWindow: 400_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 0.75,
+		outputPrice: 4.5,
+		cacheReadsPrice: 0.075,
+		reasoningEffort: "medium",
+	},
+	"gpt-5.4-nano": {
+		maxTokens: 128_000,
+		contextWindow: 400_000,
+		supportsImages: true,
+		supportsComputerUse: true,
+		supportsPromptCache: true,
+		inputPrice: 0.2,
+		outputPrice: 1.25,
+		cacheReadsPrice: 0.02,
+		reasoningEffort: "low",
+	},
 	// don't support tool use yet
 	"o3-mini": {
 		maxTokens: 100_000,
@@ -943,29 +1112,53 @@ export const openAiNativeModels = {
 // DeepSeek
 // https://platform.deepseek.com/docs/api
 export type DeepSeekModelId = keyof typeof deepSeekModels
-export const deepSeekDefaultModelId: DeepSeekModelId = "deepseek-chat"
+export const deepSeekDefaultModelId: DeepSeekModelId = "deepseek-v4-flash"
 export const deepSeekModels = {
-	"deepseek-chat": {
-		maxTokens: 8192,
-		contextWindow: 64_000,
+	"deepseek-v4-flash": {
+		maxTokens: 384_000,
+		contextWindow: 1_000_000,
 		supportsImages: false,
 		supportsPromptCache: true,
-		inputPrice: 0.014, // $0.014 per million tokens
-		outputPrice: 0.28, // $0.28 per million tokens
-		cacheWritesPrice: 0.27, // $0.27 per million tokens (cache miss)
-		cacheReadsPrice: 0.07, // $0.07 per million tokens (cache hit)
-		description: `DeepSeek-V3 achieves a significant breakthrough in inference speed over previous models. It tops the leaderboard among open-source models and rivals the most advanced closed-source models globally.`,
+		inputPrice: 0.14,
+		outputPrice: 0.28,
+		cacheWritesPrice: 0.14,
+		cacheReadsPrice: 0.0028,
+		description: "DeepSeek's fast current V4 model with OpenAI-compatible chat and optional thinking mode.",
+	},
+	"deepseek-v4-pro": {
+		maxTokens: 384_000,
+		contextWindow: 1_000_000,
+		supportsImages: false,
+		supportsPromptCache: true,
+		inputPrice: 0.435,
+		outputPrice: 0.87,
+		cacheWritesPrice: 0.435,
+		cacheReadsPrice: 0.003625,
+		description: "DeepSeek's higher-capability V4 model for complex coding, reasoning, and agentic tasks.",
+	},
+	"deepseek-chat": {
+		maxTokens: 384_000,
+		contextWindow: 1_000_000,
+		supportsImages: false,
+		supportsPromptCache: true,
+		inputPrice: 0.14,
+		outputPrice: 0.28,
+		cacheWritesPrice: 0.14,
+		cacheReadsPrice: 0.0028,
+		description:
+			"Legacy alias for the non-thinking mode of deepseek-v4-flash; scheduled for discontinuation after 2026-07-24 15:59 UTC.",
 	},
 	"deepseek-reasoner": {
-		maxTokens: 8192,
-		contextWindow: 64_000,
+		maxTokens: 384_000,
+		contextWindow: 1_000_000,
 		supportsImages: false,
 		supportsPromptCache: true,
-		inputPrice: 0.55, // $0.55 per million tokens (cache miss)
-		outputPrice: 2.19, // $2.19 per million tokens
-		cacheWritesPrice: 0.55, // $0.55 per million tokens (cache miss)
-		cacheReadsPrice: 0.14, // $0.14 per million tokens (cache hit)
-		description: `DeepSeek-R1 achieves performance comparable to OpenAI-o1 across math, code, and reasoning tasks. Supports Chain of Thought reasoning with up to 32K tokens.`,
+		inputPrice: 0.14,
+		outputPrice: 0.28,
+		cacheWritesPrice: 0.14,
+		cacheReadsPrice: 0.0028,
+		description:
+			"Legacy alias for the thinking mode of deepseek-v4-flash; scheduled for discontinuation after 2026-07-24 15:59 UTC.",
 	},
 } as const satisfies Record<string, ModelInfo>
 
@@ -979,6 +1172,30 @@ export const azureOpenAiDefaultApiVersion = "2024-08-01-preview"
 export type MistralModelId = keyof typeof mistralModels
 export const mistralDefaultModelId: MistralModelId = "codestral-latest"
 export const mistralModels = {
+	"mistral-medium-3-5": {
+		maxTokens: 256_000,
+		contextWindow: 256_000,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 1.5,
+		outputPrice: 7.5,
+	},
+	"mistral-small-2603": {
+		maxTokens: 256_000,
+		contextWindow: 256_000,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.15,
+		outputPrice: 0.6,
+	},
+	"mistral-large-2512": {
+		maxTokens: 256_000,
+		contextWindow: 256_000,
+		supportsImages: true,
+		supportsPromptCache: false,
+		inputPrice: 0.5,
+		outputPrice: 1.5,
+	},
 	"codestral-latest": {
 		maxTokens: 256_000,
 		contextWindow: 256_000,

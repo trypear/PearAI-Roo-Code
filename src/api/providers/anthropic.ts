@@ -32,6 +32,10 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 		let { id: modelId, maxTokens, thinking, temperature, virtualId } = this.getModel()
 
 		switch (modelId) {
+			case "claude-fable-5":
+			case "claude-opus-4-8":
+			case "claude-sonnet-4-6":
+			case "claude-haiku-4-5-20251001":
 			case "claude-3-7-sonnet-20250219":
 			case "claude-3-5-sonnet-20241022":
 			case "claude-3-5-haiku-20241022":
@@ -92,6 +96,10 @@ export class AnthropicHandler extends BaseProvider implements SingleCompletionHa
 
 						// Then check for models that support prompt caching
 						switch (modelId) {
+							case "claude-fable-5":
+							case "claude-opus-4-8":
+							case "claude-sonnet-4-6":
+							case "claude-haiku-4-5-20251001":
 							case "claude-3-7-sonnet-20250219":
 							case "claude-3-5-sonnet-20241022":
 							case "claude-3-5-haiku-20241022":
