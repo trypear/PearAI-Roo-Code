@@ -214,6 +214,8 @@ describe("AnthropicHandler", () => {
 			const model = handlerWithoutModel.getModel()
 			expect(model.id).toBe("claude-sonnet-4-6")
 			expect(model.info).toBeDefined()
+			expect(model.info.maxTokens).toBe(64_000)
+			expect(model.info.contextWindow).toBe(1_000_000)
 		})
 
 		it("should return specified model if valid model ID is provided", () => {

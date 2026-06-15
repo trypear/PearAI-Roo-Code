@@ -191,7 +191,7 @@ export const anthropicModels = {
 		description: "Anthropic's Opus-tier model for complex reasoning, coding, and high-autonomy work.",
 	},
 	"claude-sonnet-4-6": {
-		maxTokens: 128_000,
+		maxTokens: 64_000,
 		contextWindow: 1_000_000,
 		supportsImages: true,
 		supportsComputerUse: true,
@@ -203,7 +203,7 @@ export const anthropicModels = {
 		description: "Anthropic's balanced current model for speed, intelligence, and coding workflows.",
 	},
 	"claude-haiku-4-5-20251001": {
-		maxTokens: 128_000,
+		maxTokens: 64_000,
 		contextWindow: 200_000,
 		supportsImages: true,
 		supportsComputerUse: true,
