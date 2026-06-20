@@ -1,5 +1,6 @@
 import {
 	ApiProvider,
+	aureloModels,
 	ModelInfo,
 	anthropicModels,
 	bedrockModels,
@@ -13,6 +14,7 @@ import {
 
 export const MODELS_BY_PROVIDER: Partial<Record<ApiProvider, Record<string, ModelInfo>>> = {
 	anthropic: anthropicModels,
+	aurelo: aureloModels,
 	bedrock: bedrockModels,
 	deepseek: deepSeekModels,
 	gemini: geminiModels,
@@ -23,6 +25,7 @@ export const MODELS_BY_PROVIDER: Partial<Record<ApiProvider, Record<string, Mode
 
 export const PROVIDERS = [
 	{ value: "anthropic", label: "Anthropic" },
+	{ value: "aurelo", label: "Aurelo" },
 	{ value: "gemini", label: "Google Gemini" },
 	{ value: "deepseek", label: "DeepSeek" },
 	{ value: "openai-native", label: "OpenAI" },

@@ -15,6 +15,8 @@ import {
 	ModelInfo,
 	anthropicDefaultModelId,
 	anthropicModels,
+	aureloDefaultModelId,
+	aureloModels,
 	azureOpenAiDefaultApiVersion,
 	bedrockDefaultModelId,
 	bedrockModels,
@@ -307,6 +309,26 @@ const ApiOptions = ({
 				</div>
 			)}
 			{errorMessage && <ApiErrorMessage errorMessage={errorMessage} />}
+
+			{selectedProvider === "aurelo" && (
+				<>
+					<VSCodeTextField
+						value={apiConfiguration?.aureloApiKey || ""}
+						type="password"
+						onInput={handleInputChange("aureloApiKey")}
+						placeholder={t("settings:placeholders.apiKey")}
+						className="w-full">
+						<label className="block font-medium mb-1">Aurelo API Key</label>
+					</VSCodeTextField>
+					<VSCodeTextField
+						value={apiConfiguration?.aureloBaseUrl || ""}
+						onInput={handleInputChange("aureloBaseUrl")}
+						placeholder="https://aurelo.tech"
+						className="w-full">
+						<label className="block font-medium mb-1">Aurelo Base URL</label>
+					</VSCodeTextField>
+				</>
+			)}
 
 			{selectedProvider === "openrouter" && (
 				<>
@@ -1613,6 +1635,8 @@ export function normalizeApiConfiguration(
 	switch (provider) {
 		case "anthropic":
 			return getProviderData(anthropicModels, anthropicDefaultModelId)
+		case "aurelo":
+			return getProviderData(aureloModels, aureloDefaultModelId)
 		case "bedrock":
 			// Special case for custom ARN
 			if (modelId === "custom-arn") {

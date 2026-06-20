@@ -27,6 +27,7 @@ export const SECRET_KEYS = [
 	"unboundApiKey",
 	"requestyApiKey",
 	"pearaiApiKey",
+	"aureloApiKey",
 ] as const
 
 // type CheckSecretKeysExhaustiveness = Exclude<SecretKey, (typeof SECRET_KEYS)[number]> extends never ? true : false
@@ -128,6 +129,7 @@ export const GLOBAL_STATE_KEYS = [
 	"pearaiModelId",
 	"pearaiModelInfo",
 	"pearaiBaseUrl",
+	"aureloBaseUrl",
 ] as const
 
 export const PASS_THROUGH_STATE_KEYS = ["taskHistory"] as const
