@@ -1,5 +1,5 @@
 import { Anthropic } from "@anthropic-ai/sdk"
-import AureloSDK, { type AureloStorage, type AureloStreamEvent } from "aurelo.ai"
+import AureloSDK, { type AureloStreamEvent } from "aurelo.ai"
 
 import {
 	ApiHandlerOptions,
@@ -12,18 +12,6 @@ import {
 import { ApiStream, ApiStreamUsageChunk } from "../transform/stream"
 import { BaseProvider } from "./base-provider"
 import { SingleCompletionHandler } from "../index"
-
-const runtimeStorageValues = new Map<string, string>()
-
-const runtimeStorage: AureloStorage = {
-	get: (key) => runtimeStorageValues.get(key) || null,
-	set: (key, value) => {
-		runtimeStorageValues.set(key, value)
-	},
-	delete: (key) => {
-		runtimeStorageValues.delete(key)
-	},
-}
 
 // A content part sent to Aurelo: either plain text or a native Anthropic image block.
 // Text and tool blocks are flattened to strings (the gateway converts them to input_text anyway).
@@ -51,7 +39,6 @@ export class AureloHandler extends BaseProvider implements SingleCompletionHandl
 		this.client = new AureloSDK({
 			apiKey: options.aureloApiKey,
 			baseUrl: options.aureloBaseUrl || "https://aurelo.tech",
-			storage: runtimeStorage,
 		})
 	}
 
