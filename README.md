@@ -49,6 +49,16 @@ We use [changesets](https://github.com/changesets/changesets) for versioning and
     `
 |
 
+## Aurelo AI SDK
+
+To install the latest version of the Aurelo SDK for this provider:
+
+```bash
+npm install aurelo.ai
+```
+
+Or view the package on the NPM Registry: [https://www.npmjs.com/package/aurelo.ai](https://www.npmjs.com/package/aurelo.ai)
+
 <!-- END CONTRIBUTORS SECTION -->
 
 ## License

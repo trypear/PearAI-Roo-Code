@@ -7,6 +7,11 @@ export function validateApiConfiguration(apiConfiguration?: ApiConfiguration): s
 	}
 
 	switch (apiConfiguration.apiProvider) {
+		case "aurelo":
+			if (!apiConfiguration.aureloApiKey) {
+				return i18next.t("settings:validation.apiKey")
+			}
+			break
 		case "openrouter":
 			if (!apiConfiguration.openRouterApiKey) {
 				return i18next.t("settings:validation.apiKey")

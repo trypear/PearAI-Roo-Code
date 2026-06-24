@@ -17,6 +17,7 @@ export type ApiProvider =
 	| "unbound"
 	| "requesty"
 	| "pearai"
+	| "aurelo"
 	| "human-relay"
 	| "fake-ai"
 
@@ -81,6 +82,8 @@ export interface ApiHandlerOptions {
 	pearaiBaseUrl?: string
 	pearaiModelId?: string
 	pearaiModelInfo?: ModelInfo
+	aureloApiKey?: string
+	aureloBaseUrl?: string
 	modelMaxThinkingTokens?: number
 	fakeAi?: unknown
 }
@@ -138,6 +141,7 @@ export const API_CONFIG_KEYS: GlobalStateKey[] = [
 	"unboundModelInfo",
 	"requestyModelId",
 	"requestyModelInfo",
+	"aureloBaseUrl",
 	"modelTemperature",
 	"modelMaxTokens",
 	"modelMaxThinkingTokens",
@@ -1075,5 +1079,57 @@ export const pearAiModels = {
 		cacheReadsPrice: 0.3,
 		description:
 			"PearAI Model automatically routes you to the most best / most suitable model on the market. Recommended for most users.",
+	},
+} as const satisfies Record<string, ModelInfo>
+
+export type AureloModelId = keyof typeof aureloModels
+export const aureloDefaultModelId: AureloModelId = "M1"
+export const aureloModelInfoSaneDefaults: ModelInfo = {
+	maxTokens: 100_000,
+	contextWindow: 200_000,
+	supportsImages: true,
+	supportsPromptCache: true,
+	cacheWritesPrice: 0,
+	cacheReadsPrice: 0,
+	inputPrice: 0,
+	outputPrice: 0,
+}
+
+export const aureloModels = {
+	M1: {
+		...aureloModelInfoSaneDefaults,
+		contextWindow: 200_000,
+		maxTokens: 100_000,
+		inputPrice: 2, // $2 per million input tokens
+		outputPrice: 8, // $8 per million output tokens
+		description:
+			"Aurelo M1. Fast, highly responsive model optimized for standard coding, autocomplete, and quick refactoring. Features a 200K context window with free prompt caching ($0.00/1M tokens) and a 1-hour write/read cache window.",
+	},
+	"M1 - Long Context": {
+		...aureloModelInfoSaneDefaults,
+		contextWindow: 800_000,
+		maxTokens: 100_000,
+		inputPrice: 3, // $3 per million input tokens
+		outputPrice: 15, // $15 per million output tokens
+		description:
+			"Aurelo M1 - Long Context. Designed for scanning large codebases, processing entire folders, and handling massive multi-file refactoring. Features an 800K context window with free prompt caching ($0.00/1M tokens) and a 1-hour write/read cache window.",
+	},
+	M2: {
+		...aureloModelInfoSaneDefaults,
+		contextWindow: 200_000,
+		maxTokens: 100_000,
+		inputPrice: 4, // $4 per million input tokens
+		outputPrice: 16, // $16 per million output tokens
+		description:
+			"Aurelo M2. Premium reasoning model optimized for complex systems architecture design, advanced debugging, and logical problem-solving. Features a 200K context window with free prompt caching ($0.00/1M tokens) and a 1-hour write/read cache window.",
+	},
+	"M2 - Long Context": {
+		...aureloModelInfoSaneDefaults,
+		contextWindow: 800_000,
+		maxTokens: 100_000,
+		inputPrice: 5, // $5 per million input tokens
+		outputPrice: 30, // $30 per million output tokens
+		description:
+			"Aurelo M2 - Long Context. Ultimate reasoning model with an expanded 800K context window. Best suited for deep codebase-wide analysis and complex multi-file database refactoring. Features free prompt caching ($0.00/1M tokens) and a 1-hour write/read cache window.",
 	},
 } as const satisfies Record<string, ModelInfo>

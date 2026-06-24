@@ -163,6 +163,7 @@ export type SecretKey =
 	| "unboundApiKey"
 	| "requestyApiKey"
 	| "pearaiApiKey"
+	| "aureloApiKey"
 
 export type GlobalStateKey =
 	| "apiProvider"
@@ -259,6 +260,7 @@ export type GlobalStateKey =
 	| "pearaiModelId"
 	| "pearaiModelInfo"
 	| "pearaiBaseUrl"
+	| "aureloBaseUrl"
 
 export type ConfigurationKey = GlobalStateKey | SecretKey
 
